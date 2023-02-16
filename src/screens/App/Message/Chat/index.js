@@ -6,6 +6,8 @@ import {
   View,
   Image,
   ScrollView,
+  FlatList,
+  Dimensions,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -24,6 +26,23 @@ const messages = [
     to: '',
     date: '',
     text:
+      'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    userImage: require('../../../../assets/images/png/u2.png'),
+  },
+  {
+    uid: 1,
+    from: 'Julie Watson',
+    to: '',
+    date: '',
+    text: 'Lorem ipsum',
+    userImage: require('../../../../assets/images/png/mydp.png'),
+  },
+  {
+    uid: 2,
+    from: 'Julie Watson',
+    to: '',
+    date: '',
+    text:
       ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/u2.png'),
   },
@@ -35,6 +54,15 @@ const messages = [
     text:
       ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/mydp.png'),
+  },
+  {
+    uid: 2,
+    from: 'Julie Watson',
+    to: '',
+    date: '',
+    text:
+      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    userImage: require('../../../../assets/images/png/u2.png'),
   },
   {
     uid: 2,
@@ -107,10 +135,75 @@ const Chat = ({navigation, route}) => {
       </View>
     );
   };
+
+  const renderItem = elem => {
+    console.log(elem);
+    if (elem?.item.uid === uid) {
+      return (
+        <View
+          style={[s.messege, {justifyContent: 'flex-end'}]}
+          key={elem.index}
+        >
+          <View
+            style={[
+              {
+                maxWidth: '80%',
+                marginRight: moderateScale(10, 0.1),
+              },
+            ]}
+          >
+            <View style={s.textFrom}>
+              <Text style={s.textSmall1}>{elem.item.text}</Text>
+              <Text style={[s.textSmall1, {textAlign: 'right'}]}>
+                {'12:13 PM'}
+              </Text>
+            </View>
+          </View>
+          <View style={[s.dp]}>
+            <Image
+              source={elem?.item.userImage}
+              style={s.dp1}
+              resizeMode={'cover'}
+            />
+          </View>
+        </View>
+      );
+    } else {
+      return (
+        <View
+          style={[s.messege, {justifyContent: 'flex-start'}]}
+          key={elem.index}
+        >
+          <View style={[s.dp]}>
+            <Image
+              source={elem?.item.userImage}
+              style={s.dp1}
+              resizeMode={'cover'}
+            />
+          </View>
+          <View
+            style={[
+              {
+                maxWidth: '80%',
+                marginRight: moderateScale(10, 0.1),
+              },
+            ]}
+          >
+            <View style={s.textTo}>
+              <Text style={s.textSmall1}>{elem.item.text}</Text>
+              <Text style={[s.textSmall1, {textAlign: 'right'}]}>
+                {'12:13 PM'}
+              </Text>
+            </View>
+          </View>
+        </View>
+      );
+    }
+  };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       <View style={[s.container, {backgroundColor: color}]}>
-        <View style={s.header}>
+        <View style={[s.header]}>
           <TouchableOpacity
             style={{flex: 0.1}}
             onPress={() => navigation.goBack()}
@@ -150,28 +243,39 @@ const Chat = ({navigation, route}) => {
             />
           </TouchableOpacity>
         </View>
-        <ScrollView contentContainerStyle={[s.chatContainer]}>
+
+        <View style={{height: '80%', paddingBottom: moderateScale(15, 0.1)}}>
+          <FlatList
+            inverted
+            data={messages}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            // initialScrollIndex={messages.length - 1}
+            showsVerticalScrollIndicator={true}
+          />
+        </View>
+        {/* <ScrollView contentContainerStyle={[s.chatContainer]}>
           {messages.map((elem, i) => {
             console.log(elem);
             if (elem?.uid === uid) {
               return (
-                <View style={s.messege} key={i}>
+                <View style={[s.messege, {justifyContent: 'flex-end'}]} key={i}>
                   <View
                     style={[
-                      s.text,
                       {
-                        flex: 0.8,
-                        backgroundColor: '#333232',
+                        maxWidth: '80%',
                         marginRight: moderateScale(10, 0.1),
                       },
                     ]}
                   >
-                    <Text style={s.userName}>
-                      {elem?.from}
+                    <View style={s.textFrom}>
                       <Text style={s.textSmall1}>{elem?.text}</Text>
-                    </Text>
+                      <Text style={[s.textSmall1, {textAlign: 'right'}]}>
+                        {'12:13 PM'}
+                      </Text>
+                    </View>
                   </View>
-                  <View style={[s.dp, {flex: 0.2}]}>
+                  <View style={[s.dp]}>
                     <Image
                       source={elem?.userImage}
                       style={s.dp1}
@@ -182,25 +286,37 @@ const Chat = ({navigation, route}) => {
               );
             } else {
               return (
-                <View style={s.messege} key={i}>
-                  <View style={[s.dp, {flex: 0.2}]}>
+                <View
+                  style={[s.messege, {justifyContent: 'flex-start'}]}
+                  key={i}
+                >
+                  <View style={[s.dp]}>
                     <Image
                       source={elem?.userImage}
                       style={s.dp1}
                       resizeMode={'cover'}
                     />
                   </View>
-                  <View style={[s.text, {flex: 0.8}]}>
-                    <Text style={s.userName}>
-                      {elem?.from}
+                  <View
+                    style={[
+                      {
+                        maxWidth: '80%',
+                        marginRight: moderateScale(10, 0.1),
+                      },
+                    ]}
+                  >
+                    <View style={s.textTo}>
                       <Text style={s.textSmall1}>{elem?.text}</Text>
-                    </Text>
+                      <Text style={[s.textSmall1, {textAlign: 'right'}]}>
+                        {'12:13 PM'}
+                      </Text>
+                    </View>
                   </View>
                 </View>
               );
             }
           })}
-        </ScrollView>
+        </ScrollView> */}
       </View>
       <View style={s.row}>
         <View style={s.input}>

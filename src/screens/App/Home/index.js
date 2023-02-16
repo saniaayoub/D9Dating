@@ -15,7 +15,15 @@ import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
 import s from './style';
 import InstaStory from 'react-native-insta-story';
-import {Input, Button, Stack, Menu, Pressable} from 'native-base';
+import {
+  Input,
+  Button,
+  Stack,
+  Menu,
+  Pressable,
+  HStack,
+  Spinner,
+} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {ScrollView} from 'react-native';
@@ -26,17 +34,13 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
-import mydp from '../../../assets/images/png/mydp.png';
-const images = [
-  'https://images.unsplash.com/photo-1675935122676-b916c1cc6cc1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=1600&q=60',
-  'https://images.unsplash.com/photo-1675790463148-3b5ec3d62139?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2OXx8fGVufDB8fHx8&auto=format&fit=crop&w=1600&q=60',
-];
+
 const myData = [
   {
     user_id: 1,
     user_image:
       'https://images.unsplash.com/photo-1616267624976-b45d3a7bac73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTl8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-    user_name: 'Ahmet Çağlar Durmuş',
+    user_name: 'Your Story',
     post: {
       image: require('../../../assets/images/png/dp.png'),
       location: 'USA',
@@ -163,7 +167,7 @@ const data = [
   {
     user_id: 5,
     user_image:
-      'https://images.unsplash.com/photo-1616267624976-b45d3a7bac73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTl8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
+      'https://images.unsplash.com/photo-1602545164910-81aecfd1413d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjF8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60g',
     user_name: 'Test User',
     post: {
       image: require('../../../assets/images/png/dp.png'),
@@ -203,28 +207,29 @@ const Home = ({navigation}) => {
   const [data1, setData1] = useState(data);
   const [refresh, setRefresh] = useState(true);
   const [path, setPath] = useState(null);
-
+  const [myStories, setMyStories] = useState([]);
+  const [storyCircle, setStoryCircle] = useState('green');
+  const [loader, setLoader] = useState(false);
   useEffect(() => {
-    let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
-    let binaryFile = Image.resolveAssetSource(
-      require('../../../assets/images/jpg/photo.jpg'),
-    );
-
-    RNFetchBlob.config({fileCache: true})
-      .fetch('GET', binaryFile.uri)
-      .then(resp => {
-        RNFS.moveFile(resp.path(), photoPath)
-          .then(() => {
-            console.log('FILE WRITTEN!');
-          })
-          .catch(err => {
-            console.log(err.message);
-          });
-      })
-      .catch(err => {
-        console.log(err.message);
-      });
-  }, [myData1]);
+    // let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
+    // let binaryFile = Image.resolveAssetSource(
+    //   require('../../../assets/images/jpg/photo.jpg'),
+    // );
+    // RNFetchBlob.config({fileCache: true})
+    //   .fetch('GET', binaryFile.uri)
+    //   .then(resp => {
+    //     RNFS.moveFile(resp.path(), photoPath)
+    //       .then(() => {
+    //         console.log('FILE WRITTEN!');
+    //       })
+    //       .catch(err => {
+    //         console.log(err.message);
+    //       });
+    //   })
+    //   .catch(err => {
+    //     console.log(err.message);
+    //   });
+  }, [myStories]);
 
   var lastTap = null;
   const handleDoubleTap = index => {
@@ -520,19 +525,17 @@ const Home = ({navigation}) => {
       onDone: res => {
         console.log('on done', res);
         setPath(`file://${res}`);
-        setMyData1([
-          {
-            ...myData1[0],
-            stories: {
-              story_id: 1,
-              story_image:
-                'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
-              swipeText: 'Custom swipe text for this story',
-              onPress: () => console.log('story 1 swiped'),
-            },
-          },
-        ]);
-        console.log(myData1);
+        let temp = myStories;
+        temp.push({
+          story_id: myStories.length + 1,
+          story_image: `file://${res}`,
+          swipeText: 'Custom swipe text for this story',
+          onPress: () => console.log('story 1 swiped'),
+        });
+        setLoader(true);
+        setMyStories(temp);
+        setStoryCircle('green');
+        addStory(myStories);
       },
       onCancel: () => {
         console.log('on cancel');
@@ -554,6 +557,16 @@ const Home = ({navigation}) => {
       });
   };
 
+  const addStory = story => {
+    setMyData1([
+      {
+        ...myData1[0],
+        stories: story,
+      },
+    ]);
+    setLoader(false);
+  };
+
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {/* {storyImage ? (
@@ -565,6 +578,7 @@ const Home = ({navigation}) => {
         />
       ) : (
         <> */}
+
       <View style={[s.container, s.col, {backgroundColor: color}]}>
         <View style={s.searchContainer}>
           <Input
@@ -612,71 +626,82 @@ const Home = ({navigation}) => {
             flexDirection: 'row',
           }}
         >
-          {myData1[0].stories > 0 ? (
+          {myStories.length > 0 ? (
             <>
               <InstaStory
                 data={myData1}
                 duration={10}
-                onStart={item => console.log(item)}
+                onStart={item => setStoryCircle('grey')}
                 onClose={item => console.log('close: ', item)}
                 showAvatarText={true}
                 avatarTextStyle={{
                   color: textColor,
-                  marginBottom: moderateScale(25, 0.1),
+                  marginBottom: moderateScale(34, 0.1),
                 }}
                 customSwipeUpComponent={
-                  <View>
-                    <Text>Swipe</Text>
+                  <View
+                    style={{
+                      backgroundColor: '#000',
+                      borderRadius: moderateScale(25, 0.1),
+                    }}
+                  >
+                    <Button
+                      variant={'link'}
+                      onPress={() => {
+                        refRBSheet.current.open();
+                      }}
+                    >
+                      <Icon
+                        name={'plus'}
+                        size={moderateScale(14, 0.1)}
+                        solid
+                        color={'#fff'}
+                      />
+                    </Button>
                   </View>
                 }
                 style={{
                   marginTop: moderateScale(5, 0.1),
-                  marginRight: moderateScale(-20, 0.1),
+                  marginRight: moderateScale(-15, 0.1),
                 }}
+                pressedBorderColor={storyCircle}
+                unPressedBorderColor={'green'}
               />
             </>
           ) : (
             <>
               <View style={s.myStory}>
                 <Image
-                  source={require('../../../assets/images/png/mydp.png')}
+                  source={{
+                    uri:
+                      'https://images.unsplash.com/photo-1616267624976-b45d3a7bac73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTl8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
+                  }}
                   width={undefined}
                   height={undefined}
-                  style={{width: '100%', height: '100%'}}
-                  resizeMode={'contain'}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: moderateScale(65, 0.1),
+                  }}
+                  resizeMode={'cover'}
                 />
-                <Text style={[s.userName, {color: textColor}]}>
-                  Julie Watson
-                </Text>
+                <Text style={[s.userName, {color: textColor}]}>Your Story</Text>
                 <TouchableOpacity
                   onPress={() => {
                     refRBSheet.current.open();
                   }}
-                  style={s.addBtn}
+                  style={[s.addBtn, {borderColor: color}]}
                 >
                   <Icon
                     name={'plus'}
-                    size={moderateScale(8, 0.1)}
+                    size={moderateScale(14, 0.1)}
+                    solid
                     color={'blue'}
                   />
                 </TouchableOpacity>
               </View>
             </>
           )}
-
-          {/* <LinearGradient
-            colors={['#cc2b5e', '#753a88']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={[
-              s.linearGradient,
-              // <-- Overwrites the preceding style property
-            ]}
-          >
-            <View style={[s.innerContainer]}>
-              <Text style={s.buttonText}>GRADIENT BORDER CIRCLE</Text>
-            </View>
-          </LinearGradient> */}
 
           <InstaStory
             data={data}
@@ -688,6 +713,8 @@ const Home = ({navigation}) => {
               color: textColor,
               marginBottom: moderateScale(34, 0.1),
             }}
+            pressedBorderColor={'grey'}
+            unPressedBorderColor={'green'}
             customSwipeUpComponent={
               <View>
                 <Text>Swipe</Text>
@@ -731,15 +758,6 @@ const Home = ({navigation}) => {
             index.toString();
           }}
           extraData={refresh}
-        />
-      </View>
-      <View style={{width: 300, height: 300}}>
-        <Image
-          source={path == 1 ? path : {uri: path}}
-          resizeMode={'contain'}
-          width={undefined}
-          height={undefined}
-          style={{width: 300, height: 300}}
         />
       </View>
       <RBSheet

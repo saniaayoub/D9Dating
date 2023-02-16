@@ -17,7 +17,7 @@ const App = () => {
 
   useEffect(() => {
     // const init = async () => {
-    //   // …do multiple sync or async task
+    // …do multiple sync or async task
     dispatch(setUserToken('sania'));
     dispatch(setTheme('dark'));
     // };
