@@ -17,6 +17,7 @@ import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../../assets/images/svg/lock.svg';
 import {setTheme, setUserToken} from '../../../Redux/actions';
 import {useSelector, useDispatch} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const passRegex = new RegExp(
   '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
@@ -35,6 +36,10 @@ const Login = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
 
+  const Login = ()=>{
+    console.log('abb');
+    
+  }
   return (
     <SafeAreaView style={{flex: 1}}>
       <View
@@ -138,7 +143,12 @@ const Login = ({navigation}) => {
               w={moderateScale(140, 0.1)}
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
-              onPress={() => dispatch(setUserToken('sania'))}
+              onPress={() => {
+                    AsyncStorage.setItem('users', JSON.stringify({email: email}));
+                    console.log('saved');
+                     dispatch(setUserToken('sania'))  
+                
+              }}
             >
               <Text style={s.btnText}>Login</Text>
             </Button>

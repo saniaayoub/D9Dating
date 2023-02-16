@@ -6,7 +6,7 @@ import {
   View,
   Image,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
 import {setTheme} from '../../../Redux/actions';
@@ -15,56 +15,67 @@ import Header from '../../../Components/Header';
 import {FlatList} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {ScrollView} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 const messages = [
   {
+    id: 1,
     from: 'Julie Watson',
     text: 'Awesome',
     time: 'Now',
     userImage: require('../../../assets/images/png/mydp.png'),
   },
   {
+    id: 2,
     from: 'John Smith',
     text: 'Sent a Voice Message',
     time: '10:00pm',
     userImage: require('../../../assets/images/png/u7.png'),
   },
   {
+    id: 3,
     from: 'Julie Watson',
     text: 'Thanks a lot',
     time: 'Friday',
     userImage: require('../../../assets/images/png/u1.png'),
   },
   {
+    id: 4,
     from: 'Julie Watson',
     text: 'Are You Busy',
     time: 'Monday',
     userImage: require('../../../assets/images/png/u2.png'),
   },
   {
+    id: 5,
     from: 'John Smith',
     text: 'Nice',
     time: 'Last Week',
     userImage: require('../../../assets/images/png/u4.png'),
   },
   {
+    id: 6,
     from: 'John Smith',
     text: 'Lunch Today',
     time: 'Last Week',
     userImage: require('../../../assets/images/png/u5.png'),
   },
   {
+    id: 7,
     from: 'Julie Watson',
     text: 'Welcome',
     time: 'Now',
     userImage: require('../../../assets/images/png/u6.png'),
   },
   {
+    id: 8,
     from: 'John Smith',
     text: 'Lunch Today',
     time: 'Last Week',
     userImage: require('../../../assets/images/png/u5.png'),
   },
   {
+    id: 9,
     from: 'Julie Watson',
     text: 'Welcome',
     time: 'Now',
@@ -76,8 +87,6 @@ const Message = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-
-  useEffect(() => {}, []);
 
   const renderItem = (elem, i) => {
     return (
