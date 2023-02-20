@@ -1,16 +1,16 @@
 // const path = require('path');
-const express = require("express");
+const express = require('express');
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const socketio = require('socket.io');
 
 const io = socketio(server);
-app.get("/", function(req, res) {
-  res.write(`<h1>Hello socket</h1> ${PORT}`)
-  res.end
+app.get('/', function (req, res) {
+  res.write(`<h1>Hello socket</h1> ${PORT}`);
+  res.end;
 });
-io.on('connection', (client) => {
+io.on('connection', client => {
   console.log(`⚡: ${client.id} user just connected!`);
   client.on('send message', (data) => {
     console.log(data);
@@ -29,7 +29,6 @@ io.on('connection', (client) => {
   });
   
 
-});
 
 const PORT = process.env.PORT || 3000;
 

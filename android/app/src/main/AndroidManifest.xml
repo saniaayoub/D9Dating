@@ -1,4 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+>
 
    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -10,8 +13,9 @@
     android:label="@string/app_name"
     android:icon="@mipmap/ic_launcher"
     android:roundIcon="@mipmap/ic_launcher_round"
-    android:allowBackup="true"
+    android:allowBackup="false"
     android:theme="@style/AppTheme"
+    tools:replace="android:icon,android:theme,android:allowBackup,label"
   >
       <activity
       android:name=".MainActivity"

@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Platform, Text, View} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {moderateScale} from 'react-native-size-matters';
@@ -20,6 +20,7 @@ const BottomTabs = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
+        tabBarHideOnKeyboard: Platform.OS !== 'ios',
         tabBarStyle: [
           {
             display: 'flex',
@@ -28,7 +29,7 @@ const BottomTabs = () => {
             height:
               Platform.OS == 'ios'
                 ? moderateScale(90, 0.1)
-                : moderateScale(50, 0.1),
+                : moderateScale(53, 0.1),
             borderTopLeftRadius: moderateScale(15, 0.1),
             borderTopRightRadius: moderateScale(15, 0.1),
             elevation: 0,

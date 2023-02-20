@@ -17,7 +17,8 @@ import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../../assets/images/svg/lock.svg';
 import {setTheme, setUserToken} from '../../../Redux/actions';
 import {useSelector, useDispatch} from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import socket from '../../../utils/socket';
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const passRegex = new RegExp(
   '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
@@ -36,10 +37,11 @@ const Login = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
 
-  const Login = ()=>{
+  const Login = () => {
     console.log('abb');
-    
-  }
+    socket.auth = {username: email};
+    socket.connect();
+  };
   return (
     <SafeAreaView style={{flex: 1}}>
       <View
@@ -144,10 +146,17 @@ const Login = ({navigation}) => {
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
               onPress={() => {
+<<<<<<< HEAD
                     AsyncStorage.setItem('users', email);
                     console.log('saved');
                      dispatch(setUserToken('sania'))  
                 
+=======
+                AsyncStorage.setItem('users', JSON.stringify({email: email}));
+                console.log('saved');
+                Login();
+                dispatch(setUserToken('sania'));
+>>>>>>> f83e39565f44816a0c68ee9567bfde74af64988b
               }}
             >
               <Text style={s.btnText}>Login</Text>
