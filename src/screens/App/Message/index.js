@@ -15,7 +15,7 @@ import Header from '../../../Components/Header';
 import {FlatList} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {ScrollView} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const messages = [
   {

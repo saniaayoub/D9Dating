@@ -10,15 +10,18 @@ import {setTheme, setUserToken} from './src/Redux/actions';
 import RNBootSplash from 'react-native-bootsplash';
 import BottomTabs from './src/Navigation/BottomTabs';
 import AuthStack from './src/Navigation/Stacks/AuthStack';
-
+import socket from './src/utils/socket';
+// import io from 'socket.io-client';
 const App = () => {
   const dispatch = useDispatch();
   const userToken = useSelector(state => state.reducer.userToken);
 
   useEffect(() => {
+    // socket.emit('createRoom', 'sania');
+    // const socket = io('http://192.168.18.80:3000');
     // const init = async () => {
     // …do multiple sync or async task
-    dispatch(setUserToken('sania'));
+    dispatch(setUserToken(null));
     dispatch(setTheme('dark'));
     // };
 

@@ -569,16 +569,6 @@ const Home = ({navigation}) => {
 
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
-      {/* {storyImage ? (
-        <Editor
-          images={images}
-          onPressCreate={e => console.log(e)} // In the logs you will receive an object with settings for changed images and the settings of the editor itself .If the image has not been changed, the original data will be returned.
-          onPressGoBack={() => navigation.goBack()} // By clicking on the back button, you can return to the previous page or close the modal window
-          initialSettingsForBackend={null} // If you pass here an object with settings for the image and the editor, then you can start editing from the last edit
-        />
-      ) : (
-        <> */}
-
       <View style={[s.container, s.col, {backgroundColor: color}]}>
         <View style={s.searchContainer}>
           <Input
