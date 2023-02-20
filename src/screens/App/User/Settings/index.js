@@ -31,6 +31,7 @@ const Settings = ({navigation}) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [showPass, setshowPass] = useState(true);
+  const [showConfPass, setshowConfPass] = useState(true);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
@@ -245,13 +246,13 @@ const Settings = ({navigation}) => {
                     setPasswordError('');
                   }}
                   InputRightElement={
-                    password ? (
+                    confirmPassword ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowPass(!showPass)}
+                          onPress={() => setshowConfPass(!showConfPass)}
                         >
                           <Feather
-                            name={showPass ? 'eye' : 'eye-off'}
+                            name={showConfPass ? 'eye' : 'eye-off'}
                             color={color}
                             size={20}
                           />
@@ -263,7 +264,7 @@ const Settings = ({navigation}) => {
                   }
                   errorMessage={passwordError}
                   fontSize={moderateScale(14, 0.1)}
-                  secureTextEntry={showPass}
+                  secureTextEntry={showConfPass}
                 />
               </View>
               <TouchableOpacity

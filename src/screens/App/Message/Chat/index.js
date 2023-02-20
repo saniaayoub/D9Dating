@@ -6,6 +6,7 @@ import {
   View,
   Image,
   ScrollView,
+  FlatList
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -79,25 +80,8 @@ const Chat = ({ navigation, route }) => {
   const [msg, setMsg] = useState([]);
   const [input, setInput] = useState('');
   const [socket, setSocket] = useState(
-    // io('https://monily-chat-server.herokuapp.com'),
-    // io('http://192.168.18.109:3000'),
     io('http://192.168.18.226:3000'),
   );
-  const [value, setValue] = useState([])
-
-  const getValueFunction = () => {
-    // Function to get the value from AsyncStorage
-    AsyncStorage.getItem('users').then(
-      (value) =>
-        console.log(value, 'users'),
-        setValue(value),
-      // Setting the value in Text
-    );
-  };
-
-  useEffect(() => {
-    getValueFunction()
-  }, [])
 
 
   const dispatch = useDispatch();
@@ -110,12 +94,24 @@ const Chat = ({ navigation, route }) => {
   const uid = route.params.id;
   const name = data.from
   console.log(uid, 'id');
-
+  const senderId = Math.floor(Math.random() * 100)
+  console.log(senderId)
 
   useEffect(() => {
+   getValueFunction()
+  }, [])
+  
+
+  const idd = route.params.id
+  console.log(idd, 'idd');
+  useEffect(() => {
+    console.log('msg?');
     socket.on('receive message', (message) => {
-      console.log(message,'recieve')
+      console.log(message, 'recieve')
       setText((prevMessages) => [...prevMessages, message]);
+    });
+    socket.on("show_notification", function (data) {
+      console.log("show_notification", data);
     });
   }, []);
 
@@ -124,10 +120,7 @@ const Chat = ({ navigation, route }) => {
     socket.emit('send message', JSON.stringify({
       text: input,
       to: uid,
-      from: {
-        id: socket.id,
-        name: name,
-      },
+      from: senderId,
       avatar: 'https://placeimg.com/140/140/people',
       time: new Date()
     }));
@@ -135,39 +128,84 @@ const Chat = ({ navigation, route }) => {
       text: input,
       to: uid,
       from: {
-        id: socket.id,
+        id: 182,
         name: name,
       },
-      avatar: 'https://placeimg.com/140/140/people',
+       avatar: 'https://placeimg.com/140/140/people',
       time: new Date()
     }]);
     setInput('');
   };
+  const getValueFunction = async () => {
+    // Function to get the value from AsyncStorage
+    let user = await AsyncStorage.getItem('users');  
+    console.log(user,'iddd');
 
-  const RenderItem = () => {
-    return (
-      <View style={s.card}>
-        <View style={s.dp}>
-          <Image source={data?.userImage} style={s.dp1} resizeMode={'cover'} />
-        </View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Chat')}
-          style={[s.col, { flex: 0.6, justifyContent: 'flex-end' }]}
+  };
+
+  const renderItem = elem => {
+    console.log(elem);
+    if (elem?.item.to === uid) {
+      return (
+        <View
+          style={[s.messege, {justifyContent: 'flex-end'}]}
+          key={elem.index}
         >
-          <View>
-            <Text style={[s.name, s.nameBold, { color: textColor }]}>
-              {data?.from}
-            </Text>
+          <View
+            style={[
+              {
+                maxWidth: '80%',
+                marginRight: moderateScale(10, 0.1),
+              },
+            ]}
+          >
+            <View style={s.textFrom}>
+              <Text style={s.textSmall1}>{elem.item.text}</Text>
+              <Text style={[s.textSmall1, {textAlign: 'right'}]}>
+                {elem.item.time.toLocaleString([], {hour: '2-digit', minute:'2-digit',})}
+              </Text>
+            </View>
           </View>
-          <Text style={s.textSmall}>{elem?.item?.text}</Text>
-        </TouchableOpacity>
-        <View style={s.time}>
-          <Text style={[s.textRegular, { color: textColor }]}>
-            {elem?.item?.time}
-          </Text>
+          <View style={[s.dp]}>
+            <Image
+              source={{uri: elem.item.avatar}}
+              style={s.dp1}
+              resizeMode={'cover'}
+            />
+          </View>
         </View>
-      </View>
-    );
+      );
+    } else {
+      return (
+        <View
+          style={[s.messege, {justifyContent: 'flex-start'}]}
+          key={elem.index}
+        >
+          <View style={[s.dp]}>
+            <Image
+              source={{uri: elem.item.avatar}}
+              style={s.dp1}
+              resizeMode={'cover'}
+            />
+          </View>
+          <View
+            style={[
+              {
+                maxWidth: '80%',
+                marginRight: moderateScale(10, 0.1),
+              },
+            ]}
+          >
+            <View style={s.textTo}>
+              <Text style={s.textSmall1}>{elem.item.text}</Text>
+              <Text style={[s.textSmall1, {textAlign: 'right'}]}>
+              {elem.item.time.toLocaleString([], {hour: '2-digit', minute:'2-digit',})}
+              </Text>
+            </View>
+          </View>
+        </View>
+      );
+    }
   };
   return (
     <SafeAreaView style={{ display: 'flex', flex: 1, backgroundColor: color }}>
@@ -212,7 +250,16 @@ const Chat = ({ navigation, route }) => {
             />
           </TouchableOpacity>
         </View>
-        <ScrollView contentContainerStyle={[s.chatContainer]}>
+        <View style={{height: '80%', paddingBottom: moderateScale(15, 0.1)}}>
+            <FlatList
+              data={msg}
+              renderItem={renderItem}
+              keyExtractor={item => item.to}
+              // initialScrollIndex={messages.length - 1}
+              showsVerticalScrollIndicator={true}
+            />
+          </View>
+        {/* <ScrollView contentContainerStyle={[s.chatContainer]}>
           {msg.map((elem, i) => {
             console.log(elem);
             if (elem?.to === uid) {
@@ -232,9 +279,9 @@ const Chat = ({ navigation, route }) => {
                       <Text style={s.textSmall1}>{elem?.text}</Text>
                     </Text>
                   </View>
-                  <View style={[s.dp, {flex: 0.2}]}>
+                  <View style={[s.dp, { flex: 0.2 }]}>
                     <Image
-                      source={{uri: elem?.avatar}}
+                      source={{ uri: elem?.avatar }}
                       style={s.dp1}
                       resizeMode={'cover'}
                     />
@@ -242,25 +289,28 @@ const Chat = ({ navigation, route }) => {
                 </View>
               );
             } else {
-              return (
-                <View style={s.messege} key={i}>
-                  <View style={[s.dp, {flex: 0.2}]}>
-                    <Image
-                      source={{uri: "https://placeimg.com/140/140/people","time":"2023-02-16T08:42:26.792Z" }}
-                      style={s.dp1}
-                      resizeMode={'cover'}
-                    />
+                return (
+               
+                  <View style={s.messege} key={i}>
+                    <View style={[s.dp, { flex: 0.2 }]}>
+                      <Image
+                        source={{ uri: "https://placeimg.com/140/140/people"}}
+                        style={s.dp1}
+                        resizeMode={'cover'}
+                      />
+                    </View>
+                    <View style={[s.text, { flex: 0.8 }]}>
+                      <Text style={s.userName}>
+                        <Text style={s.textSmall1}>{text}</Text>
+                      </Text>
+                    </View>
                   </View>
-                  <View style={[s.text, {flex: 0.8}]}>
-                    <Text style={s.userName}>
-                      <Text style={s.textSmall1}>{text}</Text>
-                    </Text>
-                  </View>
-                </View>
-              );
+                );
+            
+             
             }
           })}
-        </ScrollView>
+        </ScrollView> */}
         {/* <ScrollView contentContainerStyle={[s.chatContainer]}>
           {msg.map((message, i) => (
              <View style={s.messege} key={i}>
@@ -318,6 +368,7 @@ const Chat = ({ navigation, route }) => {
               placeholderTextColor={'#fff'}
               color={'#fff'}
               placeholder="Type Message"
+              value={input}
               onChangeText={(text) => setInput(text)}
               size="md"
             />

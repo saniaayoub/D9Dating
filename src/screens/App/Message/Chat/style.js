@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop:moderateScale(-20,0.1)
+    marginTop: moderateScale(-20, 0.1),
   },
   HeadingText: {
     fontSize: moderateScale(20, 0.1),
@@ -125,19 +125,26 @@ const styles = StyleSheet.create({
   messege: {
     flexDirection: 'row',
     alignItems: 'center',
+
     marginBottom: moderateScale(15, 0.1),
   },
   textSmall1: {
     fontFamily: Poppins,
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
-    marginVertical: moderateScale(5, 0.1),
+    marginVertical: moderateScale(2, 0.1),
     color: '#fff',
   },
-  text: {
-    flexDirection: 'row',
+  textTo: {
+    flexDirection: 'column',
     padding: moderateScale(15, 0.1),
     backgroundColor: '#4D4D4D',
+    borderRadius: moderateScale(5, 0.1),
+  },
+  textFrom: {
+    flexDirection: 'column',
+    padding: moderateScale(15, 0.1),
+    backgroundColor: '#333232',
     borderRadius: moderateScale(5, 0.1),
   },
   row: {

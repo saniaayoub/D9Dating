@@ -12,16 +12,22 @@ app.get("/", function(req, res) {
 });
 io.on('connection', (client) => {
   console.log(`⚡: ${client.id} user just connected!`);
-  
-  // client.on('send message', (data) => {
-  //   console.log(data);
-  //   io.emit('receive message', data);
-  //   // client.broadcast.to(message.recieverId).emit( 'message',`${obj}`);
-  // });
+  client.on('send message', (data) => {
+    console.log(data);
+    io.emit('receive message', data);
+    // client.broadcast.to(message.recieverId).emit( 'message',`${obj}`);
+  });
+  client.on( 'new_notification', function(data) {
+    console.log(data.message);
+    io.sockets.emit( 'show_notification', { 
+      message: data 
+    });
+  });
 
   client.on('disconnect', () => {
     console.log('user disconnected');
   });
+  
 
 });
 

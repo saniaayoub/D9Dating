@@ -144,7 +144,7 @@ const Login = ({navigation}) => {
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
               onPress={() => {
-                    AsyncStorage.setItem('users', JSON.stringify({email: email}));
+                    AsyncStorage.setItem('users', email);
                     console.log('saved');
                      dispatch(setUserToken('sania'))  
                 
