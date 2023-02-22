@@ -430,6 +430,7 @@ const Home = ({navigation}) => {
                     {...triggerProps}
                     style={{
                       flexDirection: 'row',
+                      right: moderateScale(8,0.1)
                     }}
                   >
                     <Entypo

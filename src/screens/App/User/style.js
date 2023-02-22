@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
   dp: {
     flex: 'row',
   },
+ 
   dp1: {
     width: '100%',
     height: '100%',
