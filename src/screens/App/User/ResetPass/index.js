@@ -41,9 +41,9 @@ const Resetpass = ({navigation}) => {
       <View style={[s.container, {backgroundColor: color}]}>
         <View style={{width: '100%', alignItems: 'center'}}>
           <View style={s.heading}>
-            <Text style={[s.headingText, {color: Textcolor}]}>
-              Reset{' '}
-              <Text style={[s.headingText1, {color: Textcolor}]}>Password</Text>
+            <Text style={[s.headingText1, {color: Textcolor}]}>
+              To set a new password, please enter {' '}
+              <Text style={[s.headingText1, {color: Textcolor}]}>your current password first.</Text>
             </Text>
           </View>
           <View style={s.input}>
@@ -58,7 +58,7 @@ const Resetpass = ({navigation}) => {
                   <Icon2 name="locked" color={Textcolor} size={moderateScale(20,0.1)} />
                 </View>
               }
-              placeholder="New Password"
+              placeholder="Password"
               placeholderTextColor={Textcolor}
               value={password}
               onChangeText={password => {
@@ -86,7 +86,7 @@ const Resetpass = ({navigation}) => {
               secureTextEntry={showPass}
             />
           </View>
-          <View style={s.input}>
+          {/* <View style={s.input}>
             <Input
               w={{
                 base: '83%',
@@ -131,9 +131,13 @@ const Resetpass = ({navigation}) => {
               fontSize={moderateScale(14, 0.1)}
               secureTextEntry={showPass}
             />
-          </View>
+          </View> */}
 
-          <View style={s.button}>
+          {
+            password ?
+            (
+              <>
+              <View style={s.button}>
             <Button
               size="sm"
               variant={'solid'}
@@ -145,10 +149,32 @@ const Resetpass = ({navigation}) => {
               w={moderateScale(140, 0.1)}
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
+              onPress={() =>
+                navigation.navigate('ChangePass')}
             >
-              <Text style={s.btnText}>Save</Text>
+              <Text style={s.btnText}>Continue</Text>
             </Button>
           </View>
+              </>
+            ): null
+          }
+
+          
+          <View style={{marginVertical: moderateScale(10,0.1)}}>
+            <Button
+              size="md"
+              variant={'link'}
+              onPress={() => navigation.navigate('ForgetPassword')}
+            >
+              <View style={{flexDirection: 'row'}}>
+                <Text style={[s.forgetPass, {color: '#FFD700'}]}>Forgot </Text>
+                <Text style={[s.forgetPass, {color: Textcolor}]}>
+                  Password?
+                </Text>
+              </View>
+            </Button>
+          </View>
+    
         </View>
       </View>
     </SafeAreaView>

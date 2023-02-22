@@ -7,6 +7,7 @@ export const setUserToken = value => {
   };
 };
 
+
 export const setTheme = value => {
   return {
     type: SET_THEME,

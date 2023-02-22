@@ -16,10 +16,6 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { setTheme } from '../../../Redux/actions';
 import Header from '../../../Components/Header';
 
-const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-const passRegex = new RegExp(
-    '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
-);
 
 const ChangePass = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -34,6 +30,7 @@ const ChangePass = ({ navigation }) => {
     };
     const color = theme === 'dark' ? '#222222' : '#fff';
     const Textcolor = theme === 'dark' ? '#fff' : '#222222';
+    const userToken = useSelector(state => state.reducer.userToken);
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color }}>
@@ -42,7 +39,7 @@ const ChangePass = ({ navigation }) => {
                 <View style={{ width: '100%', alignItems: 'center' }}>
                     <View style={s.heading}>
                         <Text style={[s.headingText, { color: Textcolor }]}>
-                            Change{' '}
+                            Reset{' '}
                             <Text style={[s.headingText1, { color: Textcolor }]}>Password</Text>
                         </Text>
                     </View>
@@ -137,7 +134,15 @@ const ChangePass = ({ navigation }) => {
                         <Button
                             onPress={() => {
                                 alert('password changed successfully')
-                                    navigation.navigate('Login')
+                                {
+                                    userToken ? (
+
+                                        navigation.navigate('Settings')
+                                    ) : (
+                                        navigation.navigate('Login')
+
+                                    )
+                                }
 
                             }}
                             size="sm"

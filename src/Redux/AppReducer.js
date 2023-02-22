@@ -17,7 +17,6 @@ const AppReducer = (state = initialState, action) => {
         ...state,
         theme: action.payload,
       };
-
     default:
       return state;
   }

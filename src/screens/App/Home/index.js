@@ -35,6 +35,8 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
 
+
+
 const myData = [
   {
     user_id: 1,
@@ -200,6 +202,7 @@ const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const theme = useSelector(state => state.reducer.theme);
+  const loginId = useSelector(state => state.reducer.userToken);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [myData1, setMyData1] = useState(myData);
@@ -210,7 +213,12 @@ const Home = ({navigation}) => {
   const [myStories, setMyStories] = useState([]);
   const [storyCircle, setStoryCircle] = useState('green');
   const [loader, setLoader] = useState(false);
+
+  
+
   useEffect(() => {
+
+    console.log(loginId,"dataaa");
     // let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
     // let binaryFile = Image.resolveAssetSource(
     //   require('../../../assets/images/jpg/photo.jpg'),
@@ -230,6 +238,7 @@ const Home = ({navigation}) => {
     //     console.log(err.message);
     //   });
   }, [myStories]);
+  
 
   var lastTap = null;
   const handleDoubleTap = index => {
@@ -245,7 +254,7 @@ const Home = ({navigation}) => {
     console.log('hello');
     data[index].post.liked = !data[index].post.liked;
     setData1(data);
-    setRefresh(data[index].post.liked);
+    setRefresh(!refresh);
     console.log(data[index].post.liked);
   };
 
@@ -532,7 +541,7 @@ const Home = ({navigation}) => {
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 1 swiped'),
         });
-        setLoader(true);
+        // setLoader(true);
         setMyStories(temp);
         setStoryCircle('green');
         addStory(myStories);
@@ -564,7 +573,7 @@ const Home = ({navigation}) => {
         stories: story,
       },
     ]);
-    setLoader(false);
+    // setLoader(false);
   };
 
   return (
