@@ -33,7 +33,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RNFS from 'react-native-fs';
-import RNFetchBlob from 'rn-fetch-blob';
+import Loader from '../../../Components/Loader';
+// import RNFetchBlob from 'rn-fetch-blob';
+import socket from '../../../utils/socket';
+import {addUsers} from '../../../Redux/actions';
 
 const myData = [
   {
@@ -199,6 +202,7 @@ const data = [
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
+  const users = useSelector(state => state.reducer.users);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
@@ -210,26 +214,8 @@ const Home = ({navigation}) => {
   const [myStories, setMyStories] = useState([]);
   const [storyCircle, setStoryCircle] = useState('green');
   const [loader, setLoader] = useState(false);
-  useEffect(() => {
-    // let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
-    // let binaryFile = Image.resolveAssetSource(
-    //   require('../../../assets/images/jpg/photo.jpg'),
-    // );
-    // RNFetchBlob.config({fileCache: true})
-    //   .fetch('GET', binaryFile.uri)
-    //   .then(resp => {
-    //     RNFS.moveFile(resp.path(), photoPath)
-    //       .then(() => {
-    //         console.log('FILE WRITTEN!');
-    //       })
-    //       .catch(err => {
-    //         console.log(err.message);
-    //       });
-    //   })
-    //   .catch(err => {
-    //     console.log(err.message);
-    //   });
-  }, [myStories]);
+
+  useEffect(() => {}, [myStories, users]);
 
   var lastTap = null;
   const handleDoubleTap = index => {
@@ -243,9 +229,10 @@ const Home = ({navigation}) => {
   };
   const toggleLike = index => {
     console.log('hello');
+
     data[index].post.liked = !data[index].post.liked;
     setData1(data);
-    setRefresh(data[index].post.liked);
+    setRefresh(!refresh);
     console.log(data[index].post.liked);
   };
 
@@ -532,7 +519,7 @@ const Home = ({navigation}) => {
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 1 swiped'),
         });
-        setLoader(true);
+        // setLoader(true);
         setMyStories(temp);
         setStoryCircle('green');
         addStory(myStories);
@@ -564,12 +551,13 @@ const Home = ({navigation}) => {
         stories: story,
       },
     ]);
-    setLoader(false);
+    // setLoader(false);
   };
 
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       <View style={[s.container, s.col, {backgroundColor: color}]}>
+        {loader ? <Loader /> : null}
         <View style={s.searchContainer}>
           <Input
             placeholder="Search Here"

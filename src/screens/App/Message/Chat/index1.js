@@ -16,8 +16,10 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Input, FormControl, Button} from 'native-base';
+import socket from '../../../../utils/socket';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 //  const socket = io('http://192.168.18.226');
 //     socket.connect();
 
@@ -79,7 +81,7 @@ const elem = {
 const Chat = ({navigation, route}) => {
   const [msg, setMsg] = useState([]);
   const [input, setInput] = useState('');
-  const [socket, setSocket] = useState(io('http://192.168.18.226:3000'));
+  //   const [socket, setSocket] = useState(io('http://192.168.18.226:3000'));
 
   const dispatch = useDispatch();
   console.log(route.params);
@@ -89,61 +91,64 @@ const Chat = ({navigation, route}) => {
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const uid = route.params.id;
-  const name = data.from;
-  console.log(uid, 'id');
-  const senderId = Math.floor(Math.random() * 100);
-  console.log(senderId);
+  //   const name = data.from;
+  //   console.log(uid, 'id');
+  //   const senderId = Math.floor(Math.random() * 100);
+  //   console.log(senderId);
 
+  //   useEffect(() => {
+  //     getValueFunction();
+  //   }, []);
+
+  //   const idd = route.params.id;
+  //   console.log(idd, 'idd');
   useEffect(() => {
-    getValueFunction();
+    // console.log('msg?');
+    // socket.on('receive message', message => {
+    //   console.log(message, 'recieve');
+    //   setText(prevMessages => [...prevMessages, message]);
+    // });
+    // socket.on('show_notification', function (data) {
+    //   console.log('show_notification', data);
+    // });
   }, []);
 
-  const idd = route.params.id;
-  console.log(idd, 'idd');
-  useEffect(() => {
-    console.log('msg?');
-    socket.on('receive message', message => {
-      console.log(message, 'recieve');
-      setText(prevMessages => [...prevMessages, message]);
-    });
-    socket.on('show_notification', function (data) {
-      console.log('show_notification', data);
-    });
-  }, []);
+  //   const sendMessage = () => {
+  //     if (input.trim() === '') return;
+  //     socket.emit(
+  //       'send message',
+  //       JSON.stringify({
+  //         text: input,
+  //         to: uid,
+  //         from: senderId,
+  //         avatar: 'https://placeimg.com/140/140/people',
+  //         time: new Date(),
+  //       }),
+  //     );
+  //     setMsg(prevMessages => [
+  //       ...prevMessages,
+  //       {
+  //         text: input,
+  //         to: uid,
+  //         from: {
+  //           id: 182,
+  //           name: name,
+  //         },
+  //         avatar: 'https://placeimg.com/140/140/people',
+  //         time: new Date(),
+  //       },
+  //     ]);
+  //     setInput('');
+  //   };
+  //   const getValueFunction = async () => {
+  //     // Function to get the value from AsyncStorage
+  //     let user = await AsyncStorage.getItem('users');
+  //     console.log(user, 'iddd');
+  //   };
 
   const sendMessage = () => {
-    if (input.trim() === '') return;
-    socket.emit(
-      'send message',
-      JSON.stringify({
-        text: input,
-        to: uid,
-        from: senderId,
-        avatar: 'https://placeimg.com/140/140/people',
-        time: new Date(),
-      }),
-    );
-    setMsg(prevMessages => [
-      ...prevMessages,
-      {
-        text: input,
-        to: uid,
-        from: {
-          id: 182,
-          name: name,
-        },
-        avatar: 'https://placeimg.com/140/140/people',
-        time: new Date(),
-      },
-    ]);
-    setInput('');
+    socket.emit('chat message');
   };
-  const getValueFunction = async () => {
-    // Function to get the value from AsyncStorage
-    let user = await AsyncStorage.getItem('users');
-    console.log(user, 'iddd');
-  };
-
   const renderItem = elem => {
     console.log(elem);
     if (elem?.item.to === uid) {
@@ -257,7 +262,7 @@ const Chat = ({navigation, route}) => {
             />
           </TouchableOpacity>
         </View>
-        <View style={{height: '80%', paddingBottom: moderateScale(15, 0.1)}}>
+        <View style={s.chat}>
           <FlatList
             data={msg}
             renderItem={renderItem}
@@ -266,97 +271,8 @@ const Chat = ({navigation, route}) => {
             showsVerticalScrollIndicator={true}
           />
         </View>
-        {/* <ScrollView contentContainerStyle={[s.chatContainer]}>
-          {msg.map((elem, i) => {
-            console.log(elem);
-            if (elem?.to === uid) {
-              return (
-                <View style={s.messege} key={i}>
-                  <View
-                    style={[
-                      s.text,
-                      {
-                        flex: 0.8,
-                        backgroundColor: '#333232',
-                        marginRight: moderateScale(10, 0.1),
-                      },
-                    ]}
-                  >
-                    <Text style={s.userName}>
-                      <Text style={s.textSmall1}>{elem?.text}</Text>
-                    </Text>
-                  </View>
-                  <View style={[s.dp, { flex: 0.2 }]}>
-                    <Image
-                      source={{ uri: elem?.avatar }}
-                      style={s.dp1}
-                      resizeMode={'cover'}
-                    />
-                  </View>
-                </View>
-              );
-            } else {
-                return (
-               
-                  <View style={s.messege} key={i}>
-                    <View style={[s.dp, { flex: 0.2 }]}>
-                      <Image
-                        source={{ uri: "https://placeimg.com/140/140/people"}}
-                        style={s.dp1}
-                        resizeMode={'cover'}
-                      />
-                    </View>
-                    <View style={[s.text, { flex: 0.8 }]}>
-                      <Text style={s.userName}>
-                        <Text style={s.textSmall1}>{text}</Text>
-                      </Text>
-                    </View>
-                  </View>
-                );
-            
-             
-            }
-          })}
-        </ScrollView> */}
-        {/* <ScrollView contentContainerStyle={[s.chatContainer]}>
-          {msg.map((message, i) => (
-             <View style={s.messege} key={i}>
-              <View
-                style={[
-                  s.text,
-                  {
-                    flex: 0.8,
-                    backgroundColor: '#333232',
-                    marginRight: moderateScale(10, 0.1),
-                  },
-                ]}
-              >
-                <Text style={s.userName}>
-                <Text style={s.textSmall1}>{message.text}</Text>
-                </Text>
-              
-              </View>
-              <View
-                style={[
-                  s.text,
-                  {
-                    flex: 0.8,
-                    backgroundColor: '#333232',
-                    marginRight: moderateScale(10, 0.1),
-                  },
-                ]}
-              >
-                <Text style={s.userName}>
-                <Text style={s.textSmall1}>{text}</Text>
-                </Text>
-              
-              </View>
-            </View>
-           
-          ))}
-        </ScrollView> */}
       </View>
-      <View style={s.row}>
+      <View style={s.messageInput}>
         <View style={s.input}>
           <TouchableOpacity style={s.circle}>
             <Icon

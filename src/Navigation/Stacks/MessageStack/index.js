@@ -1,6 +1,6 @@
 import {createStackNavigator} from '@react-navigation/stack';
-import Message from '../../../screens/App/Message';
-import Chat from '../../../screens/App/Message/Chat';
+import Message from '../../../screens/App/Message/index1';
+import Chat from '../../../screens/App/Message/Chat/index2';
 import ViewUser from '../../../screens/App/Home/ViewUser';
 const Stack = createStackNavigator();
 

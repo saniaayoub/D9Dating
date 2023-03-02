@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    marginTop: moderateScale(-30, 0.1),
+    marginTop: moderateScale(-40, 0.1),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(5, 0.1),
   },
   headingContainer: {
-    marginTop: moderateScale(30, 0.1),
+    marginTop: moderateScale(20, 0.1),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    marginTop: moderateScale(-20, 0.1),
   },
   circle1: {
     justifyContent: 'center',
@@ -142,8 +143,8 @@ const styles = StyleSheet.create({
     borderWidth: moderateScale(1, 0.1),
     borderColor: '#FFD700',
     borderRadius: moderateScale(344 / 2, 0.1),
-    width: moderateScale(340, 0.1),
-    height: moderateScale(340, 0.1),
+    width: moderateScale(344, 0.1),
+    height: moderateScale(344, 0.1),
     backgroundColor: '#4E4E4E',
     zIndex: 10,
   },

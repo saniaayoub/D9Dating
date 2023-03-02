@@ -1,8 +1,9 @@
-import {SET_USER_TOKEN, SET_THEME} from './Constants';
+import {SET_USER_TOKEN, SET_THEME, ADD_USERS} from './Constants';
 
 const initialState = {
   userToken: null,
   theme: 'dark',
+  users: [],
 };
 
 const AppReducer = (state = initialState, action) => {
@@ -16,6 +17,12 @@ const AppReducer = (state = initialState, action) => {
       return {
         ...state,
         theme: action.payload,
+      };
+
+    case ADD_USERS:
+      return {
+        ...state,
+        users: action.payload,
       };
 
     default:

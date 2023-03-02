@@ -42,6 +42,7 @@ const Login = ({navigation}) => {
     socket.auth = {username: email};
     socket.connect();
   };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View
@@ -145,18 +146,11 @@ const Login = ({navigation}) => {
               w={moderateScale(140, 0.1)}
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
-              onPress={() => {
-<<<<<<< HEAD
-                    AsyncStorage.setItem('users', email);
-                    console.log('saved');
-                     dispatch(setUserToken('sania'))  
-                
-=======
-                AsyncStorage.setItem('users', JSON.stringify({email: email}));
-                console.log('saved');
+              onPress={async () => {
+                await AsyncStorage.setItem('username', email);
                 Login();
+                console.log(email, 'user');
                 dispatch(setUserToken('sania'));
->>>>>>> f83e39565f44816a0c68ee9567bfde74af64988b
               }}
             >
               <Text style={s.btnText}>Login</Text>

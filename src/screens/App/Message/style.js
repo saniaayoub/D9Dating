@@ -24,12 +24,13 @@ const styles = StyleSheet.create({
   },
   border: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+
+    justifyContent: 'space-between',
     paddingVertical: moderateScale(10, 0.1),
     borderBottomWidth: moderateScale(2, 0.1),
   },
   btn: {
-    flex: 0.5,
+    // flex: 0.5,
   },
   chats: {
     fontSize: moderateScale(13, 0.1),
