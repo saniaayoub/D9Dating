@@ -19,6 +19,7 @@ import {setTheme, setUserToken} from '../../../Redux/actions';
 import {useSelector, useDispatch} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import socket from '../../../utils/socket';
+import dummyUsers from '../../../Components/Users/Users';
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const passRegex = new RegExp(
   '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
@@ -37,10 +38,45 @@ const Login = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
 
+  const [loginId, setloginId] = useState(null);
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   const Login = () => {
     console.log('abb');
     socket.auth = {username: email};
     socket.connect();
+  };
+
+  const login = () => {
+    console.log(dummyUsers, 'login');
+    const user = dummyUsers.find(
+      x => x.name == email && x.password == password,
+    );
+    console.log(user, 'fff');
+    if (user) {
+      storeData(JSON.stringify(user.id));
+      setTimeout(() => {
+        getData();
+      });
+    } else {
+    }
+  };
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('id');
+      if (value != null) {
+        setloginId(value);
+        dispatch(setUserToken(loginId));
+      }
+    } catch (error) {}
+  };
+  const storeData = async value => {
+    try {
+      await AsyncStorage.setItem('id', value);
+    } catch (e) {}
   };
 
   return (

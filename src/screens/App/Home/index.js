@@ -204,6 +204,7 @@ const Home = ({navigation}) => {
   const refRBSheet = useRef();
   const users = useSelector(state => state.reducer.users);
   const theme = useSelector(state => state.reducer.theme);
+  const loginId = useSelector(state => state.reducer.userToken);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [myData1, setMyData1] = useState(myData);
@@ -215,7 +216,27 @@ const Home = ({navigation}) => {
   const [storyCircle, setStoryCircle] = useState('green');
   const [loader, setLoader] = useState(false);
 
-  useEffect(() => {}, [myStories, users]);
+  useEffect(() => {
+    console.log(loginId, 'dataaa');
+    // let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
+    // let binaryFile = Image.resolveAssetSource(
+    //   require('../../../assets/images/jpg/photo.jpg'),
+    // );
+    // RNFetchBlob.config({fileCache: true})
+    //   .fetch('GET', binaryFile.uri)
+    //   .then(resp => {
+    //     RNFS.moveFile(resp.path(), photoPath)
+    //       .then(() => {
+    //         console.log('FILE WRITTEN!');
+    //       })
+    //       .catch(err => {
+    //         console.log(err.message);
+    //       });
+    //   })
+    //   .catch(err => {
+    //     console.log(err.message);
+    //   });
+  }, [myStories]);
 
   var lastTap = null;
   const handleDoubleTap = index => {
@@ -408,6 +429,7 @@ const Home = ({navigation}) => {
                     {...triggerProps}
                     style={{
                       flexDirection: 'row',
+                      right: moderateScale(8, 0.1),
                     }}
                   >
                     <Entypo

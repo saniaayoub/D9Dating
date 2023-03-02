@@ -118,14 +118,15 @@ const Notifications = ({navigation}) => {
           <View
             style={{
               paddingHorizontal: moderateScale(6, 0.1),
-               right: moderateScale(5),
+               right: moderateScale(15),
             }}
           >
             {elem?.item?.icon}
           </View>
           <View
             style={{
-              // left: moderateScale(3),
+              right: moderateScale(5),
+              
             }}
           >
             {elem?.item?.icon1}

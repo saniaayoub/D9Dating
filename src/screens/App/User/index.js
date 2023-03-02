@@ -388,7 +388,7 @@ const Profile = ({navigation}) => {
               placeholderTextColor={textColor}
             />
           </View>
-          <View style={s.input}>
+          {/* <View style={s.input}>
             <Input
               w="100%"
               variant="underlined"
@@ -428,7 +428,7 @@ const Profile = ({navigation}) => {
               secureTextEntry
               placeholderTextColor={textColor}
             />
-          </View>
+          </View> */}
           <View style={s.input}>
             <Input
               w="100%"

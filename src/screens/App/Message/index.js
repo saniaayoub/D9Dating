@@ -16,6 +16,7 @@ import {FlatList} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import dummyUsers from '../../../Components/Users/Users';
 
 const messages = [
   {
@@ -85,11 +86,13 @@ const messages = [
 const Message = ({navigation}) => {
   const dispatch = useDispatch();
   const theme = useSelector(state => state.reducer.theme);
+  const loginId = useSelector(state => state.reducer.userToken);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
 
+  console.log(loginId, 'loginId');
   const renderItem = (elem, i) => {
-    return (
+    return elem.item.id != loginId ? (
       <View style={s.card}>
         <TouchableOpacity
           onPress={() => {
@@ -98,31 +101,33 @@ const Message = ({navigation}) => {
           style={s.dp}
         >
           <Image
-            source={elem.item.userImage}
+            source={{uri: 'https://placeimg.com/140/140/people'}}
             style={s.dp1}
             resizeMode={'cover'}
           />
         </TouchableOpacity>
+
         <TouchableOpacity
-          onPress={() => navigation.navigate('Chat', elem.item)}
+          onPress={() =>
+            navigation.navigate('Chat', {
+              id: elem.item.id,
+              name: elem.item.name,
+            })
+          }
           style={[s.col, {flex: 0.6, justifyContent: 'flex-end'}]}
         >
           <View>
             <Text style={[s.name, s.nameBold, {color: textColor}]}>
-              {elem?.item?.from}
+              {elem?.item?.name}
             </Text>
           </View>
-          <Text style={[s.textSmall, {color: '#787878'}]}>
-            {elem?.item?.text}
-          </Text>
+          <Text style={[s.textSmall, {color: '#787878'}]}>{'hello'}</Text>
         </TouchableOpacity>
         <View style={s.time}>
-          <Text style={[s.textRegular, {color: textColor}]}>
-            {elem?.item?.time}
-          </Text>
+          <Text style={[s.textRegular, {color: textColor}]}>{'10:55'}</Text>
         </View>
       </View>
-    );
+    ) : null;
   };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1}}>
@@ -142,7 +147,7 @@ const Message = ({navigation}) => {
           </TouchableOpacity> */}
         </View>
         <FlatList
-          data={messages}
+          data={dummyUsers}
           renderItem={renderItem}
           keyExtractor={(e, i) => i.toString()}
           scrollEnabled={true}

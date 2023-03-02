@@ -68,9 +68,9 @@ const styles = StyleSheet.create({
     marginLeft: moderateScale(12, 0.1),
   },
   dp1: {
-    width: '100%',
-    height: '100%',
-    borderRadius: moderateScale(53 / 2, 0.1),
+    width: '90%',
+    height: '90%',
+    borderRadius: moderateScale(55 / 2, 0.1),
   },
   col: {
     flexDirection: 'column',

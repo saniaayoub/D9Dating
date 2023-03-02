@@ -23,8 +23,10 @@ const styles = StyleSheet.create({
   },
   headingText1: {
     fontFamily: Poppins,
-    fontSize: moderateScale(32, 0.1),
-    lineHeight: moderateScale(48, 0.1),
+    // paddingHorizontal: moderateScale(14,0.1),
+    textAlign:'center',
+    fontSize: moderateScale(20, 0.1),
+    lineHeight: moderateScale(28, 0.1),
     fontWeight: '300'
   },
   iconCircle: {

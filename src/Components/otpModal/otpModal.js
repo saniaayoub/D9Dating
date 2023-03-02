@@ -1,7 +1,7 @@
-import {StyleSheet, Text, View, Modal, ActivityIndicator} from 'react-native';
+import { StyleSheet, Text, View, Modal, ActivityIndicator } from 'react-native';
 import React from 'react';
-import {Input, Button} from 'native-base';
-import {moderateScale} from 'react-native-size-matters';
+import { Input, Button } from 'native-base';
+import { moderateScale } from 'react-native-size-matters';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -9,7 +9,7 @@ const InterRegular = 'Inter-Medium';
 const InterBold = 'Inter-ExtraBold';
 const Poppins = 'Poppins-Regular';
 
-const OTPModal = ({loader, modalVisible, setModalVisible, submit, setOtp, navigation}) => {
+const OTPModal = ({ loader, modalVisible, setModalVisible, submit, setOtp, navigation }) => {
   return (
     <Modal
       animationType="slide"
@@ -42,17 +42,16 @@ const OTPModal = ({loader, modalVisible, setModalVisible, submit, setOtp, naviga
           </Text>
 
           <OTPInputView
-            style={s.otpView}
+            style={{ width: '80%', height: 200 }}
             pinCount={4}
             // code={this.state.code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
             // onCodeChanged = {code => { this.setState({code})}}
             autoFocusOnLoad
             codeInputFieldStyle={s.underlineStyleBase}
             codeInputHighlightStyle={s.underlineStyleHighLighted}
-            onCodeFilled={code => {
-              setOtp(code);
-              console.log(`Code is ${code}, you are good to go!`);
-            }}
+            onCodeFilled={(code => {
+              console.log(`Code is ${code}, you are good to go!`)
+            })}
           />
           <View style={s.button}>
             <Button
@@ -67,7 +66,7 @@ const OTPModal = ({loader, modalVisible, setModalVisible, submit, setOtp, naviga
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
               onPress={() =>
-               navigation.navigate('ChangePass')}
+                navigation.navigate('ChangePass')}
             >
               <Text style={s.btnText}>Send</Text>
             </Button>

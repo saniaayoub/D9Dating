@@ -263,7 +263,7 @@ const FunInteraction = ({navigation}) => {
           </View>
           {elem.index === 0 ? (
             <TouchableOpacity
-              style={[s.options, {marginRight: moderateScale(5, 0.1)}]}
+              style={[s.options, {marginRight: moderateScale(12, 0.1)}]}
             >
               <Pin
                 name={'pin'}
@@ -290,6 +290,7 @@ const FunInteraction = ({navigation}) => {
                     {...triggerProps}
                     style={{
                       flexDirection: 'row',
+                      right: moderateScale(8,0.1)
                     }}
                   >
                     <Entypo
