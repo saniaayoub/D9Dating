@@ -1,10 +1,10 @@
-// const path = require('path');
+const path = require('path');
 const express = require('express');
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const socketio = require('socket.io');
-
+let user = []
 const io = socketio(server);
 app.get('/', function (req, res) {
   res.write(`<h1>Hello socket</h1> ${PORT}`);
@@ -12,17 +12,31 @@ app.get('/', function (req, res) {
 });
 io.on('connection', client => {
   console.log(`⚡: ${client.id} user just connected!`);
-  client.on('send message', (data) => {
-    console.log(data);
-    io.emit('receive message', data);
-    // client.broadcast.to(message.recieverId).emit( 'message',`${obj}`);
+  client.on('join', ({ id }) => {
+    console.log(id, 'username')
+    user.push(id)
   });
-  client.on( 'new_notification', function(data) {
-    console.log(data.message);
-    io.sockets.emit( 'show_notification', { 
-      message: data 
-    });
+  client.on('send message', ({ text, recieverId }) => {
+    // get the recipient's socket ID from the message
+    const recipientSocket = io.client.get(recieverId);
+    if (recipientSocket) {
+      // send the message to the recipient
+      recipientSocket.emit('receive message', { text });
+    }
   });
+  // client.on('send message', (data,) => {
+  //   console.log(data);
+  //   io.emit('receive message', data);
+  //   // io.to(data.id).emit( 'receive message',data);
+  // });
+  client.on('new_message', (data) => {
+    // Send a notification to all connected clients
+    io.emit('new_message_notification', data);
+  });
+  // client.on( 'sendNotification', (data) =>{
+  //   console.log(data.message);
+  //   io.emit( 'show_notification', data)
+  // });
 
   client.on('disconnect', () => {
     console.log('user disconnected');

@@ -18,6 +18,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Input, FormControl, Button } from 'native-base';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+
 //  const socket = io('http://192.168.18.226');
 //     socket.connect();
 
@@ -75,6 +76,7 @@ const Chat = ({ navigation, route }) => {
   const [socket, setSocket] = useState(
     io('http://192.168.18.226:3000'),
   );
+  socket.emit('join', { username: name });
 
 
   const dispatch = useDispatch();
@@ -93,19 +95,25 @@ const Chat = ({ navigation, route }) => {
   let currDate = new Date();
   let hoursMin = currDate.getHours() + ':' + currDate.getMinutes();
   console.log(hoursMin)
+
+useEffect(() => {
+  console.log('usermm');
+  socket.emit('join', { username: name, id: recieverId });
+}, [])
+
+
   useEffect(() => {
     console.log('msg?');
     socket.on('receive message', (message) => {
       console.log(message, 'recieve')
       setMsg((prevMessages) => [...prevMessages, message]);
     });
-    // console.log(text.text, "texxxy recived hua");
-    socket.on("show_notification", function (data) {
+    socket.on("show_notification", (data)=> {
       console.log("show_notification", data);
     });
   }, []);
 
-  const sendMessage = () => {
+  const sendMessage = () => { 
     if (input.trim() === '') return;
     socket.emit('send message', ({
       text: input,
@@ -114,14 +122,13 @@ const Chat = ({ navigation, route }) => {
       avatar: 'https://placeimg.com/140/140/people',
       time: hoursMin
     }));
-    // setMsg((prevMessages) => [...prevMessages, {
-    //   text: input,
-    //   recieverId: recieverId,
-    //   senderId: senderId,
-    //   avatar: 'https://placeimg.com/140/140/people',
-    //   time: new Date()
-    // }]);
-    // console.log(msg, 'msg send ');
+    // socket.on('new_message_notification', (data) => {
+    //   // Display a notification to the user
+    //   PushNotification.localNotification({
+    //     title: 'New message',
+    //     message: `${data.senderId}: ${data.text}`,
+    //   });
+    // });
     setInput('');
   };
  

@@ -20,6 +20,12 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: moderateScale(106 / 2, 0.1),
   },
+  btnText: {
+    fontFamily: Poppins,
+    lineHeight: moderateScale(20, 0.1),
+    fontSize: moderateScale(13, 0.1),
+    color: '#222222',
+  },
   dp: {
     width: moderateScale(106, 0.1),
     height: moderateScale(106, 0.1),
