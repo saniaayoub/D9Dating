@@ -24,9 +24,10 @@ const Header = ({
 }) => {
   const theme = useSelector(state => state.reducer.theme);
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
+  const color = theme === 'dark' ? '#222222' : '#fff';
 
   return (
-    <View style={[s.main, s.container]}>
+    <View style={[[s.main, s.container, {backgroundColor: color}]]}>
       <View>
         <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
           <Inicon

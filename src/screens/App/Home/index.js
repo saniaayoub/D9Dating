@@ -33,9 +33,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RNFS from 'react-native-fs';
-import RNFetchBlob from 'rn-fetch-blob';
-
-
+import Loader from '../../../Components/Loader';
+// import RNFetchBlob from 'rn-fetch-blob';
+import socket from '../../../utils/socket';
+import {addUsers} from '../../../Redux/actions';
 
 const myData = [
   {
@@ -201,6 +202,7 @@ const data = [
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
+  const users = useSelector(state => state.reducer.users);
   const theme = useSelector(state => state.reducer.theme);
   const loginId = useSelector(state => state.reducer.userToken);
   const color = theme === 'dark' ? '#222222' : '#fff';
@@ -214,11 +216,8 @@ const Home = ({navigation}) => {
   const [storyCircle, setStoryCircle] = useState('green');
   const [loader, setLoader] = useState(false);
 
-  
-
   useEffect(() => {
-
-    console.log(loginId,"dataaa");
+    console.log(loginId, 'dataaa');
     // let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
     // let binaryFile = Image.resolveAssetSource(
     //   require('../../../assets/images/jpg/photo.jpg'),
@@ -238,7 +237,6 @@ const Home = ({navigation}) => {
     //     console.log(err.message);
     //   });
   }, [myStories]);
-  
 
   var lastTap = null;
   const handleDoubleTap = index => {
@@ -252,6 +250,7 @@ const Home = ({navigation}) => {
   };
   const toggleLike = index => {
     console.log('hello');
+
     data[index].post.liked = !data[index].post.liked;
     setData1(data);
     setRefresh(!refresh);
@@ -430,7 +429,7 @@ const Home = ({navigation}) => {
                     {...triggerProps}
                     style={{
                       flexDirection: 'row',
-                      right: moderateScale(8,0.1)
+                      right: moderateScale(8, 0.1),
                     }}
                   >
                     <Entypo
@@ -580,6 +579,7 @@ const Home = ({navigation}) => {
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       <View style={[s.container, s.col, {backgroundColor: color}]}>
+        {loader ? <Loader /> : null}
         <View style={s.searchContainer}>
           <Input
             placeholder="Search Here"

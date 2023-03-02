@@ -6,16 +6,16 @@ import {
   View,
   Image,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { moderateScale } from 'react-native-size-matters';
-import { setTheme } from '../../../Redux/actions';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {moderateScale} from 'react-native-size-matters';
+import {setTheme} from '../../../Redux/actions';
 import s from './style';
 import Header from '../../../Components/Header';
-import { FlatList } from 'react-native';
+import {FlatList} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import {ScrollView} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import dummyUsers from '../../../Components/Users/Users';
 
 const messages = [
@@ -83,87 +83,78 @@ const messages = [
     userImage: require('../../../assets/images/png/u6.png'),
   },
 ];
-const Message = ({ navigation }) => {
+const Message = ({navigation}) => {
   const dispatch = useDispatch();
   const theme = useSelector(state => state.reducer.theme);
   const loginId = useSelector(state => state.reducer.userToken);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
 
-  console.log(loginId, 'loginId')
+  console.log(loginId, 'loginId');
   const renderItem = (elem, i) => {
-    return (
-      elem.item.id != loginId ? (
-        < View style={s.card} >
+    return elem.item.id != loginId ? (
+      <View style={s.card}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('ViewUser');
+          }}
+          style={s.dp}
+        >
+          <Image
+            source={{uri: 'https://placeimg.com/140/140/people'}}
+            style={s.dp1}
+            resizeMode={'cover'}
+          />
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('ViewUser');
-            }}
-            style={s.dp}
-          >
-            <Image
-              source={{ uri: 'https://placeimg.com/140/140/people' }}
-              style={s.dp1}
-              resizeMode={'cover'}
-            />
-          </TouchableOpacity>
-
-
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Chat', {
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Chat', {
               id: elem.item.id,
-              name: elem.item.name
-            })}
-            style={[s.col, { flex: 0.6, justifyContent: 'flex-end' }]}
-          >
-            <View>
-              <Text style={[s.name, s.nameBold, { color: textColor }]}>
-                {elem?.item?.name}
-              </Text>
-            </View>
-            <Text style={[s.textSmall, { color: '#787878' }]}>
-              {'hello'}
-            </Text>
-          </TouchableOpacity>
-          <View style={s.time}>
-            <Text style={[s.textRegular, { color: textColor }]}>
-              {'10:55'}
+              name: elem.item.name,
+            })
+          }
+          style={[s.col, {flex: 0.6, justifyContent: 'flex-end'}]}
+        >
+          <View>
+            <Text style={[s.name, s.nameBold, {color: textColor}]}>
+              {elem?.item?.name}
             </Text>
           </View>
-
-        </View >
-      ) :
-        null
-    )
-
-};
-return (
-  <SafeAreaView style={{ display: 'flex', flex: 1 }}>
-    {/* <Header /> */}
-    <ScrollView
-      contentContainerStyle={[s.container, { backgroundColor: color }]}
-    >
-      <View>
-        <Text style={[s.HeadingText, { color: textColor }]}>Messages</Text>
-      </View>
-      <View style={[s.border, { borderBottomColor: textColor }]}>
-        <TouchableOpacity style={s.btn}>
-          <Text style={[s.chats, { color: textColor }]}>Chats</Text>
+          <Text style={[s.textSmall, {color: '#787878'}]}>{'hello'}</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity style={s.btn}>
+        <View style={s.time}>
+          <Text style={[s.textRegular, {color: textColor}]}>{'10:55'}</Text>
+        </View>
+      </View>
+    ) : null;
+  };
+  return (
+    <SafeAreaView style={{display: 'flex', flex: 1}}>
+      {/* <Header /> */}
+      <ScrollView
+        contentContainerStyle={[s.container, {backgroundColor: color}]}
+      >
+        <View>
+          <Text style={[s.HeadingText, {color: textColor}]}>Messages</Text>
+        </View>
+        <View style={[s.border, {borderBottomColor: textColor}]}>
+          <TouchableOpacity style={s.btn}>
+            <Text style={[s.chats, {color: textColor}]}>Chats</Text>
+          </TouchableOpacity>
+          {/* <TouchableOpacity style={s.btn}>
             <Text style={[s.chats, {color: textColor}]}>Stories</Text>
           </TouchableOpacity> */}
-      </View>
-      <FlatList
-        data={dummyUsers}
-        renderItem={renderItem}
-        keyExtractor={(e, i) => i.toString()}
-        scrollEnabled={true}
-      />
-    </ScrollView>
-  </SafeAreaView>
-);
+        </View>
+        <FlatList
+          data={dummyUsers}
+          renderItem={renderItem}
+          keyExtractor={(e, i) => i.toString()}
+          scrollEnabled={true}
+        />
+      </ScrollView>
+    </SafeAreaView>
+  );
 };
 
 export default Message;

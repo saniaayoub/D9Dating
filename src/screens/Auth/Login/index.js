@@ -7,16 +7,16 @@ import {
   ToastAndroid,
   TouchableOpacity,
 } from 'react-native';
-import React, { useContext, useState, useEffect } from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import s from './style';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/Fontisto';
-import { Input, FormControl, Button } from 'native-base';
-import { moderateScale } from 'react-native-size-matters';
+import {Input, FormControl, Button} from 'native-base';
+import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../../assets/images/svg/lock.svg';
-import { setTheme, setUserToken } from '../../../Redux/actions';
-import { useSelector, useDispatch } from 'react-redux';
+import {setTheme, setUserToken} from '../../../Redux/actions';
+import {useSelector, useDispatch} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import socket from '../../../utils/socket';
 import dummyUsers from '../../../Components/Users/Users';
@@ -25,7 +25,7 @@ const passRegex = new RegExp(
   '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
 );
 
-const Login = ({ navigation }) => {
+const Login = ({navigation}) => {
   const dispatch = useDispatch();
 
   const [email, setEmail] = useState('');
@@ -38,60 +38,59 @@ const Login = ({ navigation }) => {
   const theme = useSelector(state => state.reducer.theme);
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
 
-  const [loginId, setloginId] = useState(null)
+  const [loginId, setloginId] = useState(null);
 
   useEffect(() => {
-    getData()
-  }, [])
+    getData();
+  }, []);
 
-
-  // const Login = () => {
-  //   console.log('abb');
-  //   socket.auth = {username: email};
-  //   socket.connect();
-  // };
+  const Login = () => {
+    console.log('abb');
+    socket.auth = {username: email};
+    socket.connect();
+  };
 
   const login = () => {
     console.log(dummyUsers, 'login');
-    const user = dummyUsers.find(x => x.name == email && x.password == password);
-    console.log(user, "fff");
+    const user = dummyUsers.find(
+      x => x.name == email && x.password == password,
+    );
+    console.log(user, 'fff');
     if (user) {
-
       storeData(JSON.stringify(user.id));
       setTimeout(() => {
         getData();
       });
     } else {
-
     }
-  }
+  };
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('id');
       if (value != null) {
         setloginId(value);
-        dispatch( setUserToken(loginId));
-
+        dispatch(setUserToken(loginId));
       }
-    } catch (error) { }
+    } catch (error) {}
   };
   const storeData = async value => {
     try {
       await AsyncStorage.setItem('id', value);
-    } catch (e) { }
+    } catch (e) {}
   };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex: 1}}>
       <View
         style={[
           s.container,
-          { backgroundColor: theme === 'dark' ? '#222222' : '#fff' },
+          {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
         ]}
       >
-        <View style={{ width: '100%', alignItems: 'center' }}>
+        <View style={{width: '100%', alignItems: 'center'}}>
           <View style={s.heading}>
-            <Text style={[s.headingText, { color: Textcolor }]}>
-              Sign <Text style={[s.headingText1, { color: Textcolor }]}>In</Text>
+            <Text style={[s.headingText, {color: Textcolor}]}>
+              Sign <Text style={[s.headingText1, {color: Textcolor}]}>In</Text>
             </Text>
           </View>
           <View style={s.input}>
@@ -133,7 +132,7 @@ const Login = ({ navigation }) => {
               }}
               variant="underlined"
               InputLeftElement={
-                <View style={[s.iconCircle, { borderColor: Textcolor }]}>
+                <View style={[s.iconCircle, {borderColor: Textcolor}]}>
                   <Icon2 name="locked" color={Textcolor} size={18} />
                 </View>
               }
@@ -183,9 +182,13 @@ const Login = ({ navigation }) => {
               w={moderateScale(140, 0.1)}
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
-              onPress={() =>
-                login()
-              }>
+              onPress={async () => {
+                await AsyncStorage.setItem('username', email);
+                Login();
+                console.log(email, 'user');
+                dispatch(setUserToken('sania'));
+              }}
+            >
               <Text style={s.btnText}>Login</Text>
             </Button>
           </View>
@@ -196,9 +199,9 @@ const Login = ({ navigation }) => {
               variant={'link'}
               onPress={() => navigation.navigate('ForgetPassword')}
             >
-              <View style={{ flexDirection: 'row' }}>
-                <Text style={[s.forgetPass, { color: '#FFD700' }]}>Forgot </Text>
-                <Text style={[s.forgetPass, { color: Textcolor }]}>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={[s.forgetPass, {color: '#FFD700'}]}>Forgot </Text>
+                <Text style={[s.forgetPass, {color: Textcolor}]}>
                   Password?
                 </Text>
               </View>
@@ -215,12 +218,12 @@ const Login = ({ navigation }) => {
             }}
             onPress={() => navigation.navigate('Register')}
           >
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={[s.forgetPass, { color: Textcolor }]}>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={[s.forgetPass, {color: Textcolor}]}>
                 Don’t Have an Account?
               </Text>
               <Text
-                style={[s.forgetPass, { fontWeight: '700', color: '#FFD700' }]}
+                style={[s.forgetPass, {fontWeight: '700', color: '#FFD700'}]}
               >
                 {' '}
                 Sign up Now!
@@ -238,17 +241,17 @@ const Login = ({ navigation }) => {
               <Text
                 style={[
                   s.forgetPass,
-                  { color: Textcolor, textDecorationLine: 'underline' },
+                  {color: Textcolor, textDecorationLine: 'underline'},
                 ]}
               >
                 Privacy Policy
               </Text>
             </TouchableOpacity>
-            <Text style={[s.forgetPass, { textDecorationLine: 'none' }]}>
+            <Text style={[s.forgetPass, {textDecorationLine: 'none'}]}>
               {'  '}&{'  '}
             </Text>
             <TouchableOpacity>
-              <Text style={[s.forgetPass, { textDecorationLine: 'underline' }]}>
+              <Text style={[s.forgetPass, {textDecorationLine: 'underline'}]}>
                 Terms & conditions
               </Text>
             </TouchableOpacity>

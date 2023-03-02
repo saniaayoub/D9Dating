@@ -6,7 +6,6 @@ const PoppinsBold = 'Poppins-Bold';
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: moderateScale(20, 0.1),
     flexDirection: 'column',
     justifyContent: 'flex-start',
     // paddingBottom: moderateScale(70, 0.1),
@@ -16,6 +15,8 @@ const styles = StyleSheet.create({
     // margin: moderateScale(20, 0.1),
   },
   header: {
+    paddingHorizontal: moderateScale(20, 0.1),
+
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: moderateScale(-20, 0.1),
@@ -116,7 +117,6 @@ const styles = StyleSheet.create({
   },
   options: {
     flex: 0.2,
-
     justifyContent: 'center',
     alignItems: 'flex-end',
     // marginLeft: moderateScale(140, 0.1),
@@ -125,9 +125,9 @@ const styles = StyleSheet.create({
   messege: {
     flexDirection: 'row',
     alignItems: 'center',
-
     marginBottom: moderateScale(15, 0.1),
   },
+  chat: {height: '80%', paddingBottom: moderateScale(15, 0.1)},
   textSmall1: {
     fontFamily: Poppins,
     fontSize: moderateScale(10, 0.1),
@@ -147,8 +147,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#333232',
     borderRadius: moderateScale(5, 0.1),
   },
-  row: {
-    position: 'absolute',
+  messageInput: {
+    // position: 'absolute',
     bottom: moderateScale(80, 0.1),
     flexDirection: 'row',
     alignItems: 'center',

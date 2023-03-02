@@ -10,14 +10,15 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {moderateScale, ms} from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import s from './style';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Input, FormControl, Button} from 'native-base';
+import socket from '../../../../utils/socket';
 import io from 'socket.io-client';
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //  const socket = io('http://192.168.18.226');
 //     socket.connect();
@@ -70,14 +71,17 @@ const messages = [
   },
 ];
 
+const elem = {
+  from: 'Julie Watson',
+  text: 'Welcome',
+  time: 'Now',
+  userImage: require('../../../../assets/images/png/u6.png'),
+};
+
 const Chat = ({navigation, route}) => {
   const [msg, setMsg] = useState([]);
   const [input, setInput] = useState('');
-  const [socket, setSocket] = useState(
-    io('http://192.168.18.226:3000'),
-  );
-  socket.emit('join', { username: name });
-
+  //   const [socket, setSocket] = useState(io('http://192.168.18.226:3000'));
 
   const dispatch = useDispatch();
   console.log(route.params);
@@ -86,56 +90,68 @@ const Chat = ({navigation, route}) => {
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-  const recieverId = route.params.id;
-  const name = route.params.name;
-  const senderId = useSelector(state => state.reducer.userToken);
+  const uid = route.params.id;
+  //   const name = data.from;
+  //   console.log(uid, 'id');
+  //   const senderId = Math.floor(Math.random() * 100);
+  //   console.log(senderId);
 
-  console.log(senderId, 'senderId');
-  console.log(recieverId, 'recieverId');
-  let currDate = new Date();
-  let hoursMin = currDate.getHours() + ':' + currDate.getMinutes();
-  console.log(hoursMin)
+  //   useEffect(() => {
+  //     getValueFunction();
+  //   }, []);
 
-useEffect(() => {
-  console.log('usermm');
-  socket.emit('join', { username: name, id: recieverId });
-}, [])
-
-
+  //   const idd = route.params.id;
+  //   console.log(idd, 'idd');
   useEffect(() => {
-    console.log('msg?');
-    socket.on('receive message', message => {
-      console.log(message, 'recieve');
-      setMsg(prevMessages => [...prevMessages, message]);
-    });
-    socket.on("show_notification", (data)=> {
-      console.log("show_notification", data);
-    });
+    // console.log('msg?');
+    // socket.on('receive message', message => {
+    //   console.log(message, 'recieve');
+    //   setText(prevMessages => [...prevMessages, message]);
+    // });
+    // socket.on('show_notification', function (data) {
+    //   console.log('show_notification', data);
+    // });
   }, []);
 
-  const sendMessage = () => { 
-    if (input.trim() === '') return;
-    socket.emit('send message', {
-      text: input,
-      recieverId: recieverId,
-      senderId: senderId,
-      avatar: 'https://placeimg.com/140/140/people',
-      time: hoursMin,
-    });
-    // setMsg((prevMessages) => [...prevMessages, {
-    //   text: input,
-    //   recieverId: recieverId,
-    //   senderId: senderId,
-    //   avatar: 'https://placeimg.com/140/140/people',
-    //   time: new Date()
-    // }]);
-    // console.log(msg, 'msg send ');
-    setInput('');
-  };
+  //   const sendMessage = () => {
+  //     if (input.trim() === '') return;
+  //     socket.emit(
+  //       'send message',
+  //       JSON.stringify({
+  //         text: input,
+  //         to: uid,
+  //         from: senderId,
+  //         avatar: 'https://placeimg.com/140/140/people',
+  //         time: new Date(),
+  //       }),
+  //     );
+  //     setMsg(prevMessages => [
+  //       ...prevMessages,
+  //       {
+  //         text: input,
+  //         to: uid,
+  //         from: {
+  //           id: 182,
+  //           name: name,
+  //         },
+  //         avatar: 'https://placeimg.com/140/140/people',
+  //         time: new Date(),
+  //       },
+  //     ]);
+  //     setInput('');
+  //   };
+  //   const getValueFunction = async () => {
+  //     // Function to get the value from AsyncStorage
+  //     let user = await AsyncStorage.getItem('users');
+  //     console.log(user, 'iddd');
+  //   };
 
+  const sendMessage = () => {
+    socket.emit('chat message');
+  };
   const renderItem = elem => {
-    console.log(elem, 'msgsssss');
-    if (elem.item.senderId === senderId) {
+    console.log(elem);
+    if (elem?.item.to === uid) {
       return (
         <View
           style={[s.messege, {justifyContent: 'flex-end'}]}
@@ -159,13 +175,13 @@ useEffect(() => {
               </Text>
             </View>
           </View>
-          {/* <View style={[s.dp]}>
-          <Image
-            source={{ uri: elem.item.avatar }}
-            style={s.dp1}
-            resizeMode={'cover'}
-          />
-        </View> */}
+          <View style={[s.dp]}>
+            <Image
+              source={{uri: elem.item.avatar}}
+              style={s.dp1}
+              resizeMode={'cover'}
+            />
+          </View>
         </View>
       );
     } else {
@@ -174,13 +190,13 @@ useEffect(() => {
           style={[s.messege, {justifyContent: 'flex-start'}]}
           key={elem.index}
         >
-          {/* <View style={[s.dp]}>
-          <Image
-            source={{ uri: 'https://placeimg.com/140/140/people' }}
-            style={s.dp1}
-            resizeMode={'cover'}
-          />
-        </View> */}
+          <View style={[s.dp]}>
+            <Image
+              source={{uri: elem.item.avatar}}
+              style={s.dp1}
+              resizeMode={'cover'}
+            />
+          </View>
           <View
             style={[
               {
@@ -203,7 +219,6 @@ useEffect(() => {
       );
     }
   };
-
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       <View style={[s.container, {backgroundColor: color}]}>
@@ -232,7 +247,9 @@ useEffect(() => {
               />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
-              <Text style={[s.name, {color: textColor}]}>{name}</Text>
+              <Text style={[s.name, {color: textColor}]}>
+                {messages[0].from}
+              </Text>
 
               <Text style={s.textSmall}>Last Seen 5:52 PM</Text>
             </TouchableOpacity>
@@ -245,18 +262,7 @@ useEffect(() => {
             />
           </TouchableOpacity>
         </View>
-
-        <View style={{height: '80%', paddingBottom: moderateScale(15, 0.1)}}>
-          <FlatList
-            data={msg}
-            renderItem={renderItem}
-            keyExtractor={item => item.index}
-            // initialScrollIndex={messages.length - 1}
-            showsVerticalScrollIndicator={true}
-          />
-        </View>
-
-        <View style={{height: '80%', paddingBottom: moderateScale(15, 0.1)}}>
+        <View style={s.chat}>
           <FlatList
             data={msg}
             renderItem={renderItem}
@@ -266,7 +272,7 @@ useEffect(() => {
           />
         </View>
       </View>
-      <View style={s.row}>
+      <View style={s.messageInput}>
         <View style={s.input}>
           <TouchableOpacity style={s.circle}>
             <Icon

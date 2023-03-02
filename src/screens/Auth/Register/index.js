@@ -98,336 +98,348 @@ const Register = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <View
-        style={[
-          s.container,
-          {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
-        ]}
-      >
-        <View style={s.header}>
-          <Header navigation={navigation} />
-        </View>
-        <View style={s.heading}>
-          <Text style={[s.headingText, {color: Textcolor}]}>Create Your </Text>
-          <Text
-            style={[
-              s.headingText,
-              {fontFamily: 'Poppins-Bold', color: Textcolor},
-            ]}
-          >
-            {' '}
-            Account
-          </Text>
-        </View>
-        <ScrollView
-          style={{
-            width: '100%',
-          }}
-          contentContainerStyle={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingBottom: moderateScale(20, 0.1),
-          }}
+      <ScrollView>
+        <View
+          style={[
+            s.container,
+            {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
+          ]}
         >
-          <View style={s.input}>
-            <View style={{flex: 0.4}}>
-              <Text style={[s.inputTxt, {color: Textcolor}]}>Name</Text>
-            </View>
-            <View style={{flex: 0.3}}>
-              <Input
-                w={{
-                  base: '90%',
-                  md: '25%',
-                }}
-                placeholder="First Name"
-                variant="underlined"
-                placeholderTextColor={Textcolor}
-                color={Textcolor}
-                fontSize={moderateScale(10, 0.1)}
-              />
-            </View>
-            <View style={{flex: 0.3}}>
-              <Input
-                w={{
-                  base: '90%',
-                  md: '15%',
-                }}
-                placeholder="Last Name"
-                variant="underlined"
-                placeholderTextColor={Textcolor}
-                color={Textcolor}
-                fontSize={moderateScale(10, 0.1)}
-              />
-            </View>
-
-            {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
+          <View style={s.header}>
+            <Header navigation={navigation} />
           </View>
-          <View style={s.input}>
-            <View style={{flex: 0.4}}>
-              <Text style={[s.inputTxt, {color: Textcolor}]}>Gender</Text>
-            </View>
-            <View
-              style={{
-                flex: 0.6,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
+          <View style={s.heading}>
+            <Text style={[s.headingText, {color: Textcolor}]}>
+              Create Your{' '}
+            </Text>
+            <Text
+              style={[
+                s.headingText,
+                {fontFamily: 'Poppins-Bold', color: Textcolor},
+              ]}
             >
-              {isSelected.map((item, i) => (
-                <View style={s.radio}>
-                  <RadioButton
-                    onPress={() => onRadioBtnClick(item)}
-                    selected={item.selected}
-                    key={item.id}
-                  >
-                    {item.name}
-                  </RadioButton>
-                </View>
-              ))}
-            </View>
+              {' '}
+              Account
+            </Text>
           </View>
-          <View style={s.input}>
-            <View style={{flex: 0.4}}>
-              <Text style={[s.inputTxt, {color: Textcolor}]}>
-                Date of Birth
-              </Text>
-            </View>
-            <View style={{flex: 0.6}}>
-              <TouchableOpacity onPress={() => setOpen(true)}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: moderateScale(5, 0.1),
-                  }}
-                >
-                  <View style={[s.dateView, {borderBottomColor: Textcolor}]}>
-                    <Text style={[s.date, {color: Textcolor}]}>
-                      {date ? datee : 'Date'}
-                    </Text>
-                  </View>
-
-                  <View style={[s.dateView, {borderBottomColor: Textcolor}]}>
-                    <Text style={[s.date, {color: Textcolor}]}>
-                      {date ? month : 'month'}
-                    </Text>
-                  </View>
-
-                  <View style={[s.dateView, {borderBottomColor: Textcolor}]}>
-                    <Text style={[s.date, {color: Textcolor}]}>
-                      {date ? year : 'Year'}
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              <DatePicker
-                modal
-                open={open}
-                date={date}
-                // textColor ={Textcolor}
-                minimumDate={new Date('1995-05-15')}
-                maximumDate={new Date('2012-06-15')}
-                mode="date"
-                onConfirm={handleConfirm}
-                onCancel={() => {
-                  setOpen(false);
-                }}
-              />
-            </View>
-
-            {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
-          </View>
-
-          <View style={s.input}>
-            <View style={{flex: 0.4}}>
-              <Text style={[s.inputTxt, {color: Textcolor}]}>Phone Number</Text>
-            </View>
-            <View style={{flex: 0.6}}>
-              <PhoneInput
-                style={{bottom: moderateScale(-10, 0.1)}}
-                initialCountry={'us'}
-                textProps={{
-                  placeholder: 'Enter Phone Number',
-                  placeholderTextColor: Textcolor,
-                }}
-                pickerBackgroundColor={'grey'}
-                pickerButtonColor={'#fff'}
-                isReadOnly={disable}
-                autoFormat={true}
-                textStyle={[s.inputStyle, {color: Textcolor}]}
-                isValidNumber={e => console.log(e, 'here')}
-                ref={phonenum}
-                onChangePhoneNumber={phNumber => {
-                  if (phonenum.current.isValidNumber()) {
-                    console.log('jdj');
-                    setPhNumErr('');
-                  } else {
-                    setPhNumErr('*');
-                  }
-                }}
-              />
-              <Input
-                style={{marginTop: moderateScale(-20, 0.1)}}
-                w={{
-                  base: '100%',
-                  md: '25%',
-                }}
-                variant="underlined"
-                // placeholderTextColor={Textcolor}
-                isReadOnly={true}
-                color={Textcolor}
-              />
-            </View>
-
-            {phNumErr ? <Text style={[s.error]}>{phNumErr}</Text> : null}
-          </View>
-
-          <View style={s.input}>
-            <View style={{flex: 0.4}}>
-              <Text style={[s.inputTxt, {color: Textcolor}]}>Email Adress</Text>
-            </View>
-            <View style={{flex: 0.6}}>
-              <Input
-                w={{
-                  base: '100%',
-                  md: '25%',
-                }}
-                variant="underlined"
-                placeholderTextColor={Textcolor}
-                color={Textcolor}
-                fontSize={moderateScale(10, 0.1)}
-              />
-            </View>
-
-            {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
-          </View>
-          <View style={s.input}>
-            <View style={{flex: 0.4}}>
-              <Text style={[s.inputTxt, {color: Textcolor}]}>Password</Text>
-            </View>
-            <View style={{flex: 0.6}}>
-              <Input
-                w={{
-                  base: '100%',
-                  md: '25%',
-                }}
-                variant="underlined"
-                placeholderTextColor={Textcolor}
-                value={password}
-                onChangeText={password => {
-                  setPassword(password);
-                }}
-                InputRightElement={
-                  password ? (
-                    <View style={s.eye}>
-                      <TouchableOpacity onPress={() => setshowPass(!showPass)}>
-                        <Feather
-                          name={showPass ? 'eye' : 'eye-off'}
-                          color={Textcolor}
-                          size={20}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  ) : (
-                    <></>
-                  )
-                }
-                color={Textcolor}
-                fontSize={moderateScale(14, 0.1)}
-                secureTextEntry={showPass}
-              />
-            </View>
-
-            {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
-          </View>
-          <View style={s.input}>
-            <View style={{flex: 0.4}}>
-              <Text style={[s.inputTxt, {color: Textcolor}]}>
-                Confirm Password
-              </Text>
-            </View>
-            <View style={{flex: 0.6}}>
-              <Input
-                w={{
-                  base: '100%',
-                  md: '25%',
-                }}
-                variant="underlined"
-                placeholderTextColor={Textcolor}
-                value={confirmPassword}
-                onChangeText={password => {
-                  setConfirmPassword(password);
-                }}
-                InputRightElement={
-                  confirmPassword ? (
-                    <View style={s.eye}>
-                      <TouchableOpacity onPress={() => setshowPass(!showPass)}>
-                        <Feather
-                          name={showPass ? 'eye' : 'eye-off'}
-                          color={Textcolor}
-                          size={20}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  ) : (
-                    <></>
-                  )
-                }
-                color={Textcolor}
-                fontSize={moderateScale(14, 0.1)}
-                secureTextEntry={showPass}
-              />
-            </View>
-          </View>
-          <View style={s.button}>
-            <Button
-              size="sm"
-              variant={'solid'}
-              _text={{
-                color: '#6627EC',
-              }}
-              backgroundColor={'#FFD700'}
-              borderRadius={50}
-              w={moderateScale(140, 0.1)}
-              h={moderateScale(35, 0.1)}
-              alignItems={'center'}
-              style={s.shadow}
-              onPress={() => navigation.navigate('Login')}
-            >
-              <Text style={s.btnText}>Register</Text>
-            </Button>
-          </View>
-        </ScrollView>
-        <View style={s.bottomLink}>
-          <View
+          <ScrollView
             style={{
-              flexDirection: 'row',
+              width: '100%',
+            }}
+            contentContainerStyle={{
+              alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: moderateScale(20, 0.1),
+              paddingBottom: moderateScale(20, 0.1),
             }}
           >
-            <TouchableOpacity>
-              <Text
-                style={[
-                  s.forgetPass,
-                  {color: Textcolor, textDecorationLine: 'underline'},
-                ]}
+            <View style={s.input}>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>Name</Text>
+              </View>
+              <View style={{flex: 0.3}}>
+                <Input
+                  w={{
+                    base: '90%',
+                    md: '25%',
+                  }}
+                  placeholder="First Name"
+                  variant="underlined"
+                  placeholderTextColor={Textcolor}
+                  color={Textcolor}
+                  fontSize={moderateScale(10, 0.1)}
+                />
+              </View>
+              <View style={{flex: 0.3}}>
+                <Input
+                  w={{
+                    base: '90%',
+                    md: '15%',
+                  }}
+                  placeholder="Last Name"
+                  variant="underlined"
+                  placeholderTextColor={Textcolor}
+                  color={Textcolor}
+                  fontSize={moderateScale(10, 0.1)}
+                />
+              </View>
+
+              {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
+            </View>
+            <View style={s.input}>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>Gender</Text>
+              </View>
+              <View
+                style={{
+                  flex: 0.6,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
               >
-                Privacy Policy
+                {isSelected.map((item, i) => (
+                  <View style={s.radio}>
+                    <RadioButton
+                      onPress={() => onRadioBtnClick(item)}
+                      selected={item.selected}
+                      key={item.id}
+                    >
+                      {item.name}
+                    </RadioButton>
+                  </View>
+                ))}
+              </View>
+            </View>
+            <View style={s.input}>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>
+                  Date of Birth
+                </Text>
+              </View>
+              <View style={{flex: 0.6}}>
+                <TouchableOpacity onPress={() => setOpen(true)}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: moderateScale(5, 0.1),
+                    }}
+                  >
+                    <View style={[s.dateView, {borderBottomColor: Textcolor}]}>
+                      <Text style={[s.date, {color: Textcolor}]}>
+                        {date ? datee : 'Date'}
+                      </Text>
+                    </View>
+
+                    <View style={[s.dateView, {borderBottomColor: Textcolor}]}>
+                      <Text style={[s.date, {color: Textcolor}]}>
+                        {date ? month : 'month'}
+                      </Text>
+                    </View>
+
+                    <View style={[s.dateView, {borderBottomColor: Textcolor}]}>
+                      <Text style={[s.date, {color: Textcolor}]}>
+                        {date ? year : 'Year'}
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                <DatePicker
+                  modal
+                  open={open}
+                  date={date}
+                  // textColor ={Textcolor}
+                  minimumDate={new Date('1995-05-15')}
+                  maximumDate={new Date('2012-06-15')}
+                  mode="date"
+                  onConfirm={handleConfirm}
+                  onCancel={() => {
+                    setOpen(false);
+                  }}
+                />
+              </View>
+
+              {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
+            </View>
+
+            <View style={s.input}>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>
+                  Phone Number
+                </Text>
+              </View>
+              <View style={{flex: 0.6}}>
+                <PhoneInput
+                  style={{bottom: moderateScale(-10, 0.1)}}
+                  initialCountry={'us'}
+                  textProps={{
+                    placeholder: 'Enter Phone Number',
+                    placeholderTextColor: Textcolor,
+                  }}
+                  pickerBackgroundColor={'grey'}
+                  pickerButtonColor={'#fff'}
+                  isReadOnly={disable}
+                  autoFormat={true}
+                  textStyle={[s.inputStyle, {color: Textcolor}]}
+                  isValidNumber={e => console.log(e, 'here')}
+                  ref={phonenum}
+                  onChangePhoneNumber={phNumber => {
+                    if (phonenum.current.isValidNumber()) {
+                      console.log('jdj');
+                      setPhNumErr('');
+                    } else {
+                      setPhNumErr('*');
+                    }
+                  }}
+                />
+                <Input
+                  style={{marginTop: moderateScale(-20, 0.1)}}
+                  w={{
+                    base: '100%',
+                    md: '25%',
+                  }}
+                  variant="underlined"
+                  // placeholderTextColor={Textcolor}
+                  isReadOnly={true}
+                  color={Textcolor}
+                />
+              </View>
+
+              {phNumErr ? <Text style={[s.error]}>{phNumErr}</Text> : null}
+            </View>
+
+            <View style={s.input}>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>
+                  Email Adress
+                </Text>
+              </View>
+              <View style={{flex: 0.6}}>
+                <Input
+                  w={{
+                    base: '100%',
+                    md: '25%',
+                  }}
+                  variant="underlined"
+                  placeholderTextColor={Textcolor}
+                  color={Textcolor}
+                  fontSize={moderateScale(10, 0.1)}
+                />
+              </View>
+
+              {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
+            </View>
+            <View style={s.input}>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>Password</Text>
+              </View>
+              <View style={{flex: 0.6}}>
+                <Input
+                  w={{
+                    base: '100%',
+                    md: '25%',
+                  }}
+                  variant="underlined"
+                  placeholderTextColor={Textcolor}
+                  value={password}
+                  onChangeText={password => {
+                    setPassword(password);
+                  }}
+                  InputRightElement={
+                    password ? (
+                      <View style={s.eye}>
+                        <TouchableOpacity
+                          onPress={() => setshowPass(!showPass)}
+                        >
+                          <Feather
+                            name={showPass ? 'eye' : 'eye-off'}
+                            color={Textcolor}
+                            size={20}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    ) : (
+                      <></>
+                    )
+                  }
+                  color={Textcolor}
+                  fontSize={moderateScale(14, 0.1)}
+                  secureTextEntry={showPass}
+                />
+              </View>
+
+              {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
+            </View>
+            <View style={s.input}>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>
+                  Confirm Password
+                </Text>
+              </View>
+              <View style={{flex: 0.6}}>
+                <Input
+                  w={{
+                    base: '100%',
+                    md: '25%',
+                  }}
+                  variant="underlined"
+                  placeholderTextColor={Textcolor}
+                  value={confirmPassword}
+                  onChangeText={password => {
+                    setConfirmPassword(password);
+                  }}
+                  InputRightElement={
+                    confirmPassword ? (
+                      <View style={s.eye}>
+                        <TouchableOpacity
+                          onPress={() => setshowPass(!showPass)}
+                        >
+                          <Feather
+                            name={showPass ? 'eye' : 'eye-off'}
+                            color={Textcolor}
+                            size={20}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    ) : (
+                      <></>
+                    )
+                  }
+                  color={Textcolor}
+                  fontSize={moderateScale(14, 0.1)}
+                  secureTextEntry={showPass}
+                />
+              </View>
+            </View>
+            <View style={s.button}>
+              <Button
+                size="sm"
+                variant={'solid'}
+                _text={{
+                  color: '#6627EC',
+                }}
+                backgroundColor={'#FFD700'}
+                borderRadius={50}
+                w={moderateScale(140, 0.1)}
+                h={moderateScale(35, 0.1)}
+                alignItems={'center'}
+                style={s.shadow}
+                onPress={() => navigation.navigate('Login')}
+              >
+                <Text style={s.btnText}>Register</Text>
+              </Button>
+            </View>
+          </ScrollView>
+          <View style={s.bottomLink}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                marginBottom: moderateScale(20, 0.1),
+              }}
+            >
+              <TouchableOpacity>
+                <Text
+                  style={[
+                    s.forgetPass,
+                    {color: Textcolor, textDecorationLine: 'underline'},
+                  ]}
+                >
+                  Privacy Policy
+                </Text>
+              </TouchableOpacity>
+              <Text style={[s.forgetPass, {textDecorationLine: 'none'}]}>
+                {'  '}&{'  '}
               </Text>
-            </TouchableOpacity>
-            <Text style={[s.forgetPass, {textDecorationLine: 'none'}]}>
-              {'  '}&{'  '}
-            </Text>
-            <TouchableOpacity>
-              <Text style={[s.forgetPass, {textDecorationLine: 'underline'}]}>
-                Terms & conditions
-              </Text>
-            </TouchableOpacity>
+              <TouchableOpacity>
+                <Text style={[s.forgetPass, {textDecorationLine: 'underline'}]}>
+                  Terms & conditions
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
