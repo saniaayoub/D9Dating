@@ -9,27 +9,35 @@ import {
   ActivityIndicator,
   Linking,
   ScrollView,
+  Image,
+  Dimensions
 } from 'react-native';
-import React, {useRef, useState, useEffect} from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import s from './style';
 import Feather from 'react-native-vector-icons/Feather';
-import {Input, Button, Radio, ListItem} from 'native-base';
-import {moderateScale} from 'react-native-size-matters';
+import { Input, Button, Radio, ListItem, Menu, Pressable, } from 'native-base';
+import { moderateScale } from 'react-native-size-matters';
 import PhoneInput from 'react-native-phone-input';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RadioButton from '../../../Components/Radio';
-import {useDispatch, useSelector} from 'react-redux';
-import {setTheme} from '../../../Redux/actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTheme } from '../../../Redux/actions';
 import Header from '../../../Components/Header';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import Entypo from 'react-native-vector-icons/Entypo';
+import MapView, { PROVIDER_GOOGLE, Marker, ProviderPropType } from 'react-native-maps';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
+
+
 
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const passRegex = new RegExp(
   '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
 );
 
-const Register = ({navigation}) => {
+const Register = ({ navigation }) => {
   const dispatch = useDispatch();
   const phonenum = useRef();
   const [fname, setFname] = useState('');
@@ -46,11 +54,12 @@ const Register = ({navigation}) => {
   const [conPassErr, setConPassErr] = useState('');
   const [phNumErr, setPhNumErr] = useState('');
   const [loader, setLoader] = useState(false);
-  const [value, setValue] = React.useState('one');
+  // const [value, setValue] = React.useState('one');
   const [gender, setGender] = useState('Female');
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   const theme = useSelector(state => state.reducer.theme);
+  const [icon, setIcon] = useState('globe');
   const [isSelected, setIsSelected] = useState([
     {
       id: 1,
@@ -71,12 +80,54 @@ const Register = ({navigation}) => {
       selected: gender == 'Other' ? true : false,
     },
   ]);
-  useEffect(() => {}, []);
+  const [group, setGroup] = useState('Group 1');
+  const [value, setValue] = useState([
+    {
+      label: 'Public',
+      value: '1',
+      icon: () => (
+        <Entypo
+          name={'globe'}
+          color={Textcolor}
+          size={moderateScale(15, 0.1)}
+        />
+      ),
+    },
+    {
+      label: 'Freinds',
+      value: '2',
+      icon: () => (
+        <Icon
+          name={'user-friends'}
+          color={Textcolor}
+          size={moderateScale(15, 0.1)}
+        />
+      ),
+    },
+    {
+      label: 'Only me',
+      value: '3',
+      icon: () => (
+        <Entypo name={'lock'} color={Textcolor} size={moderateScale(15, 0.1)} />
+      ),
+    },
+  ]);
+  const { width, height } = Dimensions.get('window');
+
+  const ASPECT_RATIO = width / height;
+  const LATITUDE = 35.4828833;
+  const LONGITUDE = -97.7593856;
+  const LATITUDE_DELTA = 0.0922;
+  const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+
+
+  useEffect(() => { }, []);
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
       isSelectedItem.id === item.id
-        ? {...isSelectedItem, selected: true}
-        : {...isSelectedItem, selected: false},
+        ? { ...isSelectedItem, selected: true }
+        : { ...isSelectedItem, selected: false },
     );
     setIsSelected(updatedState);
     setGender(item.name);
@@ -96,26 +147,51 @@ const Register = ({navigation}) => {
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
   const color = theme === 'dark' ? '#222222' : '#fff';
 
+  const mapRef = useRef()
+  const area = {
+    latitude: 37.78825,
+    longitude: -122.4324,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  };
+  const [map, setMap] = useState(false)
+  const [region, setRegion] = useState(area)
+  const setArea = (e) => {
+    console.log(e);
+
+    setRegion(e)
+
+  }
+  const defaultState = () => {
+
+    setRegion(area)
+    mapRef.current.animateToRegion(area);
+
+  }
+  useEffect(() => {
+    console.log(region)
+  }, [region])
+
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
         <View
           style={[
             s.container,
-            {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
+            { backgroundColor: theme === 'dark' ? '#222222' : '#fff' },
           ]}
         >
           <View style={s.header}>
             <Header navigation={navigation} />
           </View>
           <View style={s.heading}>
-            <Text style={[s.headingText, {color: Textcolor}]}>
+            <Text style={[s.headingText, { color: Textcolor }]}>
               Create Your{' '}
             </Text>
             <Text
               style={[
                 s.headingText,
-                {fontFamily: 'Poppins-Bold', color: Textcolor},
+                { fontFamily: 'Poppins-Bold', color: Textcolor },
               ]}
             >
               {' '}
@@ -133,10 +209,10 @@ const Register = ({navigation}) => {
             }}
           >
             <View style={s.input}>
-              <View style={{flex: 0.4}}>
-                <Text style={[s.inputTxt, {color: Textcolor}]}>Name</Text>
+              <View style={{ flex: 0.4 }}>
+                <Text style={[s.inputTxt, { color: Textcolor }]}>Name</Text>
               </View>
-              <View style={{flex: 0.3}}>
+              <View style={{ flex: 0.3 }}>
                 <Input
                   w={{
                     base: '90%',
@@ -149,7 +225,7 @@ const Register = ({navigation}) => {
                   fontSize={moderateScale(10, 0.1)}
                 />
               </View>
-              <View style={{flex: 0.3}}>
+              <View style={{ flex: 0.3 }}>
                 <Input
                   w={{
                     base: '90%',
@@ -166,8 +242,8 @@ const Register = ({navigation}) => {
               {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
             </View>
             <View style={s.input}>
-              <View style={{flex: 0.4}}>
-                <Text style={[s.inputTxt, {color: Textcolor}]}>Gender</Text>
+              <View style={{ flex: 0.4 }}>
+                <Text style={[s.inputTxt, { color: Textcolor }]}>Gender</Text>
               </View>
               <View
                 style={{
@@ -191,12 +267,12 @@ const Register = ({navigation}) => {
               </View>
             </View>
             <View style={s.input}>
-              <View style={{flex: 0.4}}>
-                <Text style={[s.inputTxt, {color: Textcolor}]}>
+              <View style={{ flex: 0.4 }}>
+                <Text style={[s.inputTxt, { color: Textcolor }]}>
                   Date of Birth
                 </Text>
               </View>
-              <View style={{flex: 0.6}}>
+              <View style={{ flex: 0.6 }}>
                 <TouchableOpacity onPress={() => setOpen(true)}>
                   <View
                     style={{
@@ -205,20 +281,20 @@ const Register = ({navigation}) => {
                       marginTop: moderateScale(5, 0.1),
                     }}
                   >
-                    <View style={[s.dateView, {borderBottomColor: Textcolor}]}>
-                      <Text style={[s.date, {color: Textcolor}]}>
+                    <View style={[s.dateView, { borderBottomColor: Textcolor }]}>
+                      <Text style={[s.date, { color: Textcolor }]}>
                         {date ? datee : 'Date'}
                       </Text>
                     </View>
 
-                    <View style={[s.dateView, {borderBottomColor: Textcolor}]}>
-                      <Text style={[s.date, {color: Textcolor}]}>
+                    <View style={[s.dateView, { borderBottomColor: Textcolor }]}>
+                      <Text style={[s.date, { color: Textcolor }]}>
                         {date ? month : 'month'}
                       </Text>
                     </View>
 
-                    <View style={[s.dateView, {borderBottomColor: Textcolor}]}>
-                      <Text style={[s.date, {color: Textcolor}]}>
+                    <View style={[s.dateView, { borderBottomColor: Textcolor }]}>
+                      <Text style={[s.date, { color: Textcolor }]}>
                         {date ? year : 'Year'}
                       </Text>
                     </View>
@@ -243,14 +319,14 @@ const Register = ({navigation}) => {
             </View>
 
             <View style={s.input}>
-              <View style={{flex: 0.4}}>
-                <Text style={[s.inputTxt, {color: Textcolor}]}>
+              <View style={{ flex: 0.4 }}>
+                <Text style={[s.inputTxt, { color: Textcolor }]}>
                   Phone Number
                 </Text>
               </View>
-              <View style={{flex: 0.6}}>
+              <View style={{ flex: 0.6 }}>
                 <PhoneInput
-                  style={{bottom: moderateScale(-10, 0.1)}}
+                  style={{ bottom: moderateScale(-10, 0.1) }}
                   initialCountry={'us'}
                   textProps={{
                     placeholder: 'Enter Phone Number',
@@ -260,7 +336,7 @@ const Register = ({navigation}) => {
                   pickerButtonColor={'#fff'}
                   isReadOnly={disable}
                   autoFormat={true}
-                  textStyle={[s.inputStyle, {color: Textcolor}]}
+                  textStyle={[s.inputStyle, { color: Textcolor }]}
                   isValidNumber={e => console.log(e, 'here')}
                   ref={phonenum}
                   onChangePhoneNumber={phNumber => {
@@ -273,7 +349,7 @@ const Register = ({navigation}) => {
                   }}
                 />
                 <Input
-                  style={{marginTop: moderateScale(-20, 0.1)}}
+                  style={{ marginTop: moderateScale(-20, 0.1) }}
                   w={{
                     base: '100%',
                     md: '25%',
@@ -289,12 +365,12 @@ const Register = ({navigation}) => {
             </View>
 
             <View style={s.input}>
-              <View style={{flex: 0.4}}>
-                <Text style={[s.inputTxt, {color: Textcolor}]}>
+              <View style={{ flex: 0.4 }}>
+                <Text style={[s.inputTxt, { color: Textcolor }]}>
                   Email Adress
                 </Text>
               </View>
-              <View style={{flex: 0.6}}>
+              <View style={{ flex: 0.6 }}>
                 <Input
                   w={{
                     base: '100%',
@@ -310,10 +386,122 @@ const Register = ({navigation}) => {
               {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
             </View>
             <View style={s.input}>
-              <View style={{flex: 0.4}}>
-                <Text style={[s.inputTxt, {color: Textcolor}]}>Password</Text>
+              <View style={{ flex: 0.4 }}>
+                <Text style={[s.inputTxt, { color: Textcolor }]}>
+                  Group
+                </Text>
               </View>
-              <View style={{flex: 0.6}}>
+              <View style={{ flex: 0.6 }}>
+                <Menu
+                  w="180"
+                  borderWidth={moderateScale(1, 0.1)}
+                  borderBottomColor={'grey'}
+                  backgroundColor={color}
+                  // marginRight={moderateScale(5, 0.1)}
+
+                  top={moderateScale(24, 0.1)}
+                  borderColor={Textcolor}
+                  trigger={triggerProps => {
+                    return (
+                      <Pressable
+                        accessibilityLabel="More options menu"
+                        {...triggerProps}
+                        style={{
+                          flexDirection: 'row',
+                          borderColor: 'white',
+                          // borderWidth: 1,
+                          borderBottomWidth: 1,
+                          marginBottom: moderateScale(-10, 0.1),
+                          // backgroundColor:'red',
+                          // marginVertical: moderateScale(7),
+                          // borderRadius: moderateScale(8, 0.1),
+                          paddingLeft: moderateScale(10, 0.1),
+                          width: moderateScale(170, 0.1),
+                          // height: moderateScale(20, 0.1),
+                          // justifyContent:'center',
+                          alignItems: 'center',
+                          //  marginBottom: moderateScale(-20)
+                          marginTop: moderateScale(18, 0.1)
+                        }}
+                      >
+                        <Text style={[s.option, { color: Textcolor, flex: 0.8, paddingBottom: moderateScale(12, 0.1) }]}>
+                          {group}
+                        </Text>
+
+                        <Entypo
+                          style={{ flex: 0.2, paddingBottom: moderateScale(12, 0.1), }}
+                          name={'chevron-down'}
+                          size={moderateScale(25, 0.1)}
+                          color={Textcolor}
+                        />
+                      </Pressable>
+                    );
+                  }}
+                >
+                  <Menu.Item
+                    onPress={() => {
+                      setGroup('Group 1');
+                    }}
+                  >
+                    <View style={s.optionView}>
+                      <Text style={[s.optionBtns, { color: Textcolor }]}>
+                        Group 1
+                      </Text>
+                    </View>
+                  </Menu.Item>
+                  <Menu.Item
+                    onPress={() => {
+                      setGroup('Group 2');
+                    }}
+                  >
+                    <View style={s.optionView}>
+                      <Text style={[s.optionBtns, { color: Textcolor }]}>
+                        Group 2
+                      </Text>
+                    </View>
+                  </Menu.Item>
+                  <Menu.Item
+                    onPress={() => {
+                      setGroup('Group 3');
+                    }}
+                  >
+                    <View style={s.optionView}>
+                      <Text style={[s.optionBtns, { color: Textcolor }]}>
+                        Group 3
+                      </Text>
+                    </View>
+                  </Menu.Item>
+                </Menu>
+              </View>
+            </View>
+            <View style={s.input}>
+              <View style={{ flex: 0.4 }}>
+                <Text style={[s.inputTxt, { color: Textcolor }]}>
+                  Location
+                </Text>
+              </View>
+              <View style={{ flex: 0.6 }}>
+                <Input
+                  w={{
+                    base: '100%',
+                    md: '25%',
+                  }}
+                  onTouchStart={()=>navigation.navigate('Maps')}
+                  variant="underlined"
+                  placeholderTextColor={Textcolor}
+                  color={Textcolor}
+                  fontSize={moderateScale(10, 0.1)}
+                />
+              </View>
+
+              {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
+            </View>
+
+            <View style={s.input}>
+              <View style={{ flex: 0.4 }}>
+                <Text style={[s.inputTxt, { color: Textcolor }]}>Password</Text>
+              </View>
+              <View style={{ flex: 0.6 }}>
                 <Input
                   w={{
                     base: '100%',
@@ -351,12 +539,12 @@ const Register = ({navigation}) => {
               {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
             </View>
             <View style={s.input}>
-              <View style={{flex: 0.4}}>
-                <Text style={[s.inputTxt, {color: Textcolor}]}>
+              <View style={{ flex: 0.4 }}>
+                <Text style={[s.inputTxt, { color: Textcolor }]}>
                   Confirm Password
                 </Text>
               </View>
-              <View style={{flex: 0.6}}>
+              <View style={{ flex: 0.6 }}>
                 <Input
                   w={{
                     base: '100%',
@@ -422,25 +610,25 @@ const Register = ({navigation}) => {
                 <Text
                   style={[
                     s.forgetPass,
-                    {color: Textcolor, textDecorationLine: 'underline'},
+                    { color: Textcolor, textDecorationLine: 'underline' },
                   ]}
                 >
                   Privacy Policy
                 </Text>
               </TouchableOpacity>
-              <Text style={[s.forgetPass, {textDecorationLine: 'none'}]}>
+              <Text style={[s.forgetPass, { textDecorationLine: 'none' }]}>
                 {'  '}&{'  '}
               </Text>
               <TouchableOpacity>
-                <Text style={[s.forgetPass, {textDecorationLine: 'underline'}]}>
+                <Text style={[s.forgetPass, { textDecorationLine: 'underline' }]}>
                   Terms & conditions
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </ScrollView >
+    </SafeAreaView >
   );
 };
 

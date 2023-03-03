@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission  android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
     android:name=".MainApplication"
@@ -18,6 +20,7 @@
     android:usesCleartextTraffic="true"
     tools:replace="android:icon,android:theme,android:allowBackup,label"
   >
+  
       <activity
       android:name=".MainActivity"
       android:label="@string/app_name"
@@ -35,5 +38,8 @@
       android:name="com.ahmedadeltito.photoeditor.PhotoEditorActivity"
     /> 
       <activity android:name="com.yalantis.ucrop.UCropActivity" />
+       <meta-data
+     android:name="com.google.android.geo.API_KEY"
+     android:value="AIzaSyD8i3TGGkBPF757aCT-w36E6zvSer3r2KE"/>
     </application>
 </manifest>
