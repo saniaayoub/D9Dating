@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setTheme } from '../../../Redux/actions';
 import Header from '../../../Components/Header';
 import OTPModal from '../../../Components/otpModal/otpModal.js';
+import axiosconfig from '../../../provider/axios';
 // import OTPInputView from '@twotalltotems/react-native-otp-input';
 
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -28,11 +29,7 @@ const passRegex = new RegExp(
 const ForgetPassword = ({ navigation }) => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [validEmail, setValidEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [showPass, setshowPass] = useState(true);
   const [loader, setLoader] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [otp, setOtp] = useState();
@@ -42,6 +39,82 @@ const ForgetPassword = ({ navigation }) => {
   };
   const color = theme === 'dark' ? '#222222' : '#fff'
   const Textcolor = theme === 'dark' ? '#fff' : '#222222'
+
+  const Reset = () => {
+    var data = {
+      email: 'alex5325test@gmail.com',
+    }
+    setLoader(true);
+    axiosconfig
+      .post('forgot', data)
+      .then((res) => {
+        setLoader(false);
+        if (res.data.error) {
+          alert('invalid credentials')
+          console.log(res.data, 'invalid')
+
+        } else {
+          alert("email-verified", res)
+          console.log(res.data, 'email ')
+          setTimeout(() => {            
+            setModalVisible(!modalVisible)
+          }, 3000);
+          // navigation.navigate('VerifyEmail', {
+          //   email: email
+          // })
+        }
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err.response, 'aaa')
+        if (err.response.data.errors) {
+          for (const property in err.response.data.errors) {
+            alert(err.response.data.errors[property][0])
+            return
+          }
+        } else {
+          alert(err.response.data.message)
+        }
+      });
+  }
+  const OtpSubmit = () => {
+    var data = {
+      email: 'alex5325test@gmail.com',
+      token: '2505'
+    }
+    setLoader(true);
+    axiosconfig
+      .post('otp_password', data)
+      .then((res) => {
+        setLoader(false);
+        if (res.data.error) {
+          alert('invalid credentials')
+          console.log(res.data, 'invalid')
+
+        } else {
+          alert("email-verified", res)
+          console.log(res.data, 'email ')
+          setTimeout(() => {            
+            setModalVisible(!modalVisible)
+          }, 3000);
+          navigation.navigate('ChangePass')
+          
+        }
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err.response, 'aaa')
+        if (err.response.data.errors) {
+          for (const property in err.response.data.errors) {
+            alert(err.response.data.errors[property][0])
+            return
+          }
+        } else {
+          alert(err.response.data.message)
+        }
+      });
+  }
+ 
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: color }}>
@@ -77,23 +150,20 @@ const ForgetPassword = ({ navigation }) => {
               onChangeText={email => {
                 setEmail(email);
                 let valid = emailReg.test(email);
-                setEmailError('');
                 setValidEmail(valid);
               }}
               color={Textcolor}
               fontSize={moderateScale(14, 0.1)}
             />
-            {emailError ? (
-              <Text style={s.error}>{emailError}</Text>
-            ) : (
-              <Text> </Text>
-            )}
           </View>
 
 
           <View style={s.button}>
             <Button
-              onPress={() => { setModalVisible(!modalVisible)}}
+              onPress={() => {
+                Reset()
+               
+              }}
               size="sm"
               variant={'solid'}
               _text={{
@@ -148,17 +218,18 @@ const ForgetPassword = ({ navigation }) => {
           </Button>
         </View>
         {modalVisible ? (
-            <OTPModal
-               navigation={navigation}
-              modalVisible={modalVisible}
-              setModalVisible={setModalVisible}
-              // submit={submit}
-              setOtp={setOtp}
-              // loader={loader}
-            />
-          ) : (
-            <></>
-          )}
+          <OTPModal
+            navigation={navigation}
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            OtpSubmit={OtpSubmit}
+            screen={'Forgot'}
+            setOtp={setOtp}
+          // loader={loader}
+          />
+        ) : (
+          <></>
+        )}
       </View>
     </SafeAreaView>
   );

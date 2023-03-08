@@ -9,7 +9,7 @@ const InterRegular = 'Inter-Medium';
 const InterBold = 'Inter-ExtraBold';
 const Poppins = 'Poppins-Regular';
 
-const OTPModal = ({ loader, modalVisible, setModalVisible, submit, setOtp, navigation }) => {
+const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, setOtp, navigation,handleSubmit, OtpSubmit}) => {
   return (
     <Modal
       animationType="slide"
@@ -66,7 +66,14 @@ const OTPModal = ({ loader, modalVisible, setModalVisible, submit, setOtp, navig
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
               onPress={() =>
-                navigation.navigate('ChangePass')}
+               { if(screen=="register"){
+                 handleSubmit()
+                }
+                if(screen == "Forgot"){
+                  OtpSubmit()
+                // navigation.navigate('ChangePass')
+              }}
+                }
             >
               <Text style={s.btnText}>Send</Text>
             </Button>

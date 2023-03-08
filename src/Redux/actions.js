@@ -1,4 +1,4 @@
-import {SET_USER_TOKEN, SET_THEME, ADD_USERS} from './Constants';
+import {SET_USER_TOKEN, SET_THEME, ADD_USERS, LOCATION, DATE} from './Constants';
 
 export const setUserToken = value => {
   return {
@@ -20,3 +20,15 @@ export const addUsers = value => {
     payload: value,
   };
 };
+export const setLocation = value => {
+  return {
+    type: LOCATION,
+    payload: value,
+  };
+}
+export const setDate = value => {
+  return {
+    type: DATE,
+    payload: value,
+  };
+}

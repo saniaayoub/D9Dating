@@ -7,90 +7,100 @@ import {
   ToastAndroid,
   TouchableOpacity,
 } from 'react-native';
-import React, {useContext, useState, useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import s from './style';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/Fontisto';
-import {Input, FormControl, Button} from 'native-base';
-import {moderateScale} from 'react-native-size-matters';
+import { Input, FormControl, Button } from 'native-base';
+import { moderateScale } from 'react-native-size-matters';
 import Lock from '../../../assets/images/svg/lock.svg';
-import {setTheme, setUserToken} from '../../../Redux/actions';
-import {useSelector, useDispatch} from 'react-redux';
+import { setTheme, setUserToken } from '../../../Redux/actions';
+import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import socket from '../../../utils/socket';
-import dummyUsers from '../../../Components/Users/Users';
+import axiosconfig from '../../../provider/axios';
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const passRegex = new RegExp(
   '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
 );
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   const dispatch = useDispatch();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [submitted, setSubmitted] = useState();
+const [showPass, setshowPass] = useState('')
   const [validEmail, setValidEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [showPass, setshowPass] = useState(true);
   const [loader, setLoader] = useState(false);
   const theme = useSelector(state => state.reducer.theme);
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
 
-  const [loginId, setloginId] = useState(null);
+  const onSignInUser = () => {
+    console.log('submit');
+    setSubmitted(false);
+    let sub = false;
 
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const Login = () => {
-    console.log('abb');
-    socket.auth = {username: email};
-    socket.connect();
-  };
-
-  const login = () => {
-    console.log(dummyUsers, 'login');
-    const user = dummyUsers.find(
-      x => x.name == email && x.password == password,
-    );
-    console.log(user, 'fff');
-    if (user) {
-      storeData(JSON.stringify(user.id));
-      setTimeout(() => {
-        getData();
-      });
-    } else {
+    if (email == null || email == "") {
+      setSubmitted(true);
+      sub = true
+      return ;
+    }
+     if (password == null || password == "") {
+      setSubmitted(true);
+      sub = true;
+      return ;
+    }
+    setLoader(true);
+    var data = {
+      email: 'alex5325test@gmail.com',
+      password: 'admin123'
+    }
+    if (!sub) {
+      axiosconfig
+        .post('login', data)
+        .then((res) => {
+          console.log(res);
+          setLoader(false);
+          if (res.data.errors) {
+            for (const property in res.data.errors) {
+              alert(res.data.errors[property][0])
+              return
+            }
+          } else {
+             dispatch(setUserToken(res.data.access_token));
+            // storeData(res.data.token);
+          }
+        })
+        .catch(err => {
+          console.log(err.response);
+          alert(err.response.data.message)
+          setLoader(false);
+        });
+    }
+  }
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem('@auth_token', value);
+      context.setuserToken(value)
+    } catch (e) {
+      console.log(e, 'data store error');
     }
   };
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('id');
-      if (value != null) {
-        setloginId(value);
-        dispatch(setUserToken(loginId));
-      }
-    } catch (error) {}
-  };
-  const storeData = async value => {
-    try {
-      await AsyncStorage.setItem('id', value);
-    } catch (e) {}
-  };
+
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <View
         style={[
           s.container,
-          {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
+          { backgroundColor: theme === 'dark' ? '#222222' : '#fff' },
         ]}
       >
-        <View style={{width: '100%', alignItems: 'center'}}>
+        <View style={{ width: '100%', alignItems: 'center' }}>
           <View style={s.heading}>
-            <Text style={[s.headingText, {color: Textcolor}]}>
-              Sign <Text style={[s.headingText1, {color: Textcolor}]}>In</Text>
+            <Text style={[s.headingText, { color: Textcolor }]}>
+              Sign <Text style={[s.headingText1, { color: Textcolor }]}>In</Text>
             </Text>
           </View>
           <View style={s.input}>
@@ -112,18 +122,26 @@ const Login = ({navigation}) => {
               onChangeText={email => {
                 setEmail(email);
                 let valid = emailReg.test(email);
-                setEmailError('');
-                setValidEmail(valid);
               }}
               color={Textcolor}
               fontSize={moderateScale(14, 0.1)}
             />
-            {emailError ? (
-              <Text style={s.error}>{emailError}</Text>
-            ) : (
-              <Text> </Text>
-            )}
+
           </View>
+          {
+            submitted && (email == null || email == '') ? (
+              <>
+                <View style={{
+                  alignSelf:'flex-end',
+                  marginRight: moderateScale(35,0.1)
+                }}>
+                  <Text style={{
+                    color: 'red',
+                  }}>Required</Text>
+                </View>
+              </>
+            ) : null
+          }
           <View style={s.input}>
             <Input
               w={{
@@ -132,7 +150,7 @@ const Login = ({navigation}) => {
               }}
               variant="underlined"
               InputLeftElement={
-                <View style={[s.iconCircle, {borderColor: Textcolor}]}>
+                <View style={[s.iconCircle, { borderColor: Textcolor }]}>
                   <Icon2 name="locked" color={Textcolor} size={18} />
                 </View>
               }
@@ -141,7 +159,6 @@ const Login = ({navigation}) => {
               value={password}
               onChangeText={password => {
                 setPassword(password);
-                setPasswordError('');
               }}
               InputRightElement={
                 password ? (
@@ -158,17 +175,25 @@ const Login = ({navigation}) => {
                   <></>
                 )
               }
-              errorMessage={passwordError}
               color={Textcolor}
               fontSize={moderateScale(14, 0.1)}
-              secureTextEntry={showPass}
             />
-            {passwordError ? (
-              <Text style={s.error}>{passwordError}</Text>
-            ) : (
-              <Text> </Text>
-            )}
+
           </View>
+          {
+            submitted && (password == null || password == '') ? (
+              <>
+                <View style={{
+                  alignSelf:'flex-end',
+                  marginRight: moderateScale(35,0.1)
+                }}>
+                  <Text style={{
+                    color: 'red',
+                  }}>Required</Text>
+                </View>
+              </>
+            ) : null
+          }
 
           <View style={s.button}>
             <Button
@@ -183,10 +208,8 @@ const Login = ({navigation}) => {
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
               onPress={async () => {
-                await AsyncStorage.setItem('username', email);
-                Login();
-                console.log(email, 'user');
-                dispatch(setUserToken('sania'));
+                onSignInUser()
+                // dispatch(setUserToken('sania'));
               }}
             >
               <Text style={s.btnText}>Login</Text>
@@ -199,9 +222,9 @@ const Login = ({navigation}) => {
               variant={'link'}
               onPress={() => navigation.navigate('ForgetPassword')}
             >
-              <View style={{flexDirection: 'row'}}>
-                <Text style={[s.forgetPass, {color: '#FFD700'}]}>Forgot </Text>
-                <Text style={[s.forgetPass, {color: Textcolor}]}>
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={[s.forgetPass, { color: '#FFD700' }]}>Forgot </Text>
+                <Text style={[s.forgetPass, { color: Textcolor }]}>
                   Password?
                 </Text>
               </View>
@@ -218,12 +241,12 @@ const Login = ({navigation}) => {
             }}
             onPress={() => navigation.navigate('Register')}
           >
-            <View style={{flexDirection: 'row'}}>
-              <Text style={[s.forgetPass, {color: Textcolor}]}>
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={[s.forgetPass, { color: Textcolor }]}>
                 Don’t Have an Account?
               </Text>
               <Text
-                style={[s.forgetPass, {fontWeight: '700', color: '#FFD700'}]}
+                style={[s.forgetPass, { fontWeight: '700', color: '#FFD700' }]}
               >
                 {' '}
                 Sign up Now!
@@ -241,17 +264,17 @@ const Login = ({navigation}) => {
               <Text
                 style={[
                   s.forgetPass,
-                  {color: Textcolor, textDecorationLine: 'underline'},
+                  { color: Textcolor, textDecorationLine: 'underline' },
                 ]}
               >
                 Privacy Policy
               </Text>
             </TouchableOpacity>
-            <Text style={[s.forgetPass, {textDecorationLine: 'none'}]}>
+            <Text style={[s.forgetPass, { textDecorationLine: 'none' }]}>
               {'  '}&{'  '}
             </Text>
             <TouchableOpacity>
-              <Text style={[s.forgetPass, {textDecorationLine: 'underline'}]}>
+              <Text style={[s.forgetPass, { textDecorationLine: 'underline' }]}>
                 Terms & conditions
               </Text>
             </TouchableOpacity>

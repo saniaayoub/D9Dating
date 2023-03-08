@@ -9,17 +9,21 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import {setLocation} from '../../../Redux/actions';
+import {useSelector, useDispatch} from 'react-redux';
 import { Marker } from "react-native-maps";
 import MapView from "react-native-maps";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import Geolocation from '@react-native-community/geolocation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import Geocoder from 'react-native-geocoding';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const App = () => {
+  const dispatch = useDispatch();
   const mapRef = useRef()
   const [markerPosition, setMarkerPosition] = useState({
     latitude: 37.78825,
@@ -33,19 +37,20 @@ const App = () => {
   });
 
   const onMapRegionChange = (newRegion) => {
+    console.log(newRegion, 'new region');
     setMapCenter(newRegion);
   };
 
   const onMarkerDragEnd = (event) => {
     setMarkerPosition(event.nativeEvent.coordinate);
   };
-  // const [position, setPosition] = useState({
-  //   latitude: 24.946218,
-  //   longitude:  67.005615,
-  //   latitudeDelta: 0.0922,
-  //   longitudeDelta: 0.0421,
-  // });
-
+  const [position, setPosition] = useState({
+    latitude: 24.946218,
+    longitude:  67.005615,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+  Geocoder.init('AIzaSyD8i3TGGkBPF757aCT-w36E6zvSer3r2KE');
 
   // useEffect(() => {
   //   Geolocation.getCurrentPosition((pos) => {
@@ -63,13 +68,28 @@ const App = () => {
     // setPosition(details.geometry.location);
     // setMarker(details.geometry.location);
   };
+  // const getCityName = async (coordinate) => {
+  //   const { latitude, longitude } = coordinate;
+  //   try {
+  //     const response = await Geocoder.from(latitude, longitude);
+  //     const address = response.results[0].address_components;
+  //     for (let i = 0; i < address.length; i++) {
+  //       if (address[i].types.includes('locality')) {
+  //         return address[i].long_name;
+          
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <View style={styles.container}>
-      <MapView
+      {/* <MapView
         style={styles.map}
+        ref={mapRef}
         initialRegion={mapCenter}
-        
         onRegionChange={onMapRegionChange}
       >
         <Marker
@@ -77,8 +97,8 @@ const App = () => {
           coordinate={markerPosition}
           onDragEnd={onMarkerDragEnd}
         />
-      </MapView>
-      {/* <MapView
+      </MapView> */}
+      <MapView
       style={styles.map}
       initialRegion={position}
       showsUserLocation={true}
@@ -94,9 +114,16 @@ const App = () => {
        title='Yor are here'
        description='current Location'
        draggable
-       onDragEnd = { e => alert(JSON.stringify(e.nativeEvent.coordinate,))}
+       onDragEnd = { e => {
+        const coordinate = (JSON.stringify(e.nativeEvent.coordinate))
+        dispatch(setLocation(coordinate))
+        // getCityName(coordinate)
+        alert(coordinate)
+        // const city = getCityName(JSON.stringify(e.nativeEvent.coordinate,))
+        // console.log(city,'city')
+      }}
        />
-       </MapView> */}
+       </MapView>
 
       <View style={{ position: 'absolute', top: 10, width: '100%' }}>
         <GooglePlacesAutocomplete
