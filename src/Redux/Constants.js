@@ -4,3 +4,4 @@ export const ADD_USERS = 'ADD_USERS';
 export const LOCATION = 'LOCATION';
 export const DATE = 'DATE';
 
+export const SET_USER_DATA = 'SET_USER_DATA';

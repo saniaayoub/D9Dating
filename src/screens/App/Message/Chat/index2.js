@@ -84,9 +84,10 @@ const Chat = ({navigation, route}) => {
   const [message, setMessage] = useState('');
   const [user, setUser] = useState('');
   const [refresh, setRefresh] = useState(true);
-
+  const users = useSelector(state => state.reducer.users);
   //👇🏻 Access the chatroom's name and id
-  const {name, id, userImage} = route.params;
+  const {username, userID} = route.params;
+  // console.log(route.params, ' route.params');
 
   //👇🏻 This function gets the username saved on AsyncStorage
   const getUsername = async () => {
@@ -101,11 +102,11 @@ const Chat = ({navigation, route}) => {
   };
 
   //👇🏻 Sets the header title to the name chatroom's name
-  useLayoutEffect(() => {
-    getUsername();
-    socket.emit('findRoom', id);
-    socket.on('foundRoom', roomChats => setChatMessages(roomChats));
-  }, []);
+  // useLayoutEffect(() => {
+  //   // getUsername();
+  //   // socket.emit('findRoom', id);
+  //   // socket.on('foundRoom', roomChats => setChatMessages(roomChats));
+  // }, []);
 
   /*👇🏻 
         This function gets the time the user sends a message, then 
@@ -122,19 +123,46 @@ const Chat = ({navigation, route}) => {
       new Date().getMinutes() < 10
         ? `0${new Date().getMinutes()}`
         : `${new Date().getMinutes()}`;
+    let content = message;
+    if (userID) {
+      socket.emit('private message', {
+        content,
+        to: userID,
+        timestamp: {hour, mins},
+      });
+      setChatMessages([
+        {
+          message,
+          fromSelf: true,
+          time: `${hour}:${mins}`,
+        },
+        ...chatMessages,
+      ]);
+      console.log('sent', {
+        message,
+        fromSelf: true,
+      });
+      setMessage('');
 
-    console.log({
-      message,
-      user,
-      timestamp: {hour, mins},
-    });
-    socket.emit('newMessage', {
-      message,
-      room_id: id,
-      user,
-      timestamp: {hour, mins},
-    });
-    setMessage('');
+      // this.selectedUser.messages.push({
+      //   content,
+      //   fromSelf: true,
+      // });
+    }
+
+    // console.log({
+    //   message,
+    //   user,
+    //   timestamp: {hour, mins},
+    // });
+    // socket.emit('newMessage', {
+    //   message,
+    //   room_id: id,
+    //   user,
+    //   timestamp: {hour, mins},
+    // });
+    // setMessage('');
+    // socket.on('foundRoom', roomChats => setChatMessages(roomChats));
   };
 
   const [msg, setMsg] = useState([]);
@@ -152,15 +180,48 @@ const Chat = ({navigation, route}) => {
   //   const senderId = Math.floor(Math.random() * 100);
   //   console.log(senderId);
 
-  //   useEffect(() => {
-  //     getValueFunction();
-  //   }, []);
+  useEffect(() => {
+    // getValueFunction();
+    socket.on('private message', ({content, from, time}) => {
+      console.log(content, 'recieve');
+      console.log('');
+      if (from === userID) {
+        console.log('from', from, 'useriD', userID, chatMessages);
+        setChatMessages(chatMessages => [
+          {
+            message: content,
+            fromSelf: false,
+            time: time,
+          },
+          ...chatMessages,
+        ]);
+      }
+      // for (let i = 0; i < users.length; i++) {
+      //   const user = users[i];
+      //   if (user.userID === from) {
+      //     setChatMessages([
+      //       ...chatMessages,
+      //       {
+      //         content,
+      //         fromSelf: false,
+      //       },
+      //     ]);
+
+      //     if (user.username !== username) {
+      //       user.hasNewMessages = true;
+      //     }
+      //     break;
+      //   }
+      // }
+    });
+  }, []);
 
   //   const idd = route.params.id;
   //   console.log(idd, 'idd');
-  useEffect(() => {
-    socket.on('foundRoom', roomChats => setChatMessages(roomChats));
-  }, [socket]);
+  // useEffect(() => {
+  //   socket.emit('findRoom', id);
+  //   socket.on('foundRoom', roomChats => setChatMessages(roomChats));
+  // }, [socket]);
 
   //   const sendMessage = () => {
   //     if (input.trim() === '') return;
@@ -199,9 +260,9 @@ const Chat = ({navigation, route}) => {
     socket.emit('chat message');
   };
   const renderItem = elem => {
-    const status = elem?.item?.user?.toLowerCase() === user?.toLowerCase();
-    console.log(elem, 'elem', user, 'user');
-    console.log(status);
+    const status = elem?.item?.fromSelf;
+    // console.log(elem, 'elem', user, 'user');
+    // console.log(status);
 
     // if (elem?.item.to === uid) {
     return (
@@ -215,7 +276,7 @@ const Chat = ({navigation, route}) => {
         {!status ? (
           <View style={[s.dp]}>
             <Image
-              source={!status ? userImage : userData.userImage}
+              source={!status ? userData.userImage : userData.userImage}
               style={s.dp1}
               resizeMode={'cover'}
             />
@@ -230,9 +291,10 @@ const Chat = ({navigation, route}) => {
           ]}
         >
           <View style={status ? s.textFrom : s.textTo}>
-            <Text style={s.textSmall1}>{elem.item.text}</Text>
+            <Text style={s.textSmall1}>{elem.item.message}</Text>
             <Text style={[s.textSmall1, {textAlign: 'right'}]}>
-              {elem.item.time.toLocaleString([], {
+              {/* time */}
+              {elem?.item?.time?.toLocaleString([], {
                 hour: '2-digit',
                 minute: '2-digit',
               })}
@@ -242,7 +304,7 @@ const Chat = ({navigation, route}) => {
         {status ? (
           <View style={[s.dp]}>
             <Image
-              source={!status ? userImage : userData.userImage}
+              source={!status ? userData.userImage : userData.userImage}
               style={s.dp1}
               resizeMode={'cover'}
             />
@@ -306,10 +368,14 @@ const Chat = ({navigation, route}) => {
               }}
               style={s.dp}
             >
-              <Image source={userImage} style={s.dp1} resizeMode={'cover'} />
+              <Image
+                source={userData?.userImage}
+                style={s.dp1}
+                resizeMode={'cover'}
+              />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
-              <Text style={[s.name, {color: textColor}]}>{name}</Text>
+              <Text style={[s.name, {color: textColor}]}>{username}</Text>
 
               <Text style={s.textSmall}>Last Seen 5:52 PM</Text>
             </TouchableOpacity>

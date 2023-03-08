@@ -14,11 +14,12 @@ const styles = StyleSheet.create({
   dp: {
     flex: 'row',
   },
- 
+
   dp1: {
     width: '100%',
     height: '100%',
     borderRadius: moderateScale(106 / 2, 0.1),
+    backgroundColor: '#fff',
   },
   btnText: {
     fontFamily: Poppins,
