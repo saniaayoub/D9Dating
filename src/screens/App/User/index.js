@@ -8,15 +8,18 @@ import {
   ScrollView,
   PermissionsAndroid,
   Platform,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
-import {setTheme} from '../../../Redux/actions';
+import {setTheme, setUserData} from '../../../Redux/actions';
 import s from './style';
 import Header from '../../../Components/Header';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Inicon from 'react-native-vector-icons/Ionicons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+
 import img1 from '../../../assets/images/png/mydp.png';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -28,40 +31,65 @@ import {
   launchImageLibrary,
   showImagePicker,
 } from 'react-native-image-picker';
+import axiosconfig from '../../../Providers/axios';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useIsFocused} from '@react-navigation/native';
+import Loader from '../../../Components/Loader';
+import RNFS from 'react-native-fs';
 
 const Profile = ({navigation}) => {
   const dispatch = useDispatch();
+  const refRBSheet = useRef();
+  const isFocused = useIsFocused();
+  const userToken = useSelector(state => state.reducer.userToken);
+  const theme = useSelector(state => state.reducer.theme);
+  const color = theme === 'dark' ? '#222222' : '#fff';
+  const textColor = theme === 'light' ? '#000' : '#fff';
+  const color2 = theme === 'dark' ? '#2E2D2D' : '#fff';
+
   const [disable1, setDisable1] = useState(false);
   const [disable2, setDisable2] = useState(false);
   const [disable3, setDisable3] = useState(false);
   const [disable4, setDisable4] = useState(false);
   const [disable5, setDisable5] = useState(false);
   const [disable6, setDisable6] = useState(false);
+  let formData = {
+    id: '',
+    name: '',
+    last_name: '',
+    about_me: '',
+    email: '',
+    phone_number: '',
+    location: '',
+    gender: 'male',
+    month: '',
+    date: '',
+    image: '',
+  };
 
-  const refRBSheet = useRef();
-  const [filePath, setFilePath] = useState('');
-
-  const theme = useSelector(state => state.reducer.theme);
-  const color = theme === 'dark' ? '#222222' : '#fff';
-  const textColor = theme === 'light' ? '#000' : '#fff';
-  const color2 = theme === 'dark' ? '#2E2D2D' : '#fff';
-  const [gender, setGender] = useState('Female');
-
+  const [loader, setLoader] = useState(false);
+  const [form, setForm] = useState(formData);
+  const [dummyImage, setDummyImage] = useState(
+    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  );
   const [isSelected, setIsSelected] = useState([
     {
       id: 1,
       value: true,
       name: 'Male',
-      selected: gender == 'Male' ? true : false,
+      selected: form?.gender == 'male' ? true : false,
     },
     {
       id: 2,
       value: false,
       name: 'Female',
-      selected: gender == 'Female' ? true : false,
+      selected: form?.gender == 'female' ? true : false,
     },
   ]);
+
+  useEffect(() => {
+    getData();
+  }, [isFocused]);
 
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
@@ -70,20 +98,84 @@ const Profile = ({navigation}) => {
         : {...isSelectedItem, selected: false},
     );
     setIsSelected(updatedState);
-    setGender(item.name);
+    setForm({...form, gender: item.name});
+
     console.log(item.name);
   };
-  const formData = {
-    fname: '',
-    about: '',
-    email: '',
-    phone: '',
-    password: '',
-    location: '',
-    gender: '',
+
+  const showToast = msg => {
+    Alert.alert(msg);
+    // ToastAndroid.show(msg, ToastAndroid.LONG);
   };
 
-  useEffect(() => {}, []);
+  const getData = async () => {
+    setLoader(true);
+    axiosconfig
+      .get('user_view/2', {
+        headers: {
+          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5ODk1ZTI5Ni00NGE0LTQ3NGQtODk3Zi1mZTMxNDI4ZjM5Y2UiLCJqdGkiOiIwYzU5NDJjNWFlYzUwYmUxZjg5YjZmN2E1ZTM5OTcyYmUyMzA4NDNkMDE3M2Q1MmRkMmNjNDEwOWExOTQ4YjcyY2UyYzMyMTJiMTM3ZWRlYiIsImlhdCI6MTY3ODE2Nzk4MC42NTQ1NDMsIm5iZiI6MTY3ODE2Nzk4MC42NTQ1NDcsImV4cCI6MTcwOTc5MDM4MC42NDc4ODcsInN1YiI6IjIiLCJzY29wZXMiOltdfQ.bqK6MiDu6MDiBEnh671d45NWQp1rrmAokvyIQNHE7EKPMn9rvCC_O0M2SwYb6onSYFKGY8TffoGamovsIXPM1KYWgXg56m4zbv9gT1SXI0VjM3eTmlTbHngMp_IzM-tA1jOIRuqaLvf7gq_w2LJeP0iKQl87v2_XBrN-JvIzQcAS7VVYxFvIe_ayj15IXkC7XuTLqFm5mN99Ay92nSLM-WhXc0psoQQODr-it2L2aN69rxRxDta8_PIgD5Tfyf5oxrnG6w0wMhVW2SPI14pRmLJnvYNCRtOJL3aHWKqazpVdKfo_kROKHItSmcjH3BsaggKVirnG5SD44FapEt-qDvc11JM-fG8CMEugTarvNOw1y7_2yfxaC0ZomeFX5Si5rGA3Pq9ezmRFPMNEvmfQ0sXcKpNJ-bndYNscF36pK9F6huypxHwfZejwa4h-yCUSNV82gdpWGJJihxBf339OfV5h2xRkryDVeXlxQ96NGcBfn8YgMJ_jyz5NJGN4EIX0u3D3agnoxhSoWXILOgEg8jSnBdTffx_6br0yXa5y5fVt0EBiL_OBoWsLfrDHGqGs_QJhI6PGp6aq_8Pl1vfbkN2VMTIYSHh-DMgnlzBaN1ISs2knlAWLWizc7UUPlUnzkKrHq8v1n2T5qLg3ozMv_o-AOKJNfTQV-v-1aOP9kmI`,
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        if (res.data.user_details) {
+          setData(res.data.user_details);
+        }
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err.response);
+        showToast(err.response);
+      });
+  };
+
+  const setData = data => {
+    for (let item of Object.keys(formData)) {
+      // console.log(data[item]);
+      formData[item] = data[item];
+    }
+    setForm(formData);
+    // console.log(form);
+    dispatch(setUserData(formData));
+    setLoader(false);
+  };
+
+  const save = async () => {
+    setLoader(true);
+    await axiosconfig
+      .post('user_update', form, {
+        headers: {
+          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5ODk1ZTI5Ni00NGE0LTQ3NGQtODk3Zi1mZTMxNDI4ZjM5Y2UiLCJqdGkiOiIwYzU5NDJjNWFlYzUwYmUxZjg5YjZmN2E1ZTM5OTcyYmUyMzA4NDNkMDE3M2Q1MmRkMmNjNDEwOWExOTQ4YjcyY2UyYzMyMTJiMTM3ZWRlYiIsImlhdCI6MTY3ODE2Nzk4MC42NTQ1NDMsIm5iZiI6MTY3ODE2Nzk4MC42NTQ1NDcsImV4cCI6MTcwOTc5MDM4MC42NDc4ODcsInN1YiI6IjIiLCJzY29wZXMiOltdfQ.bqK6MiDu6MDiBEnh671d45NWQp1rrmAokvyIQNHE7EKPMn9rvCC_O0M2SwYb6onSYFKGY8TffoGamovsIXPM1KYWgXg56m4zbv9gT1SXI0VjM3eTmlTbHngMp_IzM-tA1jOIRuqaLvf7gq_w2LJeP0iKQl87v2_XBrN-JvIzQcAS7VVYxFvIe_ayj15IXkC7XuTLqFm5mN99Ay92nSLM-WhXc0psoQQODr-it2L2aN69rxRxDta8_PIgD5Tfyf5oxrnG6w0wMhVW2SPI14pRmLJnvYNCRtOJL3aHWKqazpVdKfo_kROKHItSmcjH3BsaggKVirnG5SD44FapEt-qDvc11JM-fG8CMEugTarvNOw1y7_2yfxaC0ZomeFX5Si5rGA3Pq9ezmRFPMNEvmfQ0sXcKpNJ-bndYNscF36pK9F6huypxHwfZejwa4h-yCUSNV82gdpWGJJihxBf339OfV5h2xRkryDVeXlxQ96NGcBfn8YgMJ_jyz5NJGN4EIX0u3D3agnoxhSoWXILOgEg8jSnBdTffx_6br0yXa5y5fVt0EBiL_OBoWsLfrDHGqGs_QJhI6PGp6aq_8Pl1vfbkN2VMTIYSHh-DMgnlzBaN1ISs2knlAWLWizc7UUPlUnzkKrHq8v1n2T5qLg3ozMv_o-AOKJNfTQV-v-1aOP9kmI`,
+        },
+      })
+      .then(res => {
+        console.log(res.data, 'message');
+        let message = res?.data?.messsage;
+        showToast(message);
+        dispatch(setUserData(form));
+        setLoader(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setLoader(false);
+        getData();
+        showToast(err.message);
+      });
+  };
+
+  const convertImage = async image => {
+    await RNFS.readFile(image, 'base64')
+      .then(res => {
+        let base64 = `data:image/png;base64,${res}`;
+        setForm({...form, image: base64});
+        save();
+      })
+      .catch(err => {
+        console.log(err);
+        showToast('Profile picture not updated');
+        setLoader(false);
+      });
+  };
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
@@ -153,7 +245,10 @@ const Profile = ({navigation}) => {
           alert(response.errorMessage);
           return;
         }
-        setFilePath(response.assets[0].uri);
+        let source = response;
+        console.log(source.assets[0].uri, 'uri');
+        // setFilePath(source.assets[0].uri);
+        convertImage(source.assets[0].uri);
         refRBSheet.current.close();
       });
     }
@@ -185,9 +280,9 @@ const Profile = ({navigation}) => {
       } else {
         let source = res;
         console.log(source.assets[0].uri, 'uri');
-        setFilePath(source.assets[0].uri);
+        // setFilePath(source.assets[0].uri);
+        convertImage(source.assets[0].uri);
 
-        console.log(filePath, 'filepath');
         refRBSheet.current.close();
       }
     });
@@ -195,13 +290,14 @@ const Profile = ({navigation}) => {
 
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
+      {loader ? <Loader /> : null}
       <Header navigation={navigation} />
       <ScrollView
         contentContainerStyle={[s.container, {backgroundColor: color}]}
       >
         <View style={s.dp}>
           <Image
-            source={filePath ? {uri: filePath} : img1}
+            source={{uri: form?.image ? form?.image : dummyImage}}
             style={s.dp1}
             resizeMode={'cover'}
           />
@@ -220,7 +316,7 @@ const Profile = ({navigation}) => {
         </View>
 
         <View style={s.username}>
-          <Text style={[s.textBold, {color: textColor}]}>Julie Watson</Text>
+          <Text style={[s.textBold, {color: textColor}]}>{form?.name}</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
             <Inicon
               name={'settings-sharp'}
@@ -268,6 +364,10 @@ const Profile = ({navigation}) => {
               isFocused={disable1}
               placeholder="Full Name"
               placeholderTextColor={textColor}
+              value={form?.name}
+              onChangeText={text => {
+                setForm({...form, name: text});
+              }}
             />
           </View>
           <View style={s.input}>
@@ -307,6 +407,10 @@ const Profile = ({navigation}) => {
               isFocused={disable2}
               placeholder="About Me"
               placeholderTextColor={textColor}
+              value={form?.about_me}
+              onChangeText={text => {
+                setForm({...form, about_me: text});
+              }}
             />
           </View>
           <View style={s.input}>
@@ -347,6 +451,10 @@ const Profile = ({navigation}) => {
               keyboardType="email-address"
               placeholder="Email"
               placeholderTextColor={textColor}
+              value={form?.email}
+              onChangeText={text => {
+                setForm({...form, email: text});
+              }}
             />
           </View>
           <View style={s.input}>
@@ -386,9 +494,13 @@ const Profile = ({navigation}) => {
               placeholder="Phone"
               keyboardType="numeric"
               placeholderTextColor={textColor}
+              value={form?.phone_number}
+              onChangeText={text => {
+                setForm({...form, phone_number: text});
+              }}
             />
           </View>
-          {/* <View style={s.input}>
+          <View style={s.input}>
             <Input
               w="100%"
               variant="underlined"
@@ -396,8 +508,8 @@ const Profile = ({navigation}) => {
               fontSize={moderateScale(12, 0.1)}
               InputLeftElement={
                 <View style={s.icon}>
-                  <Icon
-                    name={'lock'}
+                  <Fontisto
+                    name={'date'}
                     size={moderateScale(20, 0.1)}
                     solid
                     color={textColor}
@@ -424,11 +536,14 @@ const Profile = ({navigation}) => {
 
               isReadOnly={!disable5}
               isFocused={disable5}
-              placeholder="Password"
-              secureTextEntry
+              placeholder="Date of Birth"
               placeholderTextColor={textColor}
+              value={form?.date}
+              onChangeText={text => {
+                setForm({...form, date: text});
+              }}
             />
-          </View> */}
+          </View>
           <View style={s.input}>
             <Input
               w="100%"
@@ -466,6 +581,10 @@ const Profile = ({navigation}) => {
               isFocused={disable6}
               placeholder="Location"
               placeholderTextColor={textColor}
+              value={form?.location}
+              onChangeText={text => {
+                setForm({...form, location: text});
+              }}
             />
           </View>
           <View style={s.radioInput}>

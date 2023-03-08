@@ -16,9 +16,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {addUsers} from '../Redux/actions';
 const Poppins = 'Poppins-Regular';
 const PoppinsBold = 'Poppins-Bold';
-
 const Users = [
   {
     id: 1,
@@ -91,30 +91,41 @@ const UserListModal = ({
   navigation,
   handleCreateRoom,
 }) => {
+  const dispatch = useDispatch();
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [searchText, setSearchText] = useState('');
   const [searchedList, setSearchedList] = useState([]);
+  const users = useSelector(state => state.reducer.users);
+
   const [user, setUser] = useState('');
-  const [users, setUsers] = useState([]);
+  // const [users, setUsers] = useState([]);
   const handleCancel = () => {
     clearData();
   };
   useEffect(() => {
-    getUsername();
+    // getUsername();
+    filterUser();
   }, []);
   const clearData = () => {
     setSearchedList([]);
     setSearchText('');
   };
 
-  const filterUser = value => {
-    let temp = Users.filter(
-      elem => elem.from.toLowerCase() != value.toLowerCase(),
-    );
-    console.log(temp);
-    setUsers(temp);
+  const filterUser = () => {
+    // let temp = users.filter(
+    //   elem => elem.from.toLowerCase() != value.toLowerCase(),
+    // );
+    // console.log(temp);
+    let temp = users.filter(elem => {
+      if (!elem.self) {
+        return elem;
+      }
+    });
+    console.log(temp, 'temp');
+    // setUsers(temp);
+    dispatch(addUsers(temp));
   };
   const getUsername = async () => {
     try {
@@ -141,6 +152,7 @@ const UserListModal = ({
   };
 
   const renderItem = (elem, i) => {
+    console.log(elem);
     return (
       <TouchableOpacity
         style={styles.card}
@@ -149,21 +161,21 @@ const UserListModal = ({
           //   navigation.navigate('Chat', elem.item);
         }}
       >
-        <View style={styles.dp}>
+        {/* <View style={styles.dp}>
           <Image
             source={elem.item.userImage}
             style={styles.dp1}
             resizeMode={'cover'}
           />
-        </View>
+        </View> */}
         <View>
           <View>
             <Text style={[styles.name, {color: textColor}]}>
-              {elem?.item?.from}
+              {elem?.item?.username}
             </Text>
           </View>
           <Text style={[styles.textSmall, {color: '#787878'}]}>
-            {elem?.item?.id}
+            {elem?.item?.userID}
           </Text>
         </View>
       </TouchableOpacity>

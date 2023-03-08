@@ -8,9 +8,8 @@ import {
 } from 'react-native';
 import React, {useEffect, useState, useLayoutEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {addUsers} from '../../../Redux/actions';
 import {moderateScale} from 'react-native-size-matters';
-import {setTheme} from '../../../Redux/actions';
+import {setTheme, addUsers} from '../../../Redux/actions';
 import s from './style';
 import Header from '../../../Components/Header';
 import {FlatList} from 'react-native';
@@ -20,112 +19,112 @@ import {ScrollView} from 'react-native';
 import socket from '../../../utils/socket';
 import UserListModal from '../../../Components/userListModal';
 
-const rooms = [
-  {
-    id: '1',
-    name: 'Julie Watson',
-    userImage: require('../../../assets/images/png/mydp.png'),
-    messages: [
-      {
-        id: '1a',
-        text: 'Hello guys, welcome!',
-        time: '07:50',
-        user: 'Julie Watson',
-      },
-      {
-        id: '1b',
-        text: 'Hi Tomer, thank you! 😇',
-        time: '08:50',
-        user: 'Emily',
-      },
-    ],
-  },
-  {
-    id: '2',
-    name: 'John Smith',
-    userImage: require('../../../assets/images/png/u7.png'),
-    messages: [
-      {
-        id: '2a',
-        text: "Guys, who's awake? 🙏🏽",
-        time: '12:50',
-        user: 'John Smith',
-      },
-      {
-        id: '2b',
-        text: "What's up? 🧑🏻‍💻",
-        time: '03:50',
-        user: 'Emily',
-      },
-    ],
-  },
-];
+// const rooms = [
+//   {
+//     id: '1',
+//     name: 'Julie Watson',
+//     userImage: require('../../../assets/images/png/mydp.png'),
+//     messages: [
+//       {
+//         id: '1a',
+//         text: 'Hello guys, welcome!',
+//         time: '07:50',
+//         user: 'Julie Watson',
+//       },
+//       {
+//         id: '1b',
+//         text: 'Hi Tomer, thank you! 😇',
+//         time: '08:50',
+//         user: 'Emily',
+//       },
+//     ],
+//   },
+//   {
+//     id: '2',
+//     name: 'John Smith',
+//     userImage: require('../../../assets/images/png/u7.png'),
+//     messages: [
+//       {
+//         id: '2a',
+//         text: "Guys, who's awake? 🙏🏽",
+//         time: '12:50',
+//         user: 'John Smith',
+//       },
+//       {
+//         id: '2b',
+//         text: "What's up? 🧑🏻‍💻",
+//         time: '03:50',
+//         user: 'Emily',
+//       },
+//     ],
+//   },
+// ];
 
-const messages = [
-  {
-    id: 1,
-    from: 'Julie Watson',
-    text: 'Awesome',
-    time: 'Now',
-    userImage: require('../../../assets/images/png/mydp.png'),
-  },
-  {
-    id: 2,
-    from: 'John Smith',
-    text: 'Sent a Voice Message',
-    time: '10:00pm',
-    userImage: require('../../../assets/images/png/u7.png'),
-  },
-  {
-    id: 3,
-    from: 'Julie Watson',
-    text: 'Thanks a lot',
-    time: 'Friday',
-    userImage: require('../../../assets/images/png/u1.png'),
-  },
-  {
-    id: 4,
-    from: 'Julie Watson',
-    text: 'Are You Busy',
-    time: 'Monday',
-    userImage: require('../../../assets/images/png/u2.png'),
-  },
-  {
-    id: 5,
-    from: 'John Smith',
-    text: 'Nice',
-    time: 'Last Week',
-    userImage: require('../../../assets/images/png/u4.png'),
-  },
-  {
-    id: 6,
-    from: 'John Smith',
-    text: 'Lunch Today',
-    time: 'Last Week',
-    userImage: require('../../../assets/images/png/u5.png'),
-  },
-  {
-    id: 7,
-    from: 'Julie Watson',
-    text: 'Welcome',
-    time: 'Now',
-    userImage: require('../../../assets/images/png/u6.png'),
-  },
-  {
-    id: 8,
-    from: 'John Smith',
-    text: 'Lunch Today',
-    time: 'Last Week',
-    userImage: require('../../../assets/images/png/u5.png'),
-  },
-  {
-    id: 9,
-    from: 'Julie Watson',
-    text: 'Welcome',
-    time: 'Now',
-    userImage: require('../../../assets/images/png/u6.png'),
-  },
-];
+// const messages = [
+//   {
+//     id: 1,
+//     from: 'Julie Watson',
+//     text: 'Awesome',
+//     time: 'Now',
+//     userImage: require('../../../assets/images/png/mydp.png'),
+//   },
+//   {
+//     id: 2,
+//     from: 'John Smith',
+//     text: 'Sent a Voice Message',
+//     time: '10:00pm',
+//     userImage: require('../../../assets/images/png/u7.png'),
+//   },
+//   {
+//     id: 3,
+//     from: 'Julie Watson',
+//     text: 'Thanks a lot',
+//     time: 'Friday',
+//     userImage: require('../../../assets/images/png/u1.png'),
+//   },
+//   {
+//     id: 4,
+//     from: 'Julie Watson',
+//     text: 'Are You Busy',
+//     time: 'Monday',
+//     userImage: require('../../../assets/images/png/u2.png'),
+//   },
+//   {
+//     id: 5,
+//     from: 'John Smith',
+//     text: 'Nice',
+//     time: 'Last Week',
+//     userImage: require('../../../assets/images/png/u4.png'),
+//   },
+//   {
+//     id: 6,
+//     from: 'John Smith',
+//     text: 'Lunch Today',
+//     time: 'Last Week',
+//     userImage: require('../../../assets/images/png/u5.png'),
+//   },
+//   {
+//     id: 7,
+//     from: 'Julie Watson',
+//     text: 'Welcome',
+//     time: 'Now',
+//     userImage: require('../../../assets/images/png/u6.png'),
+//   },
+//   {
+//     id: 8,
+//     from: 'John Smith',
+//     text: 'Lunch Today',
+//     time: 'Last Week',
+//     userImage: require('../../../assets/images/png/u5.png'),
+//   },
+//   {
+//     id: 9,
+//     from: 'Julie Watson',
+//     text: 'Welcome',
+//     time: 'Now',
+//     userImage: require('../../../assets/images/png/u6.png'),
+//   },
+// ];
 
 const Message = ({navigation}) => {
   const dispatch = useDispatch();
@@ -135,23 +134,48 @@ const Message = ({navigation}) => {
   const users = useSelector(state => state.reducer.users);
   const [modalVisible, setModalVisible] = useState(false);
   const [rooms, setRooms] = useState([]);
-
+  const [user, setUser] = useState('');
   useEffect(() => {
-    socket.on('roomsList', rooms => {
-      setRooms(rooms);
-      console.log(rooms);
+    // socket.on('roomsList', rooms => {
+    //   setRooms(rooms);
+    //   console.log(rooms);
+    // });
+    socket.on('users', users => {
+      users.forEach(user => {
+        user.self = user.userID === socket.id;
+        setUser(user);
+        console.log(user, 'yourself');
+      });
+      // put the current user first, and then sort by username
+      let temp = users.sort((a, b) => {
+        if (a.self) return -1;
+        if (b.self) return 1;
+        if (a.username < b.username) return -1;
+        return a.username > b.username ? 1 : 0;
+      });
+      dispatch(addUsers(temp));
+      console.log('userss', temp);
     });
-  }, []);
+    socket.on('user connected', user => {
+      dispatch(addUsers([...users, user]));
+    });
 
-  useLayoutEffect(() => {
-    function fetchGroups() {
-      fetch('http://localhost:3000/api')
-        .then(res => console.error(res, 'here1'))
-        .then(data => setRooms(data))
-        .catch(err => console.error(err, 'here'));
-    }
-    fetchGroups();
-  }, []);
+    socket.on('connect_error', err => {
+      if (err.message === 'invalid username') {
+        // usernameAlreadySelected = false;
+      }
+    });
+  }, [socket]);
+
+  // useLayoutEffect(() => {
+  //   function fetchGroups() {
+  //     fetch('http://localhost:3000/api')
+  //       .then(res => console.error(res, 'here1'))
+  //       .then(data => setRooms(data))
+  //       .catch(err => console.error(err, 'here'));
+  //   }
+  //   fetchGroups();
+  // }, []);
   // const filterUser = () => {
   //   let temp;
   //   temp = users.filter(user => user.self === false);
@@ -170,16 +194,23 @@ const Message = ({navigation}) => {
   //   console.log(temp, 'temp');
   //   dispatch(addUsers(temp));
   // };
+  
   const handleCreateRoom = user => {
-    console.log(user.from);
-    // let checkExist = rooms.map(elem => {
+    navigation.navigate('Chat', user);
+    setModalVisible(!modalVisible);
+    // console.log(user.from);
+    // let checkExist = false;
+    // rooms.map(elem => {
     //   if (elem.name === user.from) {
-    //     return true;
+    //     checkExist = elem.name === user.from;
+    //     navigation.navigate('Chat', elem);
+    //     setModalVisible(!modalVisible);
     //   }
     // });
-    // console.log(checkExist);
-    socket.emit('createRoom', user.from);
-    setModalVisible(!modalVisible);
+    // console.log(checkExist, 'exist');
+    // if (!checkExist) {
+    //   socket.emit('createRoom', user.from);
+    // }
   };
   const renderItem = (elem, i) => {
     return (
