@@ -17,7 +17,8 @@ import Inicon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Input, FormControl, Button} from 'native-base';
 import io from 'socket.io-client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 //  const socket = io('http://192.168.18.226');
 //     socket.connect();
 
@@ -72,7 +73,11 @@ const messages = [
 const Chat = ({navigation, route}) => {
   const [msg, setMsg] = useState([]);
   const [input, setInput] = useState('');
-  const [socket, setSocket] = useState(io('http://192.168.18.226:3000'));
+  const [socket, setSocket] = useState(
+    io('http://192.168.18.226:3000'),
+  );
+  socket.emit('join', { username: name });
+
 
   const dispatch = useDispatch();
   console.log(route.params);
@@ -89,20 +94,26 @@ const Chat = ({navigation, route}) => {
   console.log(recieverId, 'recieverId');
   let currDate = new Date();
   let hoursMin = currDate.getHours() + ':' + currDate.getMinutes();
-  console.log(hoursMin);
+  console.log(hoursMin)
+
+useEffect(() => {
+  console.log('usermm');
+  socket.emit('join', { username: name, id: recieverId });
+}, [])
+
+
   useEffect(() => {
     console.log('msg?');
     socket.on('receive message', message => {
       console.log(message, 'recieve');
       setMsg(prevMessages => [...prevMessages, message]);
     });
-    // console.log(text.text, "texxxy recived hua");
-    socket.on('show_notification', function (data) {
-      console.log('show_notification', data);
+    socket.on("show_notification", (data)=> {
+      console.log("show_notification", data);
     });
   }, []);
 
-  const sendMessage = () => {
+  const sendMessage = () => { 
     if (input.trim() === '') return;
     socket.emit('send message', {
       text: input,
