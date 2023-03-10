@@ -23,6 +23,8 @@ import {
   launchImageLibrary,
   showImagePicker,
 } from 'react-native-image-picker';
+import axiosconfig from '../../../provider/axios';
+
 // import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreatePost = ({navigation}) => {
@@ -65,7 +67,7 @@ const CreatePost = ({navigation}) => {
   ]);
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
   const color = theme === 'dark' ? '#222222' : '#fff';
-
+  const userToken = useSelector(state => state.reducer.userToken);
   const dispatch = useDispatch();
   const refRBSheet = useRef();
 
@@ -137,10 +139,28 @@ const CreatePost = ({navigation}) => {
           alert(response.errorMessage);
           return;
         }
-        setFilePath(response.assets[0].uri);
+         setFilePath(response.assets[0].uri);
+        convertImage(response.assets[0].uri)
         refRBSheet.current.close();
+        console.log(filePath, 'image')
       });
+      
     }
+  };
+
+  const convertImage = async image => {
+    await RNFS.readFile(image, 'base64')
+      .then(res => {
+        let base64 = `data:image/png;base64,${res}`;
+        // setFilePath(response.assets[0].uri);
+        setFilePath({...form, image: base64});
+        
+      })
+      .catch(err => {
+        console.log(err);
+        // showToast('Profile picture not updated');
+        setLoader(false);
+      });
   };
 
   const chooseFile = async type => {
@@ -170,12 +190,52 @@ const CreatePost = ({navigation}) => {
         let source = res;
         console.log(source.assets[0].uri, 'uri');
         setFilePath(source.assets[0].uri);
-
+        convertImage(source.assets[0].uri)
         console.log(filePath, 'filepath');
         refRBSheet.current.close();
       }
     });
   };
+  const onsubmit = () => {
+    console.log(userToken)
+    var data = {
+      image: filePath,
+      caption: caption,
+      privacy_option: story
+    }
+    // setLoader(true);
+    axiosconfig
+      .post('post_store', data,{
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then((res) => {
+        // setLoader(false);
+        if (res.data.error) {
+          alert(res.data.messsage)
+          console.log(res.data, 'invalid')
+
+        } else {
+          alert(res.data.messsage)
+          console.log(res, 'post')
+           navigation.navigate('Home')
+          
+        }
+      })
+      .catch(err => {
+        // setLoader(false);
+        console.log(err, 'aaa')
+        if (err.response.data.errors) {
+          for (const property in err.response.data.errors) {
+            alert(err.response.data.errors[property][0])
+            return
+          }
+        } else {
+          alert(err.response.data.message)
+        }
+      });
+  }
 
   return (
     <View
@@ -455,7 +515,7 @@ const CreatePost = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>onsubmit()}>
           <View style={[s.postBtn, {borderColor: Textcolor}]}>
             <Text style={[s.postTxt, {color: Textcolor}]}>Post</Text>
           </View>

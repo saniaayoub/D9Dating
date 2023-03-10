@@ -1,5 +1,4 @@
-import {SET_USER_TOKEN, SET_THEME, ADD_USERS, LOCATION, DATE} from './Constants';
-import {SET_USER_TOKEN, SET_THEME, ADD_USERS, SET_USER_DATA} from './Constants';
+import {SET_USER_TOKEN, SET_THEME, ADD_USERS, LOCATION, DATE, SET_USER_DATA, } from './Constants';
 
 const initialState = {
   userToken: null,
@@ -8,6 +7,8 @@ const initialState = {
   location: '',
   date : '',
   userData: {},
+  userPassword: ''
+  
 };
 
 const AppReducer = (state = initialState, action) => {
@@ -43,6 +44,7 @@ const AppReducer = (state = initialState, action) => {
         ...state,
         userData: action.payload,
       };
+
 
     default:
       return state;

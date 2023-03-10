@@ -9,10 +9,10 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import {setLocation} from '../../../Redux/actions';
-import {useSelector, useDispatch} from 'react-redux';
+import { setLocation } from '../../../Redux/actions';
+import { useSelector, useDispatch } from 'react-redux';
 import { Marker } from "react-native-maps";
-import MapView from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE, animateToRegion } from "react-native-maps";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import Geolocation from '@react-native-community/geolocation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -21,13 +21,18 @@ import Geocoder from 'react-native-geocoding';
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
+let LONGITUDE
+let LATITUDE
+
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const App = () => {
   const dispatch = useDispatch();
   const mapRef = useRef()
   const [markerPosition, setMarkerPosition] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
+    latitude: 24.946218,
+    longitude: 67.005615,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
   });
   const [mapCenter, setMapCenter] = useState({
     latitude: 37.78825,
@@ -38,7 +43,9 @@ const App = () => {
 
   const onMapRegionChange = (newRegion) => {
     console.log(newRegion, 'new region');
-    setMapCenter(newRegion);
+    setMarkerPosition(newRegion);
+    // dispatch(setLocation(newRegion))
+
   };
 
   const onMarkerDragEnd = (event) => {
@@ -46,23 +53,19 @@ const App = () => {
   };
   const [position, setPosition] = useState({
     latitude: 24.946218,
-    longitude:  67.005615,
+    longitude: 67.005615,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
   Geocoder.init('AIzaSyD8i3TGGkBPF757aCT-w36E6zvSer3r2KE');
 
-  // useEffect(() => {
-  //   Geolocation.getCurrentPosition((pos) => {
-  //     const crd = pos.coords;
-  //     setPosition({
-  //       latitude: crd.latitude,
-  //       longitude: crd.longitude,
-  //       latitudeDelta: 0.0421,
-  //       longitudeDelta: 0.0421,
-  //     });
-  //   })
-  // }, []);
+  useEffect(() => {
+    Geolocation.getCurrentPosition((pos) => {
+      const crd = pos.coords;
+      LATITUDE = crd.latitude
+      LONGITUDE = crd.longitude
+    })
+  }, []);
 
   const onPress = (data, details) => {
     // setPosition(details.geometry.location);
@@ -76,54 +79,75 @@ const App = () => {
   //     for (let i = 0; i < address.length; i++) {
   //       if (address[i].types.includes('locality')) {
   //         return address[i].long_name;
-          
+
   //       }
   //     }
   //   } catch (error) {
   //     console.log(error);
   //   }
   // };
+  function getLocation() {
+    Geolocation.getCurrentPosition(
+      //Will give you the current location
+      (position) => {
+        //getting the Longitude from the location json
+        const currentLongitude =
+          JSON.stringify(position.coords.longitude);
+        console.log(currentLongitude);
+        //getting the Latitude from the location json
+        const currentLatitude =
+          JSON.stringify(position.coords.latitude);
+        console.log(currentLatitude);
+        setMarkerPosition({
+          longitude: position.coords.longitude,
+          latitude: position.coords.latitude,
+          longitudeDelta: 0.0421,
+          latitudeDelta: 0.0922
+        })
 
+        console.log(markerPosition, 'current marker position');
+      }, (error) => alert(error.message), {
+      enableHighAccuracy: true, timeout: 20000, maximumAge: 1000
+    }
+    );
+
+  }
   return (
     <View style={styles.container}>
-      {/* <MapView
+      <MapView
         style={styles.map}
-        ref={mapRef}
-        initialRegion={mapCenter}
+        provider={PROVIDER_GOOGLE}
+        initialRegion={position}
+        showsUserLocation={true}
+        followsUserLocation={true}
+        showsCompass={true}
+        scrollEnabled={true}
+        zoomEnabled={true}
+        pitchEnabled={true}
         onRegionChange={onMapRegionChange}
-      >
+
+        rotateEnabled={true}>
         <Marker
           draggable
           coordinate={markerPosition}
-          onDragEnd={onMarkerDragEnd}
+          title='Yor are here'
+          description='current Location'
+
+          onPress={()=> {
+            console.log(markerPosition, 'before');
+            setMarkerPosition(position)
+            console.log(markerPosition, 'after');
+          }}
+          onDragEnd={e => {
+            const coordinate = (JSON.stringify(e.nativeEvent.coordinate))
+            dispatch(setLocation(coordinate))
+            // getCityName(coordinate)
+            alert(coordinate)
+            // const city = getCityName(JSON.stringify(e.nativeEvent.coordinate,))
+            // console.log(city,'city')
+          }}
         />
-      </MapView> */}
-      <MapView
-      style={styles.map}
-      initialRegion={position}
-      showsUserLocation={true}
-      followsUserLocation={true}
-      showsCompass={true}
-      scrollEnabled={true}
-      zoomEnabled={true}
-      pitchEnabled={true}
-      onRegionChangeComplete={()=>setPosition(position)}
-      rotateEnabled={true}>
-       <Marker
-       coordinate={position}
-       title='Yor are here'
-       description='current Location'
-       draggable
-       onDragEnd = { e => {
-        const coordinate = (JSON.stringify(e.nativeEvent.coordinate))
-        dispatch(setLocation(coordinate))
-        // getCityName(coordinate)
-        alert(coordinate)
-        // const city = getCityName(JSON.stringify(e.nativeEvent.coordinate,))
-        // console.log(city,'city')
-      }}
-       />
-       </MapView>
+      </MapView>
 
       <View style={{ position: 'absolute', top: 10, width: '100%' }}>
         <GooglePlacesAutocomplete

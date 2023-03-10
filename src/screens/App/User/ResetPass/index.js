@@ -4,6 +4,7 @@ import {
   View,
   ToastAndroid,
   TouchableOpacity,
+  Alert
 } from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import s from './style';
@@ -16,6 +17,8 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {setTheme} from '../../../../Redux/actions';
 import axiosconfig from '../../../../provider/axios';
 import Header from '../../../../Components/Header';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const passRegex = new RegExp(
@@ -27,13 +30,29 @@ const Resetpass = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [showPass, setshowPass] = useState(true);
   const [loader, setLoader] = useState(false);
+  const [storedPassword, setStorePassword] = useState('')
   const theme = useSelector(state => state.reducer.theme);
   const showToast = msg => {
     ToastAndroid.show(msg, ToastAndroid.LONG);
   };
   const color = theme === 'dark' ? '#222222' : '#fff';
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
+useEffect(() => {
+  getPassword()
+}, [])
 
+const getPassword = async()=>{
+ let  SP =  await AsyncStorage.getItem('password')
+ setStorePassword(SP)
+}
+const validate = ()=>{
+  if(password == storedPassword){
+    navigation.navigate('ChangePass')
+  }
+  else{
+    Alert.alert("Password Incorrect")
+  }
+}
   const onsubmit = () => {
     var data = {
       password: 'admin123' ,
@@ -135,7 +154,7 @@ const Resetpass = ({navigation}) => {
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
               onPress={() =>
-                onsubmit()
+                validate()
               }
             >
               <Text style={s.btnText}>Continue</Text>

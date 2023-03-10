@@ -30,7 +30,7 @@ const Login = ({ navigation }) => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [submitted, setSubmitted] = useState();
-const [showPass, setshowPass] = useState('')
+  const [showPass, setshowPass] = useState('')
   const [validEmail, setValidEmail] = useState('');
   const [loader, setLoader] = useState(false);
   const theme = useSelector(state => state.reducer.theme);
@@ -44,33 +44,33 @@ const [showPass, setshowPass] = useState('')
     if (email == null || email == "") {
       setSubmitted(true);
       sub = true
-      return ;
+      return;
     }
-     if (password == null || password == "") {
+    if (password == null || password == "") {
       setSubmitted(true);
       sub = true;
-      return ;
+      return;
     }
     setLoader(true);
     var data = {
-      email: 'alex5325test@gmail.com',
-      password: 'admin123'
+      email: email,
+      password: password
     }
+    console.log({data})
     if (!sub) {
       axiosconfig
         .post('login', data)
         .then((res) => {
-          console.log(res);
+          // console.log(res)
+          // alert(res?.data?.message);
+          AsyncStorage.setItem('password' , password)
+          AsyncStorage.setItem('userToken' , res?.data?.access_token)
+          console.log(res, 'Login data ')
+          dispatch(setUserToken(res?.data?.access_token));
           setLoader(false);
-          if (res.data.errors) {
-            for (const property in res.data.errors) {
-              alert(res.data.errors[property][0])
-              return
-            }
-          } else {
-             dispatch(setUserToken(res.data.access_token));
-            // storeData(res.data.token);
-          }
+
+          // setOnsubmit(true)
+
         })
         .catch(err => {
           console.log(err.response);
@@ -132,8 +132,8 @@ const [showPass, setshowPass] = useState('')
             submitted && (email == null || email == '') ? (
               <>
                 <View style={{
-                  alignSelf:'flex-end',
-                  marginRight: moderateScale(35,0.1)
+                  alignSelf: 'flex-end',
+                  marginRight: moderateScale(35, 0.1)
                 }}>
                   <Text style={{
                     color: 'red',
@@ -184,8 +184,8 @@ const [showPass, setshowPass] = useState('')
             submitted && (password == null || password == '') ? (
               <>
                 <View style={{
-                  alignSelf:'flex-end',
-                  marginRight: moderateScale(35,0.1)
+                  alignSelf: 'flex-end',
+                  marginRight: moderateScale(35, 0.1)
                 }}>
                   <Text style={{
                     color: 'red',
@@ -209,7 +209,7 @@ const [showPass, setshowPass] = useState('')
               alignItems={'center'}
               onPress={async () => {
                 onSignInUser()
-                // dispatch(setUserToken('sania'));
+                //  dispatch(setUserToken('eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5ODk1ZTI5Ni00NGE0LTQ3NGQtODk3Zi1mZTMxNDI4ZjM5Y2UiLCJqdGkiOiJhYjk3Mzk5YzA4MWQ0ZjdhNmIyNjJiNzM2OTg5YjQyYTBjMjY4ZTE5YzdkNDhkMmViNWQwMzhkYWVjNzAyY2M5MzdiZDY4OTBiMTdhNjY0NiIsImlhdCI6MTY3ODQyNDYwNC42OTczOTIsIm5iZiI6MTY3ODQyNDYwNC42OTczOTUsImV4cCI6MTcxMDA0NzAwNC42OTE3MTEsInN1YiI6IjMiLCJzY29wZXMiOltdfQ.FVxin8JM9tjUOMHO8RZIWCsUH-iqhgDSerZlr9cUfl95YrcRMpJFNOhHc4wWe84ydYCMGfJtAz1RU0pgvMVJmXsnThnTtQIC4A68JC_w_F6RCX3iO_OBoFt81KdWzUQSlulnJA351zn1dEf-S5sojm9vVnjWEqEAav81BdNuJu2h0x6Fpr94bw4NnvZtClxR1ZuOWv6LIEwFqMap0zHMExr9UljzlQ0QZ9BEcfXwPerp6SFCil9piRrSXoaGaz24O2VzgMG9qJq50n7IxaDTy8maToJEf_bbPHvJOhmmTQt7l2YVgmFynTKsVQpB8YgXj2kbi2mKLPEYQNwYELMGPmD2O0jL48rbO0kQgUC-JEQgrOByYf9Rq4QnNx5k6swELGe0IcXIqbjE4O7C9nc86ppO0lRJLgRYCgvwoxxiu2CJaHo60dRhBdyClRcNyO6cjRZaRqrB8z8oazD2grlA_O2mEBdc2vg7gNegJK1cUwUKTxkiwYtZ9NbKhVeKKlrDmHu6KkXCVSAX2_b3DxA-6uGbEJkDfLrQebe9qvcZ4JUC5pI0uG_VODQySOiFZGaMFuunMLGB63Vp-j9RZDiJZ_67fsiIc7dBVeTZMGbKzAuHU0j8spMXbsNGSf5eOEhkIqhm6Sz6U7sNz8G_kp7bPLWA8lZDPWa3ezmkYljPr08'));
               }}
             >
               <Text style={s.btnText}>Login</Text>

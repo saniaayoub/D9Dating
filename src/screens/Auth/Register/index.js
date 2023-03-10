@@ -25,7 +25,6 @@ import RadioButton from '../../../Components/Radio';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTheme } from '../../../Redux/actions';
 import Header from '../../../Components/Header';
-import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -108,6 +107,9 @@ const Register = ({ navigation }) => {
       ),
     },
   ]);
+  const [d,setD] = useState('');
+  const [m,setM]=useState('');
+  const [y,setY]=useState('');
   const { width, height } = Dimensions.get('window');
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
   const color = theme === 'dark' ? '#222222' : '#fff';
@@ -118,9 +120,7 @@ const Register = ({ navigation }) => {
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const userLocation = useSelector(state => state.reducer.location)
   const [location, setLocation] = useState(null);
-  const [d,setD] = useState('');
-  const [m,setM]=useState('');
-  const [y,setY]=useState('');
+
 
   useEffect(() => { }, []);
   const onRadioBtnClick = item => {
@@ -193,38 +193,27 @@ const Register = ({ navigation }) => {
     }
     axiosconfig.post('otp', data).then((res) => {
       // setLoader(false);
-      if (res?.data?.email[0]) {
-        alert(res?.data?.email[0]);
-        console.log(res.data)
-        setOnsubmit(true)
-
-        for (const property in res.data.errors) {
-          console.log(`${property}: ${res.data.errors[property]}`);
-          alert(res.data.errors[property])
-          return
-        }
-      } else {
+      if (res) {
+          alert(res?.data.messsage);
+          console.log(res, 'signup data ')
+          setTimeout(() => {
+            setModalVisible(!modalVisible)
+          }, 3000);
+         
+        // setOnsubmit(true)
+      } 
+      else {
         // navigation.navigate('Login')
-        console.log(res, 'signup data ')
+       console.log(res.data.messsage);
         alert(res.data.messsage)
-        setTimeout(() => {
-          setModalVisible(!modalVisible)
-        }, 3000);
+       
       }
       setLoader(false);
     }).catch(err => {
       // setLoader(false);
       console.log(err, 'errors');
-      // console.log(err.response.data.message)
-      // console.log(data, 'data');
-      if (err.response.data.errors) {
-        for (const property in err.response.data.errors) {
-          alert(err.response.data.errors[property][0])
-          return
-        }
-      } else {
-        alert(err.response.data.message)
-      }
+       console.log(err.response.data.messsage)
+       alert(err.response.data.messsage)
     });
   }
   const storeData = async (value) => {
@@ -242,7 +231,7 @@ const Register = ({ navigation }) => {
     var data = {
       name: fname,
       last_name: lastname,
-      email: 'alex5325test@gmail.com',
+      email: email,
       otp: otp,
       phone_number: phonenum.current.getValue(),
       gender: gender,
@@ -256,20 +245,13 @@ const Register = ({ navigation }) => {
     }
     axiosconfig.post('register', data).then((res) => {
       // setLoader(false);
-      if (res.data.email) {
-        alert(res.data.email[0]);
-        console.log(res.data)
-        setOnsubmit(true)
-
-        for (const property in res.data.errors) {
-          console.log(`${property}: ${res.data.errors[property]}`);
-          alert(res.data.errors[property])
-          return
-        }
-      } else {
-        // navigation.navigate('Login')
-        console.log(res, 'user register data')
+      if (res) {
+        console.log(res?.data.messsage, 'user register data')
         navigation.navigate('Login')
+        alert(res?.data.messsage);
+
+      } else {
+        console.log(res?.data.messsage, 'user register data')   
         alert(res.data.messsage)
 
       }
@@ -277,16 +259,9 @@ const Register = ({ navigation }) => {
     }).catch(err => {
       // setLoader(false);
       console.log(err, 'errors');
-      // console.log(err.response.data.message)
-      // console.log(data, 'data');
-      if (err.response.data.errors) {
-        for (const property in err.response.data.errors) {
-          alert(err.response.data.errors[property][0])
-          return
-        }
-      } else {
-        alert(err.response.data.message)
-      }
+       console.log(err.response.data.messsage)
+       alert(err.response?.data?.messsage)
+      
     });
   }
   // const context = useContext(AppContext)
@@ -297,23 +272,23 @@ const Register = ({ navigation }) => {
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
- let check 
- let month 
- let dateex 
- let year 
+  let check
+  let month
+  let dateex
+  let year
 
   const handleConfirm = (datee) => {
     console.warn("A date has been picked: ", datee);
-     check = moment(datee, 'YYYY/MM/DD');
-     month = check.format('M');
-     setM(month)
-     dateex = check.format('DD');
-     setD(dateex)
-     year = check.format('YYYY');
-     setY(year)
-    console.log(check,'date');
+    check = moment(datee, 'YYYY/MM/DD');
+    month = check.format('M');
+    dateex = check.format('DD');
+    year = check.format('YYYY');
+    console.log(check, 'date');
     console.log(month, 'month');
     console.log(dateex, 'dateeee');
+    setM(month)
+    setY(year)
+    setD(dateex)
     console.log(year, 'year');
     setDate(`${d}/${m}/${y}`);
     console.log(date, 'c date');
@@ -425,8 +400,8 @@ const Register = ({ navigation }) => {
                 </Text>
               </View>
               <View style={{ flex: 0.6 }}>
-         
-                 <TouchableOpacity onPress={() => showDatePicker()}>
+
+                <TouchableOpacity onPress={() => showDatePicker()}>
                   <View
                     style={{
                       flexDirection: 'row',
@@ -434,28 +409,28 @@ const Register = ({ navigation }) => {
                       marginTop: moderateScale(5, 0.1),
                     }}
                   >
-                    <View 
-                    style={[s.dateView, {
-                      borderBottomWidth: 1,
-                      borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
-                    }]}>
+                    <View
+                      style={[s.dateView, {
+                        borderBottomWidth: 1,
+                        borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
+                      }]}>
                       <Text style={[s.date, { color: Textcolor }]}>
-                       {date ? d : 'DD'}
+                        {date ? d : 'DD'}
                       </Text>
                     </View>
 
                     <View style={[s.dateView, {
-                       borderBottomWidth: 1,
-                       borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
+                      borderBottomWidth: 1,
+                      borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
                     }]}>
                       <Text style={[s.date, { color: Textcolor }]}>
                         {date ? m : 'month'}
                       </Text>
                     </View>
 
-                    <View style={[s.dateView, { 
-                       borderBottomWidth: 1,
-                       borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
+                    <View style={[s.dateView, {
+                      borderBottomWidth: 1,
+                      borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
                     }]}>
                       <Text style={[s.date, { color: Textcolor }]}>
                         {date ? y : 'Year'}
@@ -463,8 +438,8 @@ const Register = ({ navigation }) => {
                     </View>
                   </View>
                 </TouchableOpacity>
-               
-           
+
+
                 <DateTimePickerModal
                   isVisible={isDatePickerVisible}
                   mode="date"

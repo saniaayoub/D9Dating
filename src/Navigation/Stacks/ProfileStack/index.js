@@ -6,6 +6,7 @@ import Privacy from '../../../screens/App/User/Privacy';
 import Resetpass from '../../../screens/App/User/ResetPass';
 import About from '../../../screens/App/User/About/About';
 import ChangePass from '../../../screens/Auth/ChangePass';
+import Map from '../../../screens/Auth/Register/Map'
 const Stack = createStackNavigator();
 
 const ProfileStack = () => {
@@ -18,6 +19,8 @@ const ProfileStack = () => {
       <Stack.Screen name="ResetPass" component={Resetpass} />
       <Stack.Screen name="ChangePass" component={ChangePass} />
       <Stack.Screen name="About" component={About} />
+      <Stack.Screen name="Map" component={Map} />
+
 
 
 
