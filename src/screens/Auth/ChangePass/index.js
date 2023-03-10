@@ -31,6 +31,47 @@ const ChangePass = ({ navigation }) => {
     const color = theme === 'dark' ? '#222222' : '#fff';
     const Textcolor = theme === 'dark' ? '#fff' : '#222222';
     const userToken = useSelector(state => state.reducer.userToken);
+ 
+    const submit = () => {
+        var data = {
+          email: 'alex5325test@gmail.com',
+          password: password,
+          password_confirm : confirmPassword,
+          token: userToken
+        }
+        setLoader(true);
+        axiosconfig
+          .post('otp_password', data)
+          .then((res) => {
+            setLoader(false);
+            if (res.data.error) {
+              alert('invalid credentials')
+              console.log(res.data, 'invalid')
+    
+            } else {
+              alert("OTp verified", res)
+              console.log(res.data, 'email ')
+              setTimeout(() => {            
+                setModalVisible(!modalVisible)
+              }, 3000);
+              navigation.navigate('ChangePass')
+              
+            }
+          })
+          .catch(err => {
+            setLoader(false);
+            console.log(err.response, 'aaa')
+            if (err.response.data.errors) {
+              for (const property in err.response.data.errors) {
+                alert(err.response.data.errors[property][0])
+                return
+              }
+            } else {
+              alert(err.response.data.message)
+            }
+          });
+      }
+    
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color }}>
@@ -134,6 +175,7 @@ const ChangePass = ({ navigation }) => {
                         <Button
                             onPress={() => {
                                 alert('password changed successfully')
+                                submit()
                                 {
                                     userToken ? (
 

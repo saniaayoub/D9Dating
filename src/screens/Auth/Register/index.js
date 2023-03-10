@@ -13,6 +13,8 @@ import {
   Dimensions
 } from 'react-native';
 import React, { useRef, useState, useEffect } from 'react';
+import axiosconfig from '../../../provider/axios';
+import OTPModal from '../../../Components/otpModal/otpModal.js';
 import s from './style';
 import Feather from 'react-native-vector-icons/Feather';
 import { Input, Button, Radio, ListItem, Menu, Pressable, } from 'native-base';
@@ -29,35 +31,29 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MapView, { PROVIDER_GOOGLE, Marker, ProviderPropType } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
-
-
-
-const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-const passRegex = new RegExp(
-  '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
-);
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const Register = ({ navigation }) => {
   const dispatch = useDispatch();
   const phonenum = useRef();
-  const [fname, setFname] = useState('');
-  const [lastname, setLastname] = useState('');
-  const [email, setEmail] = useState('');
+  const [fname, setFname] = useState(null);
+  const [lastname, setLastname] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [phone, setPhone] = useState(null)
   const [disable, setDisable] = useState(false);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setPassword] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState(null);
   const [showPass, setshowPass] = useState(true);
-  const [showPasso, setshowPasso] = useState(true);
-  const [fnameErr, setFnameErr] = useState('');
-  const [emailErr, setEmailErr] = useState('');
-  const [passErr, setPassErr] = useState('');
-  const [conPassErr, setConPassErr] = useState('');
-  const [phNumErr, setPhNumErr] = useState('');
+  const [showConPass, setshowConPass] = useState(true);
   const [loader, setLoader] = useState(false);
-  // const [value, setValue] = React.useState('one');
+  const [isEmail, setIsEmail] = useState(false)
+  const [isPhone, setIsPhone] = useState(false)
+  const [onsubmit, setOnsubmit] = useState(false)
   const [gender, setGender] = useState('Female');
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(null);
   const [open, setOpen] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [otp, setOtp] = useState();
   const theme = useSelector(state => state.reducer.theme);
   const [icon, setIcon] = useState('globe');
   const [isSelected, setIsSelected] = useState([
@@ -80,7 +76,7 @@ const Register = ({ navigation }) => {
       selected: gender == 'Other' ? true : false,
     },
   ]);
-  const [group, setGroup] = useState('Group 1');
+  const [group, setGroup] = useState(null);
   const [value, setValue] = useState([
     {
       label: 'Public',
@@ -113,14 +109,18 @@ const Register = ({ navigation }) => {
     },
   ]);
   const { width, height } = Dimensions.get('window');
-
+  const Textcolor = theme === 'dark' ? '#fff' : '#222222';
+  const color = theme === 'dark' ? '#222222' : '#fff';
   const ASPECT_RATIO = width / height;
   const LATITUDE = 35.4828833;
   const LONGITUDE = -97.7593856;
   const LATITUDE_DELTA = 0.0922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-
-
+  const userLocation = useSelector(state => state.reducer.location)
+  const [location, setLocation] = useState(null);
+  const [d,setD] = useState('');
+  const [m,setM]=useState('');
+  const [y,setY]=useState('');
 
   useEffect(() => { }, []);
   const onRadioBtnClick = item => {
@@ -133,44 +133,192 @@ const Register = ({ navigation }) => {
     setGender(item.name);
     console.log(item.name);
   };
-  const handleConfirm = date => {
-    setDate(date);
-    setOpen(false);
-  };
 
-  var check = moment(date, 'YYYY/MM/DD');
 
-  var month = check.format('M');
-  var datee = check.format('DD');
-  var year = check.format('YYYY');
-
-  const Textcolor = theme === 'dark' ? '#fff' : '#222222';
-  const color = theme === 'dark' ? '#222222' : '#fff';
-
-  const mapRef = useRef()
-  const area = {
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  };
-  const [map, setMap] = useState(false)
-  const [region, setRegion] = useState(area)
-  const setArea = (e) => {
-    console.log(e);
-
-    setRegion(e)
-
+  const validateEmail = () => {
+    setIsEmail(false)
+    if (onsubmit) {
+      const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+      if (emailRegex.test(email)) {
+        setIsEmail(true);
+      }
+      else {
+        setIsEmail(false)
+      }
+    }
   }
-  const defaultState = () => {
+  const submit = () => {
+    setOnsubmit(true);
+    let sub = true
 
-    setRegion(area)
-    mapRef.current.animateToRegion(area);
-
+    if (fname == null) {
+      sub = false
+      return false
+    }
+    if (lastname == null) {
+      sub = false
+      return false
+    }
+    if (email == null) {
+      sub = false
+      return false
+    }
+    if (date == null) {
+      sub = false
+      return false
+    }
+    if (password == null) {
+      sub = false
+      return false
+    }
+    if (date == null) {
+      sub = false
+      return false
+    }
+    if (group == null) {
+      sub = false
+      return false
+    }
+    if (sub) {
+      onSignupUser()
+    }
   }
-  useEffect(() => {
-    console.log(region)
-  }, [region])
+  // const context = useContext(AppContext)
+  const onSignupUser = () => {
+    // setLoader(true)
+    setOnsubmit(false)
+    var data = {
+      email: email,
+
+    }
+    axiosconfig.post('otp', data).then((res) => {
+      // setLoader(false);
+      if (res?.data?.email[0]) {
+        alert(res?.data?.email[0]);
+        console.log(res.data)
+        setOnsubmit(true)
+
+        for (const property in res.data.errors) {
+          console.log(`${property}: ${res.data.errors[property]}`);
+          alert(res.data.errors[property])
+          return
+        }
+      } else {
+        // navigation.navigate('Login')
+        console.log(res, 'signup data ')
+        alert(res.data.messsage)
+        setTimeout(() => {
+          setModalVisible(!modalVisible)
+        }, 3000);
+      }
+      setLoader(false);
+    }).catch(err => {
+      // setLoader(false);
+      console.log(err, 'errors');
+      // console.log(err.response.data.message)
+      // console.log(data, 'data');
+      if (err.response.data.errors) {
+        for (const property in err.response.data.errors) {
+          alert(err.response.data.errors[property][0])
+          return
+        }
+      } else {
+        alert(err.response.data.message)
+      }
+    });
+  }
+  const storeData = async (value) => {
+    try {
+
+      await AsyncStorage.setItem('@auth_token', value);
+      context.setuserToken(value)
+
+
+    } catch (e) { }
+  };
+  const handleSubmit = () => {
+    // setLoader(true)
+    setOnsubmit(false)
+    var data = {
+      name: fname,
+      last_name: lastname,
+      email: 'alex5325test@gmail.com',
+      otp: otp,
+      phone_number: phonenum.current.getValue(),
+      gender: gender,
+      location: location,
+      group: group,
+      password: password,
+      confirm_password: confirmPassword,
+      date: date,
+      type: 'user'
+
+    }
+    axiosconfig.post('register', data).then((res) => {
+      // setLoader(false);
+      if (res.data.email) {
+        alert(res.data.email[0]);
+        console.log(res.data)
+        setOnsubmit(true)
+
+        for (const property in res.data.errors) {
+          console.log(`${property}: ${res.data.errors[property]}`);
+          alert(res.data.errors[property])
+          return
+        }
+      } else {
+        // navigation.navigate('Login')
+        console.log(res, 'user register data')
+        navigation.navigate('Login')
+        alert(res.data.messsage)
+
+      }
+      setLoader(false);
+    }).catch(err => {
+      // setLoader(false);
+      console.log(err, 'errors');
+      // console.log(err.response.data.message)
+      // console.log(data, 'data');
+      if (err.response.data.errors) {
+        for (const property in err.response.data.errors) {
+          alert(err.response.data.errors[property][0])
+          return
+        }
+      } else {
+        alert(err.response.data.message)
+      }
+    });
+  }
+  // const context = useContext(AppContext)
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+ let check 
+ let month 
+ let dateex 
+ let year 
+
+  const handleConfirm = (datee) => {
+    console.warn("A date has been picked: ", datee);
+     check = moment(datee, 'YYYY/MM/DD');
+     month = check.format('M');
+     setM(month)
+     dateex = check.format('DD');
+     setD(dateex)
+     year = check.format('YYYY');
+     setY(year)
+    console.log(check,'date');
+    console.log(month, 'month');
+    console.log(dateex, 'dateeee');
+    console.log(year, 'year');
+    setDate(`${d}/${m}/${y}`);
+    console.log(date, 'c date');
+    hideDatePicker();
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -218,12 +366,15 @@ const Register = ({ navigation }) => {
                     base: '90%',
                     md: '25%',
                   }}
+                  style={{ borderBottomColor: onsubmit && fname == null ? 'red' : Textcolor, borderBottomWidth: 1 }}
                   placeholder="First Name"
-                  variant="underlined"
+                  variant="unstyled"
                   placeholderTextColor={Textcolor}
+                  onChangeText={(e) => setFname(e)}
                   color={Textcolor}
                   fontSize={moderateScale(10, 0.1)}
                 />
+
               </View>
               <View style={{ flex: 0.3 }}>
                 <Input
@@ -232,14 +383,15 @@ const Register = ({ navigation }) => {
                     md: '15%',
                   }}
                   placeholder="Last Name"
-                  variant="underlined"
+                  style={{ borderBottomColor: onsubmit && lastname == null ? 'red' : Textcolor, borderBottomWidth: 1 }}
+                  variant="unstyled"
                   placeholderTextColor={Textcolor}
                   color={Textcolor}
+                  onChangeText={(e) => setLastname(e)}
                   fontSize={moderateScale(10, 0.1)}
                 />
               </View>
 
-              {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
             </View>
             <View style={s.input}>
               <View style={{ flex: 0.4 }}>
@@ -273,7 +425,8 @@ const Register = ({ navigation }) => {
                 </Text>
               </View>
               <View style={{ flex: 0.6 }}>
-                <TouchableOpacity onPress={() => setOpen(true)}>
+         
+                 <TouchableOpacity onPress={() => showDatePicker()}>
                   <View
                     style={{
                       flexDirection: 'row',
@@ -281,41 +434,44 @@ const Register = ({ navigation }) => {
                       marginTop: moderateScale(5, 0.1),
                     }}
                   >
-                    <View style={[s.dateView, { borderBottomColor: Textcolor }]}>
+                    <View 
+                    style={[s.dateView, {
+                      borderBottomWidth: 1,
+                      borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
+                    }]}>
                       <Text style={[s.date, { color: Textcolor }]}>
-                        {date ? datee : 'Date'}
+                       {date ? d : 'DD'}
                       </Text>
                     </View>
 
-                    <View style={[s.dateView, { borderBottomColor: Textcolor }]}>
+                    <View style={[s.dateView, {
+                       borderBottomWidth: 1,
+                       borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
+                    }]}>
                       <Text style={[s.date, { color: Textcolor }]}>
-                        {date ? month : 'month'}
+                        {date ? m : 'month'}
                       </Text>
                     </View>
 
-                    <View style={[s.dateView, { borderBottomColor: Textcolor }]}>
+                    <View style={[s.dateView, { 
+                       borderBottomWidth: 1,
+                       borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
+                    }]}>
                       <Text style={[s.date, { color: Textcolor }]}>
-                        {date ? year : 'Year'}
+                        {date ? y : 'Year'}
                       </Text>
                     </View>
                   </View>
                 </TouchableOpacity>
-                <DatePicker
-                  modal
-                  open={open}
-                  date={date}
-                  // textColor ={Textcolor}
-                  minimumDate={new Date('1995-05-15')}
-                  maximumDate={new Date('2012-06-15')}
+               
+           
+                <DateTimePickerModal
+                  isVisible={isDatePickerVisible}
                   mode="date"
                   onConfirm={handleConfirm}
-                  onCancel={() => {
-                    setOpen(false);
-                  }}
+                  onCancel={hideDatePicker}
                 />
               </View>
-
-              {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
             </View>
 
             <View style={s.input}>
@@ -341,27 +497,28 @@ const Register = ({ navigation }) => {
                   ref={phonenum}
                   onChangePhoneNumber={phNumber => {
                     if (phonenum.current.isValidNumber()) {
-                      console.log('jdj');
-                      setPhNumErr('');
+                      setIsPhone(true);
                     } else {
-                      setPhNumErr('*');
+                      setIsPhone(false);
+
                     }
                   }}
                 />
                 <Input
-                  style={{ marginTop: moderateScale(-20, 0.1) }}
                   w={{
                     base: '100%',
                     md: '25%',
                   }}
-                  variant="underlined"
+                  style={{
+                    marginTop: moderateScale(-15, 0.1),
+                    borderBottomColor: onsubmit && isPhone == false ? 'red' : Textcolor, borderBottomWidth: 1
+                  }}
+                  variant="unstyled"
                   // placeholderTextColor={Textcolor}
                   isReadOnly={true}
                   color={Textcolor}
                 />
               </View>
-
-              {phNumErr ? <Text style={[s.error]}>{phNumErr}</Text> : null}
             </View>
 
             <View style={s.input}>
@@ -376,14 +533,27 @@ const Register = ({ navigation }) => {
                     base: '100%',
                     md: '25%',
                   }}
-                  variant="underlined"
+                  style={{
+                    borderBottomWidth: 1,
+                    borderBottomColor: onsubmit && email == null ? 'red' : Textcolor
+                  }}
+                  variant="unstyled"
                   placeholderTextColor={Textcolor}
                   color={Textcolor}
                   fontSize={moderateScale(10, 0.1)}
+                  onChangeText={(e) => { setEmail(e); validateEmail() }}
                 />
+                {
+                  onsubmit && isEmail == false && email != null ? (
+                    <>
+                      <View style={{ height: 15, justifyContent: 'center', width: '90%', marginBottom: 20 }}>
+                        <Text style={{ fontSize: 12, color: 'red' }}>please enter valid email</Text>
+                      </View>
+                    </>
+                  ) : null
+                }
               </View>
 
-              {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
             </View>
             <View style={s.input}>
               <View style={{ flex: 0.4 }}>
@@ -409,18 +579,12 @@ const Register = ({ navigation }) => {
                         style={{
                           flexDirection: 'row',
                           borderColor: 'white',
-                          // borderWidth: 1,
                           borderBottomWidth: 1,
+                          borderBottomColor: onsubmit && group == null ? 'red' : Textcolor,
                           marginBottom: moderateScale(-10, 0.1),
-                          // backgroundColor:'red',
-                          // marginVertical: moderateScale(7),
-                          // borderRadius: moderateScale(8, 0.1),
                           paddingLeft: moderateScale(10, 0.1),
                           width: moderateScale(170, 0.1),
-                          // height: moderateScale(20, 0.1),
-                          // justifyContent:'center',
                           alignItems: 'center',
-                          //  marginBottom: moderateScale(-20)
                           marginTop: moderateScale(18, 0.1)
                         }}
                       >
@@ -486,15 +650,20 @@ const Register = ({ navigation }) => {
                     base: '100%',
                     md: '25%',
                   }}
-                  onTouchStart={()=>navigation.navigate('Maps')}
-                  variant="underlined"
+                  style={{
+                    borderBottomWidth: 1,
+                    borderBottomColor: onsubmit && location == null ? 'red' : Textcolor
+                  }}
+                  onTouchStart={() => navigation.navigate('Maps')}
+                  variant="unstyled"
+                  placeholder={userLocation ? userLocation : 'Enter Location'}
+                  onChangeText={() => setLocation(location)}
                   placeholderTextColor={Textcolor}
                   color={Textcolor}
                   fontSize={moderateScale(10, 0.1)}
                 />
               </View>
 
-              {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
             </View>
 
             <View style={s.input}>
@@ -507,7 +676,8 @@ const Register = ({ navigation }) => {
                     base: '100%',
                     md: '25%',
                   }}
-                  variant="underlined"
+                  style={{ borderBottomColor: onsubmit && password == null ? 'red' : Textcolor, borderBottomWidth: 1 }}
+                  variant="unstyled"
                   placeholderTextColor={Textcolor}
                   value={password}
                   onChangeText={password => {
@@ -535,8 +705,6 @@ const Register = ({ navigation }) => {
                   secureTextEntry={showPass}
                 />
               </View>
-
-              {fnameErr ? <Text style={s.error}>{fnameErr}</Text> : <></>}
             </View>
             <View style={s.input}>
               <View style={{ flex: 0.4 }}>
@@ -550,7 +718,8 @@ const Register = ({ navigation }) => {
                     base: '100%',
                     md: '25%',
                   }}
-                  variant="underlined"
+                  style={{ borderBottomColor: onsubmit && confirmPassword == null ? 'red' : Textcolor, borderBottomWidth: 1 }}
+                  variant="unstyled"
                   placeholderTextColor={Textcolor}
                   value={confirmPassword}
                   onChangeText={password => {
@@ -560,10 +729,10 @@ const Register = ({ navigation }) => {
                     confirmPassword ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowPass(!showPass)}
+                          onPress={() => setshowConPass(!showConPass)}
                         >
                           <Feather
-                            name={showPass ? 'eye' : 'eye-off'}
+                            name={showConPass ? 'eye' : 'eye-off'}
                             color={Textcolor}
                             size={20}
                           />
@@ -575,7 +744,7 @@ const Register = ({ navigation }) => {
                   }
                   color={Textcolor}
                   fontSize={moderateScale(14, 0.1)}
-                  secureTextEntry={showPass}
+                  secureTextEntry={showConPass}
                 />
               </View>
             </View>
@@ -592,7 +761,9 @@ const Register = ({ navigation }) => {
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
-                onPress={() => navigation.navigate('Login')}
+                onPress={() =>
+                  submit()}
+              // onPress={() => navigation.navigate('Login')}
               >
                 <Text style={s.btnText}>Register</Text>
               </Button>
@@ -627,6 +798,20 @@ const Register = ({ navigation }) => {
             </View>
           </View>
         </View>
+        {modalVisible ? (
+          <OTPModal
+            navigation={navigation}
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            //  submit={submit}
+            setOtp={setOtp}
+            handleSubmit={handleSubmit}
+            screen={'register'}
+          // loader={loader}
+          />
+        ) : (
+          <></>
+        )}
       </ScrollView >
     </SafeAreaView >
   );
