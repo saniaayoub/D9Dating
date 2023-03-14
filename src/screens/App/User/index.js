@@ -19,6 +19,7 @@ import Header from '../../../Components/Header';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import img1 from '../../../assets/images/png/mydp.png';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -56,6 +57,7 @@ const Profile = ({ navigation }) => {
   const [disable5, setDisable5] = useState(false);
   const [disable6, setDisable6] = useState(false);
   const [date, setDate] = useState(null);
+  const [id, setId] = useState('')
   
 
   let formData = {
@@ -126,10 +128,15 @@ const Profile = ({ navigation }) => {
     // ToastAndroid.show(msg, ToastAndroid.LONG);
   };
 
+  
+  let  token =  AsyncStorage.getItem('userToken')
   const getData = async () => {
+    let  SP = await AsyncStorage.getItem('id')
+    console.log(SP, 'id');
+    // setId(SP)
     setLoader(true);
     axiosconfig
-      .get('user_view/3', {
+      .get('user_view/12', {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -156,6 +163,7 @@ const Profile = ({ navigation }) => {
       if(item =='location'){
         dispatch(setLocation(data[item]))
       }
+      
     }
     setForm(formData);
     // console.log(form);

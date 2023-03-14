@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    paddingHorizontal: moderateScale(12, 0.1),
+    paddingHorizontal: moderateScale(20, 0.1),
   },
   heading: {
     marginBottom: moderateScale(30, 0.1),
@@ -60,9 +60,11 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    marginTop: moderateScale(15, 0.1),
+    top: moderateScale(15, 0.1),
     alignItems: 'center',
     justifyContent: 'center',
+    marginVertical: moderateScale(20,0.1),
+    bottom: moderateScale(15,0.1)
   },
   btnText: {
     fontFamily: Poppins,

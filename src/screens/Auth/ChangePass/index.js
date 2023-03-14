@@ -8,21 +8,28 @@ import {
 import React, { useContext, useState, useEffect } from 'react';
 import s from './style';
 import Feather from 'react-native-vector-icons/Feather';
-import { Input, FormControl, Button } from 'native-base';
+import { Input, FormControl, Button, Alert } from 'native-base';
 import { moderateScale } from 'react-native-size-matters';
 import Icon2 from 'react-native-vector-icons/Fontisto';
 import { useDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { setTheme } from '../../../Redux/actions';
 import Header from '../../../Components/Header';
+import axiosconfig from '../../../Providers/axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const ChangePass = ({ navigation }) => {
+
+const ChangePass = ({ navigation,route }) => {
     const dispatch = useDispatch();
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordError, setPasswordError] = useState('');
+    const screen=route?.params?.screen;
+    console.log(screen);
+    const [email, setEmail] = useState(route.params.email)
+    const [otp, setOtp] = useState(route.params.otp)
+    const [password, setPassword] = useState(null);
+    const [confirmPassword, setConfirmPassword] = useState(null);
     const [showPass, setshowPass] = useState(true);
+    const [submitted, setSubmitted] = useState();
     const [loader, setLoader] = useState(false);
     const theme = useSelector(state => state.reducer.theme);
     const showToast = msg => {
@@ -33,43 +40,73 @@ const ChangePass = ({ navigation }) => {
     const userToken = useSelector(state => state.reducer.userToken);
  
     const submit = () => {
-        var data = {
-          email: 'alex5325test@gmail.com',
-          password: password,
-          password_confirm : confirmPassword,
-          token: userToken
-        }
+        console.log('submit');
+    setSubmitted(false);
+    let sub = false;
+    if (confirmPassword == null || confirmPassword == "") {
+      setSubmitted(true);
+      sub = true
+      return;
+    }
+    if (password == null || password == "") {
+      setSubmitted(true);
+      sub = true;
+      return;
+    }
+    if(password != confirmPassword){
+        alert('password does not match')
+    }
+    if(!sub){
         setLoader(true);
-        axiosconfig
-          .post('otp_password', data)
-          .then((res) => {
-            setLoader(false);
-            if (res.data.error) {
-              alert('invalid credentials')
-              console.log(res.data, 'invalid')
-    
-            } else {
-              alert("OTp verified", res)
-              console.log(res.data, 'email ')
-              setTimeout(() => {            
-                setModalVisible(!modalVisible)
-              }, 3000);
-              navigation.navigate('ChangePass')
-              
-            }
-          })
-          .catch(err => {
-            setLoader(false);
-            console.log(err.response, 'aaa')
-            if (err.response.data.errors) {
-              for (const property in err.response.data.errors) {
-                alert(err.response.data.errors[property][0])
-                return
+        var data = {
+          email: email,
+          password: password
+        }
+        console.log({data})
+        if(screen == 'reset'){
+            var data = {
+                password: password,
               }
-            } else {
-              alert(err.response.data.message)
+        }else
+            {
+                console.log(email, otp);
+                var data = {
+                    email: email,
+                    password: password,
+                    password_confirm : confirmPassword,
+                    token: otp
+                  }
             }
-          });
+            setLoader(true);
+            axiosconfig
+              .post(screen=='Reset'? 'password_update':'reset' , data, screen=="Reset"? {headers: {
+                Authorization: `Bearer ${userToken}`,
+              }}:null,)
+              .then((res) => {
+                setLoader(false);  
+                console.log(res?.data, 'change password data') 
+                  alert(res?.data?.message)
+                  {
+                    screen == 'Reset'? (
+                        AsyncStorage.setItem('password' , password),
+                        navigation.navigate('Settings')
+                    ) : (
+                        AsyncStorage.setItem('password' , password),
+                        navigation.navigate('Login')
+    
+                    )
+                }
+                //   navigation.navigate('ChangePass')  
+                
+              })
+              .catch(err => {
+                setLoader(false);
+                console.log(err.response, 'aaa')
+                alert(err?.response?.data?.message)
+              });
+            
+    }
+    
       }
     
 
@@ -90,18 +127,18 @@ const ChangePass = ({ navigation }) => {
                                 base: '83%',
                                 md: '25%',
                             }}
-                            variant="underlined"
+                            variant="unstyled"
                             InputLeftElement={
                                 <View style={[s.iconCircle, { borderColor: Textcolor }]}>
                                     <Icon2 name="locked" color={Textcolor} size={moderateScale(20, 0.1)} />
                                 </View>
                             }
+                            style={{ borderBottomColor: submitted &&  password == null  ? 'red' : Textcolor, borderBottomWidth: 1 }}
                             placeholder="New Password"
                             placeholderTextColor={Textcolor}
                             value={password}
                             onChangeText={password => {
                                 setPassword(password);
-                                setPasswordError('');
                             }}
                             InputRightElement={
                                 password ? (
@@ -118,7 +155,6 @@ const ChangePass = ({ navigation }) => {
                                     <></>
                                 )
                             }
-                            errorMessage={passwordError}
                             color={Textcolor}
                             fontSize={moderateScale(14, 0.1)}
                             secureTextEntry={showPass}
@@ -130,7 +166,7 @@ const ChangePass = ({ navigation }) => {
                                 base: '83%',
                                 md: '25%',
                             }}
-                            variant="underlined"
+                            variant="unstyled"
                             InputLeftElement={
                                 <View style={[s.iconCircle, { borderColor: Textcolor }]}>
                                     <MaterialIcon
@@ -141,13 +177,12 @@ const ChangePass = ({ navigation }) => {
                                     />
                                 </View>
                             }
-
+                            style={{ borderBottomColor: submitted &&  confirmPassword == null ? 'red' : Textcolor, borderBottomWidth: 1 }}
                             placeholder="Confirm Password"
                             placeholderTextColor={Textcolor}
                             value={confirmPassword}
                             onChangeText={password => {
                                 setConfirmPassword(password);
-                                setPasswordError('');
                             }}
                             InputRightElement={
                                 password ? (
@@ -164,7 +199,6 @@ const ChangePass = ({ navigation }) => {
                                     <></>
                                 )
                             }
-                            errorMessage={passwordError}
                             color={Textcolor}
                             fontSize={moderateScale(14, 0.1)}
                             secureTextEntry={showPass}
@@ -174,17 +208,9 @@ const ChangePass = ({ navigation }) => {
                     <View style={s.button}>
                         <Button
                             onPress={() => {
-                                alert('password changed successfully')
+                                // alert('password changed successfully')
                                 submit()
-                                {
-                                    userToken ? (
-
-                                        navigation.navigate('Settings')
-                                    ) : (
-                                        navigation.navigate('Login')
-
-                                    )
-                                }
+                               
 
                             }}
                             size="sm"

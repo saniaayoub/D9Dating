@@ -15,7 +15,7 @@ import Header from '../../../Components/Header';
 import Vector from '../../../assets/images/png/Vector.png';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Button, Stack, Menu, Pressable, Input} from 'native-base';
+import {Button, Stack, Menu, Pressable, Input, Alert} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {
@@ -198,43 +198,45 @@ const CreatePost = ({navigation}) => {
   };
   const onsubmit = () => {
     console.log(userToken)
-    var data = {
-      image: filePath,
-      caption: caption,
-      privacy_option: story
+    if(caption == ''){
+      alert('please fill given fields') 
     }
-    // setLoader(true);
-    axiosconfig
-      .post('post_store', data,{
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      })
-      .then((res) => {
-        // setLoader(false);
-        if (res.data.error) {
-          alert(res.data.messsage)
-          console.log(res.data, 'invalid')
-
-        } else {
-          alert(res.data.messsage)
-          console.log(res, 'post')
-           navigation.navigate('Home')
+    if(filePath == ''){
+      alert('please fill given fields')
+    }
+    if(filePath == '' || caption == ''){
+      alert('please fill given fields')
+    }
+    else{
+      var data = {
+        image: filePath,
+        caption: caption,
+        privacy_option: story
+      }
+      // setLoader(true);
+      axiosconfig
+        .post('post_store', data,{
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        })
+        .then((res) => {
+          // setLoader(false);
+            alert(res?.data?.message)
+            console.log(res, 'post')
+            setFilePath('')
+            setCaption('')
+             navigation.navigate('Home')
+        
+        })
+        .catch(err => {
+          // setLoader(false);
+          console.log(err, 'aaa')
+            alert(err?.response?.data?.message)
           
-        }
-      })
-      .catch(err => {
-        // setLoader(false);
-        console.log(err, 'aaa')
-        if (err.response.data.errors) {
-          for (const property in err.response.data.errors) {
-            alert(err.response.data.errors[property][0])
-            return
-          }
-        } else {
-          alert(err.response.data.message)
-        }
-      });
+        });
+    }
+    
   }
 
   return (

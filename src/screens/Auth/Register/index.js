@@ -10,44 +10,49 @@ import {
   Linking,
   ScrollView,
   Image,
-  Dimensions
+  Dimensions,
 } from 'react-native';
-import React, { useRef, useState, useEffect } from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import axiosconfig from '../../../provider/axios';
 import OTPModal from '../../../Components/otpModal/otpModal.js';
 import s from './style';
 import Feather from 'react-native-vector-icons/Feather';
-import { Input, Button, Radio, ListItem, Menu, Pressable, } from 'native-base';
-import { moderateScale } from 'react-native-size-matters';
+import {Input, Button, Radio, ListItem, Menu, Pressable} from 'native-base';
+import {moderateScale} from 'react-native-size-matters';
 import PhoneInput from 'react-native-phone-input';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RadioButton from '../../../Components/Radio';
-import { useDispatch, useSelector } from 'react-redux';
-import { setTheme } from '../../../Redux/actions';
+import {useDispatch, useSelector} from 'react-redux';
+import {setTheme, setUserToken} from '../../../Redux/actions';
 import Header from '../../../Components/Header';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
-import MapView, { PROVIDER_GOOGLE, Marker, ProviderPropType } from 'react-native-maps';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import MapView, {
+  PROVIDER_GOOGLE,
+  Marker,
+  ProviderPropType,
+} from 'react-native-maps';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import style from '../../../Components/Header/style';
 
-const Register = ({ navigation }) => {
+const Register = ({navigation}) => {
   const dispatch = useDispatch();
   const phonenum = useRef();
   const [fname, setFname] = useState(null);
   const [lastname, setLastname] = useState(null);
   const [email, setEmail] = useState(null);
-  const [phone, setPhone] = useState(null)
+  const [phone, setPhone] = useState(null);
   const [disable, setDisable] = useState(false);
   const [password, setPassword] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState(null);
   const [showPass, setshowPass] = useState(true);
   const [showConPass, setshowConPass] = useState(true);
   const [loader, setLoader] = useState(false);
-  const [isEmail, setIsEmail] = useState(false)
-  const [isPhone, setIsPhone] = useState(false)
-  const [onsubmit, setOnsubmit] = useState(false)
+  const [isEmail, setIsEmail] = useState(false);
+  const [isPhone, setIsPhone] = useState(false);
+  const [onsubmit, setOnsubmit] = useState(false);
   const [gender, setGender] = useState('Female');
   const [date, setDate] = useState(null);
   const [open, setOpen] = useState(false);
@@ -107,10 +112,10 @@ const Register = ({ navigation }) => {
       ),
     },
   ]);
-  const [d,setD] = useState('');
-  const [m,setM]=useState('');
-  const [y,setY]=useState('');
-  const { width, height } = Dimensions.get('window');
+  const [d, setD] = useState('');
+  const [m, setM] = useState('');
+  const [y, setY] = useState('');
+  const {width, height} = Dimensions.get('window');
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
   const color = theme === 'dark' ? '#222222' : '#fff';
   const ASPECT_RATIO = width / height;
@@ -118,116 +123,107 @@ const Register = ({ navigation }) => {
   const LONGITUDE = -97.7593856;
   const LATITUDE_DELTA = 0.0922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-  const userLocation = useSelector(state => state.reducer.location)
+  const userLocation = useSelector(state => state.reducer.location);
   const [location, setLocation] = useState(null);
 
-
-  useEffect(() => { }, []);
+  useEffect(() => {}, []);
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
       isSelectedItem.id === item.id
-        ? { ...isSelectedItem, selected: true }
-        : { ...isSelectedItem, selected: false },
+        ? {...isSelectedItem, selected: true}
+        : {...isSelectedItem, selected: false},
     );
     setIsSelected(updatedState);
     setGender(item.name);
     console.log(item.name);
   };
 
-
   const validateEmail = () => {
-    setIsEmail(false)
     if (onsubmit) {
       const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
       if (emailRegex.test(email)) {
         setIsEmail(true);
-      }
-      else {
-        setIsEmail(false)
+      } else {
+        setIsEmail(false);
       }
     }
-  }
+  };
   const submit = () => {
     setOnsubmit(true);
-    let sub = true
+    let sub = true;
 
     if (fname == null) {
-      sub = false
-      return false
+      sub = false;
+      return false;
     }
     if (lastname == null) {
-      sub = false
-      return false
+      sub = false;
+      return false;
     }
-    if (email == null) {
-      sub = false
-      return false
+    if (email == null || email == '') {
+      sub = false;
+      return false;
     }
     if (date == null) {
-      sub = false
-      return false
+      sub = false;
+      return false;
     }
     if (password == null) {
-      sub = false
-      return false
+      sub = false;
+      return false;
     }
     if (date == null) {
-      sub = false
-      return false
+      sub = false;
+      return false;
     }
     if (group == null) {
-      sub = false
-      return false
+      sub = false;
+      return false;
+    }
+    if(password != confirmPassword){
+      alert('password does not match')
+      sub = false;
+      return false;
     }
     if (sub) {
-      onSignupUser()
+      onSignupUser();
     }
-  }
+  };
   // const context = useContext(AppContext)
   const onSignupUser = () => {
     // setLoader(true)
-    setOnsubmit(false)
+    setOnsubmit(false);
     var data = {
       email: email,
-
-    }
-    axiosconfig.post('otp', data).then((res) => {
-      // setLoader(false);
-      if (res) {
-          alert(res?.data.messsage);
-          console.log(res, 'signup data ')
-          setTimeout(() => {
-            setModalVisible(!modalVisible)
-          }, 3000);
-         
+    };
+    axiosconfig
+      .post('otp', data)
+      .then(res => {
+        // setLoader(false);
+        alert(res?.data?.message);
+        console.log(res, 'signup data ');
+        setTimeout(() => {
+          setModalVisible(!modalVisible);
+        }, 3000);
         // setOnsubmit(true)
-      } 
-      else {
-        // navigation.navigate('Login')
-       console.log(res.data.messsage);
-        alert(res.data.messsage)
-       
-      }
-      setLoader(false);
-    }).catch(err => {
-      // setLoader(false);
-      console.log(err, 'errors');
-       console.log(err.response.data.messsage)
-       alert(err.response.data.messsage)
-    });
-  }
-  const storeData = async (value) => {
+        setLoader(false);
+      })
+      .catch(err => {
+        // setLoader(false);
+        console.log(err, 'errors');
+        console.log(err.response?.data?.message,'error message');
+        alert(err?.response?.data?.message);
+      });
+  };
+  const storeData = async value => {
     try {
-
       await AsyncStorage.setItem('@auth_token', value);
-      context.setuserToken(value)
-
-
-    } catch (e) { }
+      context.setuserToken(value);
+    } catch (e) {}
   };
   const handleSubmit = () => {
     // setLoader(true)
-    setOnsubmit(false)
+    setOnsubmit(false);
     var data = {
       name: fname,
       last_name: lastname,
@@ -240,30 +236,27 @@ const Register = ({ navigation }) => {
       password: password,
       confirm_password: confirmPassword,
       date: date,
-      type: 'user'
-
-    }
-    axiosconfig.post('register', data).then((res) => {
-      // setLoader(false);
-      if (res) {
-        console.log(res?.data.messsage, 'user register data')
-        navigation.navigate('Login')
-        alert(res?.data.messsage);
-
-      } else {
-        console.log(res?.data.messsage, 'user register data')   
-        alert(res.data.messsage)
-
-      }
-      setLoader(false);
-    }).catch(err => {
-      // setLoader(false);
-      console.log(err, 'errors');
-       console.log(err.response.data.messsage)
-       alert(err.response?.data?.messsage)
-      
-    });
-  }
+      type: 'user',
+    };
+    axiosconfig
+      .post('register', data)
+      .then(res => {
+        // setLoader(false);
+        console.log(res?.data, 'user register data');
+        alert(res?.data?.message);
+        AsyncStorage.setItem('password', password);
+        AsyncStorage.setItem('userToken', res?.data?.access_token);
+        console.log(res, 'Login data ');
+        dispatch(setUserToken(res?.data?.access_token));
+        setLoader(false);
+      })
+      .catch(err => {
+        // setLoader(false);
+        console.log(err, 'errors');
+        console.log(err?.response?.data?.message,'msg');
+        alert(err.response?.data?.message);
+      });
+  };
   // const context = useContext(AppContext)
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const showDatePicker = () => {
@@ -272,13 +265,13 @@ const Register = ({ navigation }) => {
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
-  let check
-  let month
-  let dateex
-  let year
+  let check;
+  let month;
+  let dateex;
+  let year;
 
-  const handleConfirm = (datee) => {
-    console.warn("A date has been picked: ", datee);
+  const handleConfirm = datee => {
+    console.warn('A date has been picked: ', datee);
     check = moment(datee, 'YYYY/MM/DD');
     month = check.format('M');
     dateex = check.format('DD');
@@ -286,9 +279,9 @@ const Register = ({ navigation }) => {
     console.log(check, 'date');
     console.log(month, 'month');
     console.log(dateex, 'dateeee');
-    setM(month)
-    setY(year)
-    setD(dateex)
+    setM(month);
+    setY(year);
+    setD(dateex);
     console.log(year, 'year');
     setDate(`${d}/${m}/${y}`);
     console.log(date, 'c date');
@@ -296,27 +289,25 @@ const Register = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex: 1}}>
       <ScrollView>
         <View
           style={[
             s.container,
-            { backgroundColor: theme === 'dark' ? '#222222' : '#fff' },
-          ]}
-        >
+            {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
+          ]}>
           <View style={s.header}>
             <Header navigation={navigation} />
           </View>
           <View style={s.heading}>
-            <Text style={[s.headingText, { color: Textcolor }]}>
+            <Text style={[s.headingText, {color: Textcolor}]}>
               Create Your{' '}
             </Text>
             <Text
               style={[
                 s.headingText,
-                { fontFamily: 'Poppins-Bold', color: Textcolor },
-              ]}
-            >
+                {fontFamily: 'Poppins-Bold', color: Textcolor},
+              ]}>
               {' '}
               Account
             </Text>
@@ -329,48 +320,53 @@ const Register = ({ navigation }) => {
               alignItems: 'center',
               justifyContent: 'center',
               paddingBottom: moderateScale(20, 0.1),
-            }}
-          >
+            }}>
             <View style={s.input}>
-              <View style={{ flex: 0.4 }}>
-                <Text style={[s.inputTxt, { color: Textcolor }]}>Name</Text>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>Name</Text>
               </View>
-              <View style={{ flex: 0.3 }}>
+              <View style={{flex: 0.3}}>
                 <Input
                   w={{
                     base: '90%',
                     md: '25%',
                   }}
-                  style={{ borderBottomColor: onsubmit && fname == null ? 'red' : Textcolor, borderBottomWidth: 1 }}
+                  style={{
+                    borderBottomColor:
+                      onsubmit && fname == null ? 'red' : Textcolor,
+                    borderBottomWidth: 1,
+                  }}
                   placeholder="First Name"
                   variant="unstyled"
                   placeholderTextColor={Textcolor}
-                  onChangeText={(e) => setFname(e)}
+                  onChangeText={e => setFname(e)}
                   color={Textcolor}
                   fontSize={moderateScale(10, 0.1)}
                 />
-
               </View>
-              <View style={{ flex: 0.3 }}>
+              <View style={{flex: 0.3}}>
                 <Input
                   w={{
                     base: '90%',
                     md: '15%',
                   }}
                   placeholder="Last Name"
-                  style={{ borderBottomColor: onsubmit && lastname == null ? 'red' : Textcolor, borderBottomWidth: 1 }}
+                  style={{
+                    borderBottomColor:
+                      onsubmit && lastname == null ? 'red' : Textcolor,
+                    borderBottomWidth: 1,
+                  }}
                   variant="unstyled"
                   placeholderTextColor={Textcolor}
                   color={Textcolor}
-                  onChangeText={(e) => setLastname(e)}
+                  onChangeText={e => setLastname(e)}
                   fontSize={moderateScale(10, 0.1)}
                 />
               </View>
-
             </View>
             <View style={s.input}>
-              <View style={{ flex: 0.4 }}>
-                <Text style={[s.inputTxt, { color: Textcolor }]}>Gender</Text>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>Gender</Text>
               </View>
               <View
                 style={{
@@ -378,15 +374,13 @@ const Register = ({ navigation }) => {
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                }}
-              >
+                }}>
                 {isSelected.map((item, i) => (
                   <View style={s.radio}>
                     <RadioButton
                       onPress={() => onRadioBtnClick(item)}
                       selected={item.selected}
-                      key={item.id}
-                    >
+                      key={item.id}>
                       {item.name}
                     </RadioButton>
                   </View>
@@ -394,51 +388,62 @@ const Register = ({ navigation }) => {
               </View>
             </View>
             <View style={s.input}>
-              <View style={{ flex: 0.4 }}>
-                <Text style={[s.inputTxt, { color: Textcolor }]}>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>
                   Date of Birth
                 </Text>
               </View>
-              <View style={{ flex: 0.6 }}>
-
+              <View style={{flex: 0.6}}>
                 <TouchableOpacity onPress={() => showDatePicker()}>
                   <View
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                       marginTop: moderateScale(5, 0.1),
-                    }}
-                  >
+                    }}>
                     <View
-                      style={[s.dateView, {
-                        borderBottomWidth: 1,
-                        borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
-                      }]}>
-                      <Text style={[s.date, { color: Textcolor }]}>
+                      style={[
+                        s.dateView,
+                        {
+                          borderBottomWidth: 1,
+                          borderBottomColor:
+                            onsubmit && date == null ? 'red' : Textcolor,
+                        },
+                      ]}>
+                      <Text style={[s.date, {color: Textcolor}]}>
                         {date ? d : 'DD'}
                       </Text>
                     </View>
 
-                    <View style={[s.dateView, {
-                      borderBottomWidth: 1,
-                      borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
-                    }]}>
-                      <Text style={[s.date, { color: Textcolor }]}>
+                    <View
+                      style={[
+                        s.dateView,
+                        {
+                          borderBottomWidth: 1,
+                          borderBottomColor:
+                            onsubmit && date == null ? 'red' : Textcolor,
+                        },
+                      ]}>
+                      <Text style={[s.date, {color: Textcolor}]}>
                         {date ? m : 'month'}
                       </Text>
                     </View>
 
-                    <View style={[s.dateView, {
-                      borderBottomWidth: 1,
-                      borderBottomColor: onsubmit && date == null ? 'red' : Textcolor
-                    }]}>
-                      <Text style={[s.date, { color: Textcolor }]}>
+                    <View
+                      style={[
+                        s.dateView,
+                        {
+                          borderBottomWidth: 1,
+                          borderBottomColor:
+                            onsubmit && date == null ? 'red' : Textcolor,
+                        },
+                      ]}>
+                      <Text style={[s.date, {color: Textcolor}]}>
                         {date ? y : 'Year'}
                       </Text>
                     </View>
                   </View>
                 </TouchableOpacity>
-
 
                 <DateTimePickerModal
                   isVisible={isDatePickerVisible}
@@ -450,14 +455,14 @@ const Register = ({ navigation }) => {
             </View>
 
             <View style={s.input}>
-              <View style={{ flex: 0.4 }}>
-                <Text style={[s.inputTxt, { color: Textcolor }]}>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>
                   Phone Number
                 </Text>
               </View>
-              <View style={{ flex: 0.6 }}>
+              <View style={{flex: 0.6}}>
                 <PhoneInput
-                  style={{ bottom: moderateScale(-10, 0.1) }}
+                  style={{bottom: moderateScale(-10, 0.1)}}
                   initialCountry={'us'}
                   textProps={{
                     placeholder: 'Enter Phone Number',
@@ -467,7 +472,7 @@ const Register = ({ navigation }) => {
                   pickerButtonColor={'#fff'}
                   isReadOnly={disable}
                   autoFormat={true}
-                  textStyle={[s.inputStyle, { color: Textcolor }]}
+                  textStyle={[s.inputStyle, {color: Textcolor}]}
                   isValidNumber={e => console.log(e, 'here')}
                   ref={phonenum}
                   onChangePhoneNumber={phNumber => {
@@ -475,7 +480,6 @@ const Register = ({ navigation }) => {
                       setIsPhone(true);
                     } else {
                       setIsPhone(false);
-
                     }
                   }}
                 />
@@ -486,7 +490,9 @@ const Register = ({ navigation }) => {
                   }}
                   style={{
                     marginTop: moderateScale(-15, 0.1),
-                    borderBottomColor: onsubmit && isPhone == false ? 'red' : Textcolor, borderBottomWidth: 1
+                    borderBottomColor:
+                      onsubmit && isPhone == false ? 'red' : Textcolor,
+                    borderBottomWidth: 1,
                   }}
                   variant="unstyled"
                   // placeholderTextColor={Textcolor}
@@ -497,12 +503,12 @@ const Register = ({ navigation }) => {
             </View>
 
             <View style={s.input}>
-              <View style={{ flex: 0.4 }}>
-                <Text style={[s.inputTxt, { color: Textcolor }]}>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>
                   Email Adress
                 </Text>
               </View>
-              <View style={{ flex: 0.6 }}>
+              <View style={{flex: 0.6}}>
                 <Input
                   w={{
                     base: '100%',
@@ -510,33 +516,40 @@ const Register = ({ navigation }) => {
                   }}
                   style={{
                     borderBottomWidth: 1,
-                    borderBottomColor: onsubmit && email == null ? 'red' : Textcolor
+                    borderBottomColor:
+                      onsubmit && email == null ? 'red' : Textcolor,
                   }}
                   variant="unstyled"
                   placeholderTextColor={Textcolor}
                   color={Textcolor}
                   fontSize={moderateScale(10, 0.1)}
-                  onChangeText={(e) => { setEmail(e); validateEmail() }}
+                  onChangeText={e => {
+                    setEmail(e);
+                    validateEmail();
+                  }}
                 />
-                {
-                  onsubmit && isEmail == false && email != null ? (
-                    <>
-                      <View style={{ height: 15, justifyContent: 'center', width: '90%', marginBottom: 20 }}>
-                        <Text style={{ fontSize: 12, color: 'red' }}>please enter valid email</Text>
-                      </View>
-                    </>
-                  ) : null
-                }
+                {onsubmit && isEmail === false && email != null ? (
+                  <>
+                    <View
+                      style={{
+                        height: 15,
+                        justifyContent: 'center',
+                        width: '90%',
+                        marginBottom: 20,
+                      }}>
+                      <Text style={{fontSize: 12, color: 'red'}}>
+                        please enter valid email
+                      </Text>
+                    </View>
+                  </>
+                ) : null}
               </View>
-
             </View>
             <View style={s.input}>
-              <View style={{ flex: 0.4 }}>
-                <Text style={[s.inputTxt, { color: Textcolor }]}>
-                  Group
-                </Text>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>Group</Text>
               </View>
-              <View style={{ flex: 0.6 }}>
+              <View style={{flex: 0.6}}>
                 <Menu
                   w="180"
                   borderWidth={moderateScale(1, 0.1)}
@@ -555,35 +568,44 @@ const Register = ({ navigation }) => {
                           flexDirection: 'row',
                           borderColor: 'white',
                           borderBottomWidth: 1,
-                          borderBottomColor: onsubmit && group == null ? 'red' : Textcolor,
+                          borderBottomColor:
+                            onsubmit && group == null ? 'red' : Textcolor,
                           marginBottom: moderateScale(-10, 0.1),
                           paddingLeft: moderateScale(10, 0.1),
                           width: moderateScale(170, 0.1),
                           alignItems: 'center',
-                          marginTop: moderateScale(18, 0.1)
-                        }}
-                      >
-                        <Text style={[s.option, { color: Textcolor, flex: 0.8, paddingBottom: moderateScale(12, 0.1) }]}>
+                          marginTop: moderateScale(18, 0.1),
+                        }}>
+                        <Text
+                          style={[
+                            s.option,
+                            {
+                              color: Textcolor,
+                              flex: 0.8,
+                              paddingBottom: moderateScale(12, 0.1),
+                            },
+                          ]}>
                           {group}
                         </Text>
 
                         <Entypo
-                          style={{ flex: 0.2, paddingBottom: moderateScale(12, 0.1), }}
+                          style={{
+                            flex: 0.2,
+                            paddingBottom: moderateScale(12, 0.1),
+                          }}
                           name={'chevron-down'}
                           size={moderateScale(25, 0.1)}
                           color={Textcolor}
                         />
                       </Pressable>
                     );
-                  }}
-                >
+                  }}>
                   <Menu.Item
                     onPress={() => {
                       setGroup('Group 1');
-                    }}
-                  >
+                    }}>
                     <View style={s.optionView}>
-                      <Text style={[s.optionBtns, { color: Textcolor }]}>
+                      <Text style={[s.optionBtns, {color: Textcolor}]}>
                         Group 1
                       </Text>
                     </View>
@@ -591,10 +613,9 @@ const Register = ({ navigation }) => {
                   <Menu.Item
                     onPress={() => {
                       setGroup('Group 2');
-                    }}
-                  >
+                    }}>
                     <View style={s.optionView}>
-                      <Text style={[s.optionBtns, { color: Textcolor }]}>
+                      <Text style={[s.optionBtns, {color: Textcolor}]}>
                         Group 2
                       </Text>
                     </View>
@@ -602,10 +623,9 @@ const Register = ({ navigation }) => {
                   <Menu.Item
                     onPress={() => {
                       setGroup('Group 3');
-                    }}
-                  >
+                    }}>
                     <View style={s.optionView}>
-                      <Text style={[s.optionBtns, { color: Textcolor }]}>
+                      <Text style={[s.optionBtns, {color: Textcolor}]}>
                         Group 3
                       </Text>
                     </View>
@@ -614,12 +634,11 @@ const Register = ({ navigation }) => {
               </View>
             </View>
             <View style={s.input}>
-              <View style={{ flex: 0.4 }}>
-                <Text style={[s.inputTxt, { color: Textcolor }]}>
-                  Location
-                </Text>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>Location</Text>
               </View>
-              <View style={{ flex: 0.6 }}>
+              <View style={{flex: 0.6}}>
+                <TouchableOpacity onPress={()=>navigation.navigate('Maps')}>
                 <Input
                   w={{
                     base: '100%',
@@ -627,31 +646,38 @@ const Register = ({ navigation }) => {
                   }}
                   style={{
                     borderBottomWidth: 1,
-                    borderBottomColor: onsubmit && location == null ? 'red' : Textcolor
+                    borderBottomColor:
+                      onsubmit && location == null ? 'red' : Textcolor,
                   }}
-                  onTouchStart={() => navigation.navigate('Maps')}
+                  // onTouchStart={() => navigation.navigate('Maps')}
                   variant="unstyled"
+                  editable = {false}
                   placeholder={userLocation ? userLocation : 'Enter Location'}
                   onChangeText={() => setLocation(location)}
                   placeholderTextColor={Textcolor}
                   color={Textcolor}
                   fontSize={moderateScale(10, 0.1)}
                 />
+                </TouchableOpacity>
+               
               </View>
-
             </View>
 
             <View style={s.input}>
-              <View style={{ flex: 0.4 }}>
-                <Text style={[s.inputTxt, { color: Textcolor }]}>Password</Text>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>Password</Text>
               </View>
-              <View style={{ flex: 0.6 }}>
+              <View style={{flex: 0.6}}>
                 <Input
                   w={{
                     base: '100%',
                     md: '25%',
                   }}
-                  style={{ borderBottomColor: onsubmit && password == null ? 'red' : Textcolor, borderBottomWidth: 1 }}
+                  style={{
+                    borderBottomColor:
+                      onsubmit && password == null ? 'red' : Textcolor,
+                    borderBottomWidth: 1,
+                  }}
                   variant="unstyled"
                   placeholderTextColor={Textcolor}
                   value={password}
@@ -662,8 +688,7 @@ const Register = ({ navigation }) => {
                     password ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowPass(!showPass)}
-                        >
+                          onPress={() => setshowPass(!showPass)}>
                           <Feather
                             name={showPass ? 'eye' : 'eye-off'}
                             color={Textcolor}
@@ -682,18 +707,22 @@ const Register = ({ navigation }) => {
               </View>
             </View>
             <View style={s.input}>
-              <View style={{ flex: 0.4 }}>
-                <Text style={[s.inputTxt, { color: Textcolor }]}>
+              <View style={{flex: 0.4}}>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>
                   Confirm Password
                 </Text>
               </View>
-              <View style={{ flex: 0.6 }}>
+              <View style={{flex: 0.6}}>
                 <Input
                   w={{
                     base: '100%',
                     md: '25%',
                   }}
-                  style={{ borderBottomColor: onsubmit && confirmPassword == null ? 'red' : Textcolor, borderBottomWidth: 1 }}
+                  style={{
+                    borderBottomColor:
+                      onsubmit && confirmPassword == null ? 'red' : Textcolor,
+                    borderBottomWidth: 1,
+                  }}
                   variant="unstyled"
                   placeholderTextColor={Textcolor}
                   value={confirmPassword}
@@ -704,8 +733,7 @@ const Register = ({ navigation }) => {
                     confirmPassword ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowConPass(!showConPass)}
-                        >
+                          onPress={() => setshowConPass(!showConPass)}>
                           <Feather
                             name={showConPass ? 'eye' : 'eye-off'}
                             color={Textcolor}
@@ -736,9 +764,9 @@ const Register = ({ navigation }) => {
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
-                onPress={() =>
-                  submit()}
-              // onPress={() => navigation.navigate('Login')}
+                onPress={() => {                  
+                  submit()}}
+                // onPress={() => navigation.navigate('Login')}
               >
                 <Text style={s.btnText}>Register</Text>
               </Button>
@@ -750,23 +778,21 @@ const Register = ({ navigation }) => {
                 flexDirection: 'row',
                 justifyContent: 'center',
                 marginBottom: moderateScale(20, 0.1),
-              }}
-            >
+              }}>
               <TouchableOpacity>
                 <Text
                   style={[
                     s.forgetPass,
-                    { color: Textcolor, textDecorationLine: 'underline' },
-                  ]}
-                >
+                    {color: Textcolor, textDecorationLine: 'underline'},
+                  ]}>
                   Privacy Policy
                 </Text>
               </TouchableOpacity>
-              <Text style={[s.forgetPass, { textDecorationLine: 'none' }]}>
+              <Text style={[s.forgetPass, {textDecorationLine: 'none'}]}>
                 {'  '}&{'  '}
               </Text>
               <TouchableOpacity>
-                <Text style={[s.forgetPass, { textDecorationLine: 'underline' }]}>
+                <Text style={[s.forgetPass, {textDecorationLine: 'underline'}]}>
                   Terms & conditions
                 </Text>
               </TouchableOpacity>
@@ -782,13 +808,13 @@ const Register = ({ navigation }) => {
             setOtp={setOtp}
             handleSubmit={handleSubmit}
             screen={'register'}
-          // loader={loader}
+            // loader={loader}
           />
         ) : (
           <></>
         )}
-      </ScrollView >
-    </SafeAreaView >
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

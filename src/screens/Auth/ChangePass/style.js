@@ -27,6 +27,11 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(48, 0.1),
     fontWeight: '300'
   },
+  eye: {
+    position: 'absolute',
+    top: moderateScale(13),
+    right: moderateScale(13),
+  },
   iconCircle: {
     padding: moderateScale(7, 0.1),
     marginRight: moderateScale(15, 0.1),
