@@ -28,10 +28,11 @@ const passRegex = new RegExp(
 
 const ForgetPassword = ({ navigation }) => {
   const dispatch = useDispatch();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(null);
   const [validEmail, setValidEmail] = useState('');
   const [loader, setLoader] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [submitted, setSubmitted] = useState();
   const [otp, setOtp] = useState();
   const theme = useSelector(state => state.reducer.theme);
   const showToast = msg => {
@@ -41,77 +42,61 @@ const ForgetPassword = ({ navigation }) => {
   const Textcolor = theme === 'dark' ? '#fff' : '#222222'
 
   const Reset = () => {
+    setSubmitted(true);
+    let sub = true
+    if (email == null || email == "") {
+      sub = false
+      return false
+    }
+   
+    if (sub) {
     var data = {
-      email: 'alex5325test@gmail.com',
+      email: email,
     }
     setLoader(true);
     axiosconfig
       .post('forgot', data)
       .then((res) => {
         setLoader(false);
-        if (res.data.error) {
-          alert('invalid credentials')
-          console.log(res.data, 'invalid')
-
-        } else {
-          alert("email-verified", res)
-          console.log(res.data, 'email ')
+       console.log(res)
+          alert(res?.data?.message)
           setTimeout(() => {            
             setModalVisible(!modalVisible)
           }, 3000);
           // navigation.navigate('VerifyEmail', {
           //   email: email
           // })
-        }
+        
       })
       .catch(err => {
         setLoader(false);
-        console.log(err.response, 'aaa')
-        if (err.response.data.errors) {
-          for (const property in err.response.data.errors) {
-            alert(err.response.data.errors[property][0])
-            return
-          }
-        } else {
-          alert(err.response.data.message)
-        }
+        console.log(err?.response, 'aaa')
+        alert(err?.response?.data?.message)
+        
       });
+    }
   }
   const OtpSubmit = () => {
+    console.log(email, otp)
     var data = {
-      email: 'alex5325test@gmail.com',
-      token: '2505'
+      email: email,
+      token: otp
     }
     setLoader(true);
     axiosconfig
       .post('otp_password', data)
       .then((res) => {
-        setLoader(false);
-        if (res.data.error) {
-          alert('invalid credentials')
-          console.log(res.data, 'invalid')
-
-        } else {
-          alert("email-verified", res)
-          console.log(res.data, 'email ')
-          setTimeout(() => {            
-            setModalVisible(!modalVisible)
-          }, 3000);
-          navigation.navigate('ChangePass')
+        // setLoader(false);
+        console.log(res,'email')  
+          alert(res?.data)
+          navigation.navigate('ChangePass',{email, otp})
           
-        }
       })
       .catch(err => {
         setLoader(false);
-        console.log(err.response, 'aaa')
-        if (err.response.data.errors) {
-          for (const property in err.response.data.errors) {
-            alert(err.response.data.errors[property][0])
-            return
-          }
-        } else {
-          alert(err.response.data.message)
-        }
+        console.log(err?.response, 'aaa')
+        alert(err?.response?.data)
+        
       });
   }
  
@@ -137,12 +122,13 @@ const ForgetPassword = ({ navigation }) => {
                 base: '83%',
                 md: '25%',
               }}
-              variant="underlined"
+              variant="unstyled"
               InputLeftElement={
                 <View style={s.iconCircle}>
                   <Icon name={'envelope'} color={Textcolor} size={18} />
                 </View>
               }
+              style={{ borderBottomColor: submitted &&  email == null  ? 'red' : Textcolor, borderBottomWidth: 1 }}
               placeholder="Email"
               placeholderTextColor={Textcolor}
               value={email}
@@ -161,7 +147,8 @@ const ForgetPassword = ({ navigation }) => {
           <View style={s.button}>
             <Button
               onPress={() => {
-                Reset()
+                 Reset()
+                // navigation.navigate('ChangePass', {email, otp})
                
               }}
               size="sm"
@@ -222,6 +209,8 @@ const ForgetPassword = ({ navigation }) => {
             navigation={navigation}
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
+            // OtpSubmit={OtpSubmit}
+            // OtpSubmit={()=> navigation.navigate('ChangePass',{ email, otp})}
             OtpSubmit={OtpSubmit}
             screen={'Forgot'}
             setOtp={setOtp}

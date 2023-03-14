@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  
   btnText: {
     fontFamily: Poppins,
     lineHeight: moderateScale(20, 0.1),

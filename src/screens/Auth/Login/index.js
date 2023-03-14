@@ -64,9 +64,19 @@ const Login = ({ navigation }) => {
           // console.log(res)
           // alert(res?.data?.message);
           AsyncStorage.setItem('password' , password)
-          AsyncStorage.setItem('userToken' , res?.data?.access_token)
+          const data ={
+            id: res?.data?.userInfo,
+            userToken: res?.data?.access_token
+          }
+          console.log(res?.data?.userInfo, 'id')
+          AsyncStorage.setItem('id', res?.data?.userInfo)
+          AsyncStorage.setItem('userToken' , res?.data?.access_token,)
+          // AsyncStorage.setItem('data' , data)
+
+
           console.log(res, 'Login data ')
           dispatch(setUserToken(res?.data?.access_token));
+          // alert(res?.data?.message)
           setLoader(false);
 
           // setOnsubmit(true)

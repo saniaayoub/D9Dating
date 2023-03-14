@@ -47,7 +47,9 @@ const getPassword = async()=>{
 }
 const validate = ()=>{
   if(password == storedPassword){
-    navigation.navigate('ChangePass')
+    navigation.navigate('ChangePass',{
+      screen:'Reset'
+    })
   }
   else{
     Alert.alert("Password Incorrect")
@@ -169,7 +171,7 @@ const validate = ()=>{
             <Button
               size="md"
               variant={'link'}
-              onPress={() => navigation.navigate('ForgetPassword')}
+              onPress={() => navigation.navigate('Forgot')}
             >
               <View style={{flexDirection: 'row'}}>
                 <Text style={[s.forgetPass, {color: '#FFD700'}]}>Forgot </Text>

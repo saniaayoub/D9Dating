@@ -27,6 +27,8 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import Feather from 'react-native-vector-icons/Feather';
 import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Settings = ({navigation}) => {
   const dispatch = useDispatch();
@@ -46,49 +48,117 @@ const Settings = ({navigation}) => {
   const [showPass, setshowPass] = useState(true);
   const [showConfPass, setshowConfPass] = useState(true);
   const [loader, setLoader] = useState(false);
+  const [submitted, setSubmitted] = useState();
+
 
   const showToast = msg => {
     Alert.alert(msg);
   };
 
   const deleteAccount = async () => {
-    refRBSheet.current.close();
-    setLoader(true);
-    if (!password || !confirmPassword) {
-      setLoader(false);
+    // refRBSheet.current.close();
+    console.log('submit');
+    setSubmitted(false);
+    let sub = false;
+
+    if (password == null || password == "") {
+      setSubmitted(true);
+      sub = true
       return;
     }
-    if (confirmPassErr) {
-      setLoader(false);
+    if (confirmPassword == null || confirmPassword == "") {
+      setSubmitted(true);
+      sub = true;
       return;
     }
-    const body = {
-      old_password: password,
-    };
-    await axiosconfig
-      .post('account_delete', body, {
-        headers: {
-          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5ODk1ZTI5Ni00NGE0LTQ3NGQtODk3Zi1mZTMxNDI4ZjM5Y2UiLCJqdGkiOiIwYzU5NDJjNWFlYzUwYmUxZjg5YjZmN2E1ZTM5OTcyYmUyMzA4NDNkMDE3M2Q1MmRkMmNjNDEwOWExOTQ4YjcyY2UyYzMyMTJiMTM3ZWRlYiIsImlhdCI6MTY3ODE2Nzk4MC42NTQ1NDMsIm5iZiI6MTY3ODE2Nzk4MC42NTQ1NDcsImV4cCI6MTcwOTc5MDM4MC42NDc4ODcsInN1YiI6IjIiLCJzY29wZXMiOltdfQ.bqK6MiDu6MDiBEnh671d45NWQp1rrmAokvyIQNHE7EKPMn9rvCC_O0M2SwYb6onSYFKGY8TffoGamovsIXPM1KYWgXg56m4zbv9gT1SXI0VjM3eTmlTbHngMp_IzM-tA1jOIRuqaLvf7gq_w2LJeP0iKQl87v2_XBrN-JvIzQcAS7VVYxFvIe_ayj15IXkC7XuTLqFm5mN99Ay92nSLM-WhXc0psoQQODr-it2L2aN69rxRxDta8_PIgD5Tfyf5oxrnG6w0wMhVW2SPI14pRmLJnvYNCRtOJL3aHWKqazpVdKfo_kROKHItSmcjH3BsaggKVirnG5SD44FapEt-qDvc11JM-fG8CMEugTarvNOw1y7_2yfxaC0ZomeFX5Si5rGA3Pq9ezmRFPMNEvmfQ0sXcKpNJ-bndYNscF36pK9F6huypxHwfZejwa4h-yCUSNV82gdpWGJJihxBf339OfV5h2xRkryDVeXlxQ96NGcBfn8YgMJ_jyz5NJGN4EIX0u3D3agnoxhSoWXILOgEg8jSnBdTffx_6br0yXa5y5fVt0EBiL_OBoWsLfrDHGqGs_QJhI6PGp6aq_8Pl1vfbkN2VMTIYSHh-DMgnlzBaN1ISs2knlAWLWizc7UUPlUnzkKrHq8v1n2T5qLg3ozMv_o-AOKJNfTQV-v-1aOP9kmI`,
-        },
-      })
-      .then(res => {
-        clear(res?.data?.messsage);
-        logout();
-      })
-      .catch(err => {
-        clear(err.response?.data?.messsage);
-      });
+    if(password != confirmPassword){
+      Alert.alert('password does not match')
+    }
+    if(!sub){
+      console.log('avvv');
+      const body = {
+        old_password: password,
+      };
+      await axiosconfig
+        .post('account_delete', body, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        })
+        .then(res => {
+          // clear(res?.data?.messsage);
+          console.log(res);
+          console.log(res?.data?.message)
+          alert(res?.data?.message)
+           AsyncStorage.removeItem('userToken');
+          dispatch(setUserToken(null));
+           
+
+        })
+        .catch(err => {
+          console.log(err);
+          alert(err.response?.data?.message);
+          console.log(err.response?.data?.message);
+        });
+    }
+    
   };
 
-  const clear = message => {
-    showToast(message);
-    setPassword('');
-    setConfirmPassword('');
-    setLoader(false);
-  };
+  // const clear = message => {
+  //   showToast(message);
+  //   setPassword('');
+  //   setConfirmPassword('');
+  //   setLoader(false);
+  // };
+
   const logout = () => {
     dispatch(setUserToken(null));
   };
+
+  const LogoutApi = async () => {
+   console.log(userToken);
+      // const value = await AsyncStorage.getItem('userToken')
+      // console.log(value, 'tokenLogout');
+      // setLoader(true)
+       await axiosconfig.get('logout', {
+          headers: {
+            Authorization: `Bearer ${userToken}`  ,
+          },
+        }).then((res) => {
+          setLoader(false)
+          clearToken()
+          console.log(res.data, 'logoutToken');
+        }).catch((err) => {
+          console.log(err, 'errrr');
+        })
+  }
+  const clearToken = async ()=>{
+    dispatch(setUserToken(null));
+  await  AsyncStorage.removeItem('userToken')
+   await AsyncStorage.removeItem('password')
+  }
+  const getData = async () => {
+    console.log(context.myData, 'mydata');
+    try {
+      const value = await AsyncStorage.getItem('@auth_token')
+      console.log(value, 'valueToken');
+      if (value !== null) {
+        axiosconfig.get('my-data', {
+          headers: {
+            Authorization: 'Bearer ' + value,
+          },
+        }).then((res) => {
+          console.log(res.data, 'jjkjhkhkhk');
+          context.setMyData(res.data)
+          setfromU(res.data?._from)
+        }).catch((err) => {
+          console.log(err, 'errrr');
+        })
+      }
+    } catch (e) {
+      console.log(e, 'getdata error');
+    }
+  }
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
@@ -275,6 +345,22 @@ const Settings = ({navigation}) => {
                   <Text style={{color: 'red'}}>{passwordError}</Text>
                 ) : null}
               </View>
+              {
+            submitted && (password == null || password == '') ? (
+              <>
+                <View style={{
+                  alignSelf: 'flex-end',
+                  top: moderateScale(-15,0.1),
+                  marginRight: moderateScale(35, 0.1)
+                }}>
+                  <Text style={{
+                    color: 'red',
+                  }}>Required</Text>
+                </View>
+              </>
+            ) : null
+          }
+
 
               <View style={s.input1}>
                 <Input
@@ -327,21 +413,38 @@ const Settings = ({navigation}) => {
                   fontSize={moderateScale(14, 0.1)}
                   secureTextEntry={showConfPass}
                 />
-                {confirmPassErr ? (
-                  <Text style={{color: 'red'}}>{confirmPassErr}</Text>
-                ) : null}
+              
               </View>
+              {
+            submitted && (confirmPassword == null || confirmPassword == '') ? (
+              <>
+                <View style={{
+                  alignSelf: 'flex-end',
+                  top: moderateScale(-15,0.1),
+                  marginRight: moderateScale(35, 0.1)
+                }}>
+                  <Text style={{
+                    color: 'red',
+                  }}>Required</Text>
+                </View>
+              </>
+            ) : null
+          }
+
               <TouchableOpacity
-                onPress={() => deleteAccount()}
+                onPress={() => {
+                  console.log('dlt');
+                  deleteAccount()}}
                 style={s.dltbtn}
               >
                 <Text style={s.dltTxt}>Delete Account</Text>
               </TouchableOpacity>
             </RBSheet>
           </TouchableOpacity>
+         
           <TouchableOpacity
             onPress={() => {
-              logout();
+              LogoutApi();
             }}
             style={s.input}
           >

@@ -61,6 +61,11 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(15, 0.1),
     fontFamily: Poppins,
   },
+  eye: {
+    position: 'absolute',
+    top: moderateScale(13),
+    right: moderateScale(13),
+  },
   bottomLink: {
     flex: 1,
     justifyContent: 'flex-end',

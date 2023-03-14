@@ -52,6 +52,9 @@ const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, setOtp,
             onCodeFilled={(code => {
               console.log(`Code is ${code}, you are good to go!`)
             })}
+            onCodeChanged={(code)=>{
+              setOtp(code)
+            }}
           />
           <View style={s.button}>
             <Button
