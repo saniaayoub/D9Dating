@@ -296,7 +296,8 @@ console.log(userLocation,'bbb')
           style={[
             s.container,
             {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
-          ]}>
+          ]}
+        >
           <View style={s.header}>
             <Header navigation={navigation} />
           </View>
@@ -308,7 +309,8 @@ console.log(userLocation,'bbb')
               style={[
                 s.headingText,
                 {fontFamily: 'Poppins-Bold', color: Textcolor},
-              ]}>
+              ]}
+            >
               {' '}
               Account
             </Text>
@@ -321,7 +323,8 @@ console.log(userLocation,'bbb')
               alignItems: 'center',
               justifyContent: 'center',
               paddingBottom: moderateScale(20, 0.1),
-            }}>
+            }}
+          >
             <View style={s.input}>
               <View style={{flex: 0.4}}>
                 <Text style={[s.inputTxt, {color: Textcolor}]}>Name</Text>
@@ -375,13 +378,15 @@ console.log(userLocation,'bbb')
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                }}>
+                }}
+              >
                 {isSelected.map((item, i) => (
                   <View style={s.radio}>
                     <RadioButton
                       onPress={() => onRadioBtnClick(item)}
                       selected={item.selected}
-                      key={item.id}>
+                      key={item.id}
+                    >
                       {item.name}
                     </RadioButton>
                   </View>
@@ -401,7 +406,8 @@ console.log(userLocation,'bbb')
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                       marginTop: moderateScale(5, 0.1),
-                    }}>
+                    }}
+                  >
                     <View
                       style={[
                         s.dateView,
@@ -410,7 +416,8 @@ console.log(userLocation,'bbb')
                           borderBottomColor:
                             onsubmit && date == null ? 'red' : Textcolor,
                         },
-                      ]}>
+                      ]}
+                    >
                       <Text style={[s.date, {color: Textcolor}]}>
                         {date ? d : 'DD'}
                       </Text>
@@ -424,7 +431,8 @@ console.log(userLocation,'bbb')
                           borderBottomColor:
                             onsubmit && date == null ? 'red' : Textcolor,
                         },
-                      ]}>
+                      ]}
+                    >
                       <Text style={[s.date, {color: Textcolor}]}>
                         {date ? m : 'month'}
                       </Text>
@@ -438,7 +446,8 @@ console.log(userLocation,'bbb')
                           borderBottomColor:
                             onsubmit && date == null ? 'red' : Textcolor,
                         },
-                      ]}>
+                      ]}
+                    >
                       <Text style={[s.date, {color: Textcolor}]}>
                         {date ? y : 'Year'}
                       </Text>
@@ -537,7 +546,8 @@ console.log(userLocation,'bbb')
                         justifyContent: 'center',
                         width: '90%',
                         marginBottom: 20,
-                      }}>
+                      }}
+                    >
                       <Text style={{fontSize: 12, color: 'red'}}>
                         please enter valid email
                       </Text>
@@ -576,7 +586,8 @@ console.log(userLocation,'bbb')
                           width: moderateScale(170, 0.1),
                           alignItems: 'center',
                           marginTop: moderateScale(18, 0.1),
-                        }}>
+                        }}
+                      >
                         <Text
                           style={[
                             s.option,
@@ -585,7 +596,8 @@ console.log(userLocation,'bbb')
                               flex: 0.8,
                               paddingBottom: moderateScale(12, 0.1),
                             },
-                          ]}>
+                          ]}
+                        >
                           {group}
                         </Text>
 
@@ -600,11 +612,13 @@ console.log(userLocation,'bbb')
                         />
                       </Pressable>
                     );
-                  }}>
+                  }}
+                >
                   <Menu.Item
                     onPress={() => {
                       setGroup('Group 1');
-                    }}>
+                    }}
+                  >
                     <View style={s.optionView}>
                       <Text style={[s.optionBtns, {color: Textcolor}]}>
                         Group 1
@@ -614,7 +628,8 @@ console.log(userLocation,'bbb')
                   <Menu.Item
                     onPress={() => {
                       setGroup('Group 2');
-                    }}>
+                    }}
+                  >
                     <View style={s.optionView}>
                       <Text style={[s.optionBtns, {color: Textcolor}]}>
                         Group 2
@@ -624,7 +639,8 @@ console.log(userLocation,'bbb')
                   <Menu.Item
                     onPress={() => {
                       setGroup('Group 3');
-                    }}>
+                    }}
+                  >
                     <View style={s.optionView}>
                       <Text style={[s.optionBtns, {color: Textcolor}]}>
                         Group 3
@@ -688,7 +704,8 @@ console.log(userLocation,'bbb')
                     password ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowPass(!showPass)}>
+                          onPress={() => setshowPass(!showPass)}
+                        >
                           <Feather
                             name={showPass ? 'eye' : 'eye-off'}
                             color={Textcolor}
@@ -733,7 +750,8 @@ console.log(userLocation,'bbb')
                     confirmPassword ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowConPass(!showConPass)}>
+                          onPress={() => setshowConPass(!showConPass)}
+                        >
                           <Feather
                             name={showConPass ? 'eye' : 'eye-off'}
                             color={Textcolor}
@@ -764,7 +782,14 @@ console.log(userLocation,'bbb')
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
+<<<<<<< HEAD
                  onPress={() => submit()}
+=======
+                onPress={() => {
+                  submit();
+                }}
+                // onPress={() => navigation.navigate('Login')}
+>>>>>>> e11eead3fae507faceb9e17d0e869f5b002b8127
               >
                 <Text style={s.btnText}>Register</Text>
               </Button>
@@ -776,13 +801,15 @@ console.log(userLocation,'bbb')
                 flexDirection: 'row',
                 justifyContent: 'center',
                 marginBottom: moderateScale(20, 0.1),
-              }}>
+              }}
+            >
               <TouchableOpacity>
                 <Text
                   style={[
                     s.forgetPass,
                     {color: Textcolor, textDecorationLine: 'underline'},
-                  ]}>
+                  ]}
+                >
                   Privacy Policy
                 </Text>
               </TouchableOpacity>

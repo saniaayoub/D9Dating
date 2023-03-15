@@ -34,9 +34,8 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RNFS from 'react-native-fs';
 import Loader from '../../../Components/Loader';
-// import RNFetchBlob from 'rn-fetch-blob';
-import socket from '../../../utils/socket';
-import {addUsers} from '../../../Redux/actions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axiosconfig from '../../../provider/axios';
 
 const myData = [
   {
@@ -204,7 +203,7 @@ const Home = ({navigation}) => {
   const refRBSheet = useRef();
   const users = useSelector(state => state.reducer.users);
   const theme = useSelector(state => state.reducer.theme);
-  const loginId = useSelector(state => state.reducer.userToken);
+  const userToken = useSelector(state => state.reducer.userToken);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [myData1, setMyData1] = useState(myData);
@@ -217,7 +216,8 @@ const Home = ({navigation}) => {
   const [loader, setLoader] = useState(false);
 
   useEffect(() => {
-    console.log(loginId, 'dataaa');
+    getPosts();
+    // console.log(loginId, 'dataaa');
     // let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
     // let binaryFile = Image.resolveAssetSource(
     //   require('../../../assets/images/jpg/photo.jpg'),
@@ -237,6 +237,26 @@ const Home = ({navigation}) => {
     //     console.log(err.message);
     //   });
   }, [myStories]);
+
+  const getPosts = async () => {
+    setLoader(true);
+    await axiosconfig
+      .get('user_details', {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
 
   var lastTap = null;
   const handleDoubleTap = index => {
