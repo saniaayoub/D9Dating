@@ -66,6 +66,10 @@ const App = () => {
       LONGITUDE = crd.longitude
     })
   }, []);
+  useEffect(() => {
+   console.log('map');
+  }, [])
+  
 
   const onPress = (data, details) => {
     // setPosition(details.geometry.location);
@@ -118,7 +122,7 @@ const App = () => {
         style={styles.map}
         provider={PROVIDER_GOOGLE}
         initialRegion={position}
-        showsUserLocation={true}
+        // showsUserLocation={true}
         followsUserLocation={true}
         showsCompass={true}
         scrollEnabled={true}

@@ -125,7 +125,8 @@ const Register = ({navigation}) => {
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const userLocation = useSelector(state => state.reducer.location);
   const [location, setLocation] = useState(userLocation);
-
+console.log(userLocation,'bbb')
+ 
   useEffect(() => {}, []);
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
@@ -180,8 +181,8 @@ const Register = ({navigation}) => {
       sub = false;
       return false;
     }
-    if(password != confirmPassword){
-      alert('password does not match')
+    if (password != confirmPassword) {
+      alert('password does not match');
       sub = false;
       return false;
     }
@@ -211,7 +212,7 @@ const Register = ({navigation}) => {
       .catch(err => {
         // setLoader(false);
         console.log(err, 'errors');
-        console.log(err.response?.data?.message,'error message');
+        console.log(err.response?.data?.message, 'error message');
         alert(err?.response?.data?.message);
       });
   };
@@ -222,7 +223,6 @@ const Register = ({navigation}) => {
     } catch (e) {}
   };
   const handleSubmit = () => {
-    
     // setLoader(true)
     setOnsubmit(false);
     var data = {
@@ -232,14 +232,14 @@ const Register = ({navigation}) => {
       otp: otp,
       phone_number: phonenum.current.getValue(),
       gender: gender,
-      location: location,
+      location: userLocation,
       group: group,
       password: password,
       confirm_password: confirmPassword,
       date: date,
       type: 'user',
     };
-    console.log(data,'data');
+    console.log(data, 'data');
     axiosconfig
       .post('register', data)
       .then(res => {
@@ -248,8 +248,8 @@ const Register = ({navigation}) => {
         alert(res?.data?.message);
         AsyncStorage.setItem('password', password);
         AsyncStorage.setItem('userToken', res?.data?.access_token);
-        let id =res?.data?.userInfo.toString()
-        AsyncStorage.setItem('id',id)
+        let id = res?.data?.userInfo.toString();
+        AsyncStorage.setItem('id', id);
         console.log(res, 'Login data ');
         dispatch(setUserToken(res?.data?.access_token));
         setLoader(false);
@@ -257,7 +257,7 @@ const Register = ({navigation}) => {
       .catch(err => {
         // setLoader(false);
         console.log(err, 'errors');
-        console.log(err?.response?.data?.message,'msg');
+        console.log(err?.response?.data?.message, 'msg');
         alert(err.response?.data?.message);
       });
   };
@@ -280,15 +280,12 @@ const Register = ({navigation}) => {
     month = check.format('M');
     dateex = check.format('DD');
     year = check.format('YYYY');
-    console.log(check, 'date');
-    console.log(month, 'month');
-    console.log(dateex, 'dateeee');
     setM(month);
     setY(year);
     setD(dateex);
     console.log(year, 'year');
-    setDate(`${d}/${m}/${y}`);
-    console.log(date, 'c date');
+    setDate(`${dateex}/${month}/${year}`);
+
     hideDatePicker();
   };
 
@@ -642,28 +639,27 @@ const Register = ({navigation}) => {
                 <Text style={[s.inputTxt, {color: Textcolor}]}>Location</Text>
               </View>
               <View style={{flex: 0.6}}>
-                <TouchableOpacity onPress={()=>navigation.navigate('Maps')}>
-                <Input
-                  w={{
-                    base: '100%',
-                    md: '25%',
-                  }}
-                  style={{
-                    borderBottomWidth: 1,
-                    borderBottomColor:
-                      onsubmit && location == null ? 'red' : Textcolor,
-                  }}
-                  // onTouchStart={() => navigation.navigate('Maps')}
-                  variant="unstyled"
-                  editable = {false}
-                  placeholder={userLocation ? userLocation : 'Enter Location'}
-                  onChangeText={() => setLocation(location)}
-                  placeholderTextColor={Textcolor}
-                  color={Textcolor}
-                  fontSize={moderateScale(10, 0.1)}
-                />
+                <TouchableOpacity onPress={() => navigation.navigate('Maps')}>
+                  <Input
+                    w={{
+                      base: '100%',
+                      md: '25%',
+                    }}
+                    style={{
+                      borderBottomWidth: 1,
+                      borderBottomColor:
+                        onsubmit && location == null ? 'red' : Textcolor,
+                    }}
+                    // onTouchStart={() => navigation.navigate('Maps')}
+                    variant="unstyled"
+                    editable={false}
+                    placeholder={userLocation ? userLocation : 'Enter Location'}
+                    onChangeText={() => setLocation(location)}
+                    placeholderTextColor={Textcolor}
+                    color={Textcolor}
+                    fontSize={moderateScale(10, 0.1)}
+                  />
                 </TouchableOpacity>
-               
               </View>
             </View>
 
@@ -768,9 +764,7 @@ const Register = ({navigation}) => {
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
-                onPress={() => {                  
-                  submit()}}
-                // onPress={() => navigation.navigate('Login')}
+                 onPress={() => submit()}
               >
                 <Text style={s.btnText}>Register</Text>
               </Button>
