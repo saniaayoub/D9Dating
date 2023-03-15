@@ -53,7 +53,8 @@ const styles = StyleSheet.create({
   },
 
   img: {
-    width: '100%',
+    // height: moderateScale(300, 0.1),
+    paddingHorizontal: moderateScale(10, 0.1),
   },
   optionView: {
     flexDirection: 'row',

@@ -125,8 +125,8 @@ const Register = ({navigation}) => {
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const userLocation = useSelector(state => state.reducer.location);
   const [location, setLocation] = useState(userLocation);
-console.log(userLocation,'bbb')
- 
+  console.log(userLocation, 'bbb');
+
   useEffect(() => {}, []);
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
