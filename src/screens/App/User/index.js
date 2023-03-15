@@ -108,7 +108,8 @@ const Profile = ({ navigation }) => {
 
 
   useEffect(() => {
-    getData();
+    // getID()
+     getData();
   }, []);
 
   const onRadioBtnClick = item => {
@@ -127,16 +128,20 @@ const Profile = ({ navigation }) => {
     Alert.alert(msg);
     // ToastAndroid.show(msg, ToastAndroid.LONG);
   };
+  // const getID=async()=> {
+  //   let  SP = await AsyncStorage.getItem('id')
+  //   getData(SP)
+  // }
 
   
   let  token =  AsyncStorage.getItem('userToken')
   const getData = async () => {
-    let  SP = await AsyncStorage.getItem('id')
-    console.log(SP, 'id');
-    // setId(SP)
+  let  id = await AsyncStorage.getItem('id')
+    console.log(id, 'id');
+    setId(id)
     setLoader(true);
     axiosconfig
-      .get('user_view/12', {
+      .get(`user_view/${id}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },

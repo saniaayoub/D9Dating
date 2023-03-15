@@ -69,7 +69,8 @@ const Login = ({ navigation }) => {
             userToken: res?.data?.access_token
           }
           console.log(res?.data?.userInfo, 'id')
-          AsyncStorage.setItem('id', res?.data?.userInfo)
+          let id =res?.data?.userInfo.toString()
+          AsyncStorage.setItem('id',id)
           AsyncStorage.setItem('userToken' , res?.data?.access_token,)
           // AsyncStorage.setItem('data' , data)
 

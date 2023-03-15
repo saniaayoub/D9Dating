@@ -124,7 +124,7 @@ const Register = ({navigation}) => {
   const LATITUDE_DELTA = 0.0922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const userLocation = useSelector(state => state.reducer.location);
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState(userLocation);
 
   useEffect(() => {}, []);
   const onRadioBtnClick = item => {
@@ -222,6 +222,7 @@ const Register = ({navigation}) => {
     } catch (e) {}
   };
   const handleSubmit = () => {
+    
     // setLoader(true)
     setOnsubmit(false);
     var data = {
@@ -238,6 +239,7 @@ const Register = ({navigation}) => {
       date: date,
       type: 'user',
     };
+    console.log(data,'data');
     axiosconfig
       .post('register', data)
       .then(res => {
@@ -246,6 +248,8 @@ const Register = ({navigation}) => {
         alert(res?.data?.message);
         AsyncStorage.setItem('password', password);
         AsyncStorage.setItem('userToken', res?.data?.access_token);
+        let id =res?.data?.userInfo.toString()
+        AsyncStorage.setItem('id',id)
         console.log(res, 'Login data ');
         dispatch(setUserToken(res?.data?.access_token));
         setLoader(false);
