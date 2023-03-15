@@ -24,6 +24,7 @@ import {
   showImagePicker,
 } from 'react-native-image-picker';
 import axiosconfig from '../../../provider/axios';
+import RNFS from 'react-native-fs';
 
 // import DropDownPicker from 'react-native-dropdown-picker';
 
@@ -139,12 +140,11 @@ const CreatePost = ({navigation}) => {
           alert(response.errorMessage);
           return;
         }
-         setFilePath(response.assets[0].uri);
-        convertImage(response.assets[0].uri)
+
+        convertImage(response.assets[0].uri);
         refRBSheet.current.close();
-        console.log(filePath, 'image')
+        console.log(filePath, 'image');
       });
-      
     }
   };
 
@@ -152,14 +152,10 @@ const CreatePost = ({navigation}) => {
     await RNFS.readFile(image, 'base64')
       .then(res => {
         let base64 = `data:image/png;base64,${res}`;
-        // setFilePath(response.assets[0].uri);
-        setFilePath({...form, image: base64});
-        
+        setFilePath(base64);
       })
       .catch(err => {
         console.log(err);
-        // showToast('Profile picture not updated');
-        setLoader(false);
       });
   };
 
@@ -189,55 +185,52 @@ const CreatePost = ({navigation}) => {
       } else {
         let source = res;
         console.log(source.assets[0].uri, 'uri');
-        setFilePath(source.assets[0].uri);
-        convertImage(source.assets[0].uri)
+
+        convertImage(source.assets[0].uri);
         console.log(filePath, 'filepath');
         refRBSheet.current.close();
       }
     });
   };
   const onsubmit = () => {
-    console.log(userToken)
-    if(caption == ''){
-      alert('please fill given fields') 
+    console.log(userToken);
+    if (caption == '') {
+      alert('please fill given fields');
+      return;
     }
-    if(filePath == ''){
-      alert('please fill given fields')
-    }
-    if(filePath == '' || caption == ''){
-      alert('please fill given fields')
-    }
-    else{
-      var data = {
+    if (filePath == '') {
+      alert('please fill given fields');
+      return;
+    } else {
+      let data = {
         image: filePath,
         caption: caption,
-        privacy_option: story
-      }
+        privacy_option:
+          story == 'Public' ? '1' : story == 'Friends' ? '2' : '3',
+      };
+      console.log(data);
       // setLoader(true);
       axiosconfig
-        .post('post_store', data,{
+        .post('post_store', data, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
         })
-        .then((res) => {
+        .then(res => {
           // setLoader(false);
-            alert(res?.data?.message)
-            console.log(res, 'post')
-            setFilePath('')
-            setCaption('')
-             navigation.navigate('Home')
-        
+          alert(res?.data?.message);
+          console.log(res, 'post');
+          setFilePath('');
+          setCaption('');
+          navigation.navigate('Home');
         })
         .catch(err => {
           // setLoader(false);
-          console.log(err, 'aaa')
-            alert(err?.response?.data?.message)
-          
+          console.log(err, 'aaa');
+          alert(err?.response?.data?.message);
         });
     }
-    
-  }
+  };
 
   return (
     <View
@@ -517,7 +510,7 @@ const CreatePost = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={()=>onsubmit()}>
+        <TouchableOpacity onPress={() => onsubmit()}>
           <View style={[s.postBtn, {borderColor: Textcolor}]}>
             <Text style={[s.postTxt, {color: Textcolor}]}>Post</Text>
           </View>

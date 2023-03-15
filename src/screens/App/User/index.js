@@ -107,7 +107,7 @@ const Profile = ({navigation}) => {
 
   useEffect(() => {
     // getID()
-     getData();
+    getData();
   }, []);
 
   const onRadioBtnClick = item => {
@@ -135,10 +135,10 @@ const Profile = ({navigation}) => {
   const getData = async () => {
     let SP = await AsyncStorage.getItem('id');
     console.log(SP, 'id');
-    // setId(SP)
+    setId(SP);
     setLoader(true);
     axiosconfig
-      .get(`user_view/${id}`, {
+      .get(`user_view/${SP}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },

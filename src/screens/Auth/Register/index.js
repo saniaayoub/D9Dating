@@ -124,7 +124,7 @@ const Register = ({navigation}) => {
   const LATITUDE_DELTA = 0.0922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const userLocation = useSelector(state => state.reducer.location);
-  const [location, setLocation] = useState(userLocation);
+  const [location, setLocation] = useState('');
 
   useEffect(() => {}, []);
   const onRadioBtnClick = item => {
@@ -180,8 +180,8 @@ const Register = ({navigation}) => {
       sub = false;
       return false;
     }
-    if(password != confirmPassword){
-      alert('password does not match')
+    if (password != confirmPassword) {
+      alert('password does not match');
       sub = false;
       return false;
     }
@@ -211,7 +211,7 @@ const Register = ({navigation}) => {
       .catch(err => {
         // setLoader(false);
         console.log(err, 'errors');
-        console.log(err.response?.data?.message,'error message');
+        console.log(err.response?.data?.message, 'error message');
         alert(err?.response?.data?.message);
       });
   };
@@ -222,7 +222,6 @@ const Register = ({navigation}) => {
     } catch (e) {}
   };
   const handleSubmit = () => {
-    
     // setLoader(true)
     setOnsubmit(false);
     var data = {
@@ -239,7 +238,7 @@ const Register = ({navigation}) => {
       date: date,
       type: 'user',
     };
-    console.log(data,'data');
+    console.log(data, 'data');
     axiosconfig
       .post('register', data)
       .then(res => {
@@ -248,8 +247,8 @@ const Register = ({navigation}) => {
         alert(res?.data?.message);
         AsyncStorage.setItem('password', password);
         AsyncStorage.setItem('userToken', res?.data?.access_token);
-        let id =res?.data?.userInfo.toString()
-        AsyncStorage.setItem('id',id)
+        let id = res?.data?.userInfo.toString();
+        AsyncStorage.setItem('id', id);
         console.log(res, 'Login data ');
         dispatch(setUserToken(res?.data?.access_token));
         setLoader(false);
@@ -257,7 +256,7 @@ const Register = ({navigation}) => {
       .catch(err => {
         // setLoader(false);
         console.log(err, 'errors');
-        console.log(err?.response?.data?.message,'msg');
+        console.log(err?.response?.data?.message, 'msg');
         alert(err.response?.data?.message);
       });
   };
@@ -299,7 +298,8 @@ const Register = ({navigation}) => {
           style={[
             s.container,
             {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
-          ]}>
+          ]}
+        >
           <View style={s.header}>
             <Header navigation={navigation} />
           </View>
@@ -311,7 +311,8 @@ const Register = ({navigation}) => {
               style={[
                 s.headingText,
                 {fontFamily: 'Poppins-Bold', color: Textcolor},
-              ]}>
+              ]}
+            >
               {' '}
               Account
             </Text>
@@ -324,7 +325,8 @@ const Register = ({navigation}) => {
               alignItems: 'center',
               justifyContent: 'center',
               paddingBottom: moderateScale(20, 0.1),
-            }}>
+            }}
+          >
             <View style={s.input}>
               <View style={{flex: 0.4}}>
                 <Text style={[s.inputTxt, {color: Textcolor}]}>Name</Text>
@@ -378,13 +380,15 @@ const Register = ({navigation}) => {
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                }}>
+                }}
+              >
                 {isSelected.map((item, i) => (
                   <View style={s.radio}>
                     <RadioButton
                       onPress={() => onRadioBtnClick(item)}
                       selected={item.selected}
-                      key={item.id}>
+                      key={item.id}
+                    >
                       {item.name}
                     </RadioButton>
                   </View>
@@ -404,7 +408,8 @@ const Register = ({navigation}) => {
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                       marginTop: moderateScale(5, 0.1),
-                    }}>
+                    }}
+                  >
                     <View
                       style={[
                         s.dateView,
@@ -413,7 +418,8 @@ const Register = ({navigation}) => {
                           borderBottomColor:
                             onsubmit && date == null ? 'red' : Textcolor,
                         },
-                      ]}>
+                      ]}
+                    >
                       <Text style={[s.date, {color: Textcolor}]}>
                         {date ? d : 'DD'}
                       </Text>
@@ -427,7 +433,8 @@ const Register = ({navigation}) => {
                           borderBottomColor:
                             onsubmit && date == null ? 'red' : Textcolor,
                         },
-                      ]}>
+                      ]}
+                    >
                       <Text style={[s.date, {color: Textcolor}]}>
                         {date ? m : 'month'}
                       </Text>
@@ -441,7 +448,8 @@ const Register = ({navigation}) => {
                           borderBottomColor:
                             onsubmit && date == null ? 'red' : Textcolor,
                         },
-                      ]}>
+                      ]}
+                    >
                       <Text style={[s.date, {color: Textcolor}]}>
                         {date ? y : 'Year'}
                       </Text>
@@ -540,7 +548,8 @@ const Register = ({navigation}) => {
                         justifyContent: 'center',
                         width: '90%',
                         marginBottom: 20,
-                      }}>
+                      }}
+                    >
                       <Text style={{fontSize: 12, color: 'red'}}>
                         please enter valid email
                       </Text>
@@ -579,7 +588,8 @@ const Register = ({navigation}) => {
                           width: moderateScale(170, 0.1),
                           alignItems: 'center',
                           marginTop: moderateScale(18, 0.1),
-                        }}>
+                        }}
+                      >
                         <Text
                           style={[
                             s.option,
@@ -588,7 +598,8 @@ const Register = ({navigation}) => {
                               flex: 0.8,
                               paddingBottom: moderateScale(12, 0.1),
                             },
-                          ]}>
+                          ]}
+                        >
                           {group}
                         </Text>
 
@@ -603,11 +614,13 @@ const Register = ({navigation}) => {
                         />
                       </Pressable>
                     );
-                  }}>
+                  }}
+                >
                   <Menu.Item
                     onPress={() => {
                       setGroup('Group 1');
-                    }}>
+                    }}
+                  >
                     <View style={s.optionView}>
                       <Text style={[s.optionBtns, {color: Textcolor}]}>
                         Group 1
@@ -617,7 +630,8 @@ const Register = ({navigation}) => {
                   <Menu.Item
                     onPress={() => {
                       setGroup('Group 2');
-                    }}>
+                    }}
+                  >
                     <View style={s.optionView}>
                       <Text style={[s.optionBtns, {color: Textcolor}]}>
                         Group 2
@@ -627,7 +641,8 @@ const Register = ({navigation}) => {
                   <Menu.Item
                     onPress={() => {
                       setGroup('Group 3');
-                    }}>
+                    }}
+                  >
                     <View style={s.optionView}>
                       <Text style={[s.optionBtns, {color: Textcolor}]}>
                         Group 3
@@ -642,28 +657,27 @@ const Register = ({navigation}) => {
                 <Text style={[s.inputTxt, {color: Textcolor}]}>Location</Text>
               </View>
               <View style={{flex: 0.6}}>
-                <TouchableOpacity onPress={()=>navigation.navigate('Maps')}>
-                <Input
-                  w={{
-                    base: '100%',
-                    md: '25%',
-                  }}
-                  style={{
-                    borderBottomWidth: 1,
-                    borderBottomColor:
-                      onsubmit && location == null ? 'red' : Textcolor,
-                  }}
-                  // onTouchStart={() => navigation.navigate('Maps')}
-                  variant="unstyled"
-                  editable = {false}
-                  placeholder={userLocation ? userLocation : 'Enter Location'}
-                  onChangeText={() => setLocation(location)}
-                  placeholderTextColor={Textcolor}
-                  color={Textcolor}
-                  fontSize={moderateScale(10, 0.1)}
-                />
+                <TouchableOpacity onPress={() => navigation.navigate('Maps')}>
+                  <Input
+                    w={{
+                      base: '100%',
+                      md: '25%',
+                    }}
+                    style={{
+                      borderBottomWidth: 1,
+                      borderBottomColor:
+                        onsubmit && location == null ? 'red' : Textcolor,
+                    }}
+                    // onTouchStart={() => navigation.navigate('Maps')}
+                    variant="unstyled"
+                    editable={false}
+                    placeholder={userLocation ? userLocation : 'Enter Location'}
+                    onChangeText={() => setLocation(location)}
+                    placeholderTextColor={Textcolor}
+                    color={Textcolor}
+                    fontSize={moderateScale(10, 0.1)}
+                  />
                 </TouchableOpacity>
-               
               </View>
             </View>
 
@@ -692,7 +706,8 @@ const Register = ({navigation}) => {
                     password ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowPass(!showPass)}>
+                          onPress={() => setshowPass(!showPass)}
+                        >
                           <Feather
                             name={showPass ? 'eye' : 'eye-off'}
                             color={Textcolor}
@@ -737,7 +752,8 @@ const Register = ({navigation}) => {
                     confirmPassword ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowConPass(!showConPass)}>
+                          onPress={() => setshowConPass(!showConPass)}
+                        >
                           <Feather
                             name={showConPass ? 'eye' : 'eye-off'}
                             color={Textcolor}
@@ -768,8 +784,9 @@ const Register = ({navigation}) => {
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
-                onPress={() => {                  
-                  submit()}}
+                onPress={() => {
+                  submit();
+                }}
                 // onPress={() => navigation.navigate('Login')}
               >
                 <Text style={s.btnText}>Register</Text>
@@ -782,13 +799,15 @@ const Register = ({navigation}) => {
                 flexDirection: 'row',
                 justifyContent: 'center',
                 marginBottom: moderateScale(20, 0.1),
-              }}>
+              }}
+            >
               <TouchableOpacity>
                 <Text
                   style={[
                     s.forgetPass,
                     {color: Textcolor, textDecorationLine: 'underline'},
-                  ]}>
+                  ]}
+                >
                   Privacy Policy
                 </Text>
               </TouchableOpacity>
