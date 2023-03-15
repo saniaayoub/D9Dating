@@ -36,6 +36,7 @@ import RNFS from 'react-native-fs';
 import Loader from '../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
+import {useIsFocused} from '@react-navigation/native';
 
 const myData = [
   {
@@ -201,6 +202,8 @@ const data = [
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
+  const isFocused = useIsFocused();
+
   const users = useSelector(state => state.reducer.users);
   const theme = useSelector(state => state.reducer.theme);
   const userToken = useSelector(state => state.reducer.userToken);
@@ -214,9 +217,13 @@ const Home = ({navigation}) => {
   const [myStories, setMyStories] = useState([]);
   const [storyCircle, setStoryCircle] = useState('green');
   const [loader, setLoader] = useState(false);
-
+  const [posts, setPosts] = useState();
+  const [dummyImage, setDummyImage] = useState(
+    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  );
   useEffect(() => {
     getPosts();
+    // getStories();
     // console.log(loginId, 'dataaa');
     // let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
     // let binaryFile = Image.resolveAssetSource(
@@ -236,7 +243,7 @@ const Home = ({navigation}) => {
     //   .catch(err => {
     //     console.log(err.message);
     //   });
-  }, [myStories]);
+  }, [myStories, isFocused]);
 
   const getPosts = async () => {
     setLoader(true);
@@ -249,6 +256,7 @@ const Home = ({navigation}) => {
       })
       .then(res => {
         console.log('data', JSON.stringify(res.data));
+        setPosts(res?.data?.post_public);
         setLoader(false);
       })
       .catch(err => {
@@ -416,7 +424,9 @@ const Home = ({navigation}) => {
         <View style={s.header}>
           <View style={s.dp}>
             <Image
-              source={{uri: elem.item.user_image}}
+              source={{
+                uri: elem?.item?.pfimage ? elem?.item?.pfimage : dummyImage,
+              }}
               style={s.dp1}
               resizeMode={'cover'}
             />
@@ -424,11 +434,11 @@ const Home = ({navigation}) => {
           <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
             <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                {elem?.item?.user_name}
+                {elem?.item?.user?.name}
               </Text>
             </TouchableOpacity>
             <Text style={[s.textRegular, {color: textColor}]}>
-              {elem?.item?.post?.location}
+              {elem?.item?.user?.location}
             </Text>
           </View>
           <View style={[s.options]}>
@@ -490,11 +500,17 @@ const Home = ({navigation}) => {
         <View style={s.img}>
           <TouchableWithoutFeedback onPress={() => handleDoubleTap(elem.index)}>
             <Image
-              source={elem?.item?.post?.image}
+              source={{uri: elem?.item?.image}}
               width={undefined}
               height={undefined}
-              resizeMode={'contain'}
-              style={{width: '100%'}}
+              resizeMode={'cover'}
+              style={{
+                width: '95%',
+                height: moderateScale(270, 0.1),
+                borderRadius: moderateScale(10, 0.1),
+                paddingHorizontal: moderateScale(10, 0.1),
+                alignSelf: 'center',
+              }}
             />
           </TouchableWithoutFeedback>
           <TouchableOpacity
@@ -516,11 +532,20 @@ const Home = ({navigation}) => {
         </View>
         <View style={s.footer}>
           <Text style={[s.name, {color: textColor}]}>
-            {elem?.item?.user_name}
+            {elem?.item?.user?.name}
           </Text>
           <Text style={[s.textRegular, {color: textColor}]}>
-            {elem?.item?.post?.caption}
+            {elem?.item?.caption}
           </Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Comments', {post: elem.item});
+            }}
+          >
+            <Text style={[s.textRegular, {color: 'grey'}]}>
+              View all {'count'} Comments
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -772,7 +797,7 @@ const Home = ({navigation}) => {
         </TouchableOpacity>
 
         <FlatList
-          data={data1}
+          data={posts}
           renderItem={(elem, index) => renderItem(elem)}
           keyExtractor={(elem, index) => {
             index.toString();

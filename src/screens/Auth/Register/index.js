@@ -125,8 +125,8 @@ const Register = ({navigation}) => {
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const userLocation = useSelector(state => state.reducer.location);
   const [location, setLocation] = useState(userLocation);
-console.log(userLocation,'bbb')
- 
+  console.log(userLocation, 'bbb');
+
   useEffect(() => {}, []);
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
@@ -782,14 +782,7 @@ console.log(userLocation,'bbb')
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
-<<<<<<< HEAD
-                 onPress={() => submit()}
-=======
-                onPress={() => {
-                  submit();
-                }}
-                // onPress={() => navigation.navigate('Login')}
->>>>>>> e11eead3fae507faceb9e17d0e869f5b002b8127
+                onPress={() => submit()}
               >
                 <Text style={s.btnText}>Register</Text>
               </Button>
