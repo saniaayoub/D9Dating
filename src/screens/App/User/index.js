@@ -10,10 +10,10 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { moderateScale } from 'react-native-size-matters';
-import { setTheme, setUserData,setLocation } from '../../../Redux/actions';
+import React, {useEffect, useRef, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {moderateScale} from 'react-native-size-matters';
+import {setTheme, setUserData, setLocation} from '../../../Redux/actions';
 import s from './style';
 import Header from '../../../Components/Header';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -24,7 +24,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import img1 from '../../../assets/images/png/mydp.png';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Input, Stack, Button } from 'native-base';
+import {Input, Stack, Button} from 'native-base';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RadioButton from '../../../Components/Radio';
 import {
@@ -37,10 +37,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // import { useIsFocused } from '@react-navigation/native';
 import Loader from '../../../Components/Loader';
 import RNFS from 'react-native-fs';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 
-const Profile = ({ navigation }) => {
+const Profile = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   // const isFocused = useIsFocused();
@@ -49,7 +49,7 @@ const Profile = ({ navigation }) => {
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const color2 = theme === 'dark' ? '#2E2D2D' : '#fff';
-  const userLocation = useSelector(state => state.reducer.location)
+  const userLocation = useSelector(state => state.reducer.location);
   const [disable1, setDisable1] = useState(false);
   const [disable2, setDisable2] = useState(false);
   const [disable3, setDisable3] = useState(false);
@@ -57,8 +57,7 @@ const Profile = ({ navigation }) => {
   const [disable5, setDisable5] = useState(false);
   const [disable6, setDisable6] = useState(false);
   const [date, setDate] = useState(null);
-  const [id, setId] = useState('')
-  
+  const [id, setId] = useState('');
 
   let formData = {
     id: '',
@@ -101,11 +100,10 @@ const Profile = ({ navigation }) => {
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
- var check 
- var month 
- var dateex 
- var year 
-
+  var check;
+  var month;
+  var dateex;
+  var year;
 
   useEffect(() => {
     getData();
@@ -114,11 +112,11 @@ const Profile = ({ navigation }) => {
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
       isSelectedItem.id === item.id
-        ? { ...isSelectedItem, selected: true }
-        : { ...isSelectedItem, selected: false },
+        ? {...isSelectedItem, selected: true}
+        : {...isSelectedItem, selected: false},
     );
     setIsSelected(updatedState);
-    setForm({ ...form, gender: item.name });
+    setForm({...form, gender: item.name});
 
     console.log(item.name);
   };
@@ -128,10 +126,9 @@ const Profile = ({ navigation }) => {
     // ToastAndroid.show(msg, ToastAndroid.LONG);
   };
 
-  
-  let  token =  AsyncStorage.getItem('userToken')
+  let token = AsyncStorage.getItem('userToken');
   const getData = async () => {
-    let  SP = await AsyncStorage.getItem('id')
+    let SP = await AsyncStorage.getItem('id');
     console.log(SP, 'id');
     // setId(SP)
     setLoader(true);
@@ -150,7 +147,7 @@ const Profile = ({ navigation }) => {
       })
       .catch(err => {
         setLoader(false);
-        
+
         console.log(err);
         // showToast(err.response);
       });
@@ -160,10 +157,9 @@ const Profile = ({ navigation }) => {
     for (let item of Object.keys(formData)) {
       // console.log(data[item]);
       formData[item] = data[item];
-      if(item =='location'){
-        dispatch(setLocation(data[item]))
+      if (item == 'location') {
+        dispatch(setLocation(data[item]));
       }
-      
     }
     setForm(formData);
     // console.log(form);
@@ -171,13 +167,12 @@ const Profile = ({ navigation }) => {
     setLoader(false);
   };
 
-  const save = async (base64image) => {
+  const save = async base64image => {
     setLoader(true);
-    setForm({ ...form, location: userLocation });
-    setForm({ ...form, image: base64image });
+    setForm({...form, location: userLocation});
+    setForm({...form, image: base64image});
 
-
-    console.log('form',form)
+    console.log('form', form);
     await axiosconfig
       .post('user_update', form, {
         headers: {
@@ -189,7 +184,7 @@ const Profile = ({ navigation }) => {
         let message = res?.data?.messsage;
         showToast(message);
         dispatch(setUserData(form));
-        console.log('form',form)
+        console.log('form', form);
         setLoader(false);
       })
       .catch(err => {
@@ -204,9 +199,9 @@ const Profile = ({ navigation }) => {
     await RNFS.readFile(image, 'base64')
       .then(res => {
         let base64 = `data:image/png;base64,${res}`;
-        setForm({ ...form, image: base64 });
-      console.log(base64)
-      save(base64)
+        setForm({...form, image: base64});
+        console.log(base64);
+        save(base64);
       })
       .catch(err => {
         console.log(err);
@@ -325,34 +320,33 @@ const Profile = ({ navigation }) => {
       }
     });
   };
-  const handleConfirm = (datee) => {
+  const handleConfirm = datee => {
     console.log('jhf');
-    console.log("A date has been picked: ", datee);
+    console.log('A date has been picked: ', datee);
     check = moment(datee, 'YYYY/MM/DD');
-    console.log(check,'date');
+    console.log(check, 'date');
     month = check.format('M');
     dateex = check.format('DD');
     year = check.format('YYYY');
-   console.log(month, 'month');
-   console.log(dateex, 'dateeee');
-   console.log(year, 'year');
-   setDate(`${dateex}/${month}/${year}`);
-   setForm({ ...form, date: `${dateex}/${month}/${year}` });
-   console.log(date, 'c date');
-   hideDatePicker();
+    console.log(month, 'month');
+    console.log(dateex, 'dateeee');
+    console.log(year, 'year');
+    setDate(`${dateex}/${month}/${year}`);
+    setForm({...form, date: `${dateex}/${month}/${year}`});
+    console.log(date, 'c date');
+    hideDatePicker();
   };
 
-
   return (
-    <SafeAreaView style={{ display: 'flex', flex: 1, backgroundColor: color }}>
+    <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
       <Header navigation={navigation} />
       <ScrollView
-        contentContainerStyle={[s.container, { backgroundColor: color }]}
+        contentContainerStyle={[s.container, {backgroundColor: color}]}
       >
         <View style={s.dp}>
           <Image
-            source={{ uri: form?.image ? form?.image : dummyImage }}
+            source={{uri: form?.image ? form?.image : dummyImage}}
             style={s.dp1}
             resizeMode={'cover'}
           />
@@ -371,7 +365,7 @@ const Profile = ({ navigation }) => {
         </View>
 
         <View style={s.username}>
-          <Text style={[s.textBold, { color: textColor }]}>{form?.name}</Text>
+          <Text style={[s.textBold, {color: textColor}]}>{form?.name}</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
             <Inicon
               name={'settings-sharp'}
@@ -381,7 +375,7 @@ const Profile = ({ navigation }) => {
             />
           </TouchableOpacity>
         </View>
-        <View style={[s.inputSection, { backgroundColor: color2 }]}>
+        <View style={[s.inputSection, {backgroundColor: color2}]}>
           <View style={s.input}>
             <Input
               w="100%"
@@ -421,7 +415,7 @@ const Profile = ({ navigation }) => {
               placeholderTextColor={textColor}
               value={form?.name}
               onChangeText={text => {
-                setForm({ ...form, name: text });
+                setForm({...form, name: text});
               }}
             />
           </View>
@@ -464,7 +458,7 @@ const Profile = ({ navigation }) => {
               placeholderTextColor={textColor}
               value={form?.about_me}
               onChangeText={text => {
-                setForm({ ...form, about_me: text });
+                setForm({...form, about_me: text});
               }}
             />
           </View>
@@ -508,7 +502,7 @@ const Profile = ({ navigation }) => {
               placeholderTextColor={textColor}
               value={form?.email}
               onChangeText={text => {
-                setForm({ ...form, email: text });
+                setForm({...form, email: text});
               }}
             />
           </View>
@@ -551,7 +545,7 @@ const Profile = ({ navigation }) => {
               placeholderTextColor={textColor}
               value={form?.phone_number}
               onChangeText={text => {
-                setForm({ ...form, phone_number: text });
+                setForm({...form, phone_number: text});
               }}
             />
           </View>
@@ -577,7 +571,7 @@ const Profile = ({ navigation }) => {
               InputRightElement={
                 <TouchableOpacity
                   onPress={() => {
-                    showDatePicker()
+                    showDatePicker();
                     // setDisable5(!disable5);
                   }}
                 >
@@ -592,7 +586,7 @@ const Profile = ({ navigation }) => {
 
               isReadOnly={true}
               isFocused={disable5}
-              placeholder= {'Date of Birth'}
+              placeholder={'Date of Birth'}
               placeholderTextColor={textColor}
               value={form?.date}
               // onChangeText={text => {
@@ -622,7 +616,7 @@ const Profile = ({ navigation }) => {
               InputRightElement={
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.navigate('Map')
+                    navigation.navigate('Map');
                     setDisable6(!disable6);
                   }}
                 >
@@ -636,7 +630,7 @@ const Profile = ({ navigation }) => {
               // value={fname}
               isReadOnly={true}
               isFocused={disable6}
-              placeholder= {'Location'}
+              placeholder={'Location'}
               placeholderTextColor={textColor}
               value={userLocation}
               // onChangeText={text => {
@@ -645,13 +639,13 @@ const Profile = ({ navigation }) => {
             />
           </View>
           <DateTimePickerModal
-                  isVisible={isDatePickerVisible}
-                  mode="date"
-                  onConfirm={handleConfirm}
-                  onCancel={hideDatePicker}
-                />
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
+          />
           <View style={s.radioInput}>
-            <Text style={[s.text, { color: textColor }]}>Gender</Text>
+            <Text style={[s.text, {color: textColor}]}>Gender</Text>
             {isSelected.map((item, i) => (
               <View style={s.radio} key={i}>
                 <RadioButton
@@ -715,7 +709,7 @@ const Profile = ({ navigation }) => {
                 style={s.capturebtn}
                 onPress={() => captureImage('photo')}
               >
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{flexDirection: 'row'}}>
                   <Ionicons name="camera" style={s.capturebtnicon} />
                   <Text style={s.capturebtntxt}>Open Camera</Text>
                 </View>
@@ -725,7 +719,7 @@ const Profile = ({ navigation }) => {
                 style={s.capturebtn}
                 onPress={() => chooseFile('photo')}
               >
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{flexDirection: 'row'}}>
                   <Ionicons name="md-image-outline" style={s.capturebtnicon} />
                   <Text style={s.capturebtntxt}>Open Gallery</Text>
                 </View>
