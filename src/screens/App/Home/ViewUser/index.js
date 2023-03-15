@@ -8,6 +8,9 @@ import Header from '../../../../Components/Header';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux';
 import {setTheme} from '../../../../Redux/actions';
+import axiosconfig from '../../../../Providers/axios';
+import Loader from '../../../../Components/Loader';
+
 
 const data = [
   {
@@ -32,15 +35,105 @@ const ViewUser = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
+  const userToken = useSelector(state => state.reducer.userToken);
 
   useEffect(() => {}, []);
 
   const [scroll, setScroll] = useState(false);
   const [connected, setConnected] = useState(false);
   const [blocked, setBlocked] = useState(false);
+  const [loader, setLoader] = useState(false);
+  const [userData, setUserData] = useState(['abc'])
+
+  useEffect(() => {
+    console.log(userToken,'ggg');
+    getData();
+    connect();
+    Disconnect()
+  }, []);
+
+  const getData = async () => {
+    setLoader(true);
+    axiosconfig
+      .get(`user_view/3`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        console.log(res?.data?.user_details,'user detials')
+        if (res?.data?.user_details) {
+          // const dd = JSON.stringify(res?.data)
+           setUserData([res?.data?.user_details]);
+        }
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+  const connect = async () => {
+    setLoader(true);
+    console.log(userToken,'hgh')
+   await axiosconfig
+      .get("connect/3",{
+        headers: {
+          Accept:'application/json',
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('connect', res);
+        setConnected(true)
+        // console.log(res?.data?.user_details,'user detials')
+        // if (res?.data?.user_details) {
+        //   // const dd = JSON.stringify(res?.data)
+        //    setUserData([res?.data?.user_details]);
+        // }
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+
+        console.log(err,'her');
+        // showToast(err.response);
+      });
+  };
+  const Disconnect = async () => {
+    setLoader(true);
+   await axiosconfig
+      .get('connect-remove/3',{
+        headers: {
+          Accept:'application/json',
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('Disconnect', res);
+        setConnected(false)
+        // console.log(res?.data?.user_details,'user detials')
+        // if (res?.data?.user_details) {
+        //   // const dd = JSON.stringify(res?.data)
+        //    setUserData([res?.data?.user_details]);
+        // }
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+
+        console.log(err,'her');
+        // showToast(err.response);
+      });
+  };
+
 
   return (
     <View style={{flex: 1, backgroundColor: color}}>
+      {loader ? <Loader /> : null}
       <View style={[s.View1]}>
         <Image
           style={s.view1Img}
@@ -51,8 +144,7 @@ const ViewUser = ({navigation}) => {
             position: 'absolute',
             justifyContent: 'flex-start',
             // paddingHorizontal: moderateScale(15),
-          }}
-        >
+          }}>
           <Header navigation={navigation} />
         </View>
       </View>
@@ -68,16 +160,16 @@ const ViewUser = ({navigation}) => {
             bottom: scroll ? moderateScale(50) : moderateScale(5),
           },
         ]}
-        scrollEnabled={true}
-      >
+        scrollEnabled={true}>
         <View>
           <View style={s.line}></View>
-          {data.map((v, i) => {
+          {userData.map((v, i) => {
+            console.log('aa');
             return (
               <View style={s.container}>
                 <View style={s.row}>
                   <Text style={[s.headerTxt, {color: textColor}]}>
-                    {v.user_name}{' '}
+                    {v.name}{" "}{v.last_name}
                   </Text>
 
                   <View style={s.icon}>
@@ -92,7 +184,7 @@ const ViewUser = ({navigation}) => {
                 </View>
 
                 <View>
-                  <Text style={s.txt}>{v.Designation} </Text>
+                  <Text style={s.txt}>hdjdkdjksd </Text>
                 </View>
 
                 <View style={s.row1}>
@@ -112,18 +204,29 @@ const ViewUser = ({navigation}) => {
                     About Us{' '}
                   </Text>
                   <View style={s.abTxt}>
-                    <Text style={s.txt}>{v.caption} </Text>
+                    <Text style={s.txt}>{v.about_me} </Text>
                   </View>
                 </View>
               </View>
             );
-          })}
-          <TouchableOpacity onPress={() => setConnected(!connected)}>
+          })
+          }
+          <TouchableOpacity >
             <View>
-              {connected ? (
+              {!connected ? (
+                <>
+                <TouchableOpacity onPress={()=>connect()}>
+
+                  <View style={s.btn}>
+                    <Text style={[s.btnTxt]}>Connect</Text>
+                  </View>
+                </TouchableOpacity>
+                </>
+              ):
+              (
                 <>
                   <View style={s.connected}>
-                    <TouchableOpacity onPress={() => setConnected(false)}>
+                    <TouchableOpacity onPress={() => Disconnect()}>
                       <View style={s.btn}>
                         <Text style={[s.btnTxt]}>Disconnect</Text>
                       </View>
@@ -135,13 +238,7 @@ const ViewUser = ({navigation}) => {
                     </TouchableOpacity>
                   </View>
                 </>
-              ) : (
-                <>
-                  <View style={s.btn}>
-                    <Text style={[s.btnTxt]}>Connect</Text>
-                  </View>
-                </>
-              )}
+              ) }
             </View>
           </TouchableOpacity>
         </View>

@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(36, 0.1),
     color: '#fff',
     alignSelf: 'center',
+   
 
   },
   location: {
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     // marginVertical: moderateScale(10,0.1)
   },
   row1: {
-
+    marginVertical: moderateScale(10,0.1),
     flexDirection: 'row',
     justifyContent: 'flex-start'
   },

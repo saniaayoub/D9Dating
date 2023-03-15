@@ -88,7 +88,10 @@ const styles = StyleSheet.create({
   },
 
   img: {
-    width: '100%',
+    // width: '100%',
+    // backgroundColor:'red',
+    // height: moderateScale(250,0.1)
+    // height: '55%'
   },
   optionView: {
     flexDirection: 'row',

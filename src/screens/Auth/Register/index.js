@@ -782,14 +782,7 @@ console.log(userLocation,'bbb')
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
-<<<<<<< HEAD
                  onPress={() => submit()}
-=======
-                onPress={() => {
-                  submit();
-                }}
-                // onPress={() => navigation.navigate('Login')}
->>>>>>> e11eead3fae507faceb9e17d0e869f5b002b8127
               >
                 <Text style={s.btnText}>Register</Text>
               </Button>

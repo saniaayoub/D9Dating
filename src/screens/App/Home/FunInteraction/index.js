@@ -18,6 +18,8 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Pin from 'react-native-vector-icons/SimpleLineIcons';
 import {ScrollView} from 'react-native';
+import Loader from '../../../../Components/Loader';
+import axiosconfig from '../../../../Providers/axios';
 
 const myData = [];
 
@@ -181,8 +183,15 @@ const FunInteraction = ({navigation}) => {
   const [searchText, setSearchText] = useState('');
   const [lastTap, setLastTap] = useState(null);
   const [refresh, setReferesh] = useState(true);
-
-  useEffect(() => {}, []);
+  const [loader, setLoader] = useState(false);
+  const [publicPost, setPublicPost] = useState([])
+  const [dummyImage, setDummyImage] = useState(
+    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  );
+  const userToken = useSelector(state => state.reducer.userToken);
+  useEffect(() => {
+    getPosts()
+  }, []);
   const handleDoubleTap = index => {
     const now = Date.now();
     const DOUBLE_PRESS_DELAY = 300;
@@ -192,6 +201,28 @@ const FunInteraction = ({navigation}) => {
       setLastTap(now);
     }
   };
+  const getPosts = async () => {
+    setLoader(true);
+    await axiosconfig
+      .get('fun-interaction', {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        console.log('public post', JSON.stringify(res?.data?.post_public));
+        setPublicPost(res?.data?.post_public)
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+
 
   const toggleLike = index => {
     console.log('hello');
@@ -202,7 +233,7 @@ const FunInteraction = ({navigation}) => {
   };
 
   const renderItem = elem => {
-    console.log(elem);
+    console.log(elem?.item?.image);
     return (
       <View style={s.col}>
         {/* {optionsModal && elem.index == selectedIndex ? (
@@ -246,7 +277,7 @@ const FunInteraction = ({navigation}) => {
         <View style={s.header}>
           <View style={s.dp}>
             <Image
-              source={{uri: elem.item.user_image}}
+              source={{uri: elem?.item?.pfimage? elem?.item?.pfimage:dummyImage}}
               style={s.dp1}
               resizeMode={'cover'}
             />
@@ -254,11 +285,11 @@ const FunInteraction = ({navigation}) => {
           <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
             <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                {elem?.item?.user_name}
+                {elem?.item?.user?.name}
               </Text>
             </TouchableOpacity>
             <Text style={[s.textRegular, {color: textColor}]}>
-              {elem?.item?.post?.location}
+              {elem?.item?.user?.location}
             </Text>
           </View>
           {elem.index === 0 ? (
@@ -350,11 +381,15 @@ const FunInteraction = ({navigation}) => {
         <View style={s.img}>
           <TouchableWithoutFeedback onPress={() => handleDoubleTap(elem.index)}>
             <Image
-              source={elem?.item?.post?.image}
-              width={undefined}
-              height={undefined}
-              resizeMode={'contain'}
-              style={{width: '100%'}}
+              source={{uri: elem?.item?.image}}
+              // width={undefined}
+              // height={undefined}
+              resizeMode={'cover'}
+               style={{width: '100%', 
+               height: moderateScale(270,0.1), 
+               paddingHorizontal: moderateScale(15,0.1),
+              //  borderRadius: moderateScale(10,0.1)
+              }}
             />
           </TouchableWithoutFeedback>
           <TouchableOpacity
@@ -364,7 +399,7 @@ const FunInteraction = ({navigation}) => {
             }}
             style={s.likes}
           >
-            <Text style={s.likesCount}> {elem?.item?.post?.likes}</Text>
+            <Text style={s.likesCount}> {elem?.item?.post_likes}</Text>
 
             <Icon
               name="heart"
@@ -376,10 +411,10 @@ const FunInteraction = ({navigation}) => {
         </View>
         <View style={s.footer}>
           <Text style={[s.name, {color: textColor}]}>
-            {elem?.item?.user_name}
+            {elem?.item?.user?.name}
           </Text>
           <Text style={[s.textRegular, {color: textColor}]}>
-            {elem?.item?.post?.caption}
+            {elem?.item?.caption}
           </Text>
         </View>
       </View>
@@ -389,6 +424,7 @@ const FunInteraction = ({navigation}) => {
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       <View style={[s.container, s.col, {backgroundColor: color}]}>
+      {loader ? <Loader /> : null}
         <View style={s.searchContainer}>
           <Input
             placeholder="Search Here"
@@ -531,7 +567,7 @@ const FunInteraction = ({navigation}) => {
         </TouchableOpacity>
 
         <FlatList
-          data={data1}
+          data={publicPost}
           renderItem={elem => renderItem(elem)}
           keyExtractor={(elem, index) => {
             index.toString();

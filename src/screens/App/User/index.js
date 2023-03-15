@@ -107,6 +107,7 @@ const Profile = ({navigation}) => {
 
   useEffect(() => {
     // getID()
+    console.log(userToken)
     getData();
   }, []);
 
