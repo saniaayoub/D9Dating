@@ -103,6 +103,30 @@ const Settings = ({navigation}) => {
     }
     
   };
+  const setTheme = async () => {
+    setLoader(true);
+    await axiosconfig
+      .get('theme-mode', {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        console.log('public post', JSON.stringify(res?.data?.post_public));
+        // console.log('user id',JSON.stringify(res?.data?.post_public?.user_id));
+        setPublicPost([res?.data?.post_public])
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+ 
+
 
   // const clear = message => {
   //   showToast(message);
@@ -111,10 +135,7 @@ const Settings = ({navigation}) => {
   //   setLoader(false);
   // };
 
-  const logout = () => {
-    dispatch(setUserToken(null));
-  };
-
+  
   const LogoutApi = async () => {
    console.log(userToken);
       // const value = await AsyncStorage.getItem('userToken')
@@ -258,6 +279,33 @@ const Settings = ({navigation}) => {
               placeholderTextColor={textColor}
             />
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={s.input}
+            onPress={() => navigation.navigate('Block')}
+          >
+            <Input
+              w="100%"
+              isReadOnly
+              variant="underlined"
+              color={textColor}
+              fontSize={moderateScale(12, 0.1)}
+              InputLeftElement={
+                <View style={s.icon}>
+                  <MaterialIcon
+                    name={'block-helper'}
+                    size={moderateScale(20, 0.1)}
+                    solid
+                    color={textColor}
+                  />
+                </View>
+              }
+              // value={fname}
+              placeholder="Blocked Users"
+              placeholderTextColor={textColor}
+            />
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={s.input}
             onPress={() => refRBSheet.current.open()}

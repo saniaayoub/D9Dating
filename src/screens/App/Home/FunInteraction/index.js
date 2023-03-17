@@ -213,6 +213,8 @@ const FunInteraction = ({navigation}) => {
       .then(res => {
         console.log('data', JSON.stringify(res.data));
         console.log('public post', JSON.stringify(res?.data?.post_public));
+        const data = res?.data?.post_public
+        // console.log('user id',JSON.stringify(res?.data?.post_public?.user_id));
         setPublicPost(res?.data?.post_public)
         setLoader(false);
       })
@@ -233,7 +235,7 @@ const FunInteraction = ({navigation}) => {
   };
 
   const renderItem = elem => {
-    console.log(elem?.item?.image);
+   
     return (
       <View style={s.col}>
         {/* {optionsModal && elem.index == selectedIndex ? (
@@ -283,7 +285,7 @@ const FunInteraction = ({navigation}) => {
             />
           </View>
           <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
+            <TouchableOpacity onPress={() => navigation.navigate('ViewUser', {post:elem.item})}>
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
                 {elem?.item?.user?.name}
               </Text>
@@ -399,13 +401,13 @@ const FunInteraction = ({navigation}) => {
             }}
             style={s.likes}
           >
-            <Text style={s.likesCount}> {elem?.item?.post_likes}</Text>
+            <Text style={s.likesCount}> {elem?.item?.post_likes?.length}</Text>
 
             <Icon
               name="heart"
               size={moderateScale(12, 0.1)}
               solid
-              color={elem?.item?.post?.liked === true ? 'yellow' : '#fff'}
+              color={elem?.item === true ? 'yellow' : '#fff'}
             />
           </TouchableOpacity>
         </View>

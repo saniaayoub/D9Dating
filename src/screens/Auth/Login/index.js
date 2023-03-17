@@ -64,14 +64,11 @@ const Login = ({navigation}) => {
           // console.log(res)
           // alert(res?.data?.message);
           AsyncStorage.setItem('password', password);
-          const data = {
-            id: res?.data?.userInfo,
-            userToken: res?.data?.access_token,
-          };
           console.log(res?.data?.userInfo, 'id');
           let id = res?.data?.userInfo.toString();
           AsyncStorage.setItem('id', id);
           AsyncStorage.setItem('userToken', res?.data?.access_token);
+          
           // AsyncStorage.setItem('data' , data)
 
           // console.log(res, 'Login data ');

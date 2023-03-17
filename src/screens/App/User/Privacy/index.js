@@ -11,24 +11,73 @@ import openMap from 'react-native-open-maps';
 import {Input, Button, Menu, Pressable} from 'native-base';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import Loader from '../../../../Components/Loader';
+import axiosconfig from '../../../../Providers/axios';
 const Privacy = ({navigation}) => {
   const dispatch = useDispatch();
+  const [loader, setLoader] = useState(false);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [story, setStory] = useState('Public');
   const [post, setPost] = useState('Public');
   const [connect, setConnect] = useState('Public');
+  const userToken = useSelector(state => state.reducer.userToken);
 
-  useEffect(() => {}, []);
+  const userPrivacy = async () => {
+    setLoader(true);
+    const data = {
+      privacy_option: connect,
+    };
+    await axiosconfig
+      .post('user-privacy', data,{
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+        
+      })
+      .then(res => {
+        console.log('data', res.data);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+  const postprivacy = async () => {
+    setLoader(true);
+    const data = {
+      privacy_option: post,
+    };
+    await axiosconfig
+      .post('post-privacy', data,{
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+        
+      })
+      .then(res => {
+        console.log('data', res.data);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
 
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
+      {loader ? <Loader /> : null}
       <Header navigation={navigation} />
       <ScrollView
-        contentContainerStyle={[s.container, {backgroundColor: color}]}
-      >
+        contentContainerStyle={[s.container, {backgroundColor: color}]}>
         <View style={{flexDirection: 'row'}}>
           <View style={s.username}>
             <Text style={[s.textBold, {color: textColor}]}>Privacy</Text>
@@ -68,8 +117,7 @@ const Privacy = ({navigation}) => {
                         {...triggerProps}
                         style={{
                           flexDirection: 'row',
-                        }}
-                      >
+                        }}>
                         <Text style={[s.option, {color: textColor}]}>
                           {story}
                         </Text>
@@ -81,8 +129,7 @@ const Privacy = ({navigation}) => {
                         />
                       </Pressable>
                     );
-                  }}
-                >
+                  }}>
                   <Menu.Item onPress={() => setStory('Public')}>
                     <View style={s.optionView}>
                       <Entypo
@@ -163,10 +210,9 @@ const Privacy = ({navigation}) => {
                         {...triggerProps}
                         style={{
                           flexDirection: 'row',
-                        }}
-                      >
+                        }}>
                         <Text style={[s.option, {color: textColor}]}>
-                          {post}
+                          {post == '1' ? 'Public' : post == '2' ? 'Friends' : 'Only Me' }
                         </Text>
 
                         <Entypo
@@ -176,9 +222,13 @@ const Privacy = ({navigation}) => {
                         />
                       </Pressable>
                     );
+                  }}>
+                  <Menu.Item onPress={() => 
+                  {
+                    setPost('1')
+                    postprivacy()
                   }}
-                >
-                  <Menu.Item onPress={() => setPost('Public')}>
+                   >
                     <View style={s.optionView}>
                       <Entypo
                         name={'globe'}
@@ -191,7 +241,10 @@ const Privacy = ({navigation}) => {
                       </Text>
                     </View>
                   </Menu.Item>
-                  <Menu.Item onPress={() => setPost('Friends')}>
+                  <Menu.Item onPress={() => {
+                    setPost('2')
+                    postprivacy()
+                  }}>
                     <View style={s.optionView}>
                       <Icon
                         name={'user-friends'}
@@ -204,7 +257,10 @@ const Privacy = ({navigation}) => {
                       </Text>
                     </View>
                   </Menu.Item>
-                  <Menu.Item onPress={() => setPost('Only Me')}>
+                  <Menu.Item onPress={() => {
+                    setPost('3')
+                    postprivacy()
+                  }}>
                     <View style={s.optionView}>
                       <Entypo
                         name={'lock'}
@@ -245,61 +301,71 @@ const Privacy = ({navigation}) => {
               }
               style={{marginBottom: moderateScale(40, 0.1)}}
               InputRightElement={
-                <Menu
-                  w="200"
-                  borderWidth={moderateScale(1, 0.1)}
-                  borderBottomColor={'grey'}
-                  backgroundColor={color}
-                  marginRight={moderateScale(20, 0.1)}
-                  trigger={triggerProps => {
-                    return (
-                      <Pressable
-                        accessibilityLabel="More options menu"
-                        {...triggerProps}
-                        style={{
-                          flexDirection: 'row',
-                        }}
-                      >
-                        <Text style={[s.option, {color: textColor}]}>
-                          {connect}
-                        </Text>
+                  <Menu
+                    w="200"
+                    borderWidth={moderateScale(1, 0.1)}
+                    borderBottomColor={'grey'}
+                    backgroundColor={color}
+                    marginRight={moderateScale(20, 0.1)}
+                    trigger={triggerProps => {
+                      return (
+                        <Pressable
+                          accessibilityLabel="More options menu"
+                          {...triggerProps}
+                          style={{
+                            flexDirection: 'row',
+                          }}>
+                          <Text style={[s.option, {color: textColor}]}>
+                            {connect == '1' ? 'Everyone' : 'Friends of Friends'}
+                          </Text>
 
+                          <Entypo
+                            name={'chevron-down'}
+                            size={moderateScale(25, 0.1)}
+                            color={textColor}
+                          />
+                        </Pressable>
+                      );
+                    }}>
+                    <Menu.Item
+                      onPress={() => {
+                        setConnect('1');
+                        userPrivacy()
+                      }}>
+                      <View style={s.optionView}>
                         <Entypo
-                          name={'chevron-down'}
-                          size={moderateScale(25, 0.1)}
+                          name={'globe'}
                           color={textColor}
+                          size={moderateScale(15, 0.1)}
+                          style={{marginRight: moderateScale(10, 0.1)}}
                         />
-                      </Pressable>
-                    );
-                  }}
-                >
-                  <Menu.Item onPress={() => setConnect('Everyone')}>
-                    <View style={s.optionView}>
-                      <Entypo
-                        name={'globe'}
-                        color={textColor}
-                        size={moderateScale(15, 0.1)}
-                        style={{marginRight: moderateScale(10, 0.1)}}
-                      />
-                      <Text style={[s.optionBtns, {color: textColor}]}>
-                        Everyone
-                      </Text>
-                    </View>
-                  </Menu.Item>
-                  <Menu.Item onPress={() => setConnect('Friends of Friends')}>
-                    <View style={s.optionView}>
-                      <Icon
-                        name={'users'}
-                        color={textColor}
-                        size={moderateScale(15, 0.1)}
-                        style={{marginRight: moderateScale(10, 0.1)}}
-                      />
-                      <Text style={[s.optionBtns, {color: textColor}]}>
-                        Friends of Friends
-                      </Text>
-                    </View>
-                  </Menu.Item>
-                </Menu>
+                        <Text style={[s.optionBtns, {color: textColor}]}>
+                          Everyone
+                        </Text>
+                      </View>
+                    </Menu.Item>
+                    <Menu.Item onPress={() => 
+                    {
+                      setConnect('2')
+                      userPrivacy()
+
+
+                    }
+                     }>
+                      <View style={s.optionView}>
+                        <Icon
+                          name={'users'}
+                          color={textColor}
+                          size={moderateScale(15, 0.1)}
+                          style={{marginRight: moderateScale(10, 0.1)}}
+                        />
+                        <Text style={[s.optionBtns, {color: textColor}]}>
+                          Friends of Friends
+                        </Text>
+                      </View>
+                    </Menu.Item>
+                  </Menu>
+
               }
               // value={fname}
               placeholder="Connect"

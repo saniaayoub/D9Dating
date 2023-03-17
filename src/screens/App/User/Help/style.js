@@ -6,8 +6,9 @@ const PoppinsBold = 'Poppins-Bold';
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
+    height: '100%',
     paddingHorizontal: moderateScale(20, 0.1),
-    paddingBottom: moderateScale(70, 0.1),
   },
 
   hView: {
@@ -27,8 +28,29 @@ const styles = StyleSheet.create({
     color: '#7D7D7D',
   },
   Ctxt: {
-    marginVertical: moderateScale(10, 0.1),
+    marginVertical: moderateScale(20, 0.1),
   },
+  button: {
+    flex:0.2,
+    top: moderateScale(15, 0.1),
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: moderateScale(20,0.1),
+    bottom: moderateScale(15,0.1)
+  },
+  row:{
+    top: moderateScale(280,0.1),
+    justifyContent:'center',
+    alignItems:'center',
+    paddingHorizontal: moderateScale(5,0.1),
+    borderWidth:0.9,
+    borderColor:'white',
+    bottom:0,
+    // flex:1,
+    flexDirection:'row',
+    // height: moderateScale(60,0.1),
+    backgroundColor:'white'
+  }
 });
 
 export default styles;

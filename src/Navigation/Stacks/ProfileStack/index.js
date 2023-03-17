@@ -9,6 +9,7 @@ import About from '../../../screens/App/User/About/About';
 import ChangePass from '../../../screens/Auth/ChangePass';
 import Map from '../../../screens/Auth/Register/Map'
 import Login from '../../../screens/Auth/Login';
+import Block from '../../../screens/App/User/Blocked';
 const Stack = createStackNavigator();
 
 const ProfileStack = () => {
@@ -22,6 +23,7 @@ const ProfileStack = () => {
       <Stack.Screen name="Forgot" component={ForgetPassword} />
       <Stack.Screen name="ChangePass" component={ChangePass} />
       <Stack.Screen name="About" component={About} />
+      <Stack.Screen name="Block" component={Block} />
       <Stack.Screen name="Map" component={Map} />
       <Stack.Screen name="Login" component={Login} />
 

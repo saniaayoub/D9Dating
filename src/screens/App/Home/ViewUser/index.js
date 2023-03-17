@@ -10,7 +10,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setTheme} from '../../../../Redux/actions';
 import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const data = [
   {
@@ -30,42 +30,52 @@ const data = [
   },
 ];
 
-const ViewUser = ({navigation}) => {
+const ViewUser = ({navigation, route}) => {
+  const {post} = route.params;
+  const [Userid, setUserid] = useState(post.user.id);
+  const [loginId, setLoginId] = useState(null);
+
+  console.log(post,'post');
   const dispatch = useDispatch();
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const userToken = useSelector(state => state.reducer.userToken);
 
-  useEffect(() => {}, []);
-
   const [scroll, setScroll] = useState(false);
   const [connected, setConnected] = useState(false);
   const [blocked, setBlocked] = useState(false);
   const [loader, setLoader] = useState(false);
-  const [userData, setUserData] = useState(['abc'])
+  const [userData, setUserData] = useState([]);
 
   useEffect(() => {
-    console.log(userToken,'ggg');
+    console.log(userToken, 'ggg');
     getData();
-    connect();
-    Disconnect()
+    getId();
+    // connect();
+    // Disconnect()
   }, []);
+
+  const getId = async () => {
+    const logInId = await AsyncStorage.getItem('id');
+    console.log(logInId, 'login id');
+    setLoginId(logInId);
+  };
 
   const getData = async () => {
     setLoader(true);
     axiosconfig
-      .get(`user_view/3`, {
+      .get(`user_view/${Userid}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
       })
       .then(res => {
         console.log('data', JSON.stringify(res.data));
-        console.log(res?.data?.user_details,'user detials')
+        console.log(res?.data?.user_details, 'user detials');
         if (res?.data?.user_details) {
           // const dd = JSON.stringify(res?.data)
-           setUserData([res?.data?.user_details]);
+          setUserData([res?.data?.user_details]);
         }
         setLoader(false);
       })
@@ -78,58 +88,94 @@ const ViewUser = ({navigation}) => {
   };
   const connect = async () => {
     setLoader(true);
-    console.log(userToken,'hgh')
-   await axiosconfig
-      .get("connect/3",{
+    console.log(userToken, 'hgh');
+    await axiosconfig
+      .get(`connect/${Userid}`, {
         headers: {
-          Accept:'application/json',
+          Accept: 'application/json',
           Authorization: `Bearer ${userToken}`,
         },
       })
       .then(res => {
         console.log('connect', res);
-        setConnected(true)
-        // console.log(res?.data?.user_details,'user detials')
-        // if (res?.data?.user_details) {
-        //   // const dd = JSON.stringify(res?.data)
-        //    setUserData([res?.data?.user_details]);
-        // }
+        setConnected(true);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
 
-        console.log(err,'her');
+        console.log(err, 'her');
         // showToast(err.response);
       });
   };
   const Disconnect = async () => {
     setLoader(true);
-   await axiosconfig
-      .get('connect-remove/3',{
+    await axiosconfig
+      .get(`connect-remove/${Userid}`, {
         headers: {
-          Accept:'application/json',
+          Accept: 'application/json',
           Authorization: `Bearer ${userToken}`,
         },
       })
       .then(res => {
         console.log('Disconnect', res);
-        setConnected(false)
-        // console.log(res?.data?.user_details,'user detials')
-        // if (res?.data?.user_details) {
-        //   // const dd = JSON.stringify(res?.data)
-        //    setUserData([res?.data?.user_details]);
-        // }
+        setConnected(false);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
 
-        console.log(err,'her');
+        console.log(err, 'her');
         // showToast(err.response);
       });
   };
+  const block = async () => {
+    console.log('aaaa');
+    setLoader(true);
+    console.log(userToken, 'hgh');
+    await axiosconfig
+      .get(`block/${Userid}`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('block', res);
+        setBlocked(true);
+        setConnected(false)
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
 
+        console.log(err, 'her');
+        // showToast(err.response);
+      });
+  };
+  const unblock = async () => {
+    console.log('aaaa');
+    setLoader(true);
+    console.log(userToken, 'hgh');
+    await axiosconfig
+      .get(`block/${Userid}`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('block', res);
+        setBlocked(false);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+
+        console.log(err, 'her');
+        // showToast(err.response);
+      });
+  };
 
   return (
     <View style={{flex: 1, backgroundColor: color}}>
@@ -169,7 +215,7 @@ const ViewUser = ({navigation}) => {
               <View style={s.container}>
                 <View style={s.row}>
                   <Text style={[s.headerTxt, {color: textColor}]}>
-                    {v.name}{" "}{v.last_name}
+                    {v.name} {v.last_name}
                   </Text>
 
                   <View style={s.icon}>
@@ -209,38 +255,47 @@ const ViewUser = ({navigation}) => {
                 </View>
               </View>
             );
-          })
-          }
-          <TouchableOpacity >
-            <View>
-              {!connected ? (
-                <>
-                <TouchableOpacity onPress={()=>connect()}>
-
-                  <View style={s.btn}>
-                    <Text style={[s.btnTxt]}>Connect</Text>
-                  </View>
-                </TouchableOpacity>
-                </>
-              ):
-              (
-                <>
-                  <View style={s.connected}>
-                    <TouchableOpacity onPress={() => Disconnect()}>
-                      <View style={s.btn}>
-                        <Text style={[s.btnTxt]}>Disconnect</Text>
+          })}
+          {Userid != loginId ? (
+            <>
+              <TouchableOpacity>
+                <View>
+                  {!connected ? (
+                    <>
+                      <TouchableOpacity onPress={() => connect()}>
+                        <View style={s.btn}>
+                          <Text style={[s.btnTxt]}>Connect</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </>
+                  ) : connected  ? (
+                    <>
+                      <View style={s.connected}>
+                        <TouchableOpacity onPress={() => Disconnect()}>
+                          <View style={s.btn}>
+                            <Text style={[s.btnTxt]}>Disconnect</Text>
+                          </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => block()}>
+                          <View style={s.btn}>
+                            <Text style={[s.btnTxt]}>Block</Text>
+                          </View>
+                        </TouchableOpacity>
                       </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                      <View style={s.btn}>
-                        <Text style={[s.btnTxt]}>Block</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                </>
-              ) }
-            </View>
-          </TouchableOpacity>
+                    </>
+                  ) : blocked ? (
+                    <>
+                      <TouchableOpacity  onPress={() => unblock()}>
+                        <View style={s.btn}>
+                          <Text style={[s.btnTxt]}>Unblock</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </>
+                  ) : null}
+                </View>
+              </TouchableOpacity>
+            </>
+          ) : null}
         </View>
       </ScrollView>
     </View>
