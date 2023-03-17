@@ -245,7 +245,7 @@ const Comments = ({navigation, route}) => {
         </View>
 
         <View style={{flexDirection: 'row'}}>
-          {post?.user?.id == userID ? (
+          {post?.user?.id == userID && elem?.item?.user_id == userID ? (
             <View style={s.icon}>
               <TouchableOpacity
                 onPress={() => {
