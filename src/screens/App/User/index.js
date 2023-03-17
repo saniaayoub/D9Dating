@@ -67,7 +67,7 @@ const Profile = ({navigation}) => {
     email: '',
     phone_number: '',
     location: '',
-    gender: 'male',
+    gender: '',
     month: '',
     date: '',
     image: '',
@@ -81,15 +81,13 @@ const Profile = ({navigation}) => {
   const [isSelected, setIsSelected] = useState([
     {
       id: 1,
-      value: true,
       name: 'Male',
-      selected: form?.gender == 'male' ? true : false,
+      selected: true,
     },
     {
       id: 2,
-      value: false,
       name: 'Female',
-      selected: form?.gender == 'female' ? true : false,
+      selected: false,
     },
   ]);
 
@@ -106,14 +104,12 @@ const Profile = ({navigation}) => {
   var year;
 
   useEffect(() => {
-    // getID()
-    console.log(userToken)
     getData();
   }, []);
 
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
-      isSelectedItem.id === item.id
+      isSelectedItem.name === item.name
         ? {...isSelectedItem, selected: true}
         : {...isSelectedItem, selected: false},
     );
@@ -125,17 +121,10 @@ const Profile = ({navigation}) => {
 
   const showToast = msg => {
     Alert.alert(msg);
-    // ToastAndroid.show(msg, ToastAndroid.LONG);
   };
-  // const getID=async()=> {
-  //   let  SP = await AsyncStorage.getItem('id')
-  //   getData(SP)
-  // }
 
-  let token = AsyncStorage.getItem('userToken');
   const getData = async () => {
     let SP = await AsyncStorage.getItem('id');
-    console.log(SP, 'id');
     setId(SP);
     setLoader(true);
     axiosconfig
@@ -153,7 +142,6 @@ const Profile = ({navigation}) => {
       })
       .catch(err => {
         setLoader(false);
-
         console.log(err);
         // showToast(err.response);
       });
@@ -161,10 +149,17 @@ const Profile = ({navigation}) => {
 
   const setData = data => {
     for (let item of Object.keys(formData)) {
-      // console.log(data[item]);
       formData[item] = data[item];
       if (item == 'location') {
         dispatch(setLocation(data[item]));
+      }
+      if (item == 'gender') {
+        let updatedState = isSelected.map(isSelectedItem =>
+          isSelectedItem.name == data[item]
+            ? {...isSelectedItem, selected: true}
+            : {...isSelectedItem, selected: false},
+        );
+        setIsSelected(updatedState);
       }
     }
     setForm(formData);
@@ -178,7 +173,6 @@ const Profile = ({navigation}) => {
     setForm({...form, location: userLocation});
     setForm({...form, image: base64image});
 
-    console.log('form', form);
     await axiosconfig
       .post('user_update', form, {
         headers: {
@@ -187,10 +181,9 @@ const Profile = ({navigation}) => {
       })
       .then(res => {
         console.log(res.data, 'message');
-        let message = res?.data?.messsage;
+        let message = res?.data?.message;
         showToast(message);
         dispatch(setUserData(form));
-        console.log('form', form);
         setLoader(false);
       })
       .catch(err => {

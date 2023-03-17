@@ -1,14 +1,22 @@
-import {SET_USER_TOKEN, SET_THEME, ADD_USERS, LOCATION, DATE, SET_USER_DATA, } from './Constants';
+import {
+  SET_USER_TOKEN,
+  SET_THEME,
+  ADD_USERS,
+  LOCATION,
+  DATE,
+  SET_USER_DATA,
+  SET_GROUP,
+} from './Constants';
 
 const initialState = {
   userToken: null,
   theme: 'dark',
   users: [],
   location: '',
-  date : '',
+  date: '',
   userData: {},
-  userPassword: ''
-  
+  userPassword: '',
+  group: [],
 };
 
 const AppReducer = (state = initialState, action) => {
@@ -29,23 +37,26 @@ const AppReducer = (state = initialState, action) => {
         ...state,
         users: action.payload,
       };
-      case LOCATION:
-        return {
-          ...state,
-          location: action.payload,
-        };
-        case DATE:
-          return {
-            ...state,
-            date: action.payload,
-          };
+    case LOCATION:
+      return {
+        ...state,
+        location: action.payload,
+      };
+    case DATE:
+      return {
+        ...state,
+        date: action.payload,
+      };
     case SET_USER_DATA:
       return {
         ...state,
         userData: action.payload,
       };
-
-
+    case SET_GROUP:
+      return {
+        ...state,
+        group: action.payload,
+      };
     default:
       return state;
   }

@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   PermissionsAndroid,
   Platform,
+  Alert,
 } from 'react-native';
 import PhotoEditor from 'react-native-photo-editor';
 import React, {useState, useRef, useEffect} from 'react';
@@ -30,6 +31,8 @@ import {ScrollView} from 'react-native';
 import Fun from '../../../assets/images/svg/fun.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Feather from 'react-native-vector-icons/Feather';
+
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RNFS from 'react-native-fs';
@@ -37,7 +40,19 @@ import Loader from '../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
 import {useIsFocused} from '@react-navigation/native';
+import {setGroup} from '../../../Redux/actions';
 
+const Groups = [
+  {id: 'Group 1', color: 'blue'},
+  {id: 'Group 2', color: 'green'},
+  {id: 'Group 3', color: 'red'},
+  {id: 'Group 4', color: 'yellow'},
+  {id: 'Group 5', color: 'orange'},
+  {id: 'Group 6', color: 'brown'},
+  {id: 'Group 7', color: 'pink'},
+  {id: 'Group 8', color: 'purple'},
+  {id: 'Group 9', color: 'blue'},
+];
 const myData = [
   {
     user_id: 1,
@@ -203,12 +218,12 @@ const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const isFocused = useIsFocused();
-
-  const users = useSelector(state => state.reducer.users);
   const theme = useSelector(state => state.reducer.theme);
   const userToken = useSelector(state => state.reducer.userToken);
+  const groups = useSelector(state => state.reducer.group);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
+
   const [myData1, setMyData1] = useState(myData);
   const [searchText, setSearchText] = useState('');
   const [data1, setData1] = useState(data);
@@ -217,12 +232,18 @@ const Home = ({navigation}) => {
   const [myStories, setMyStories] = useState([]);
   const [storyCircle, setStoryCircle] = useState('green');
   const [loader, setLoader] = useState(false);
-  const [posts, setPosts] = useState();
+  const [posts, setPosts] = useState([]);
+  const [userID, setUserID] = useState('');
+  const [comment, setComment] = useState('');
+  const [current, setCurrent] = useState('');
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
+
   useEffect(() => {
+    dispatch(setGroup(Groups));
     getPosts();
+    getID();
     // getStories();
     // console.log(loginId, 'dataaa');
     // let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
@@ -245,6 +266,11 @@ const Home = ({navigation}) => {
     //   });
   }, [myStories, isFocused]);
 
+  const getID = async () => {
+    const id = await AsyncStorage.getItem('id');
+    setUserID(id);
+  };
+
   const getPosts = async () => {
     setLoader(true);
     await axiosconfig
@@ -256,7 +282,28 @@ const Home = ({navigation}) => {
       })
       .then(res => {
         console.log('data', JSON.stringify(res.data));
-        setPosts(res?.data?.post_public);
+        setPosts(res?.data?.post_friends);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+
+  const hitLike = async (id, index) => {
+    setLoader(true);
+    await axiosconfig
+      .get(`like/${id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        toggleLike(index);
         setLoader(false);
       })
       .catch(err => {
@@ -267,22 +314,20 @@ const Home = ({navigation}) => {
   };
 
   var lastTap = null;
-  const handleDoubleTap = index => {
+  const handleDoubleTap = (id, index) => {
     const now = Date.now();
     const DOUBLE_PRESS_DELAY = 300;
     if (lastTap && now - lastTap < DOUBLE_PRESS_DELAY) {
-      toggleLike(index);
+      hitLike(id, index);
     } else {
       lastTap = now;
     }
   };
+
   const toggleLike = index => {
     console.log('hello');
-
-    data[index].post.liked = !data[index].post.liked;
-    setData1(data);
+    getPosts();
     setRefresh(!refresh);
-    console.log(data[index].post.liked);
   };
 
   const requestCameraPermission = async () => {
@@ -418,138 +463,16 @@ const Home = ({navigation}) => {
     });
   };
 
-  const renderItem = elem => {
-    return (
-      <View style={s.col}>
-        <View style={s.header}>
-          <View style={s.dp}>
-            <Image
-              source={{
-                uri: elem?.item?.pfimage ? elem?.item?.pfimage : dummyImage,
-              }}
-              style={s.dp1}
-              resizeMode={'cover'}
-            />
-          </View>
-          <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
-              <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                {elem?.item?.user?.name}
-              </Text>
-            </TouchableOpacity>
-            <Text style={[s.textRegular, {color: textColor}]}>
-              {elem?.item?.user?.location}
-            </Text>
-          </View>
-          <View style={[s.options]}>
-            <Menu
-              w="150"
-              borderWidth={moderateScale(1, 0.1)}
-              borderColor={'grey'}
-              backgroundColor={color}
-              // alignItems={'center'}
-              // justifyContent={'center'}
-              marginRight={moderateScale(15, 0.1)}
-              marginTop={moderateScale(25, 0.1)}
-              closeOnSelect={true}
-              trigger={triggerProps => {
-                return (
-                  <Pressable
-                    accessibilityLabel="More options menu"
-                    {...triggerProps}
-                    style={{
-                      flexDirection: 'row',
-                      right: moderateScale(8, 0.1),
-                    }}
-                  >
-                    <Entypo
-                      name={'dots-three-vertical'}
-                      color={textColor}
-                      size={moderateScale(15, 0.1)}
-                    />
-                  </Pressable>
-                );
-              }}
-            >
-              <Menu.Item onPress={() => {}}>
-                <View style={s.optionView}>
-                  <Icon
-                    name={'eye-slash'}
-                    color={textColor}
-                    size={moderateScale(13, 0.1)}
-                    // style={{marginRight: moderateScale(10, 0.1)}}
-                    style={{flex: 0.3}}
-                  />
-                  <Text style={[s.optionBtns, {color: textColor}]}>Hide</Text>
-                </View>
-              </Menu.Item>
-              <Menu.Item onPress={() => {}}>
-                <View style={s.optionView}>
-                  <MaterialIcons
-                    name={'report'}
-                    color={textColor}
-                    size={moderateScale(13, 0.1)}
-                    style={{flex: 0.3}}
-                  />
-                  <Text style={[s.optionBtns, {color: textColor}]}>Report</Text>
-                </View>
-              </Menu.Item>
-            </Menu>
-          </View>
-        </View>
-        <View style={s.img}>
-          <TouchableWithoutFeedback onPress={() => handleDoubleTap(elem.index)}>
-            <Image
-              source={{uri: elem?.item?.image}}
-              width={undefined}
-              height={undefined}
-              resizeMode={'cover'}
-              style={{
-                width: '95%',
-                height: moderateScale(270, 0.1),
-                borderRadius: moderateScale(10, 0.1),
-                paddingHorizontal: moderateScale(10, 0.1),
-                alignSelf: 'center',
-              }}
-            />
-          </TouchableWithoutFeedback>
-          <TouchableOpacity
-            onPress={() => {
-              toggleLike(elem.index);
-              // console.log(data[elem.index].post.liked);
-            }}
-            style={s.likes}
-          >
-            <Text style={s.likesCount}> {elem?.item?.post?.likes}</Text>
-
-            <Icon
-              name="heart"
-              size={moderateScale(12, 0.1)}
-              solid
-              color={elem?.item?.post?.liked === true ? 'yellow' : '#fff'}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={s.footer}>
-          <Text style={[s.name, {color: textColor}]}>
-            {elem?.item?.user?.name}
-          </Text>
-          <Text style={[s.textRegular, {color: textColor}]}>
-            {elem?.item?.caption}
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Comments', {post: elem.item});
-            }}
-          >
-            <Text style={[s.textRegular, {color: 'grey'}]}>
-              View all {'count'} Comments
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
+  const getColor = id => {
+    let color;
+    groups?.forEach(elem => {
+      if (elem.id == id) {
+        color = elem.color;
+      }
+    });
+    return color;
   };
+
   const onPress = () => {
     PhotoEditor.Edit({
       path: RNFS.DocumentDirectoryPath + '/photo.jpg',
@@ -621,6 +544,238 @@ const Home = ({navigation}) => {
     // setLoader(false);
   };
 
+  const addComment = async (id, index) => {
+    setLoader(true);
+    console.log('hisss', id);
+    if (!comment) {
+      setLoader(false);
+      return;
+    }
+    const data = {
+      text: comment,
+      post_id: id,
+    };
+    await axiosconfig
+      .post(`comment_add`, data, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        setComment('');
+        getPosts();
+        setRefresh(!refresh);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        setComment('');
+        console.log(err);
+        // Alert.alert(err);
+      });
+  };
+
+  const renderItem = elem => {
+    // if (elem?.item?.privacy_option == '3') {
+    //   return; //hide friends' only me posts
+    // }
+
+    //check if the user already liked the post
+    let liked = false;
+    elem?.item?.post_likes?.forEach(t => {
+      if (t?.user_id == userID) {
+        liked = true;
+      }
+    });
+    console.log(liked);
+    return (
+      <View style={s.col}>
+        <View style={s.header}>
+          <View
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
+          >
+            <Image
+              source={{
+                uri: elem?.item?.user?.image
+                  ? elem?.item?.user?.image
+                  : dummyImage,
+              }}
+              style={s.dp1}
+              resizeMode={'cover'}
+            />
+          </View>
+          <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
+            <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
+              <Text style={[s.name, s.nameBold, {color: textColor}]}>
+                {elem?.item?.user?.name}
+              </Text>
+            </TouchableOpacity>
+            <Text style={[s.textRegular, {color: textColor}]}>
+              {elem?.item?.user?.location}
+            </Text>
+          </View>
+          <View style={[s.options]}>
+            <Menu
+              w="150"
+              borderWidth={moderateScale(1, 0.1)}
+              borderColor={'grey'}
+              backgroundColor={color}
+              marginRight={moderateScale(15, 0.1)}
+              marginTop={moderateScale(25, 0.1)}
+              closeOnSelect={true}
+              trigger={triggerProps => {
+                return (
+                  <Pressable
+                    accessibilityLabel="More options menu"
+                    {...triggerProps}
+                    style={{
+                      flexDirection: 'row',
+                      right: moderateScale(8, 0.1),
+                    }}
+                  >
+                    <Entypo
+                      name={'dots-three-vertical'}
+                      color={textColor}
+                      size={moderateScale(15, 0.1)}
+                    />
+                  </Pressable>
+                );
+              }}
+            >
+              <Menu.Item onPress={() => {}}>
+                <View style={s.optionView}>
+                  <Icon
+                    name={'eye-slash'}
+                    color={textColor}
+                    size={moderateScale(13, 0.1)}
+                    // style={{marginRight: moderateScale(10, 0.1)}}
+                    style={{flex: 0.3}}
+                  />
+                  <Text style={[s.optionBtns, {color: textColor}]}>Hide</Text>
+                </View>
+              </Menu.Item>
+              <Menu.Item onPress={() => {}}>
+                <View style={s.optionView}>
+                  <MaterialIcons
+                    name={'report'}
+                    color={textColor}
+                    size={moderateScale(13, 0.1)}
+                    style={{flex: 0.3}}
+                  />
+                  <Text style={[s.optionBtns, {color: textColor}]}>Report</Text>
+                </View>
+              </Menu.Item>
+            </Menu>
+          </View>
+        </View>
+        <View style={s.img}>
+          <TouchableWithoutFeedback
+            onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}
+          >
+            <Image
+              source={{uri: elem?.item?.image}}
+              width={undefined}
+              height={undefined}
+              resizeMode={'cover'}
+              style={{
+                width: '95%',
+                height: moderateScale(270, 0.1),
+                borderRadius: moderateScale(10, 0.1),
+                paddingHorizontal: moderateScale(10, 0.1),
+                alignSelf: 'center',
+              }}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableOpacity
+            onPress={() => {
+              hitLike(elem?.item?.id, elem?.index);
+              // console.log(data[elem.index].post.liked);
+            }}
+            style={s.likes}
+          >
+            <Text style={s.likesCount}> {elem?.item?.post_likes?.length}</Text>
+
+            <Icon
+              name="heart"
+              size={moderateScale(12, 0.1)}
+              solid
+              color={liked === true ? 'yellow' : '#fff'}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={s.footer}>
+          <Text style={[s.name, {color: textColor}]}>
+            {elem?.item?.user?.name}
+          </Text>
+          <Text style={[s.textRegular, {color: textColor}]}>
+            {elem?.item?.caption}
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Comments', {post: elem?.item});
+            }}
+          >
+            <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
+              View all {elem?.item?.post_comments?.length} Comments
+            </Text>
+          </TouchableOpacity>
+          <View style={s.input}>
+            <Input
+              w="100%"
+              variant="unstyled"
+              color={textColor}
+              fontSize={moderateScale(12, 0.1)}
+              InputLeftElement={
+                <View
+                  style={[
+                    s.smallDp,
+                    {
+                      borderColor: getColor(elem?.item?.user?.group),
+                    },
+                  ]}
+                >
+                  <Image
+                    source={{uri: elem?.item?.user?.image}}
+                    style={s.dp1}
+                    resizeMode={'cover'}
+                  />
+                </View>
+              }
+              InputRightElement={
+                <TouchableOpacity
+                  onPress={() => {
+                    addComment(elem?.item?.id, elem?.index);
+                  }}
+                  style={{marginRight: moderateScale(10, 0.1)}}
+                >
+                  <Feather
+                    name={'send'}
+                    size={moderateScale(15, 0.1)}
+                    color={textColor}
+                  />
+                </TouchableOpacity>
+              }
+              // value={fname}
+              onEndEditing={() => {
+                // setDisable1(!disable1);
+              }}
+              // isReadOnly={!disable1}
+              // isFocused={disable1}
+              placeholder="Add Comment ..."
+              placeholderTextColor={'grey'}
+              value={current == elem.index ? comment : ''}
+              onChangeText={text => {
+                setCurrent(elem.index);
+                setComment(text);
+              }}
+            />
+          </View>
+        </View>
+      </View>
+    );
+  };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       <View style={[s.container, s.col, {backgroundColor: color}]}>
