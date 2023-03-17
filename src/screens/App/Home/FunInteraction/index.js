@@ -184,14 +184,16 @@ const FunInteraction = ({navigation}) => {
   const [lastTap, setLastTap] = useState(null);
   const [refresh, setReferesh] = useState(true);
   const [loader, setLoader] = useState(false);
-  const [publicPost, setPublicPost] = useState([])
+  const [publicPost, setPublicPost] = useState([]);
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
   const userToken = useSelector(state => state.reducer.userToken);
+
   useEffect(() => {
-    getPosts()
+    getPosts();
   }, []);
+
   const handleDoubleTap = index => {
     const now = Date.now();
     const DOUBLE_PRESS_DELAY = 300;
@@ -213,7 +215,8 @@ const FunInteraction = ({navigation}) => {
       .then(res => {
         console.log('data', JSON.stringify(res.data));
         console.log('public post', JSON.stringify(res?.data?.post_public));
-        setPublicPost(res?.data?.post_public)
+        setPublicPost(res?.data?.post_public);
+
         setLoader(false);
       })
       .catch(err => {
@@ -222,7 +225,6 @@ const FunInteraction = ({navigation}) => {
         // showToast(err.response);
       });
   };
-
 
   const toggleLike = index => {
     console.log('hello');
@@ -233,7 +235,7 @@ const FunInteraction = ({navigation}) => {
   };
 
   const renderItem = elem => {
-    console.log(elem?.item?.image);
+    // console.log(elem?.item?.image);
     return (
       <View style={s.col}>
         {/* {optionsModal && elem.index == selectedIndex ? (
@@ -277,7 +279,9 @@ const FunInteraction = ({navigation}) => {
         <View style={s.header}>
           <View style={s.dp}>
             <Image
-              source={{uri: elem?.item?.pfimage? elem?.item?.pfimage:dummyImage}}
+              source={{
+                uri: elem?.item?.pfimage ? elem?.item?.pfimage : dummyImage,
+              }}
               style={s.dp1}
               resizeMode={'cover'}
             />
@@ -321,7 +325,7 @@ const FunInteraction = ({navigation}) => {
                     {...triggerProps}
                     style={{
                       flexDirection: 'row',
-                      right: moderateScale(8,0.1)
+                      right: moderateScale(8, 0.1),
                     }}
                   >
                     <Entypo
@@ -358,25 +362,6 @@ const FunInteraction = ({navigation}) => {
               </Menu.Item>
             </Menu>
           </View>
-          {/* <TouchableOpacity
-            onPress={() => {
-              if (elem.index === selectedIndex) {
-                setOptionsModal(!optionsModal);
-              } else {
-                setOptionsModal(true);
-                setSelectedIndex(elem.index);
-              }
-            }}
-            style={s.options}
-          >
-            <Entypo
-              name={'dots-three-vertical'}
-              color={textColor}
-              size={moderateScale(15, 0.1)}
-            />
-          </TouchableOpacity> */}
-
-          {/*All views of Modal*/}
         </View>
         <View style={s.img}>
           <TouchableWithoutFeedback onPress={() => handleDoubleTap(elem.index)}>
@@ -385,10 +370,10 @@ const FunInteraction = ({navigation}) => {
               // width={undefined}
               // height={undefined}
               resizeMode={'cover'}
-               style={{width: '100%', 
-               height: moderateScale(270,0.1), 
-               paddingHorizontal: moderateScale(15,0.1),
-              //  borderRadius: moderateScale(10,0.1)
+              style={{
+                width: '100%',
+                height: moderateScale(270, 0.1),
+                paddingHorizontal: moderateScale(15, 0.1),
               }}
             />
           </TouchableWithoutFeedback>
@@ -399,13 +384,13 @@ const FunInteraction = ({navigation}) => {
             }}
             style={s.likes}
           >
-            <Text style={s.likesCount}> {elem?.item?.post_likes}</Text>
+            <Text style={s.likesCount}> count</Text>
 
             <Icon
               name="heart"
               size={moderateScale(12, 0.1)}
               solid
-              color={elem?.item?.post?.liked === true ? 'yellow' : '#fff'}
+              color={elem?.item === true ? 'yellow' : '#fff'}
             />
           </TouchableOpacity>
         </View>
@@ -424,7 +409,7 @@ const FunInteraction = ({navigation}) => {
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       <View style={[s.container, s.col, {backgroundColor: color}]}>
-      {loader ? <Loader /> : null}
+        {loader ? <Loader /> : null}
         <View style={s.searchContainer}>
           <Input
             placeholder="Search Here"

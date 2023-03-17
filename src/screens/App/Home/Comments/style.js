@@ -32,10 +32,10 @@ const styles = StyleSheet.create({
     fontFamily: Poppins,
   },
   dp: {
-    flex: 0.15,
     width: moderateScale(53, 0.1),
     height: moderateScale(53, 0.1),
     borderRadius: moderateScale(53 / 2, 0.1),
+    borderWidth: moderateScale(2, 0.1),
     marginRight: moderateScale(10, 0.1),
   },
   userName: {
@@ -71,12 +71,27 @@ const styles = StyleSheet.create({
   },
   card: {
     flexDirection: 'row',
-    marginVertical: moderateScale(15, 0.1),
+    width: '100%',
+    marginVertical: moderateScale(10, 0.1),
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   name: {
     fontFamily: PoppinsBold,
     fontSize: moderateScale(13, 0.1),
-    lineHeight: moderateScale(17, 0.1),
+    lineHeight: moderateScale(15, 0.1),
+  },
+  details: {
+    width: moderateScale(200, 0.1),
+    flexDirection: 'column',
+    marginTop: moderateScale(5, 0.1),
+  },
+  caption: {
+    flexDirection: 'row',
+    marginTop: moderateScale(10, 0.1),
+    borderBottomColor: 'grey',
+    borderBottomWidth: moderateScale(1, 0.1),
+    paddingVertical: moderateScale(10, 0.1),
   },
   name1: {
     fontFamily: Poppins,
@@ -94,22 +109,18 @@ const styles = StyleSheet.create({
   },
   textSmall: {
     fontFamily: Poppins,
-    fontSize: moderateScale(8, 0.1),
-    lineHeight: moderateScale(12, 0.1),
+    fontSize: moderateScale(10, 0.1),
+    lineHeight: moderateScale(13, 0.1),
     marginVertical: moderateScale(5, 0.1),
   },
   img: {
     width: '100%',
   },
   icon: {
-    flex: 0.15,
     justifyContent: 'center',
     paddingTop: moderateScale(5, 0.1),
-    // alignItems:'center',
-    // alignItems: 'flex-end',
+    paddingLeft: moderateScale(15, 0.1),
     flexDirection: 'row',
-    // alignSelf:'center',
-    //  marginRight: moderateScale(-20),
   },
   hTxt: {
     color: '#7B7A7A',

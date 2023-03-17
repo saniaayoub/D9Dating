@@ -25,9 +25,14 @@ const styles = StyleSheet.create({
     width: moderateScale(40, 0.1),
     height: moderateScale(40, 0.1),
     borderRadius: moderateScale(40 / 2, 0.1),
-    borderColor: 'red',
-    borderWidth: moderateScale(1, 0.1),
+    borderWidth: moderateScale(2, 0.1),
     marginHorizontal: moderateScale(10, 0.1),
+  },
+  smallDp: {
+    width: moderateScale(25, 0.1),
+    height: moderateScale(25, 0.1),
+    borderRadius: moderateScale(40 / 2, 0.1),
+    borderWidth: moderateScale(2, 0.1),
   },
   container1: {
     flex: 1,
@@ -47,6 +52,9 @@ const styles = StyleSheet.create({
     borderColor: '#222233',
     flexDirection: 'column',
   },
+  // input: {
+  //   marginVertical: moderateScale(5, 0.1),
+  // },
   text: {
     color: '#3f2949',
     marginTop: 10,
