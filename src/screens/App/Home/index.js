@@ -237,6 +237,7 @@ const Home = ({navigation}) => {
   const [userID, setUserID] = useState('');
   const [comment, setComment] = useState('');
   const [current, setCurrent] = useState('');
+  const [otherStories, setOtherStories] = useState([]);
   const [storyImage, setStoryImage] = useState('');
   // const [myStories, setMyStories] = useState('')
   const [dummyImage, setDummyImage] = useState(
@@ -338,7 +339,7 @@ const Home = ({navigation}) => {
       .then(res => {
         console.log('Posts', JSON.stringify(res.data));
         setPosts(res?.data?.post_friends);
-        // setMyStories(res?.data?.stories);
+        setOtherStoriesData(res?.data?.stories);
         setLoader(false);
       })
       .catch(err => {
@@ -346,6 +347,20 @@ const Home = ({navigation}) => {
         console.log(err);
         // showToast(err.response);
       });
+  };
+
+  const setOtherStoriesData = data => {
+    console.log('sent data', data);
+    let temp = {
+      user_id: data.id,
+      user_image: data.image,
+      group: data.group,
+      user_name: data.name,
+      stories: data.stories,
+    };
+    dispatch(setStories([temp]));
+    dispatch(setUserToken(token));
+    setLoader(false);
   };
 
   const hitLike = async (id, index) => {
@@ -951,7 +966,10 @@ const Home = ({navigation}) => {
                 }}
                 style={[
                   s.addBtn,
-                  {borderColor: color, bottom: moderateScale(15, 0.1)},
+                  {
+                    borderColor: color,
+                    bottom: moderateScale(15, 0.1),
+                  },
                 ]}
               >
                 <Icon
