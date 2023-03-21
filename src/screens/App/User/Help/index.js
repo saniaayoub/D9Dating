@@ -111,6 +111,8 @@ const Help = ({navigation}) => {
             s.container,
             {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
           ]}>
+          {loader ? <Loader /> : null}
+
           <View style={s.header}>
             <Header navigation={navigation} />
           </View>
@@ -170,8 +172,7 @@ const Help = ({navigation}) => {
               borderWidth: 0.9,
               borderColor: textColor,
             }}>
-            <View style={{flex: 0.2, 
-              marginTop: moderateScale(5, 0.1)}}>
+            <View style={{flex: 0.2, marginTop: moderateScale(5, 0.1)}}>
               <Input
                 w={{
                   base: '100%',

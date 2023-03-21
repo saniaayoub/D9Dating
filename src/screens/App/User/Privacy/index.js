@@ -28,7 +28,7 @@ const Privacy = ({navigation}) => {
   const userPrivacy = async () => {
     setLoader(true);
     const data = {
-      privacy_option: connect,
+      privacy_option: connect == '1' ? 'Everyone' : 'Friends of Friends',
     };
     await axiosconfig
       .post('user-privacy', data,{
@@ -51,7 +51,9 @@ const Privacy = ({navigation}) => {
   const postprivacy = async () => {
     setLoader(true);
     const data = {
-      privacy_option: post,
+      privacy_option:
+      post == 'Public' ? '1' : story == 'Friends' ? '2' : '3',
+      
     };
     console.log(data,'dataa');
     await axiosconfig
@@ -213,7 +215,7 @@ const Privacy = ({navigation}) => {
                           flexDirection: 'row',
                         }}>
                         <Text style={[s.option, {color: textColor}]}>
-                          {post == '1' ? 'Public' : post == '2' ? 'Friends' : 'Only Me' }
+                          {post}
                         </Text>
 
                         <Entypo
@@ -226,7 +228,7 @@ const Privacy = ({navigation}) => {
                   }}>
                   <Menu.Item onPress={() => 
                   {
-                    setPost('1')
+                    setPost('Public')
                     postprivacy()
                   }}
                    >
@@ -243,7 +245,7 @@ const Privacy = ({navigation}) => {
                     </View>
                   </Menu.Item>
                   <Menu.Item onPress={() => {
-                    setPost('2')
+                    setPost('Friends')
                     postprivacy()
                   }}>
                     <View style={s.optionView}>
@@ -259,7 +261,7 @@ const Privacy = ({navigation}) => {
                     </View>
                   </Menu.Item>
                   <Menu.Item onPress={() => {
-                    setPost('3')
+                    setPost('Only Me')
                     postprivacy()
                   }}>
                     <View style={s.optionView}>

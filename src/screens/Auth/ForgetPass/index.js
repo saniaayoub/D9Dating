@@ -101,7 +101,6 @@ const ForgetPassword = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
-
       <Header navigation={navigation} />
       <View style={[s.container, {backgroundColor: color}]}>
         <View style={{width: '100%', alignItems: 'center'}}>

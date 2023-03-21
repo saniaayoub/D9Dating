@@ -18,6 +18,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Button, Stack, Menu, Pressable, Input, Alert} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loader from '../../../Components/Loader';
+
 
 import {
   launchCamera,
@@ -41,6 +44,8 @@ const CreatePost = ({navigation}) => {
   const [icon, setIcon] = useState('globe');
   const [caption, setCaption] = useState('');
   const [story, setStory] = useState('Public');
+  const [loader, setLoader] = useState(false);
+
   
   const [value, setValue] = useState([
     {
@@ -218,8 +223,9 @@ const CreatePost = ({navigation}) => {
         caption: caption,
         privacy_option:
           story == 'Public' ? '1' : story == 'Friends' ? '2' : '3',
+          location: `${location}`
       };
-      console.log(data);
+      console.log(data,'dataaaa');
       // setLoader(true);
       axiosconfig
         .post('post_store', data, {
@@ -242,7 +248,32 @@ const CreatePost = ({navigation}) => {
         });
     }
   };
-
+  useEffect(() => {
+   getData()
+  }, [])
+  
+  const getData = async () => {
+    let SP = await AsyncStorage.getItem('id');
+    setLoader(true);
+    axiosconfig
+      .get(`user_view/${SP}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        // if (res.data.user_details) {
+        //   setData(res.data.user_details);
+        // }
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
   return (
     <View
       style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}
@@ -367,50 +398,7 @@ const CreatePost = ({navigation}) => {
                   </View>
                 </Menu.Item>
               </Menu>
-              {/* <DropDownPicker
-                containerStyle={{
-                  width: moderateScale(170, 0.1),
-                  backgroundColor: color,
-                }}
-                style={{
-                  backgroundColor: color, borderColor: Textcolor,
 
-                }}
-                itemStyle={{
-                  justifyContent: 'flex-start',
-                  color: Textcolor,
-
-                }}
-                labelStyle={{
-                  fontSize: 14,
-                  color: Textcolor,
-
-                }}
-
-                open={open}
-                value={value}
-                items={items}
-                setOpen={setOpen}
-                setValue={setValue}
-                setItems={setItems}
-
-                dropDownContainerStyle={{
-                  backgroundColor: color, borderColor: Textcolor,
-                  zIndex: 1000, elevation: 1000,
-                }}
-              /> */}
-              {/* <TouchableOpacity>
-                <View style={[s.btnView, {borderColor: Textcolor}]}>
-                  <Text style={[s.buttonText, {color: Textcolor}]}>Public</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <View style={[s.btnView, {borderColor: Textcolor}]}>
-                  <Text style={[s.buttonText, {color: Textcolor}]}>
-                    Private
-                  </Text>
-                </View>
-              </TouchableOpacity> */}
             </View>
           </View>
         </View>
@@ -431,17 +419,37 @@ const CreatePost = ({navigation}) => {
             What's on your Mind
           </Text> */}
         </View>
-        <View style={[s.location,]}>
-          <TouchableOpacity onPress={()=>navigation.navigate('Map',{
+        <TouchableOpacity onPress={()=>navigation.navigate('Map',{
             screen : 'createPost'
           })}>
+        <View style={[s.mText]}>
+          <Input
+            variant="unstyled"
+            placeholder={'Enter location...'}
+            placeholderTextColor={Textcolor}
+            isReadOnly
+            value={location}
+            onChangeText={text => {
+              setCaption(text);
+            }}
+            backgroundColor={color}
+            color={Textcolor}
+            fontSize={moderateScale(14, 0.1)}
+          />
+          {/* <Text style={[s.mainText, {color: Textcolor}]}>
+            What's on your Mind
+          </Text> */}
+        </View>
+        </TouchableOpacity>
+        {/* <View style={[s.location,]}>
+          
           <Text style={{color:'red',
           fontSize: moderateScale(18,0.1),
           paddingVertical: moderateScale(7,0.1),
           paddingHorizontal: moderateScale(15,0.1)
           }}>{location ? location : 'Add location'}</Text>
-          </TouchableOpacity>
-        </View>
+          
+        </View> */}
         <View style={[s.imgView, {zIndex: -1}]}>
           <TouchableOpacity onPress={() => refRBSheet.current.open()}>
             {filePath.length != 0 ? (

@@ -27,7 +27,7 @@ const Header = ({
   const color = theme === 'dark' ? '#222222' : '#fff';
 
   return (
-    <View style={[[s.main, s.container, {backgroundColor: color}]]}>
+    <View style={[[s.main, s.container, ]]}>
       <View>
         <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
           <Inicon
