@@ -260,7 +260,7 @@ const ViewUser = ({navigation, route}) => {
             <>
               <TouchableOpacity>
                 <View>
-                  {!connected ? (
+                  {connected == false && blocked == false ? (
                     <>
                       <TouchableOpacity onPress={() => connect()}>
                         <View style={s.btn}>
@@ -268,7 +268,7 @@ const ViewUser = ({navigation, route}) => {
                         </View>
                       </TouchableOpacity>
                     </>
-                  ) : connected  ? (
+                  ) : connected == true && blocked == false ? (
                     <>
                       <View style={s.connected}>
                         <TouchableOpacity onPress={() => Disconnect()}>
@@ -283,7 +283,7 @@ const ViewUser = ({navigation, route}) => {
                         </TouchableOpacity>
                       </View>
                     </>
-                  ) : blocked ? (
+                  ) : blocked == true && connected == false ? (
                     <>
                       <TouchableOpacity  onPress={() => unblock()}>
                         <View style={s.btn}>

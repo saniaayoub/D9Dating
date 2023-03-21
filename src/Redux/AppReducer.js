@@ -6,6 +6,7 @@ import {
   DATE,
   SET_USER_DATA,
   SET_GROUP,
+  POST_LOCATION
 } from './Constants';
 
 const initialState = {
@@ -17,6 +18,7 @@ const initialState = {
   userData: {},
   userPassword: '',
   group: [],
+  postLocation : ''
 };
 
 const AppReducer = (state = initialState, action) => {
@@ -57,6 +59,11 @@ const AppReducer = (state = initialState, action) => {
         ...state,
         group: action.payload,
       };
+      case POST_LOCATION:
+        return {
+          ...state,
+          postLocation: action.payload,
+        };
     default:
       return state;
   }

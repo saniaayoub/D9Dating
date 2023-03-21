@@ -5,6 +5,7 @@ import {moderateScale} from 'react-native-size-matters';
 import HomeStack from '../Stacks/HomeStack';
 import MessageStack from '../Stacks/MessageStack';
 import CreatePost from '../../screens/App/CreatePost';
+import CreatePostStack from '../Stacks/CreatePostStack';
 import ProfileStack from '../Stacks/ProfileStack';
 import Notifications from '../../screens/App/Notifications';
 import Icon from 'react-native-vector-icons/Octicons';
@@ -74,8 +75,8 @@ const BottomTabs = () => {
         }}
       />
       <Tab.Screen
-        name={'CreatePost'}
-        component={CreatePost}
+        name={'CreatePostStack'}
+        component={CreatePostStack}
         options={{
           tabBarIcon: ({focused}) => (
             <View style={styles.addTab}>

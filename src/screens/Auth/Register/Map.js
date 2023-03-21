@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { setLocation } from '../../../Redux/actions';
+import { setPostLocation } from '../../../Redux/actions';
 import { useSelector, useDispatch } from 'react-redux';
 import { Marker } from "react-native-maps";
 import MapView, { PROVIDER_GOOGLE, animateToRegion } from "react-native-maps";
@@ -25,7 +26,9 @@ let LONGITUDE
 let LATITUDE
 
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-const App = () => {
+const App = ({navigation, route}) => {
+  const screen1 = route.params
+  console.log(screen1);
   const dispatch = useDispatch();
   const mapRef = useRef()
   const [markerPosition, setMarkerPosition] = useState({
@@ -144,7 +147,15 @@ const App = () => {
           }}
           onDragEnd={e => {
             const coordinate = (JSON.stringify(e.nativeEvent.coordinate))
-            dispatch(setLocation(coordinate))
+              if(screen1){
+                console.log('ddd');
+                dispatch(setPostLocation(coordinate))            
+              }
+              else{
+                console.log('rr');
+                dispatch(setLocation(coordinate))
+              }
+            
             // getCityName(coordinate)
             alert(coordinate)
             // const city = getCityName(JSON.stringify(e.nativeEvent.coordinate,))

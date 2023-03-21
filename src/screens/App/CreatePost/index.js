@@ -18,6 +18,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Button, Stack, Menu, Pressable, Input, Alert} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
+
 import {
   launchCamera,
   launchImageLibrary,
@@ -29,12 +30,18 @@ import RNFS from 'react-native-fs';
 // import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreatePost = ({navigation}) => {
+  useEffect(() => {
+    
+    console.log('aaaaa');
+  }, [])
+  
   const theme = useSelector(state => state.reducer.theme);
   const [filePath, setFilePath] = useState([]);
   const [open, setOpen] = useState(false);
   const [icon, setIcon] = useState('globe');
   const [caption, setCaption] = useState('');
   const [story, setStory] = useState('Public');
+  
   const [value, setValue] = useState([
     {
       label: 'Public',
@@ -71,6 +78,10 @@ const CreatePost = ({navigation}) => {
   const userToken = useSelector(state => state.reducer.userToken);
   const dispatch = useDispatch();
   const refRBSheet = useRef();
+  const postLocation = useSelector(state => state.reducer.postLocation);
+  const [location, setLocation] = useState([postLocation])
+  console.log(postLocation, 'postLocation');
+  console.log(location, 'location');
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
@@ -406,7 +417,7 @@ const CreatePost = ({navigation}) => {
         <View style={[s.mText]}>
           <Input
             variant="unstyled"
-            placeholder="What's on your Mind"
+            placeholder="Write a caption...."
             placeholderTextColor={Textcolor}
             value={caption}
             onChangeText={text => {
@@ -419,6 +430,17 @@ const CreatePost = ({navigation}) => {
           {/* <Text style={[s.mainText, {color: Textcolor}]}>
             What's on your Mind
           </Text> */}
+        </View>
+        <View style={[s.location,]}>
+          <TouchableOpacity onPress={()=>navigation.navigate('Map',{
+            screen : 'createPost'
+          })}>
+          <Text style={{color : Textcolor,
+          fontSize: moderateScale(14,0.1),
+          paddingVertical: moderateScale(7,0.1),
+          paddingHorizontal: moderateScale(15,0.1)
+          }}>{location ? location : 'Add location'}</Text>
+          </TouchableOpacity>
         </View>
         <View style={[s.imgView, {zIndex: -1}]}>
           <TouchableOpacity onPress={() => refRBSheet.current.open()}>

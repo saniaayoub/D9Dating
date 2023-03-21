@@ -84,7 +84,14 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(19, 0.1),
   },
   mText: {
-    paddingHorizontal: moderateScale(22, 0.1),
+    paddingHorizontal: moderateScale(28, 0.1),
+    marginVertical: moderateScale(8,0.1),
+  },
+  location:{
+    paddingHorizontal: moderateScale(28, 0.1),
+    marginVertical: moderateScale(8,0.1),
+    justifyContent:'center',
+
   },
   imgView: {
     marginVertical: moderateScale(15, 0.1),

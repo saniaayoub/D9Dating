@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     fontFamily: PoppinsBold,
     fontSize: moderateScale(13, 0.1),
     lineHeight: moderateScale(17, 0.1),
+    paddingRight: moderateScale(15,0.1)
   },
   textRegular: {
     fontFamily: Poppins,
@@ -173,6 +174,8 @@ const styles = StyleSheet.create({
   footer: {
     marginHorizontal: moderateScale(10, 0.1),
     marginVertical: moderateScale(10, 0.1),
+    flexDirection: 'row',
+    alignItems:'center'
   },
 });
 

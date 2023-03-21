@@ -5,3 +5,5 @@ export const LOCATION = 'LOCATION';
 export const DATE = 'DATE';
 export const SET_USER_DATA = 'SET_USER_DATA';
 export const SET_GROUP = 'SET_GROUP';
+export const POST_LOCATION = 'POST_LOCATION';
+
