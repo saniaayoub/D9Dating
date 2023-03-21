@@ -29,11 +29,7 @@ import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-<<<<<<< HEAD
-const Settings = ({navigation}) => {
-=======
 const Settings = ({navigation, route}) => {
->>>>>>> 8808086ace445d027a47a2b0d6944cf8e02fbf96
   const dispatch = useDispatch();
   const {data} = route.params;
   const userToken = useSelector(state => state.reducer.userToken);
@@ -168,42 +164,14 @@ const Settings = ({navigation, route}) => {
     await AsyncStorage.removeItem('userToken');
     await AsyncStorage.removeItem('password');
   };
-<<<<<<< HEAD
-  const getData = async () => {
-    console.log(context.myData, 'mydata');
-    try {
-      const value = await AsyncStorage.getItem('@auth_token');
-      console.log(value, 'valueToken');
-      if (value !== null) {
-        axiosconfig
-          .get('my-data', {
-            headers: {
-              Authorization: 'Bearer ' + value,
-            },
-          })
-          .then(res => {
-            console.log(res.data, 'jjkjhkhkhk');
-            context.setMyData(res.data);
-            setfromU(res.data?._from);
-          })
-          .catch(err => {
-            console.log(err, 'errrr');
-          });
-      }
-    } catch (e) {
-      console.log(e, 'getdata error');
-    }
-  };
-=======
-
->>>>>>> 8808086ace445d027a47a2b0d6944cf8e02fbf96
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
 
       <Header navigation={navigation} />
       <ScrollView
-        contentContainerStyle={[s.container, {backgroundColor: color}]}>
+        contentContainerStyle={[s.container, {backgroundColor: color}]}
+      >
         <View style={{flexDirection: 'row'}}>
           <View style={s.dp}>
             <Image
@@ -223,7 +191,8 @@ const Settings = ({navigation, route}) => {
               console.log('hiii');
               navigation.navigate('Privacy');
             }}
-            style={s.input}>
+            style={s.input}
+          >
             <Input
               w="100%"
               isReadOnly
@@ -249,7 +218,8 @@ const Settings = ({navigation, route}) => {
             onPress={() => {
               navigation.navigate('Help');
             }}
-            style={s.input}>
+            style={s.input}
+          >
             <Input
               w="100%"
               isReadOnly
@@ -274,7 +244,8 @@ const Settings = ({navigation, route}) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={s.input}
-            onPress={() => navigation.navigate('ResetPass')}>
+            onPress={() => navigation.navigate('ResetPass')}
+          >
             <Input
               w="100%"
               isReadOnly
@@ -299,7 +270,8 @@ const Settings = ({navigation, route}) => {
 
           <TouchableOpacity
             style={s.input}
-            onPress={() => navigation.navigate('Block')}>
+            onPress={() => navigation.navigate('Block')}
+          >
             <Input
               w="100%"
               isReadOnly
@@ -324,7 +296,8 @@ const Settings = ({navigation, route}) => {
 
           <TouchableOpacity
             style={s.input}
-            onPress={() => refRBSheet.current.open()}>
+            onPress={() => refRBSheet.current.open()}
+          >
             <Input
               w="100%"
               isReadOnly
@@ -360,7 +333,8 @@ const Settings = ({navigation, route}) => {
                 draggableIcon: {
                   backgroundColor: color,
                 },
-              }}>
+              }}
+            >
               <View style={s.input1}>
                 <Input
                   w={{
@@ -385,7 +359,8 @@ const Settings = ({navigation, route}) => {
                     password ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowPass(!showPass)}>
+                          onPress={() => setshowPass(!showPass)}
+                        >
                           <Feather
                             name={showPass ? 'eye' : 'eye-off'}
                             color={color}
@@ -460,7 +435,8 @@ const Settings = ({navigation, route}) => {
                     confirmPassword ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowConfPass(!showConfPass)}>
+                          onPress={() => setshowConfPass(!showConfPass)}
+                        >
                           <Feather
                             name={showConfPass ? 'eye' : 'eye-off'}
                             color={color}
@@ -514,7 +490,8 @@ const Settings = ({navigation, route}) => {
             onPress={() => {
               LogoutApi();
             }}
-            style={s.input}>
+            style={s.input}
+          >
             <Input
               w="100%"
               isReadOnly

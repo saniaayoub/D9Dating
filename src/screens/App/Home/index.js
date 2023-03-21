@@ -564,7 +564,7 @@ const Home = ({navigation}) => {
           story_id: Stories[0]?.stories?.length + 1,
           story_image: `file://${res}`,
           swipeText: 'Custom swipe text for this story',
-          onPress: () => console.log('story 1 swiped'),
+          // onPress: () => console.log('story 1 swiped'),
         });
         // setLoader(true);
         setMyStories(temp);
@@ -628,7 +628,7 @@ const Home = ({navigation}) => {
     const data = {
       story_id: Stories[0]?.stories?.length + 1,
       image: base64,
-      swipe_text: userID,
+      swipe_text: 'Custom swipe text for this story',
       privacy_option: '1',
     };
     await axiosconfig
@@ -706,7 +706,7 @@ const Home = ({navigation}) => {
         liked = true;
       }
     });
-    console.log(liked);
+
     return (
       <View style={s.col}>
         <View style={s.header}>
@@ -944,7 +944,23 @@ const Home = ({navigation}) => {
           }}
         >
           {Stories[0]?.stories?.length ? (
-            <>
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  refRBSheet.current.open();
+                }}
+                style={[
+                  s.addBtn,
+                  {borderColor: color, bottom: moderateScale(15, 0.1)},
+                ]}
+              >
+                <Icon
+                  name={'plus'}
+                  size={moderateScale(14, 0.1)}
+                  solid
+                  color={'blue'}
+                />
+              </TouchableOpacity>
               <InstaStory
                 data={Stories}
                 duration={10}
@@ -984,7 +1000,7 @@ const Home = ({navigation}) => {
                 pressedBorderColor={storyCircle}
                 unPressedBorderColor={'green'}
               />
-            </>
+            </View>
           ) : (
             <>
               <View style={s.myStory}>
