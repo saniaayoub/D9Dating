@@ -365,7 +365,9 @@ const Profile = ({navigation}) => {
 
         <View style={s.username}>
           <Text style={[s.textBold, {color: textColor}]}>{form?.name}</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Settings', {data: form})}
+          >
             <Inicon
               name={'settings-sharp'}
               size={moderateScale(20, 0.1)}

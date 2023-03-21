@@ -12,6 +12,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../../provider/axios';
 import Loader from '../../../../Components/Loader';
+import Toast from 'react-native-simple-toast';
+
 const messages = [
   {
     from: 'Julie Watson',
@@ -94,13 +96,26 @@ const Comments = ({navigation, route}) => {
   const [comment, setComment] = useState('');
   const [loader, setLoader] = useState(false);
   const [userID, setUserID] = useState('');
+  const [postDate, setPostDate] = useState('');
 
+  const showToast = msg => {
+    Toast.show(msg, Toast.SHORT);
+  };
+  const extractDate = () => {
+    console.log('Example to Subtract two dates');
+    var d1 = new Date('March 16, 2022');
+    var d2 = new Date('April 6, 2022');
+    var sub = d2.getTime() - d1.getTime();
+    console.log(sub);
+  };
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
   const [comments, setComments] = useState(post?.post_comments);
+
   useEffect(() => {
     getID();
+    // extractDate();
   }, []);
   const getID = async () => {
     const id = await AsyncStorage.getItem('id');
@@ -186,6 +201,8 @@ const Comments = ({navigation, route}) => {
 
   const deleteComment = async id => {
     setLoader(true);
+
+    console.log(id);
     await axiosconfig
       .get(`comment-delete/${id}`, {
         headers: {
@@ -195,6 +212,8 @@ const Comments = ({navigation, route}) => {
       })
       .then(res => {
         console.log('data', JSON.stringify(res.data));
+        updateComments(id);
+        showToast(res?.data?.success);
         // setComment('');
         // getPosts();
         // setRefresh(!refresh);
@@ -202,10 +221,16 @@ const Comments = ({navigation, route}) => {
       })
       .catch(err => {
         setLoader(false);
-
         console.log(err);
         // Alert.alert(err);
       });
+  };
+  const updateComments = id => {
+    let temp = [];
+    temp = comments.filter(elem => {
+      console.log(elem.id != id);
+    });
+    setComments(temp);
   };
 
   const renderItem = (elem, i) => {
@@ -245,7 +270,7 @@ const Comments = ({navigation, route}) => {
         </View>
 
         <View style={{flexDirection: 'row'}}>
-          {post?.user?.id == userID && elem?.item?.user_id == userID ? (
+          {post?.user?.id == userID || elem?.item?.user_id == userID ? (
             <View style={s.icon}>
               <TouchableOpacity
                 onPress={() => {
@@ -261,20 +286,21 @@ const Comments = ({navigation, route}) => {
             </View>
           ) : null}
 
-          {elem?.item?.user_id == userID}
-          <View style={s.icon}>
-            <TouchableOpacity
-              onPress={() => {
-                editComment(post.id);
-              }}
-            >
-              <Entypo
-                name={'edit'}
-                size={moderateScale(15, 0.1)}
-                color={textColor}
-              />
-            </TouchableOpacity>
-          </View>
+          {elem?.item?.user_id == userID ? (
+            <View style={s.icon}>
+              <TouchableOpacity
+                onPress={() => {
+                  editComment(post.id);
+                }}
+              >
+                <Entypo
+                  name={'edit'}
+                  size={moderateScale(15, 0.1)}
+                  color={textColor}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : null}
         </View>
       </View>
     );

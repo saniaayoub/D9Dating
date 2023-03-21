@@ -6,6 +6,7 @@ import {
   DATE,
   SET_USER_DATA,
   SET_GROUP,
+  SET_STORIES,
 } from './Constants';
 
 const initialState = {
@@ -17,6 +18,7 @@ const initialState = {
   userData: {},
   userPassword: '',
   group: [],
+  stories: [],
 };
 
 const AppReducer = (state = initialState, action) => {
@@ -57,6 +59,12 @@ const AppReducer = (state = initialState, action) => {
         ...state,
         group: action.payload,
       };
+    case SET_STORIES:
+      return {
+        ...state,
+        stories: action.payload,
+      };
+
     default:
       return state;
   }

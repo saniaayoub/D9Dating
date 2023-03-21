@@ -29,14 +29,17 @@ import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-const Settings = ({navigation}) => {
+const Settings = ({navigation, route}) => {
   const dispatch = useDispatch();
+  const {data} = route.params;
   const userToken = useSelector(state => state.reducer.userToken);
   const userData = useSelector(state => state.reducer.userData);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
+  const [dummyImage, setDummyImage] = useState(
+    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  );
   // const color2 = theme === 'dark' ? '#343434' : '#fff';
   const refRBSheet = useRef();
 
@@ -50,7 +53,9 @@ const Settings = ({navigation}) => {
   const [loader, setLoader] = useState(false);
   const [submitted, setSubmitted] = useState();
 
-
+  useEffect(() => {
+    console.log(data, 'datsa');
+  }, []);
   const showToast = msg => {
     Alert.alert(msg);
   };
@@ -61,20 +66,20 @@ const Settings = ({navigation}) => {
     setSubmitted(false);
     let sub = false;
 
-    if (password == null || password == "") {
-      setSubmitted(true);
-      sub = true
-      return;
-    }
-    if (confirmPassword == null || confirmPassword == "") {
+    if (password == null || password == '') {
       setSubmitted(true);
       sub = true;
       return;
     }
-    if(password != confirmPassword){
-      Alert.alert('password does not match')
+    if (confirmPassword == null || confirmPassword == '') {
+      setSubmitted(true);
+      sub = true;
+      return;
     }
-    if(!sub){
+    if (password != confirmPassword) {
+      Alert.alert('password does not match');
+    }
+    if (!sub) {
       console.log('avvv');
       const body = {
         old_password: password,
@@ -88,12 +93,10 @@ const Settings = ({navigation}) => {
         .then(res => {
           // clear(res?.data?.messsage);
           console.log(res);
-          console.log(res?.data?.message)
-          alert(res?.data?.message)
-           AsyncStorage.removeItem('userToken');
+          console.log(res?.data?.message);
+          alert(res?.data?.message);
+          AsyncStorage.removeItem('userToken');
           dispatch(setUserToken(null));
-           
-
         })
         .catch(err => {
           console.log(err);
@@ -101,9 +104,8 @@ const Settings = ({navigation}) => {
           console.log(err.response?.data?.message);
         });
     }
-    
   };
-  const setTheme = async () => {
+  const setThemeApi = async theme => {
     setLoader(true);
     await axiosconfig
       .get('theme-mode', {
@@ -114,9 +116,11 @@ const Settings = ({navigation}) => {
       })
       .then(res => {
         console.log('data', JSON.stringify(res.data));
-        console.log('public post', JSON.stringify(res?.data?.post_public));
+        dispatch(setTheme(theme));
+
+        // console.log('public post', JSON.stringify(res?.data?.post_public));
         // console.log('user id',JSON.stringify(res?.data?.post_public?.user_id));
-        setPublicPost([res?.data?.post_public])
+        // setPublicPost([res?.data?.post_public]);
         setLoader(false);
       })
       .catch(err => {
@@ -125,8 +129,6 @@ const Settings = ({navigation}) => {
         // showToast(err.response);
       });
   };
- 
-
 
   // const clear = message => {
   //   showToast(message);
@@ -135,51 +137,34 @@ const Settings = ({navigation}) => {
   //   setLoader(false);
   // };
 
-  
   const LogoutApi = async () => {
-   console.log(userToken);
-      // const value = await AsyncStorage.getItem('userToken')
-      // console.log(value, 'tokenLogout');
-      // setLoader(true)
-       await axiosconfig.get('logout', {
-          headers: {
-            Authorization: `Bearer ${userToken}`  ,
-          },
-        }).then((res) => {
-          setLoader(false)
-          clearToken()
-          console.log(res.data, 'logoutToken');
-        }).catch((err) => {
-          console.log(err, 'errrr');
-        })
-  }
-  const clearToken = async ()=>{
+    console.log(userToken);
+    // const value = await AsyncStorage.getItem('userToken')
+    // console.log(value, 'tokenLogout');
+    setLoader(true);
+    await axiosconfig
+      .get('logout', {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        setLoader(false);
+        clearToken();
+        console.log(res.data, 'logoutToken');
+      })
+      .catch(err => {
+        setLoader(false);
+
+        console.log(err, 'errrr');
+      });
+  };
+  const clearToken = async () => {
     dispatch(setUserToken(null));
-  await  AsyncStorage.removeItem('userToken')
-   await AsyncStorage.removeItem('password')
-  }
-  const getData = async () => {
-    console.log(context.myData, 'mydata');
-    try {
-      const value = await AsyncStorage.getItem('@auth_token')
-      console.log(value, 'valueToken');
-      if (value !== null) {
-        axiosconfig.get('my-data', {
-          headers: {
-            Authorization: 'Bearer ' + value,
-          },
-        }).then((res) => {
-          console.log(res.data, 'jjkjhkhkhk');
-          context.setMyData(res.data)
-          setfromU(res.data?._from)
-        }).catch((err) => {
-          console.log(err, 'errrr');
-        })
-      }
-    } catch (e) {
-      console.log(e, 'getdata error');
-    }
-  }
+    await AsyncStorage.removeItem('userToken');
+    await AsyncStorage.removeItem('password');
+  };
+
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
@@ -190,11 +175,15 @@ const Settings = ({navigation}) => {
       >
         <View style={{flexDirection: 'row'}}>
           <View style={s.dp}>
-            <Image source={img1} style={s.dp1} resizeMode={'cover'} />
+            <Image
+              source={{uri: data?.image ? data?.image : dummyImage}}
+              style={s.dp1}
+              resizeMode={'cover'}
+            />
           </View>
 
           <View style={s.username}>
-            <Text style={[s.textBold, {color: textColor}]}>Julie Watson</Text>
+            <Text style={[s.textBold, {color: textColor}]}>{data?.name}</Text>
           </View>
         </View>
         <View style={s.inputSection}>
@@ -393,22 +382,25 @@ const Settings = ({navigation}) => {
                   <Text style={{color: 'red'}}>{passwordError}</Text>
                 ) : null}
               </View>
-              {
-            submitted && (password == null || password == '') ? (
-              <>
-                <View style={{
-                  alignSelf: 'flex-end',
-                  top: moderateScale(-15,0.1),
-                  marginRight: moderateScale(35, 0.1)
-                }}>
-                  <Text style={{
-                    color: 'red',
-                  }}>Required</Text>
-                </View>
-              </>
-            ) : null
-          }
-
+              {submitted && (password == null || password == '') ? (
+                <>
+                  <View
+                    style={{
+                      alignSelf: 'flex-end',
+                      top: moderateScale(-15, 0.1),
+                      marginRight: moderateScale(35, 0.1),
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: 'red',
+                      }}
+                    >
+                      Required
+                    </Text>
+                  </View>
+                </>
+              ) : null}
 
               <View style={s.input1}>
                 <Input
@@ -461,35 +453,40 @@ const Settings = ({navigation}) => {
                   fontSize={moderateScale(14, 0.1)}
                   secureTextEntry={showConfPass}
                 />
-              
               </View>
-              {
-            submitted && (confirmPassword == null || confirmPassword == '') ? (
-              <>
-                <View style={{
-                  alignSelf: 'flex-end',
-                  top: moderateScale(-15,0.1),
-                  marginRight: moderateScale(35, 0.1)
-                }}>
-                  <Text style={{
-                    color: 'red',
-                  }}>Required</Text>
-                </View>
-              </>
-            ) : null
-          }
+              {submitted &&
+              (confirmPassword == null || confirmPassword == '') ? (
+                <>
+                  <View
+                    style={{
+                      alignSelf: 'flex-end',
+                      top: moderateScale(-15, 0.1),
+                      marginRight: moderateScale(35, 0.1),
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: 'red',
+                      }}
+                    >
+                      Required
+                    </Text>
+                  </View>
+                </>
+              ) : null}
 
               <TouchableOpacity
                 onPress={() => {
                   console.log('dlt');
-                  deleteAccount()}}
+                  deleteAccount();
+                }}
                 style={s.dltbtn}
               >
                 <Text style={s.dltTxt}>Delete Account</Text>
               </TouchableOpacity>
             </RBSheet>
           </TouchableOpacity>
-         
+
           <TouchableOpacity
             onPress={() => {
               LogoutApi();
@@ -527,11 +524,11 @@ const Settings = ({navigation}) => {
                 setDarkMode(!darkMode);
                 if (theme === 'dark') {
                   console.log('hi1');
-                  dispatch(setTheme('light'));
+                  setThemeApi('light');
                 } else {
                   console.log('hi2');
 
-                  dispatch(setTheme('dark'));
+                  setThemeApi('dark');
                 }
               }}
               iconColor={{true: '#000', false: '#000'}}

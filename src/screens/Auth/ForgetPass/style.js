@@ -2,14 +2,14 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
 const Poppins = 'Poppins-Regular';
-const PoppinsBold = 'Poppins-Bold'
+const PoppinsBold = 'Poppins-Bold';
 
 const styles = StyleSheet.create({
   container: {
     height: '100%',
   },
-  header:{
-    paddingHorizontal: moderateScale(10,0.1)
+  header: {
+    paddingHorizontal: moderateScale(10, 0.1),
   },
   heading: {
     marginTop: moderateScale(30, 0.1),
@@ -19,18 +19,18 @@ const styles = StyleSheet.create({
     fontFamily: Poppins,
     fontSize: moderateScale(32, 0.1),
     lineHeight: moderateScale(48, 0.1),
-    fontWeight : '700'
+    fontWeight: '700',
   },
   headingText1: {
     fontFamily: Poppins,
     fontSize: moderateScale(32, 0.1),
     lineHeight: moderateScale(48, 0.1),
-    fontWeight: '300'
+    fontWeight: '300',
   },
   iconCircle: {
     padding: moderateScale(7, 0.1),
     marginRight: moderateScale(15, 0.1),
-    marginLeft: moderateScale(5,0.1),
+    marginLeft: moderateScale(5, 0.1),
     marginBottom: moderateScale(5, 0.1),
   },
   input: {
@@ -61,8 +61,7 @@ const styles = StyleSheet.create({
     fontFamily: Poppins,
   },
   bottomLink: {
-     marginTop: moderateScale(200)
-   
+    marginTop: moderateScale(200),
   },
   error: {
     color: 'red',

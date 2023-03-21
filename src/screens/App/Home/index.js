@@ -40,7 +40,7 @@ import Loader from '../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
 import {useIsFocused} from '@react-navigation/native';
-import {setGroup} from '../../../Redux/actions';
+import {setGroup, setStories} from '../../../Redux/actions';
 
 const Groups = [
   {id: 'Group 1', color: 'blue'},
@@ -53,21 +53,22 @@ const Groups = [
   {id: 'Group 8', color: 'purple'},
   {id: 'Group 9', color: 'blue'},
 ];
+
 const myData = [
   {
     user_id: 1,
     user_image:
-      'https://images.unsplash.com/photo-1616267624976-b45d3a7bac73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTl8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-    user_name: 'Your Story',
-    post: {
-      image: require('../../../assets/images/png/dp.png'),
-      location: 'USA',
-      likes: 233,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam',
-      liked: true,
-    },
-    stories: [],
+      'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+    group: '',
+    user_name: 'name',
+    stories: [
+      {
+        story_id: 1,
+        story_image:
+          'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+        swipeText: 'Custom swipe text for this story',
+      },
+    ],
   },
 ];
 const data = [
@@ -221,10 +222,10 @@ const Home = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const userToken = useSelector(state => state.reducer.userToken);
   const groups = useSelector(state => state.reducer.group);
+  const Stories = useSelector(state => state.reducer.stories);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-
-  const [myData1, setMyData1] = useState(myData);
+  const [myData1, setMyData1] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [data1, setData1] = useState(data);
   const [refresh, setRefresh] = useState(true);
@@ -236,6 +237,8 @@ const Home = ({navigation}) => {
   const [userID, setUserID] = useState('');
   const [comment, setComment] = useState('');
   const [current, setCurrent] = useState('');
+  const [storyImage, setStoryImage] = useState('');
+  // const [myStories, setMyStories] = useState('')
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
@@ -244,6 +247,8 @@ const Home = ({navigation}) => {
     dispatch(setGroup(Groups));
     getPosts();
     getID();
+    console.log(Stories, 'sstostst');
+    // getStory();
     // getStories();
     // console.log(loginId, 'dataaa');
     // let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
@@ -264,11 +269,61 @@ const Home = ({navigation}) => {
     //   .catch(err => {
     //     console.log(err.message);
     //   });
-  }, [myStories, isFocused]);
+  }, [isFocused]);
+
+  // const getStory = async () => {
+  //   setLoader(true);
+  //   await axiosconfig
+  //     .get('story_index', {
+  //       headers: {
+  //         Authorization: `Bearer ${userToken}`,
+  //         Accept: 'application/json',
+  //       },
+  //     })
+  //     .then(res => {
+  //       console.log('story', JSON.stringify(res.data.user));
+  //       setMyData1([
+  //         {
+  //           user_id: 1,
+  //           user_image:
+  //             'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  //           group: '',
+  //           user_name: 'name',
+  //           stories: [
+  //             {
+  //               story_id: 1,
+  //               story_image:
+  //                 'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  //               swipeText: 'Custom swipe text for this story',
+  //             },
+  //           ],
+  //         },
+  //       ]);
+  //       // setPosts(res?.data?.post_friends);
+  //       // setMyStories(res?.data?.stories);
+  //       console.log(myData1);
+  //       setLoader(false);
+  //     })
+  //     .catch(err => {
+  //       setLoader(false);
+  //       console.log(err);
+  //       // showToast(err.response);
+  //     });
+  // };
 
   const getID = async () => {
     const id = await AsyncStorage.getItem('id');
     setUserID(id);
+  };
+
+  const createStoryData = async () => {
+    let data = {
+      user_id: 1,
+      user_image:
+        'https://images.unsplash.com/photo-1616267624976-b45d3a7bac73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTl8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
+      user_name: 'Your Story',
+      stories: [{}],
+    };
   };
 
   const getPosts = async () => {
@@ -281,8 +336,9 @@ const Home = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        console.log('Posts', JSON.stringify(res.data));
         setPosts(res?.data?.post_friends);
+        // setMyStories(res?.data?.stories);
         setLoader(false);
       })
       .catch(err => {
@@ -502,17 +558,19 @@ const Home = ({navigation}) => {
       onDone: res => {
         console.log('on done', res);
         setPath(`file://${res}`);
-        let temp = myStories;
+        convertToBase64(`file://${res}`);
+        let temp = Stories[0].stories;
         temp.push({
-          story_id: myStories.length + 1,
+          story_id: Stories[0]?.stories?.length + 1,
           story_image: `file://${res}`,
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 1 swiped'),
         });
         // setLoader(true);
         setMyStories(temp);
+        dispatch(setStories([{...Stories[0], stories: temp}]));
         setStoryCircle('green');
-        addStory(myStories);
+        // addStory(myStories);
       },
       onCancel: () => {
         console.log('on cancel');
@@ -520,6 +578,19 @@ const Home = ({navigation}) => {
     });
   };
 
+  const getMyStories = () => {
+    let temp = myStories;
+    temp.push({
+      story_id: myStories.length + 1,
+      story_image: `file://${res}`,
+      swipeText: 'Custom swipe text for this story',
+      onPress: () => console.log('story 1 swiped'),
+    });
+    // setLoader(true);
+    setMyStories(temp);
+    setStoryCircle('green');
+    addStory(myStories);
+  };
   const convert = source => {
     let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
     // let binaryFile = Image.resolveAssetSource(require('./assets/photo.jpg'));
@@ -534,15 +605,61 @@ const Home = ({navigation}) => {
       });
   };
 
-  const addStory = story => {
-    setMyData1([
-      {
-        ...myData1[0],
-        stories: story,
-      },
-    ]);
-    // setLoader(false);
+  const convertToBase64 = async image => {
+    await RNFS.readFile(image, 'base64')
+      .then(res => {
+        let base64 = `data:image/png;base64,${res}`;
+        setStoryImage(base64);
+        createStory(base64);
+      })
+      .catch(err => {
+        console.log(err);
+        // showToast('Profile picture not updated');
+        // setLoader(false);
+      });
   };
+
+  const createStory = async base64 => {
+    setLoader(true);
+    if (!base64) {
+      setLoader(false);
+      return;
+    }
+    const data = {
+      story_id: Stories[0]?.stories?.length + 1,
+      image: base64,
+      swipe_text: userID,
+      privacy_option: '1',
+    };
+    await axiosconfig
+      .post(`story_store`, data, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        // setComment('');
+        // getPosts();
+        // setRefresh(!refresh);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // Alert.alert(err);
+      });
+  };
+  // const addStory = story => {
+  //   setMyData1([
+  //     {
+  //       ...myData1[0],
+  //       stories: story,
+  //     },
+  //   ]);
+  //   // setLoader(false);
+  // };
 
   const addComment = async (id, index) => {
     setLoader(true);
@@ -578,9 +695,9 @@ const Home = ({navigation}) => {
   };
 
   const renderItem = elem => {
-    // if (elem?.item?.privacy_option == '3') {
-    //   return; //hide friends' only me posts
-    // }
+    if (elem?.item?.privacy_option == '3') {
+      return; //hide friends' only me posts
+    }
 
     //check if the user already liked the post
     let liked = false;
@@ -826,10 +943,10 @@ const Home = ({navigation}) => {
             flexDirection: 'row',
           }}
         >
-          {myStories.length > 0 ? (
+          {Stories[0]?.stories?.length ? (
             <>
               <InstaStory
-                data={myData1}
+                data={Stories}
                 duration={10}
                 onStart={item => setStoryCircle('grey')}
                 onClose={item => console.log('close: ', item)}
@@ -873,8 +990,9 @@ const Home = ({navigation}) => {
               <View style={s.myStory}>
                 <Image
                   source={{
-                    uri:
-                      'https://images.unsplash.com/photo-1616267624976-b45d3a7bac73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTl8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
+                    uri: Stories[0]?.user_image
+                      ? Stories[0]?.user_image
+                      : dummyImage,
                   }}
                   width={undefined}
                   height={undefined}
