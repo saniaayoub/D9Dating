@@ -195,7 +195,8 @@ const Settings = ({navigation, route}) => {
 
       <Header navigation={navigation} />
       <ScrollView
-        contentContainerStyle={[s.container, {backgroundColor: color}]}>
+        contentContainerStyle={[s.container, {backgroundColor: color}]}
+      >
         <View style={{flexDirection: 'row'}}>
           <View style={s.dp}>
             <Image
@@ -215,7 +216,8 @@ const Settings = ({navigation, route}) => {
               console.log('hiii');
               navigation.navigate('Privacy');
             }}
-            style={s.input}>
+            style={s.input}
+          >
             <Input
               w="100%"
               isReadOnly
@@ -241,7 +243,8 @@ const Settings = ({navigation, route}) => {
             onPress={() => {
               navigation.navigate('Help');
             }}
-            style={s.input}>
+            style={s.input}
+          >
             <Input
               w="100%"
               isReadOnly
@@ -266,7 +269,8 @@ const Settings = ({navigation, route}) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={s.input}
-            onPress={() => navigation.navigate('ResetPass')}>
+            onPress={() => navigation.navigate('ResetPass')}
+          >
             <Input
               w="100%"
               isReadOnly
@@ -291,7 +295,8 @@ const Settings = ({navigation, route}) => {
 
           <TouchableOpacity
             style={s.input}
-            onPress={() => navigation.navigate('Block')}>
+            onPress={() => navigation.navigate('Block')}
+          >
             <Input
               w="100%"
               isReadOnly
@@ -316,7 +321,8 @@ const Settings = ({navigation, route}) => {
 
           <TouchableOpacity
             style={s.input}
-            onPress={() => refRBSheet.current.open()}>
+            onPress={() => refRBSheet.current.open()}
+          >
             <Input
               w="100%"
               isReadOnly
@@ -352,7 +358,8 @@ const Settings = ({navigation, route}) => {
                 draggableIcon: {
                   backgroundColor: color,
                 },
-              }}>
+              }}
+            >
               <View style={s.input1}>
                 <Input
                   w={{
@@ -377,7 +384,8 @@ const Settings = ({navigation, route}) => {
                     password ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowPass(!showPass)}>
+                          onPress={() => setshowPass(!showPass)}
+                        >
                           <Feather
                             name={showPass ? 'eye' : 'eye-off'}
                             color={color}
@@ -452,7 +460,8 @@ const Settings = ({navigation, route}) => {
                     confirmPassword ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowConfPass(!showConfPass)}>
+                          onPress={() => setshowConfPass(!showConfPass)}
+                        >
                           <Feather
                             name={showConfPass ? 'eye' : 'eye-off'}
                             color={color}
@@ -506,7 +515,8 @@ const Settings = ({navigation, route}) => {
             onPress={() => {
               LogoutApi();
             }}
-            style={s.input}>
+            style={s.input}
+          >
             <Input
               w="100%"
               isReadOnly
