@@ -435,8 +435,8 @@ const CreatePost = ({navigation}) => {
           <TouchableOpacity onPress={()=>navigation.navigate('Map',{
             screen : 'createPost'
           })}>
-          <Text style={{color : Textcolor,
-          fontSize: moderateScale(14,0.1),
+          <Text style={{color:'red',
+          fontSize: moderateScale(18,0.1),
           paddingVertical: moderateScale(7,0.1),
           paddingHorizontal: moderateScale(15,0.1)
           }}>{location ? location : 'Add location'}</Text>

@@ -164,6 +164,31 @@ const Settings = ({navigation, route}) => {
     await AsyncStorage.removeItem('userToken');
     await AsyncStorage.removeItem('password');
   };
+  const getData = async () => {
+    console.log(context.myData, 'mydata');
+    try {
+      const value = await AsyncStorage.getItem('@auth_token');
+      console.log(value, 'valueToken');
+      if (value !== null) {
+        axiosconfig
+          .get('my-data', {
+            headers: {
+              Authorization: 'Bearer ' + value,
+            },
+          })
+          .then(res => {
+            console.log(res.data, 'jjkjhkhkhk');
+            context.setMyData(res.data);
+            setfromU(res.data?._from);
+          })
+          .catch(err => {
+            console.log(err, 'errrr');
+          });
+      }
+    } catch (e) {
+      console.log(e, 'getdata error');
+    }
+  };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}

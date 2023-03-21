@@ -185,7 +185,10 @@ const ForgetPassword = ({navigation}) => {
             }}
             onPress={() => navigation.navigate('Register')}
           >
-            <View style={{flexDirection: 'row'}}>
+            
+          </Button>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent:'center', bottom: moderateScale(-45,0.1)}}>
               <Text style={[s.forgetPass, {color: Textcolor}]}>
                 Don’t Have an Account?
               </Text>
@@ -196,8 +199,6 @@ const ForgetPassword = ({navigation}) => {
                 Sign up Now!
               </Text>
             </View>
-          </Button>
-        </View>
         {modalVisible ? (
           <OTPModal
             navigation={navigation}

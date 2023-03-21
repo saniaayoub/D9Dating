@@ -118,7 +118,7 @@ const Help = ({navigation}) => {
             <Text style={[s.hTxt, {color: textColor}]}>Help</Text>
           </View>
           <View style={s.Ctxt}>
-            <Text style={s.txt}>
+            <Text style={[s.txt, {color: textColor}]}>
               In publishing and graphic design, Lorem ipsum is a placeholder
               text commonly used to demonstrate the visual form of a document or
               a typeface without relying on meaningful content. Lorem ipsum may
@@ -177,8 +177,8 @@ const Help = ({navigation}) => {
                   base: '100%',
                   md: '25%',
                 }}
+                isReadOnly
                 variant="unstyled"
-                placeholderTextColor={'#fff'}
                 color={'#fff'}
                 placeholder="Name"
                 value={fname}
@@ -197,8 +197,8 @@ const Help = ({navigation}) => {
                   base: '100%',
                   md: '25%',
                 }}
+                isReadOnly
                 variant="unstyled"
-                placeholderTextColor={'#fff'}
                 color={'#fff'}
                 placeholder="Email"
                 value={email}
@@ -218,8 +218,8 @@ const Help = ({navigation}) => {
                   base: '100%',
                   md: '25%',
                 }}
+                isReadOnly
                 variant="unstyled"
-                placeholderTextColor={'#fff'}
                 color={'#fff'}
                 placeholder="phone"
                 value={phone}
@@ -239,9 +239,9 @@ const Help = ({navigation}) => {
                   md: '25%',
                 }}
                 variant="unstyled"
-                placeholderTextColor={'#fff'}
+                placeholderTextColor={textColor}
                 color={'#fff'}
-                placeholder="Descreption"
+                placeholder="Description"
                 value={descreption}
                 onChangeText={text => setDescreption(text)}
                 size="md"

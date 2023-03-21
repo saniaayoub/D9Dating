@@ -31,8 +31,8 @@ const data = [
 ];
 
 const ViewUser = ({navigation, route}) => {
-  const {post} = route.params;
-  const [Userid, setUserid] = useState(post.user.id);
+   const {post} = route.params;
+   const [Userid, setUserid] = useState(post.user.id);
   const [loginId, setLoginId] = useState(null);
 
   console.log(post,'post');

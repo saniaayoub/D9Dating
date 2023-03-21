@@ -739,7 +739,7 @@ const Home = ({navigation}) => {
             />
           </View>
           <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
+            <TouchableOpacity onPress={() => navigation.navigate('ViewUser',{post:elem.item})}>
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
                 {elem?.item?.user?.name}
               </Text>
