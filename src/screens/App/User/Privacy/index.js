@@ -53,6 +53,7 @@ const Privacy = ({navigation}) => {
     const data = {
       privacy_option: post,
     };
+    console.log(data,'dataa');
     await axiosconfig
       .post('post-privacy', data,{
         headers: {

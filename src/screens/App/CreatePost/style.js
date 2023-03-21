@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(28, 0.1),
     marginVertical: moderateScale(8,0.1),
     justifyContent:'center',
+    backgroundColor:'gray'
 
   },
   imgView: {

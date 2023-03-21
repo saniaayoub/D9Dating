@@ -29,11 +29,7 @@ import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-<<<<<<< HEAD
-const Settings = ({navigation}) => {
-=======
 const Settings = ({navigation, route}) => {
->>>>>>> 8808086ace445d027a47a2b0d6944cf8e02fbf96
   const dispatch = useDispatch();
   const {data} = route.params;
   const userToken = useSelector(state => state.reducer.userToken);
@@ -168,7 +164,6 @@ const Settings = ({navigation, route}) => {
     await AsyncStorage.removeItem('userToken');
     await AsyncStorage.removeItem('password');
   };
-<<<<<<< HEAD
   const getData = async () => {
     console.log(context.myData, 'mydata');
     try {
@@ -194,9 +189,6 @@ const Settings = ({navigation, route}) => {
       console.log(e, 'getdata error');
     }
   };
-=======
-
->>>>>>> 8808086ace445d027a47a2b0d6944cf8e02fbf96
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
