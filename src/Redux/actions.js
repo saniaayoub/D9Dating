@@ -6,7 +6,8 @@ import {
   DATE,
   SET_USER_DATA,
   SET_GROUP,
-  POST_LOCATION
+  POST_LOCATION,
+  SET_STORIES,
 } from './Constants';
 
 export const setUserToken = value => {
@@ -59,6 +60,12 @@ export const setGroup = value => {
 export const setPostLocation = value => {
   return {
     type: POST_LOCATION,
+    payload: value,
+  };
+};
+export const setStories = value => {
+  return {
+    type: SET_STORIES,
     payload: value,
   };
 };

@@ -15,10 +15,11 @@ import Icon2 from 'react-native-vector-icons/Fontisto';
 import {Input, FormControl, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../../assets/images/svg/lock.svg';
-import {setTheme, setUserToken} from '../../../Redux/actions';
+import {setTheme, setUserToken, setStories} from '../../../Redux/actions';
 import {useSelector, useDispatch} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
+import Loader from '../../../Components/Loader';
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const passRegex = new RegExp(
   '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
@@ -30,7 +31,7 @@ const Login = ({navigation}) => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [submitted, setSubmitted] = useState();
-  const [showPass, setshowPass] = useState('');
+  const [showPass, setshowPass] = useState(false);
   const [validEmail, setValidEmail] = useState('');
   const [loader, setLoader] = useState(false);
   const theme = useSelector(state => state.reducer.theme);
@@ -68,12 +69,12 @@ const Login = ({navigation}) => {
           let id = res?.data?.userInfo.toString();
           AsyncStorage.setItem('id', id);
           AsyncStorage.setItem('userToken', res?.data?.access_token);
-          
+
           // AsyncStorage.setItem('data' , data)
 
           // console.log(res, 'Login data ');
-          dispatch(setUserToken(res?.data?.access_token));
           // alert(res?.data?.message)
+          getStories(res?.data?.access_token);
           setLoader(false);
 
           // setOnsubmit(true)
@@ -85,6 +86,42 @@ const Login = ({navigation}) => {
         });
     }
   };
+
+  const getStories = async token => {
+    setLoader(true);
+    await axiosconfig
+      .get('story_index', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('storylo', JSON.stringify(res.data?.user));
+        createStoryData(res.data?.user, token);
+        console.log(myData1);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+
+  const createStoryData = (data, token) => {
+    console.log('sent data', data);
+    let temp = {
+      user_id: data.id,
+      user_image: data.image,
+      group: data.group,
+      user_name: data.name,
+      stories: data.stories,
+    };
+    dispatch(setStories([temp]));
+    dispatch(setUserToken(token));
+    setLoader(false);
+  };
+
   const storeData = async value => {
     try {
       await AsyncStorage.setItem('@auth_token', value);
@@ -102,6 +139,8 @@ const Login = ({navigation}) => {
           {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
         ]}
       >
+        {loader ? <Loader /> : null}
+
         <View style={{width: '100%', alignItems: 'center'}}>
           <View style={s.heading}>
             <Text style={[s.headingText, {color: Textcolor}]}>
@@ -185,6 +224,7 @@ const Login = ({navigation}) => {
               }
               color={Textcolor}
               fontSize={moderateScale(14, 0.1)}
+              secureTextEntry={showPass}
             />
           </View>
           {submitted && (password == null || password == '') ? (

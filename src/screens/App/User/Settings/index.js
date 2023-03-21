@@ -29,13 +29,21 @@ import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+<<<<<<< HEAD
 const Settings = ({navigation}) => {
+=======
+const Settings = ({navigation, route}) => {
+>>>>>>> 8808086ace445d027a47a2b0d6944cf8e02fbf96
   const dispatch = useDispatch();
+  const {data} = route.params;
   const userToken = useSelector(state => state.reducer.userToken);
   const userData = useSelector(state => state.reducer.userData);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
+  const [dummyImage, setDummyImage] = useState(
+    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  );
   // const color2 = theme === 'dark' ? '#343434' : '#fff';
   const refRBSheet = useRef();
 
@@ -49,6 +57,9 @@ const Settings = ({navigation}) => {
   const [loader, setLoader] = useState(false);
   const [submitted, setSubmitted] = useState();
 
+  useEffect(() => {
+    console.log(data, 'datsa');
+  }, []);
   const showToast = msg => {
     Alert.alert(msg);
   };
@@ -98,7 +109,7 @@ const Settings = ({navigation}) => {
         });
     }
   };
-  const themeApi = async () => {
+  const setThemeApi = async theme => {
     setLoader(true);
     await axiosconfig
       .get('theme-mode', {
@@ -108,17 +119,12 @@ const Settings = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', res.data);
-        setDarkMode(!darkMode);
-        alert(res?.data?.message)
-        if (theme === 'dark') {
-          console.log('hi1');
-          dispatch(setTheme('light'));
-        } else {
-          console.log('hi2');
+        console.log('data', JSON.stringify(res.data));
+        dispatch(setTheme(theme));
 
-          dispatch(setTheme('dark'));
-        }
+        // console.log('public post', JSON.stringify(res?.data?.post_public));
+        // console.log('user id',JSON.stringify(res?.data?.post_public?.user_id));
+        // setPublicPost([res?.data?.post_public]);
         setLoader(false);
       })
       .catch(err => {
@@ -139,7 +145,7 @@ const Settings = ({navigation}) => {
     console.log(userToken);
     // const value = await AsyncStorage.getItem('userToken')
     // console.log(value, 'tokenLogout');
-    // setLoader(true)
+    setLoader(true);
     await axiosconfig
       .get('logout', {
         headers: {
@@ -152,6 +158,8 @@ const Settings = ({navigation}) => {
         console.log(res.data, 'logoutToken');
       })
       .catch(err => {
+        setLoader(false);
+
         console.log(err, 'errrr');
       });
   };
@@ -160,6 +168,7 @@ const Settings = ({navigation}) => {
     await AsyncStorage.removeItem('userToken');
     await AsyncStorage.removeItem('password');
   };
+<<<<<<< HEAD
   const getData = async () => {
     console.log(context.myData, 'mydata');
     try {
@@ -185,6 +194,9 @@ const Settings = ({navigation}) => {
       console.log(e, 'getdata error');
     }
   };
+=======
+
+>>>>>>> 8808086ace445d027a47a2b0d6944cf8e02fbf96
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
@@ -194,11 +206,15 @@ const Settings = ({navigation}) => {
         contentContainerStyle={[s.container, {backgroundColor: color}]}>
         <View style={{flexDirection: 'row'}}>
           <View style={s.dp}>
-            <Image source={img1} style={s.dp1} resizeMode={'cover'} />
+            <Image
+              source={{uri: data?.image ? data?.image : dummyImage}}
+              style={s.dp1}
+              resizeMode={'cover'}
+            />
           </View>
 
           <View style={s.username}>
-            <Text style={[s.textBold, {color: textColor}]}>Julie Watson</Text>
+            <Text style={[s.textBold, {color: textColor}]}>{data?.name}</Text>
           </View>
         </View>
         <View style={s.inputSection}>
@@ -397,11 +413,13 @@ const Settings = ({navigation}) => {
                       alignSelf: 'flex-end',
                       top: moderateScale(-15, 0.1),
                       marginRight: moderateScale(35, 0.1),
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         color: 'red',
-                      }}>
+                      }}
+                    >
                       Required
                     </Text>
                   </View>
@@ -467,11 +485,13 @@ const Settings = ({navigation}) => {
                       alignSelf: 'flex-end',
                       top: moderateScale(-15, 0.1),
                       marginRight: moderateScale(35, 0.1),
-                    }}>
+                    }}
+                  >
                     <Text
                       style={{
                         color: 'red',
-                      }}>
+                      }}
+                    >
                       Required
                     </Text>
                   </View>
@@ -483,7 +503,8 @@ const Settings = ({navigation}) => {
                   console.log('dlt');
                   deleteAccount();
                 }}
-                style={s.dltbtn}>
+                style={s.dltbtn}
+              >
                 <Text style={s.dltTxt}>Delete Account</Text>
               </TouchableOpacity>
             </RBSheet>
@@ -522,9 +543,15 @@ const Settings = ({navigation}) => {
               icon={{true: moon, false: sun}}
               value={theme === 'dark' ? true : false}
               onValueChange={() => {
-                // setDarkMode(!darkMode)
-                themeApi()
-               
+                setDarkMode(!darkMode);
+                if (theme === 'dark') {
+                  console.log('hi1');
+                  setThemeApi('light');
+                } else {
+                  console.log('hi2');
+
+                  setThemeApi('dark');
+                }
               }}
               iconColor={{true: '#000', false: '#000'}}
               trackColor={{true: '#343434', false: '#343434'}}

@@ -36,6 +36,7 @@ import MapView, {
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import style from '../../../Components/Header/style';
+import Loader from '../../../Components/Loader';
 
 const Register = ({navigation}) => {
   const dispatch = useDispatch();
@@ -192,7 +193,7 @@ const Register = ({navigation}) => {
   };
   // const context = useContext(AppContext)
   const onSignupUser = () => {
-    // setLoader(true)
+    setLoader(true);
     setOnsubmit(false);
     var data = {
       email: email,
@@ -200,7 +201,6 @@ const Register = ({navigation}) => {
     axiosconfig
       .post('otp', data)
       .then(res => {
-        // setLoader(false);
         alert(res?.data?.message);
         console.log(res, 'signup data ');
         setTimeout(() => {
@@ -210,7 +210,7 @@ const Register = ({navigation}) => {
         setLoader(false);
       })
       .catch(err => {
-        // setLoader(false);
+        setLoader(false);
         console.log(err, 'errors');
         console.log(err.response?.data?.message, 'error message');
         alert(err?.response?.data?.message);
@@ -223,7 +223,7 @@ const Register = ({navigation}) => {
     } catch (e) {}
   };
   const handleSubmit = () => {
-    // setLoader(true)
+    setLoader(true);
     setOnsubmit(false);
     var data = {
       name: fname,
@@ -243,7 +243,6 @@ const Register = ({navigation}) => {
     axiosconfig
       .post('register', data)
       .then(res => {
-        // setLoader(false);
         console.log(res?.data, 'user register data');
         alert(res?.data?.message);
         AsyncStorage.setItem('password', password);
@@ -255,7 +254,7 @@ const Register = ({navigation}) => {
         setLoader(false);
       })
       .catch(err => {
-        // setLoader(false);
+        setLoader(false);
         console.log(err, 'errors');
         console.log(err?.response?.data?.message, 'msg');
         alert(err.response?.data?.message);
@@ -298,6 +297,7 @@ const Register = ({navigation}) => {
             {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
           ]}
         >
+          {loader ? <Loader /> : null}
           <View style={s.header}>
             <Header navigation={navigation} />
           </View>
@@ -434,7 +434,7 @@ const Register = ({navigation}) => {
                       ]}
                     >
                       <Text style={[s.date, {color: Textcolor}]}>
-                        {date ? m : 'month'}
+                        {date ? m : 'MM'}
                       </Text>
                     </View>
 
@@ -449,7 +449,7 @@ const Register = ({navigation}) => {
                       ]}
                     >
                       <Text style={[s.date, {color: Textcolor}]}>
-                        {date ? y : 'Year'}
+                        {date ? y : 'YYYY'}
                       </Text>
                     </View>
                   </View>
@@ -782,7 +782,7 @@ const Register = ({navigation}) => {
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
-                 onPress={() => submit()}
+                onPress={() => submit()}
               >
                 <Text style={s.btnText}>Register</Text>
               </Button>

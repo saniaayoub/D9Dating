@@ -6,12 +6,12 @@ import {NativeBaseProvider, Box} from 'native-base';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MyStatusBar from './src/Components/StatusBar';
 import {useSelector, useDispatch} from 'react-redux';
-import {setTheme, setUserToken} from './src/Redux/actions';
+import {setTheme, setUserToken, setStories} from './src/Redux/actions';
 import RNBootSplash from 'react-native-bootsplash';
 import BottomTabs from './src/Navigation/BottomTabs';
 import AuthStack from './src/Navigation/Stacks/AuthStack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import axiosconfig from './src/Providers/axios';
 // import PushNotification from 'react-native-push-notification';
 
 const App = () => {
@@ -33,6 +33,43 @@ const App = () => {
 
   const getToken = async () => {
     let token = await AsyncStorage.getItem('userToken');
+    dispatch(setUserToken(token));
+    getStories(token);
+  };
+
+  const getStories = async token => {
+    if (token) {
+      await axiosconfig
+        .get('story_index', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+          },
+        })
+        .then(res => {
+          console.log('storylo', JSON.stringify(res.data?.user));
+          createStoryData(res.data?.user, token);
+          // setLoader(false);
+        })
+        .catch(err => {
+          // setLoader(false);
+          console.log(err);
+          // showToast(err.response);
+        });
+    }
+    // setLoader(false);
+  };
+
+  const createStoryData = (data, token) => {
+    console.log('sent data', data);
+    let temp = {
+      user_id: data.id,
+      user_image: data.image,
+      group: data.group,
+      user_name: data.name,
+      stories: data.stories,
+    };
+    dispatch(setStories([temp]));
     dispatch(setUserToken(token));
   };
 
