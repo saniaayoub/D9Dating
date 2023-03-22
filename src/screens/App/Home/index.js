@@ -54,7 +54,7 @@ const Groups = [
   {id: 'Group 9', color: 'blue'},
 ];
 
-const myData = [
+let myData = [
   {
     user_id: 1,
     user_image:
@@ -340,7 +340,6 @@ const Home = ({navigation}) => {
         console.log('Posts', JSON.stringify(res.data));
         setPosts(res?.data?.post_friends);
         setOtherStoriesData(res?.data?.stories);
-        setLoader(false);
       })
       .catch(err => {
         setLoader(false);
@@ -351,15 +350,19 @@ const Home = ({navigation}) => {
 
   const setOtherStoriesData = data => {
     console.log('sent data', data);
-    let temp = {
-      user_id: data.id,
-      user_image: data.image,
-      group: data.group,
-      user_name: data.name,
-      stories: data.stories,
-    };
-    dispatch(setStories([temp]));
-    dispatch(setUserToken(token));
+    let temp = [];
+    data?.forEach(elem => {
+      let tempelem = {
+        user_id: elem.id,
+        user_image: elem.image,
+        group: elem.group,
+        user_name: elem.name,
+        stories: elem.stories,
+      };
+      temp.push(tempelem);
+    });
+    setOtherStories(temp);
+    console.log(temp, otherStories[0]?.stories?.length, 'sasasa');
     setLoader(false);
   };
 
@@ -739,7 +742,9 @@ const Home = ({navigation}) => {
             />
           </View>
           <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewUser',{post:elem.item})}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ViewUser', {post: elem.item})}
+            >
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
                 {elem?.item?.user?.name}
               </Text>
@@ -1054,28 +1059,29 @@ const Home = ({navigation}) => {
               </View>
             </>
           )}
-
-          <InstaStory
-            data={data}
-            duration={10}
-            onStart={item => console.log(item)}
-            onClose={item => console.log('close: ', item)}
-            showAvatarText={true}
-            avatarTextStyle={{
-              color: textColor,
-              marginBottom: moderateScale(34, 0.1),
-            }}
-            pressedBorderColor={'grey'}
-            unPressedBorderColor={'green'}
-            customSwipeUpComponent={
-              <View>
-                <Text>Swipe</Text>
-              </View>
-            }
-            style={{
-              marginTop: moderateScale(5, 0.1),
-            }}
-          />
+          {otherStories[0]?.stories?.length > 0 ? (
+            <InstaStory
+              data={otherStories}
+              duration={10}
+              onStart={item => console.log(item)}
+              onClose={item => console.log('close: ', item)}
+              showAvatarText={true}
+              avatarTextStyle={{
+                color: textColor,
+                marginBottom: moderateScale(34, 0.1),
+              }}
+              pressedBorderColor={'grey'}
+              unPressedBorderColor={'green'}
+              customSwipeUpComponent={
+                <View>
+                  <Text>Swipe</Text>
+                </View>
+              }
+              style={{
+                marginTop: moderateScale(5, 0.1),
+              }}
+            />
+          ) : null}
         </ScrollView>
 
         <TouchableOpacity

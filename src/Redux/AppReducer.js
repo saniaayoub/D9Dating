@@ -19,7 +19,7 @@ const initialState = {
   userData: {},
   userPassword: '',
   group: [],
-  postLocation : '',
+  postLocation: '',
   stories: [],
 };
 
@@ -61,11 +61,11 @@ const AppReducer = (state = initialState, action) => {
         ...state,
         group: action.payload,
       };
-      case POST_LOCATION:
-        return {
-          ...state,
-          postLocation: action.payload,
-        };
+    case POST_LOCATION:
+      return {
+        ...state,
+        postLocation: action.payload,
+      };
     case SET_STORIES:
       return {
         ...state,
