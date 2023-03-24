@@ -54,7 +54,7 @@ const Groups = [
   {id: 'Group 9', color: 'blue'},
 ];
 
-const myData = [
+let myData = [
   {
     user_id: 1,
     user_image:
@@ -238,6 +238,7 @@ const Home = ({navigation}) => {
   const [userID, setUserID] = useState('');
   const [comment, setComment] = useState('');
   const [current, setCurrent] = useState('');
+  const [otherStories, setOtherStories] = useState([]);
   const [storyImage, setStoryImage] = useState('');
   const [postId, setPostId] = useState(null)
   const[text, setText] = useState(null)
@@ -304,8 +305,7 @@ const Home = ({navigation}) => {
       .then(res => {
         console.log('Posts', JSON.stringify(res.data));
         setPosts(res?.data?.post_friends);
-        // setMyStories(res?.data?.stories);
-        setLoader(false);
+        setOtherStoriesData(res?.data?.stories);
       })
       .catch(err => {
         setLoader(false);
@@ -361,6 +361,24 @@ const Home = ({navigation}) => {
       });
   };
 
+
+  const setOtherStoriesData = data => {
+    console.log('sent data', data);
+    let temp = [];
+    data?.forEach(elem => {
+      let tempelem = {
+        user_id: elem.id,
+        user_image: elem.image,
+        group: elem.group,
+        user_name: elem.name,
+        stories: elem.stories,
+      };
+      temp.push(tempelem);
+    });
+    setOtherStories(temp);
+    console.log(temp, otherStories[0]?.stories?.length, 'sasasa');
+    setLoader(false);
+  };
 
   const hitLike = async (id, index) => {
     setLoader(true);
@@ -1063,28 +1081,29 @@ const Home = ({navigation}) => {
               </View>
             </>
           )}
-
-          <InstaStory
-            data={data}
-            duration={10}
-            onStart={item => console.log(item)}
-            onClose={item => console.log('close: ', item)}
-            showAvatarText={true}
-            avatarTextStyle={{
-              color: textColor,
-              marginBottom: moderateScale(34, 0.1),
-            }}
-            pressedBorderColor={'grey'}
-            unPressedBorderColor={'green'}
-            customSwipeUpComponent={
-              <View>
-                <Text>Swipe</Text>
-              </View>
-            }
-            style={{
-              marginTop: moderateScale(5, 0.1),
-            }}
-          />
+          {otherStories[0]?.stories?.length > 0 ? (
+            <InstaStory
+              data={otherStories}
+              duration={10}
+              onStart={item => console.log(item)}
+              onClose={item => console.log('close: ', item)}
+              showAvatarText={true}
+              avatarTextStyle={{
+                color: textColor,
+                marginBottom: moderateScale(34, 0.1),
+              }}
+              pressedBorderColor={'grey'}
+              unPressedBorderColor={'green'}
+              customSwipeUpComponent={
+                <View>
+                  <Text>Swipe</Text>
+                </View>
+              }
+              style={{
+                marginTop: moderateScale(5, 0.1),
+              }}
+            />
+          ) : null}
         </ScrollView>
 
         <TouchableOpacity
