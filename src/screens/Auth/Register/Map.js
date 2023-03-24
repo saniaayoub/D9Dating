@@ -47,6 +47,16 @@ const App = ({navigation, route}) => {
   const onMapRegionChange = (newRegion) => {
     console.log(newRegion, 'new region');
     setMarkerPosition(newRegion);
+    // if(screen1){
+    //   console.log('ddd');
+    //   dispatch(setPostLocation(newRegion))            
+    // }
+    // else{
+    //   console.log('rr');
+    //   dispatch(setLocation(newRegion))
+    //   // navigation.goBack()
+    // }
+  
     // dispatch(setLocation(newRegion))
 
   };
@@ -131,7 +141,7 @@ const App = ({navigation, route}) => {
         scrollEnabled={true}
         zoomEnabled={true}
         pitchEnabled={true}
-        onRegionChange={onMapRegionChange}
+        onRegionChangeComplete={onMapRegionChange}
 
         rotateEnabled={true}>
         <Marker
@@ -149,11 +159,17 @@ const App = ({navigation, route}) => {
             const coordinate = (JSON.stringify(e.nativeEvent.coordinate))
               if(screen1){
                 console.log('ddd');
-                dispatch(setPostLocation(coordinate))            
+                dispatch(setPostLocation(coordinate))
+                setTimeout(() => {
+                  navigation.goBack()
+                }, 2000);            
               }
               else{
                 console.log('rr');
                 dispatch(setLocation(coordinate))
+                setTimeout(() => {
+                  navigation.goBack()
+                }, 2000);
               }
             
             // getCityName(coordinate)

@@ -18,6 +18,8 @@ import {setTheme} from '../../../../Redux/actions';
 import axiosconfig from '../../../../provider/axios';
 import Header from '../../../../Components/Header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loader from '../../../../Components/Loader';
+
 
 
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -92,6 +94,8 @@ const validate = ()=>{
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: color}}>
+      {loader ? <Loader /> : null}
+
       <Header navigation={navigation} />
       <View style={[s.container, {backgroundColor: color}]}>
         <View style={{width: '100%', alignItems: 'center'}}>

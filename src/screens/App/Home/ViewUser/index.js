@@ -74,10 +74,20 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('data', JSON.stringify(res.data));
+        console.log(
+          'connect',
+          JSON.stringify(res.data?.user_details?.connected),
+        );
         console.log(res?.data?.user_details, 'user detials');
         if (res?.data?.user_details) {
           // const dd = JSON.stringify(res?.data)
           setUserData([res?.data?.user_details]);
+          if (res.data?.user_details?.connected == 1) {
+            setConnected(true);
+          }
+          if (res.data?.user_details?.connected == 0) {
+            setConnected(false);
+          }
         }
         setLoader(false);
       })
@@ -101,6 +111,7 @@ const ViewUser = ({navigation, route}) => {
       .then(res => {
         console.log('connect', res);
         setConnected(true);
+
         setLoader(false);
       })
       .catch(err => {
@@ -144,6 +155,7 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('block', res);
+        getData();
         setBlocked(true);
         setConnected(false);
         setLoader(false);
@@ -169,6 +181,7 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('block', res);
+        getData();
         setBlocked(false);
         setLoader(false);
       })

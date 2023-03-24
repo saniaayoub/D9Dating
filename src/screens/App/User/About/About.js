@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
 import {setTheme} from '../../../../Redux/actions';
 import Header from '../../../../Components/Header';
+import Loader from '../../../../Components/Loader';
 import s from './style';
 
 const About = ({navigation}) => {
@@ -11,8 +12,11 @@ const About = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
+  const [loader, setLoader] = useState(false);
+
   return (
     <View style={{flex: 1, backgroundColor: color}}>
+      {loader ? <Loader /> : null}
       <View style={s.container}>
         <View style={{left: moderateScale(-10)}}>
           <Header navigation={navigation} />

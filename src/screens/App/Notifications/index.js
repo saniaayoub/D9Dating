@@ -1,5 +1,5 @@
 import {TouchableOpacity, Text, SafeAreaView, View, Image} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
 import {setTheme} from '../../../Redux/actions';
@@ -8,6 +8,10 @@ import Header from '../../../Components/Header';
 import {FlatList} from 'react-native';
 import {ScrollView} from 'react-native';
 import Antdesign from 'react-native-vector-icons/AntDesign';
+import Loader from '../../../Components/Loader';
+import axiosconfig from '../../../Providers/axios';
+import {useIsFocused} from '@react-navigation/native';
+
 
 const messages = [
   {
@@ -80,63 +84,168 @@ const messages = [
 ];
 const Notifications = ({navigation}) => {
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
   const theme = useSelector(state => state.reducer.theme);
+  const userToken = useSelector(state => state.reducer.userToken);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
+  const [loader, setLoader] = useState(false);
+  const [data, setData] = useState([])
+  const[accept, setAccept] = useState(false)
+  const[decline, setDecline] = useState(false)
+  useEffect(() => {
+    getList()
+  }, [isFocused])
+  
 
-  useEffect(() => {}, []);
+  const getList = async () => {
+    setLoader(true);
+    axiosconfig
+      .get(`request-list`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data[0].request_user);
+        setData(res?.data)
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+  const connectAccept = async (id) => {
+    console.log('accept');
+    setLoader(true);
+    axiosconfig
+      .get(`connect-accept/${id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res?.data);
+        setAccept(true)
+        getList()
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+  const connectDecline = async (id) => {
+    setLoader(true);
+    axiosconfig
+      .get(`connect-remove/${id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res?.data);
+        setDecline(true)
+        getList()
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+
 
   const renderItem = (elem, i) => {
+    console.log('elem data', elem?.item);
     return (
       <View style={s.card}>
         <View style={s.dp}>
           <Image
-            source={elem.item.userImage}
+            source={{uri: elem?.item?.request_user?.image}}
             style={s.dp1}
             resizeMode={'cover'}
           />
         </View>
         <TouchableOpacity
+        onPress={()=> navigation.navigate('ViewUser')}
           style={{flex: 0.7, alignSelf: 'center'}}
         >
           <View>
             <View style={{flexDirection: 'row', width: moderateScale(200,0.1)}}>
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                {elem?.item?.from}
-              <Text style={[s.name1]}>{' '} {elem?.item?.text}</Text>
+                {elem?.item?.request_user?.name}{elem?.item?.request_user?.last_name}
+                {
+              accept == false ?(
+                <>
+                <Text style={[s.name1]}>{' '}{' '}requested to follow you</Text>
+                
+                </>
+              ): null
+            }
 
               </Text>
-
             </View>
-            <Text style={[s.textSmall, {color: '#787878'}]}>
+            {/* <Text style={[s.textSmall, {color: '#787878'}]}>
               {elem?.item?.active}
-            </Text>
+            </Text> */}
           </View>
         </TouchableOpacity>
+        
 
         <View style={s.icon}>
+          {
+            accept == false ?(
+              <>
+                <TouchableOpacity onPress={()=>connectAccept(elem?.item?.request_user?.id)}>
           <View
             style={{
               paddingHorizontal: moderateScale(6, 0.1),
                right: moderateScale(15),
             }}
           >
-            {elem?.item?.icon}
+           <Antdesign name="checkcircle" size={20} color="green" />
           </View>
+          </TouchableOpacity>
+              </>
+            ):(
+              <>
+              <View style={s.fView}>
+              <Text style={[s.fText,{color: textColor}]}>Connected</Text>
+              </View>
+              </>
+            )
+          }
+          {
+            accept == false ?(
+              <>
+              <TouchableOpacity onPress={()=>connectDecline(elem?.item?.request_user?.id)}>
           <View
             style={{
               right: moderateScale(5),
               
             }}
           >
-            {elem?.item?.icon1}
+          <Antdesign name="closecircle" size={20} color="red" />
           </View>
+            </TouchableOpacity>
+              </>
+            ): null
+            
+          }
+      
+         
         </View>
       </View>
     );
   };
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: color}}>
+      {loader ? <Loader /> : null}
       <Header navigation={navigation} />
       <ScrollView
         contentContainerStyle={[s.container, {backgroundColor: color}]}
@@ -152,9 +261,9 @@ const Notifications = ({navigation}) => {
         </View>
 
         <FlatList
-          data={messages}
+          data={data}
           renderItem={renderItem}
-          keyExtractor={(e, i) => i.toString()}
+          // keyExtractor={(e, i) => i.toString()}
           scrollEnabled={true}
         />
       </ScrollView>

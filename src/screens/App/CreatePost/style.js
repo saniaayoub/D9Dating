@@ -66,9 +66,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerImage: {
-    width: moderateScale(50, 0.1),
-    height: moderateScale(50, 0.1),
-    borderRadius: moderateScale(20, 0.1),
+    width: moderateScale(54, 0.1),
+    height: moderateScale(54, 0.1),
+    borderRadius: moderateScale(54/2, 0.1),
   },
   buttonText: {
     fontSize: moderateScale(13, 0.1),

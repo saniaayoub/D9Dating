@@ -13,6 +13,25 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: 'row',
   },
+  rb: {
+    fontSize: moderateScale(16, 0.1),
+    fontFamily: Poppins,
+    lineHeight: moderateScale(18, 0.1),
+  },
+  hText: {
+    fontSize: moderateScale(13, 0.1),
+  },
+  txt: {
+    color: 'gray',
+    fontFamily: Poppins,
+    fontSize: moderateScale(12, 0.1),
+  },
+  hv: {
+    marginVertical: moderateScale(10, 0.1),
+  },
+  list: {
+    marginVertical: moderateScale(7, 0.1),
+  },
 
   searchContainer: {
     flexDirection: 'column',

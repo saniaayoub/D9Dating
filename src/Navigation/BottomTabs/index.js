@@ -7,7 +7,7 @@ import MessageStack from '../Stacks/MessageStack';
 import CreatePost from '../../screens/App/CreatePost';
 import CreatePostStack from '../Stacks/CreatePostStack';
 import ProfileStack from '../Stacks/ProfileStack';
-import Notifications from '../../screens/App/Notifications';
+import Notification from '../Stacks/NotificationStack';
 import Icon from 'react-native-vector-icons/Octicons';
 import ChatIcon from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -91,8 +91,8 @@ const BottomTabs = () => {
         }}
       />
       <Tab.Screen
-        name={'Notifications'}
-        component={Notifications}
+        name={'Notification'}
+        component={Notification}
         options={{
           tabBarIcon: ({focused}) => (
             <View>

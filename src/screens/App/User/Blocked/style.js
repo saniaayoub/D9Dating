@@ -6,11 +6,13 @@ const PoppinsBold = 'Poppins-Bold';
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: moderateScale(12, 0.1),
+     paddingHorizontal: moderateScale(12, 0.1),
+     marginTop: moderateScale(10,0.1),
     // paddingEnd: moderateScale(-20,0.1),
     // flexDirection: 'column',
     // justifyContent: 'flex-start',
     paddingBottom: moderateScale(70, 0.1),
+    
   },
   HeadingText: {
     fontSize: moderateScale(20, 0.1),
@@ -23,20 +25,19 @@ const styles = StyleSheet.create({
     paddingVertical: moderateScale(10, 0.1),
     borderBottomWidth: moderateScale(2, 0.1),
   },
-  btn: {
-    flex: 0.5,
-  },
+
   chats: {
     fontSize: moderateScale(13, 0.1),
     lineHeight: moderateScale(18, 0.1),
     fontFamily: Poppins,
   },
   dp: {
-    flex: 0.15,
-    width: moderateScale(53, 0.1),
-    height: moderateScale(53, 0.1),
-    borderRadius: moderateScale(53 / 2, 0.1),
-    marginRight: moderateScale(10, 0.1),
+    flex:0.18,
+     width: moderateScale(55, 0.1),
+    height: moderateScale(55, 0.1),
+    borderRadius: moderateScale(55 / 2, 0.1),
+    marginRight: moderateScale(15, 0.1),
+    // backgroundColor:'red'
   },
   userName: {
     marginBottom: moderateScale(25, 0.1),
@@ -72,6 +73,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     marginVertical: moderateScale(15, 0.1),
+    
   },
   name: {
     fontFamily: PoppinsBold,
@@ -83,21 +85,9 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
     // paddingLeft: moderateScale(10),
-    alignSelf: 'center',
-    color: '#7B7A7A',
-  },
-  fText: {
-    // paddingHorizontal: moderateScale(12,0.1),
     alignSelf:'center',
-    fontSize: moderateScale(14,0.1)
-  },
-  fView: {
-    width: moderateScale(120, 0.1),
-    marginRight: moderateScale(30,0.1),
-    height: moderateScale(32, 0.1),
-    borderColor: 'green',
-    borderWidth: 1,
-    justifyContent:'center'
+    color:'#7B7A7A'
+   
     
   },
   textRegular: {
@@ -115,33 +105,43 @@ const styles = StyleSheet.create({
   img: {
     width: '100%',
   },
-  icon: {
-    flex: 0.15,
+  btn: {
+    flex: 0.3,
     justifyContent: 'center',
-    paddingTop: moderateScale(5, 0.1),
+    alignItems:'center',
+    backgroundColor:'#FFD700',
+    width:moderateScale(144,0.1),
+    height: moderateScale(34,0.1),
+    marginTop:moderateScale(5,0.1),
+   borderRadius: moderateScale(10,0.1)
+
+    
+    // paddingTop: moderateScale(10,0.1),
     // alignItems:'center',
     // alignItems: 'flex-end',
-    flexDirection: 'row',
+    // flexDirection:'row',
     // alignSelf:'center',
     //  marginRight: moderateScale(-20),
+    
   },
-  hTxt: {
-    color: '#7B7A7A',
-    fontFamily: Poppins,
-    fontSize: moderateScale(10, 0.1),
-    lineHeight: moderateScale(15, 0.1),
+  hTxt:{
+    color:'#7B7A7A',
+    fontFamily : Poppins,
+    fontSize: moderateScale(10,0.1),
+    lineHeight: moderateScale(15,0.1)
   },
-  hTxt1: {
-    color: '#FFFFFF',
-    fontSize: moderateScale(15, 0.1),
+  hTxt1:{
+    color:'#FFFFFF',
+    fontSize: moderateScale(15,0.1),
     lineHeight: moderateScale(22, 0.1),
     fontFamily: Poppins,
-    fontWeight: '700',
+    fontWeight: '700'
   },
-  hView: {
-    marginVertical: moderateScale(15, 0.1),
-    top: moderateScale(15, 0.1),
-  },
+  hView:{
+    marginVertical: moderateScale(15,0.1),
+    top: moderateScale(15,0.1)
+  }
+
 });
 
 export default styles;
