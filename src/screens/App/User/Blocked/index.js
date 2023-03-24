@@ -14,6 +14,7 @@ import {moderateScale} from 'react-native-size-matters';
 import {useDispatch, useSelector} from 'react-redux';
 import axiosconfig from '../../../../Providers/axios';
 import s from './style';
+import {useIsFocused} from '@react-navigation/native';
 
 const Block = ({navigation}) => {
   const [loader, setLoader] = useState(false);
@@ -22,14 +23,38 @@ const Block = ({navigation}) => {
   const textColor = theme === 'light' ? '#000' : '#fff';
   const userToken = useSelector(state => state.reducer.userToken);
   const [data, setData] = useState([]);
+  const isFocused = useIsFocused();
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
 
   useEffect(() => {
     block_list();
-  }, []);
+  }, [isFocused]);
 
+  const unblock = async (id) => {
+    console.log('aaaa');
+    setLoader(true);
+    console.log(userToken, 'hgh');
+    await axiosconfig
+      .get(`block/${id}`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('block', res);
+        block_list()
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+
+        console.log(err, 'her');
+        // showToast(err.response);
+      });
+  };
   const block_list = async () => {
     setLoader(true);
     axiosconfig
@@ -76,7 +101,8 @@ const Block = ({navigation}) => {
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={s.btn}>
+        <TouchableOpacity onPress={()=>unblock(elem?.item?.id)}
+         style={s.btn}>
           <View>
             <Text style={{ color:"#222222"}}>Unblock</Text>
           </View>

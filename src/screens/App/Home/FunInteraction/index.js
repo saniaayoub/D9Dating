@@ -7,7 +7,7 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect,useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
 import s from './style';
@@ -18,8 +18,12 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Pin from 'react-native-vector-icons/SimpleLineIcons';
 import {ScrollView} from 'react-native';
+import Feather from 'react-native-vector-icons/Feather';
+import RBSheet from 'react-native-raw-bottom-sheet';
 import Loader from '../../../../Components/Loader';
 import axiosconfig from '../../../../Providers/axios';
+import {useIsFocused} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const myData = [];
 
@@ -176,6 +180,9 @@ const data = [
 
 const FunInteraction = ({navigation}) => {
   const dispatch = useDispatch();
+  const refRBSheet1 = useRef();
+  const isFocused = useIsFocused();
+  const groups = useSelector(state => state.reducer.group);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
@@ -185,15 +192,33 @@ const FunInteraction = ({navigation}) => {
   const [refresh, setReferesh] = useState(true);
   const [loader, setLoader] = useState(false);
   const [publicPost, setPublicPost] = useState([]);
+  const[text, setText] = useState(null)
+  const [userID, setUserID] = useState('');
+  const [current, setCurrent] = useState('');
+  const [comment, setComment] = useState('');
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
   const userToken = useSelector(state => state.reducer.userToken);
 
   useEffect(() => {
+    getID();
     getPosts();
-  }, []);
+  }, [isFocused]);
 
+  const getID = async () => {
+    const id = await AsyncStorage.getItem('id');
+    setUserID(id);
+  };
+  const getColor = id => {
+    let color;
+    groups?.forEach(elem => {
+      if (elem.id == id) {
+        color = elem.color;
+      }
+    });
+    return color;
+  };
   const handleDoubleTap = index => {
     const now = Date.now();
     const DOUBLE_PRESS_DELAY = 300;
@@ -219,6 +244,53 @@ const FunInteraction = ({navigation}) => {
         // console.log('user id',JSON.stringify(res?.data?.post_public?.user_id));
         setPublicPost(res?.data?.post_public)
         setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+  const report = async () => {
+    setLoader(true);
+    const data={
+      post_id: postId,
+      text: text
+    }
+    await axiosconfig
+      .post('post-report',data,{
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('Posts', res.data);
+        getPosts()
+        refRBSheet1.current.close()
+        setLoader(false)
+        
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+  const hide = async () => {
+    setLoader(true);
+    await axiosconfig
+      .get(`post_action/${postId}`,{
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('Posts', res.data);
+        getPosts()
+        setLoader(false)
+        
       })
       .catch(err => {
         setLoader(false);
@@ -350,7 +422,31 @@ const FunInteraction = ({navigation}) => {
                   <Text style={[s.optionBtns, {color: textColor}]}>Hide</Text>
                 </View>
               </Menu.Item>
-              <Menu.Item onPress={() => {}}>
+              {userID == elem?.item?.user?.id ? (
+                <>
+                  <Menu.Item onPress={() => navigation.navigate('createPost',{
+                    elem : elem?.item,
+                    screen : 'funInteraction'
+                  })}>
+                    <View style={s.optionView}>
+                      <MaterialIcons
+                        name={'edit'}
+                        color={textColor}
+                        size={moderateScale(13, 0.1)}
+                        style={{flex: 0.3}}
+                      />
+                      <Text style={[s.optionBtns, {color: textColor}]}>
+                        Edit
+                      </Text>
+                    </View>
+                  </Menu.Item>
+                </>
+              ) : null}
+              <Menu.Item 
+               onPress={() => {
+                refRBSheet1.current.open();
+                setPostId(elem?.item?.id)
+              }}>
                 <View style={s.optionView}>
                   <MaterialIcons
                     name={'report'}
@@ -403,6 +499,64 @@ const FunInteraction = ({navigation}) => {
           <Text style={[s.textRegular, {color: textColor}]}>
             {elem?.item?.caption}
           </Text>
+          {/* <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Comments', {post: elem?.item});
+            }}>
+            <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
+              View all {elem?.item?.post_comments?.length} Comments
+            </Text>
+          </TouchableOpacity>
+          <View style={s.input}>
+            <Input
+              w="100%"
+              variant="unstyled"
+              color={textColor}
+              fontSize={moderateScale(12, 0.1)}
+              InputLeftElement={
+                <View
+                  style={[
+                    s.smallDp,
+                    {
+                      borderColor: getColor(elem?.item?.user?.group),
+                    },
+                  ]}>
+                  <Image
+                    source={{uri: elem?.item?.user?.image}}
+                    style={s.dp1}
+                    resizeMode={'cover'}
+                  />
+                </View>
+              }
+              InputRightElement={
+                <TouchableOpacity
+                  onPress={() => {
+                    addComment(elem?.item?.id, elem?.index);
+                  }}
+                  style={{marginRight: moderateScale(10, 0.1)}}>
+                  <Feather
+                    name={'send'}
+                    size={moderateScale(15, 0.1)}
+                    color={textColor}
+                  />
+                </TouchableOpacity>
+              }
+              // value={fname}
+              onEndEditing={() => {
+                // setDisable1(!disable1);
+              }}
+              // isReadOnly={!disable1}
+              // isFocused={disable1}
+              placeholder="Add Comment ..."
+              placeholderTextColor={'grey'}
+              value={current == elem.index ? comment : ''}
+              onChangeText={text => {
+                setCurrent(elem.index);
+                setComment(text);
+              }}
+            />
+          </View> */}
+          
         </View>
       </View>
     );
@@ -561,6 +715,113 @@ const FunInteraction = ({navigation}) => {
           }}
           extraData={refresh}
         />
+         <RBSheet
+        ref={refRBSheet1}
+        closeOnDragDown={true}
+        openDuration={250}
+        customStyles={{
+          container: {
+            alignItems: 'center',
+            height: moderateScale(480),
+            borderRadius: moderateScale(20, 0.1),
+            backgroundColor: '#222222',
+          },
+        }}>
+           {loader ? <Loader /> : null}
+        <View
+          style={{
+            alignSelf: 'center',
+            marginBottom: moderateScale(10, 0.1),
+          }}>
+        {/* {loader ? <Loader /> : null} */}
+          <Text style={[s.rb, {color: textColor}]}>Report</Text>
+        </View>
+        <View
+          style={{
+            paddingHorizontal: moderateScale(13, 0.1),
+          }}>
+          <View style={[s.hv]}>
+            <Text style={[s.hv, {color: textColor}]}>
+              Why are you reporting this post?
+            </Text>
+          </View>
+          <View>
+            <Text style={[s.txt]}>
+              In publishing and graphic design, Lorem ipsum is a placeholder
+              text commonly used to demonstrate the visual form of a document or
+              a typeface without relying on meaningful content. Lorem ipsum may
+              be used as a placeholder before final copy is available
+            </Text>
+          </View>
+          <View style={{display:'flex'}}>
+            <TouchableOpacity style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}></Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+            onPress={()=>{
+              setText('i just dont like it')
+              report()
+            }} 
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>i just don't like it</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+             onPress={()=>{
+              setText('its spam')
+              report()
+            }}
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>it's spam</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+            onPress={()=>{
+              setText('Nudity or sexual activity')
+              report()
+            }}
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>Nudity or sexual activity</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+             onPress={()=>{
+              setText('Hate speech or symbols')
+              report()
+            }}
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>Hate speech or symbols</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+             onPress={()=>{
+              setText('Violence or dangerous orgnisations')
+              report()
+            }}
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>Violence or dangerous orgnisations</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+             onPress={()=>{
+              setText('Bullying or harrasment')
+              report()
+            }}
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>Bullying or harrasment</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </RBSheet>
 
         {/* <ScrollView
           scrollEnabled

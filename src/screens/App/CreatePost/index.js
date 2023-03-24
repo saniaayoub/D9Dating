@@ -20,6 +20,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Loader from '../../../Components/Loader';
+import {useIsFocused} from '@react-navigation/native';
 
 
 import {
@@ -32,19 +33,34 @@ import RNFS from 'react-native-fs';
 
 // import DropDownPicker from 'react-native-dropdown-picker';
 
-const CreatePost = ({navigation}) => {
+const CreatePost = ({navigation, route}) => {
+  console.log(route?.params?.elem, 'data from home');
+  const cap = route?.params?.elem?.caption
+  const privacy = route?.params?.elem?.user?.post_privacy;
+
   useEffect(() => {
-    
+ if(privacy=='1'){
+  setStory('Public')
+ }else if(privacy=='2'){
+  setStory('Friends')
+ }else{
+  setStory('Only Me')
+ }
     console.log('aaaaa');
   }, [])
   
   const theme = useSelector(state => state.reducer.theme);
-  const [filePath, setFilePath] = useState([]);
+  const [filePath, setFilePath] = useState(route?.params?.screen == 'Home' ? route?.params?.elem?.image : []);
   const [open, setOpen] = useState(false);
   const [icon, setIcon] = useState('globe');
-  const [caption, setCaption] = useState('');
-  const [story, setStory] = useState('Public');
+  const [caption, setCaption] = useState(route?.params?.screen == 'Home' ? route?.params?.elem?.caption : '');
+  const [story, setStory] = useState('Public')
   const [loader, setLoader] = useState(false);
+  const isFocused = useIsFocused();
+  const [userData, setUserData] = useState([])
+  const [dummyImage, setDummyImage] = useState(
+    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  );
 
   
   const [value, setValue] = useState([
@@ -84,7 +100,7 @@ const CreatePost = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const postLocation = useSelector(state => state.reducer.postLocation);
-  const [location, setLocation] = useState([postLocation])
+  const [location, setLocation] = useState(route?.params?.screen == 'Home' ? route?.params?.elem?.location : [postLocation])
   console.log(postLocation, 'postLocation');
   console.log(location, 'location');
 
@@ -228,7 +244,8 @@ const CreatePost = ({navigation}) => {
       console.log(data,'dataaaa');
       // setLoader(true);
       axiosconfig
-        .post('post_store', data, {
+        .post(
+          route?.params?.screen == 'Home' ? `post_update/${route.params.elem.id}`: 'post_store', data, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
@@ -250,9 +267,10 @@ const CreatePost = ({navigation}) => {
   };
   useEffect(() => {
    getData()
-  }, [])
+  }, [isFocused])
   
   const getData = async () => {
+    console.log('get data ');
     let SP = await AsyncStorage.getItem('id');
     setLoader(true);
     axiosconfig
@@ -262,7 +280,8 @@ const CreatePost = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        console.log('data user', res?.data?.user_details);
+        setUserData(res?.data?.user_details)
         // if (res.data.user_details) {
         //   setData(res.data.user_details);
         // }
@@ -286,13 +305,13 @@ const CreatePost = ({navigation}) => {
           <View style={{flex: 0.2}}>
             <Image
               style={s.headerImage}
-              source={require('../../../assets/images/png/e1.png')}
+              source={{uri: userData?.image ? userData?.image : dummyImage}}
             />
           </View>
           <View style={{flex: 0.8, alignSelf: 'center'}}>
             <View>
               <Text style={[s.HeadingTxt, {color: Textcolor}]}>
-                Julie Watson
+                {userData?.name}{userData?.last_name}
               </Text>
             </View>
             <View style={[s.btn]}>
@@ -405,7 +424,7 @@ const CreatePost = ({navigation}) => {
         <View style={[s.mText]}>
           <Input
             variant="unstyled"
-            placeholder="Write a caption...."
+            placeholder={'Write a caption....'}
             placeholderTextColor={Textcolor}
             value={caption}
             onChangeText={text => {
@@ -425,7 +444,7 @@ const CreatePost = ({navigation}) => {
         <View style={[s.mText]}>
           <Input
             variant="unstyled"
-            placeholder={'Enter location...'}
+            placeholder= {'Enter location...'}
             placeholderTextColor={Textcolor}
             isReadOnly
             value={location}
@@ -461,7 +480,8 @@ const CreatePost = ({navigation}) => {
                   ></Image>
                 </View>
               </>
-            ) : (
+            ) :
+            (
               <>
                 <View style={s.img}>
                   <Image

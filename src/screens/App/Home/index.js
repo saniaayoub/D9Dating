@@ -218,6 +218,7 @@ const data = [
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
+  const refRBSheet1 = useRef();
   const isFocused = useIsFocused();
   const theme = useSelector(state => state.reducer.theme);
   const userToken = useSelector(state => state.reducer.userToken);
@@ -238,6 +239,9 @@ const Home = ({navigation}) => {
   const [comment, setComment] = useState('');
   const [current, setCurrent] = useState('');
   const [storyImage, setStoryImage] = useState('');
+  const [postId, setPostId] = useState(null)
+  const[text, setText] = useState(null)
+
   // const [myStories, setMyStories] = useState('')
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
@@ -271,45 +275,7 @@ const Home = ({navigation}) => {
     //   });
   }, [isFocused]);
 
-  // const getStory = async () => {
-  //   setLoader(true);
-  //   await axiosconfig
-  //     .get('story_index', {
-  //       headers: {
-  //         Authorization: `Bearer ${userToken}`,
-  //         Accept: 'application/json',
-  //       },
-  //     })
-  //     .then(res => {
-  //       console.log('story', JSON.stringify(res.data.user));
-  //       setMyData1([
-  //         {
-  //           user_id: 1,
-  //           user_image:
-  //             'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
-  //           group: '',
-  //           user_name: 'name',
-  //           stories: [
-  //             {
-  //               story_id: 1,
-  //               story_image:
-  //                 'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
-  //               swipeText: 'Custom swipe text for this story',
-  //             },
-  //           ],
-  //         },
-  //       ]);
-  //       // setPosts(res?.data?.post_friends);
-  //       // setMyStories(res?.data?.stories);
-  //       console.log(myData1);
-  //       setLoader(false);
-  //     })
-  //     .catch(err => {
-  //       setLoader(false);
-  //       console.log(err);
-  //       // showToast(err.response);
-  //     });
-  // };
+  
 
   const getID = async () => {
     const id = await AsyncStorage.getItem('id');
@@ -347,6 +313,54 @@ const Home = ({navigation}) => {
         // showToast(err.response);
       });
   };
+  const report = async () => {
+    setLoader(true);
+    const data={
+      post_id: postId,
+      text: text
+    }
+    await axiosconfig
+      .post('post-report',data,{
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('Posts', res.data);
+        getPosts()
+        refRBSheet1.current.close()
+        setLoader(false)
+        
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+  const hide = async () => {
+    setLoader(true);
+    await axiosconfig
+      .get(`post_action/${postId}`,{
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('Posts', res.data);
+        getPosts()
+        setLoader(false)
+        
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+
 
   const hitLike = async (id, index) => {
     setLoader(true);
@@ -695,7 +709,7 @@ const Home = ({navigation}) => {
   };
 
   const renderItem = elem => {
-    if (elem?.item?.privacy_option == '3') {
+    if (elem?.item?.privacy_option == '3' && elem?.item?.user?.id != Stories[0].user_id) {
       return; //hide friends' only me posts
     }
 
@@ -706,13 +720,11 @@ const Home = ({navigation}) => {
         liked = true;
       }
     });
-
     return (
       <View style={s.col}>
         <View style={s.header}>
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
-          >
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}>
             <Image
               source={{
                 uri: elem?.item?.user?.image
@@ -724,9 +736,12 @@ const Home = ({navigation}) => {
             />
           </View>
           <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewUser',{post:elem.item})}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('ViewUser', {post: elem.item})
+              }>
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                {elem?.item?.user?.name}
+                {elem?.item?.user?.name}{elem?.item?.user?.last_name}
               </Text>
             </TouchableOpacity>
             <Text style={[s.textRegular, {color: textColor}]}>
@@ -750,8 +765,7 @@ const Home = ({navigation}) => {
                     style={{
                       flexDirection: 'row',
                       right: moderateScale(8, 0.1),
-                    }}
-                  >
+                    }}>
                     <Entypo
                       name={'dots-three-vertical'}
                       color={textColor}
@@ -759,9 +773,8 @@ const Home = ({navigation}) => {
                     />
                   </Pressable>
                 );
-              }}
-            >
-              <Menu.Item onPress={() => {}}>
+              }}>
+              <Menu.Item onPress={() => hide()}>
                 <View style={s.optionView}>
                   <Icon
                     name={'eye-slash'}
@@ -773,7 +786,32 @@ const Home = ({navigation}) => {
                   <Text style={[s.optionBtns, {color: textColor}]}>Hide</Text>
                 </View>
               </Menu.Item>
-              <Menu.Item onPress={() => {}}>
+
+              {userID == elem?.item?.user?.id ? (
+                <>
+                  <Menu.Item onPress={() => navigation.navigate('createPost',{
+                    elem : elem?.item,
+                    screen : 'Home'
+                  })}>
+                    <View style={s.optionView}>
+                      <MaterialIcons
+                        name={'edit'}
+                        color={textColor}
+                        size={moderateScale(13, 0.1)}
+                        style={{flex: 0.3}}
+                      />
+                      <Text style={[s.optionBtns, {color: textColor}]}>
+                        Edit
+                      </Text>
+                    </View>
+                  </Menu.Item>
+                </>
+              ) : null}
+              <Menu.Item
+                onPress={() => {
+                  refRBSheet1.current.open();
+                  setPostId(elem?.item?.id)
+                }}>
                 <View style={s.optionView}>
                   <MaterialIcons
                     name={'report'}
@@ -781,7 +819,7 @@ const Home = ({navigation}) => {
                     size={moderateScale(13, 0.1)}
                     style={{flex: 0.3}}
                   />
-                  <Text style={[s.optionBtns, {color: textColor}]}>Report</Text>
+                  <Text style={[s.optionBtns,{color: textColor}]}>Report</Text>
                 </View>
               </Menu.Item>
             </Menu>
@@ -789,8 +827,7 @@ const Home = ({navigation}) => {
         </View>
         <View style={s.img}>
           <TouchableWithoutFeedback
-            onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}
-          >
+            onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}>
             <Image
               source={{uri: elem?.item?.image}}
               width={undefined}
@@ -810,8 +847,7 @@ const Home = ({navigation}) => {
               hitLike(elem?.item?.id, elem?.index);
               // console.log(data[elem.index].post.liked);
             }}
-            style={s.likes}
-          >
+            style={s.likes}>
             <Text style={s.likesCount}> {elem?.item?.post_likes?.length}</Text>
 
             <Icon
@@ -832,8 +868,7 @@ const Home = ({navigation}) => {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('Comments', {post: elem?.item});
-            }}
-          >
+            }}>
             <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
               View all {elem?.item?.post_comments?.length} Comments
             </Text>
@@ -851,8 +886,7 @@ const Home = ({navigation}) => {
                     {
                       borderColor: getColor(elem?.item?.user?.group),
                     },
-                  ]}
-                >
+                  ]}>
                   <Image
                     source={{uri: elem?.item?.user?.image}}
                     style={s.dp1}
@@ -865,8 +899,7 @@ const Home = ({navigation}) => {
                   onPress={() => {
                     addComment(elem?.item?.id, elem?.index);
                   }}
-                  style={{marginRight: moderateScale(10, 0.1)}}
-                >
+                  style={{marginRight: moderateScale(10, 0.1)}}>
                   <Feather
                     name={'send'}
                     size={moderateScale(15, 0.1)}
@@ -919,8 +952,7 @@ const Home = ({navigation}) => {
             InputRightElement={
               <TouchableOpacity
                 // onPress={() => handleCancel()}
-                style={{paddingRight: 10}}
-              >
+                style={{paddingRight: 10}}>
                 {searchText ? (
                   <Entypo
                     name={'cross'}
@@ -941,8 +973,7 @@ const Home = ({navigation}) => {
           contentContainerStyle={{
             // alignItems: 'center',
             flexDirection: 'row',
-          }}
-        >
+          }}>
           {Stories[0]?.stories?.length ? (
             <View>
               <TouchableOpacity
@@ -952,8 +983,7 @@ const Home = ({navigation}) => {
                 style={[
                   s.addBtn,
                   {borderColor: color, bottom: moderateScale(15, 0.1)},
-                ]}
-              >
+                ]}>
                 <Icon
                   name={'plus'}
                   size={moderateScale(14, 0.1)}
@@ -976,14 +1006,12 @@ const Home = ({navigation}) => {
                     style={{
                       backgroundColor: '#000',
                       borderRadius: moderateScale(25, 0.1),
-                    }}
-                  >
+                    }}>
                     <Button
                       variant={'link'}
                       onPress={() => {
                         refRBSheet.current.open();
-                      }}
-                    >
+                      }}>
                       <Icon
                         name={'plus'}
                         size={moderateScale(14, 0.1)}
@@ -1024,8 +1052,7 @@ const Home = ({navigation}) => {
                   onPress={() => {
                     refRBSheet.current.open();
                   }}
-                  style={[s.addBtn, {borderColor: color}]}
-                >
+                  style={[s.addBtn, {borderColor: color}]}>
                   <Icon
                     name={'plus'}
                     size={moderateScale(14, 0.1)}
@@ -1062,8 +1089,7 @@ const Home = ({navigation}) => {
 
         <TouchableOpacity
           style={s.funView}
-          onPress={() => navigation.navigate('FunInteraction')}
-        >
+          onPress={() => navigation.navigate('FunInteraction')}>
           <View style={[s.yellow, s.round]}>
             <Fun
               width={moderateScale(12, 0.1)}
@@ -1078,8 +1104,7 @@ const Home = ({navigation}) => {
                 elevation: 30,
                 shadowColor: 'black',
               },
-            ]}
-          >
+            ]}>
             <Text style={s.count}>5</Text>
           </View>
           <Text style={[s.funText, {color: textColor}]}>Fun Interaction</Text>
@@ -1105,27 +1130,23 @@ const Home = ({navigation}) => {
             height: moderateScale(220),
             borderRadius: moderateScale(20, 0.1),
           },
-        }}
-      >
+        }}>
         <View
           style={{
             marginVertical: moderateScale(30, 0.1),
             justifyContent: 'center',
             alignContent: 'center',
-          }}
-        >
+          }}>
           <Stack
             direction={{
               base: 'column',
               md: 'row',
             }}
-            space={4}
-          >
+            space={4}>
             <Button
               transparent
               style={s.capturebtn}
-              onPress={() => captureImage('photo')}
-            >
+              onPress={() => captureImage('photo')}>
               <View style={{flexDirection: 'row'}}>
                 <Ionicons name="camera" style={s.capturebtnicon} />
                 <Text style={s.capturebtntxt}>Open Camera</Text>
@@ -1134,14 +1155,120 @@ const Home = ({navigation}) => {
             <Button
               transparent
               style={s.capturebtn}
-              onPress={() => chooseFile('photo')}
-            >
+              onPress={() => chooseFile('photo')}>
               <View style={{flexDirection: 'row'}}>
                 <Ionicons name="md-image-outline" style={s.capturebtnicon} />
                 <Text style={s.capturebtntxt}>Open Gallery</Text>
               </View>
             </Button>
           </Stack>
+        </View>
+      </RBSheet>
+      <RBSheet
+        ref={refRBSheet1}
+        closeOnDragDown={true}
+        openDuration={250}
+        customStyles={{
+          container: {
+            alignItems: 'center',
+            height: moderateScale(480),
+            borderRadius: moderateScale(20, 0.1),
+            backgroundColor: '#222222',
+          },
+        }}>
+           {loader ? <Loader /> : null}
+        <View
+          style={{
+            alignSelf: 'center',
+            marginBottom: moderateScale(10, 0.1),
+          }}>
+        {/* {loader ? <Loader /> : null} */}
+          <Text style={[s.rb, {color: textColor}]}>Report</Text>
+        </View>
+        <View
+          style={{
+            paddingHorizontal: moderateScale(13, 0.1),
+          }}>
+          <View style={[s.hv]}>
+            <Text style={[s.hv, {color: textColor}]}>
+              Why are you reporting this post?
+            </Text>
+          </View>
+          <View>
+            <Text style={[s.txt]}>
+              In publishing and graphic design, Lorem ipsum is a placeholder
+              text commonly used to demonstrate the visual form of a document or
+              a typeface without relying on meaningful content. Lorem ipsum may
+              be used as a placeholder before final copy is available
+            </Text>
+          </View>
+          <View style={{display:'flex'}}>
+            <TouchableOpacity style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}></Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+            onPress={()=>{
+              setText('i just dont like it')
+              report()
+            }} 
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>i just don't like it</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+             onPress={()=>{
+              setText('its spam')
+              report()
+            }}
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>it's spam</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+            onPress={()=>{
+              setText('Nudity or sexual activity')
+              report()
+            }}
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>Nudity or sexual activity</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+             onPress={()=>{
+              setText('Hate speech or symbols')
+              report()
+            }}
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>Hate speech or symbols</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+             onPress={()=>{
+              setText('Violence or dangerous orgnisations')
+              report()
+            }}
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>Violence or dangerous orgnisations</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+             onPress={()=>{
+              setText('Bullying or harrasment')
+              report()
+            }}
+            style={s.list}>
+              <View>
+                <Text style={[s.listTxt,{color: textColor}]}>Bullying or harrasment</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       </RBSheet>
       {/* </>

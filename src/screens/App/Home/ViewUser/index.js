@@ -31,7 +31,7 @@ const data = [
 ];
 
 const ViewUser = ({navigation, route}) => {
-   const {post} = route.params;
+   const {post} = route?.params;
    const [Userid, setUserid] = useState(post.user.id);
   const [loginId, setLoginId] = useState(null);
 
@@ -107,6 +107,7 @@ const ViewUser = ({navigation, route}) => {
       .then(res => {
         console.log('connect', res);
         setConnected(true);
+        
         setLoader(false);
       })
       .catch(err => {
@@ -150,6 +151,7 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('block', res);
+        getData()
         setBlocked(true);
         setConnected(false)
         setLoader(false);

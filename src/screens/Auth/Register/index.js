@@ -37,7 +37,17 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import style from '../../../Components/Header/style';
 import Loader from '../../../Components/Loader';
-
+const Groups = [
+  {id: 'Group 1', color: 'blue',},
+  {id: 'Group 2', color: 'green'},
+  {id: 'Group 3', color: 'red'},
+  {id: 'Group 4', color: 'yellow'},
+  {id: 'Group 5', color: 'orange'},
+  {id: 'Group 6', color: 'brown'},
+  {id: 'Group 7', color: 'pink'},
+  {id: 'Group 8', color: 'purple'},
+  {id: 'Group 9', color: 'blue'},
+];
 const Register = ({navigation}) => {
   const dispatch = useDispatch();
   const phonenum = useRef();
@@ -613,8 +623,24 @@ const Register = ({navigation}) => {
                       </Pressable>
                     );
                   }}
-                >
-                  <Menu.Item
+                >{
+                  Groups.map((v,i)=>{
+                    return(
+                      <Menu.Item
+                      onPress={() => {
+                        setGroup(v.id);
+                      }}
+                    >
+                      <View style={s.optionView}>
+                        <Text style={[s.optionBtns, {color: Textcolor}]}>
+                         {v.id}
+                        </Text>
+                      </View>
+                    </Menu.Item>
+                    )
+                  })
+                }
+                   {/* <Menu.Item
                     onPress={() => {
                       setGroup('Group 1');
                     }}
@@ -624,7 +650,7 @@ const Register = ({navigation}) => {
                         Group 1
                       </Text>
                     </View>
-                  </Menu.Item>
+                  </Menu.Item> 
                   <Menu.Item
                     onPress={() => {
                       setGroup('Group 2');
@@ -646,7 +672,7 @@ const Register = ({navigation}) => {
                         Group 3
                       </Text>
                     </View>
-                  </Menu.Item>
+                  </Menu.Item> */}
                 </Menu>
               </View>
             </View>

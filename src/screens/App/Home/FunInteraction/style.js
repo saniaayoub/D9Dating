@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
     borderColor: '#222233',
     flexDirection: 'column',
   },
+ 
   text: {
     color: '#3f2949',
     marginTop: 10,
