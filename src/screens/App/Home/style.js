@@ -15,19 +15,20 @@ const styles = StyleSheet.create({
   },
 
   searchContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: moderateScale(5, 0.1),
     marginTop: moderateScale(10, 0.1),
   },
   dp: {
-    width: moderateScale(40, 0.1),
-    height: moderateScale(40, 0.1),
-    borderRadius: moderateScale(40 / 2, 0.1),
+    width: moderateScale(50, 0.1),
+    height: moderateScale(50, 0.1),
+    borderRadius: moderateScale(50 / 2, 0.1),
     borderWidth: moderateScale(2, 0.1),
     marginHorizontal: moderateScale(10, 0.1),
   },
+
   smallDp: {
     width: moderateScale(25, 0.1),
     height: moderateScale(25, 0.1),
@@ -40,6 +41,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#ecf0f1',
+  },
+  card: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    marginVertical: moderateScale(10, 0.1),
+    paddingBottom: moderateScale(5, 0.1),
+    borderBottomColor: 'grey',
+    borderBottomWidth: moderateScale(1, 0.1),
+  },
+  name: {
+    fontFamily: PoppinsBold,
+    fontSize: moderateScale(13, 0.1),
+    lineHeight: moderateScale(15, 0.1),
+  },
+  details: {
+    width: moderateScale(200, 0.1),
+    flexDirection: 'column',
+    marginTop: moderateScale(5, 0.1),
   },
   modal: {
     alignSelf: 'flex-end',
@@ -104,6 +124,7 @@ const styles = StyleSheet.create({
     height: moderateScale(65, 0.1),
     marginTop: moderateScale(8, 0.1),
     marginLeft: moderateScale(12, 0.1),
+    marginBottom: moderateScale(50, 0.1),
     borderRadius: moderateScale(65 / 2, 0.1),
   },
   col: {
@@ -123,6 +144,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(11, 0.1),
     lineHeight: moderateScale(14, 0.1),
     marginVertical: moderateScale(5, 0.1),
+    // height: moderateScale(30, 0.1),
   },
   img: {
     width: '100%',
@@ -156,7 +178,7 @@ const styles = StyleSheet.create({
   dp1: {
     width: '100%',
     height: '100%',
-    borderRadius: moderateScale(36 / 2, 0.1),
+    borderRadius: moderateScale(50 / 2, 0.1),
   },
   funView: {
     flexDirection: 'row',

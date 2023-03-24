@@ -1,5 +1,5 @@
-import { Dimensions, StyleSheet } from 'react-native';
-import { moderateScale } from 'react-native-size-matters';
+import {Dimensions, StyleSheet} from 'react-native';
+import {moderateScale} from 'react-native-size-matters';
 
 const Poppins = 'Poppins-Regular';
 const PoppinsBold = 'Poppins-Bold';
@@ -17,21 +17,18 @@ const styles = StyleSheet.create({
     // position:'absolute',
     borderTopLeftRadius: moderateScale(25, 0.1),
     borderTopRightRadius: moderateScale(25, 0.1),
-  //  bottom: moderateScale(100)
+    //  bottom: moderateScale(100)
     // bottom: moderateScale(50)
-
   },
   view1Img: {
-    width: moderateScale(390, 0.1),
-    height: moderateScale(353, 0.1),
-    alignSelf: 'center'
+    width: '100%',
+    height: '100%',
+    alignSelf: 'center',
     // borderRadius: moderateScale(20, 0.1)
-
   },
   container: {
     marginTop: moderateScale(25, 0.1),
     paddingHorizontal: moderateScale(18, 0.1),
-    
   },
   headerTxt: {
     fontFamily: Poppins,
@@ -39,8 +36,6 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(36, 0.1),
     color: '#fff',
     alignSelf: 'center',
-   
-
   },
   location: {
     fontFamily: Poppins,
@@ -58,9 +53,9 @@ const styles = StyleSheet.create({
     // marginVertical: moderateScale(10,0.1)
   },
   row1: {
-    marginVertical: moderateScale(10,0.1),
+    marginVertical: moderateScale(10, 0.1),
     flexDirection: 'row',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
   },
   icon: {
     width: moderateScale(37, 0.1),
@@ -68,16 +63,16 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(30, 0.1),
     backgroundColor: 'rgba(255, 215, 0, 0.2)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   txt: {
     fontFamily: Poppins,
     fontSize: moderateScale(12, 0.1),
     lineHeight: moderateScale(18, 0.1),
-    color: '#9F9F9F'
+    color: '#9F9F9F',
   },
   about: {
-    marginVertical: moderateScale(30)
+    marginVertical: moderateScale(30),
   },
   aboutTxt: {
     fontFamily: Poppins,
@@ -86,41 +81,37 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   abTxt: {
-    marginVertical: moderateScale(10, 0.1)
+    marginVertical: moderateScale(10, 0.1),
   },
   btn: {
-   marginBottom: moderateScale(10,0.1),
-    alignSelf:'center',
-    width: moderateScale(155,0.1),
-    height: moderateScale(40,0.1),
-    justifyContent:'center',
-    alignItems:'center',
-    backgroundColor:'#FFD700',
-    borderRadius: moderateScale(25,0.1),
-    
+    marginBottom: moderateScale(10, 0.1),
+    alignSelf: 'center',
+    width: moderateScale(155, 0.1),
+    height: moderateScale(40, 0.1),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFD700',
+    borderRadius: moderateScale(25, 0.1),
   },
-  btnTxt:{
+  btnTxt: {
     fontFamily: Poppins,
-    fontSize: moderateScale(14,0.1),
-    lineHeight: moderateScale(19.5,0.1),
-    color:'#222222'
+    fontSize: moderateScale(14, 0.1),
+    lineHeight: moderateScale(19.5, 0.1),
+    color: '#222222',
   },
-  line:{
-    justifyContent:'center',
-    alignItems:'center',
-    width: moderateScale(80,0.1),
-   borderWidth: moderateScale(2.5,0.1),
-   borderColor: 'rgba(255, 255, 255, 0.44)',
-   borderRadius: moderateScale(4,0.1),
-   alignSelf:'center',
-   marginTop: moderateScale(25,0.1)
+  line: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: moderateScale(80, 0.1),
+    borderWidth: moderateScale(2.5, 0.1),
+    borderColor: 'rgba(255, 255, 255, 0.44)',
+    borderRadius: moderateScale(4, 0.1),
+    alignSelf: 'center',
+    marginTop: moderateScale(25, 0.1),
   },
-  connected:{
-    flexDirection:'column',
-   
-    
-  }
-
+  connected: {
+    flexDirection: 'column',
+  },
 });
 
 export default styles;

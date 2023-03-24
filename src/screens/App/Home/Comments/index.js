@@ -13,7 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../../provider/axios';
 import Loader from '../../../../Components/Loader';
 import Toast from 'react-native-simple-toast';
-
+import Feather from 'react-native-vector-icons/Feather';
+import {Input} from 'native-base';
 const messages = [
   {
     from: 'Julie Watson',
@@ -87,20 +88,43 @@ const messages = [
 const Comments = ({navigation, route}) => {
   const dispatch = useDispatch();
   const {post} = route.params;
-  console.log(post, 'post');
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
   const groups = useSelector(state => state.reducer.group);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [comment, setComment] = useState('');
+  const [commentID, setCommentID] = useState('');
+  const [dummyImage, setDummyImage] = useState(
+    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  );
+  const [comments, setComments] = useState(post?.post_comments);
   const [loader, setLoader] = useState(false);
   const [userID, setUserID] = useState('');
-  const [postDate, setPostDate] = useState('');
+  const [edit, setEdit] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    getID();
+
+    // extractDate();
+  }, []);
+
+  const getDate = old => {
+    console.log(old, 'old');
+
+    let code = new Date(old);
+    let min = new Date(code).getMinutes();
+    let sec = new Date(code).getSeconds();
+    let hours = new Date(code).getHours();
+    // console.log(temp, 'datea');
+    return `${hours}:${min}:${sec}s`;
+  };
 
   const showToast = msg => {
     Toast.show(msg, Toast.SHORT);
   };
+
   const extractDate = () => {
     console.log('Example to Subtract two dates');
     var d1 = new Date('March 16, 2022');
@@ -108,15 +132,7 @@ const Comments = ({navigation, route}) => {
     var sub = d2.getTime() - d1.getTime();
     console.log(sub);
   };
-  const [dummyImage, setDummyImage] = useState(
-    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
-  );
-  const [comments, setComments] = useState(post?.post_comments);
 
-  useEffect(() => {
-    getID();
-    // extractDate();
-  }, []);
   const getID = async () => {
     const id = await AsyncStorage.getItem('id');
     setUserID(id);
@@ -133,52 +149,28 @@ const Comments = ({navigation, route}) => {
     return color;
   };
 
-  const addComment = async (id, index) => {
-    setLoader(true);
-    console.log('hisss', id);
+  const addComment = async postid => {
+    setLoader(false);
     if (!comment) {
       setLoader(false);
       return;
     }
-    const data = {
-      text: comment,
-      post_id: id,
-    };
-    await axiosconfig
-      .post(`comment_add`, data, {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-          Accept: 'application/json',
-        },
-      })
-      .then(res => {
-        console.log('data', JSON.stringify(res.data));
-        setComment('');
-        getPosts();
-        setRefresh(!refresh);
-        setLoader(false);
-      })
-      .catch(err => {
-        setLoader(false);
-        setComment('');
-        console.log(err);
-        // Alert.alert(err);
-      });
-  };
+    let data;
+    if (edit) {
+      data = {
+        comment_id: commentID,
+        text: comment,
+        post_id: postid,
+      };
+    } else {
+      data = {
+        text: comment,
+        post_id: postid,
+      };
+    }
 
-  const editComment = async (id, index) => {
-    setLoader(true);
-    console.log('hisss', id);
-    if (!comment) {
-      setLoader(false);
-      return;
-    }
-    const data = {
-      text: comment,
-      post_id: id,
-    };
     await axiosconfig
-      .post(`comment_add`, data, {
+      .post(edit ? 'comment_update' : 'comment_add', data, {
         headers: {
           Authorization: `Bearer ${userToken}`,
           Accept: 'application/json',
@@ -187,24 +179,32 @@ const Comments = ({navigation, route}) => {
       .then(res => {
         console.log('data', JSON.stringify(res.data));
         setComment('');
-        // getPosts();
+        setEdit(false);
+        setCommentID('');
+        getPosts(postid);
         // setRefresh(!refresh);
-        setLoader(false);
       })
       .catch(err => {
         setLoader(false);
         setComment('');
+        setEdit(false);
+        setCommentID('');
         console.log(err);
         // Alert.alert(err);
       });
   };
 
-  const deleteComment = async id => {
-    setLoader(true);
+  const onEdit = async (id, commentText) => {
+    setComment(commentText);
+    setCommentID(id);
+    setEdit(true);
+  };
 
-    console.log(id);
+  const deleteComment = async commentid => {
+    setLoader(true);
+    console.log(commentid);
     await axiosconfig
-      .get(`comment-delete/${id}`, {
+      .get(`comment-delete/${commentid}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
           Accept: 'application/json',
@@ -212,12 +212,8 @@ const Comments = ({navigation, route}) => {
       })
       .then(res => {
         console.log('data', JSON.stringify(res.data));
-        updateComments(id);
         showToast(res?.data?.success);
-        // setComment('');
-        // getPosts();
-        // setRefresh(!refresh);
-        setLoader(false);
+        getPosts(post?.id);
       })
       .catch(err => {
         setLoader(false);
@@ -225,12 +221,31 @@ const Comments = ({navigation, route}) => {
         // Alert.alert(err);
       });
   };
-  const updateComments = id => {
-    let temp = [];
-    temp = comments.filter(elem => {
-      console.log(elem.id != id);
-    });
-    setComments(temp);
+
+  const getPosts = async postid => {
+    await axiosconfig
+      .get('user_details', {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        getUpdatedComments(res.data.post_friends, postid);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+
+  const getUpdatedComments = (array, postid) => {
+    let temp = array.filter(elem => elem.id == postid);
+    setComments(temp[0]?.post_comments);
+    setLoader(false);
+    setRefresh(!refresh);
+    console.log(temp[0]?.post_comments, comments, 'whhwyw');
   };
 
   const renderItem = (elem, i) => {
@@ -264,7 +279,7 @@ const Comments = ({navigation, route}) => {
               </Text>
             </View>
             <Text style={[s.textSmall, {color: '#787878'}]}>
-              {elem?.item?.created_at}
+              {getDate(elem?.item?.created_at)}
             </Text>
           </View>
         </View>
@@ -290,7 +305,7 @@ const Comments = ({navigation, route}) => {
             <View style={s.icon}>
               <TouchableOpacity
                 onPress={() => {
-                  editComment(post.id);
+                  onEdit(elem?.item?.id, elem?.item?.text);
                 }}
               >
                 <Entypo
@@ -307,6 +322,8 @@ const Comments = ({navigation, route}) => {
   };
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: color}}>
+      {loader ? <Loader /> : null}
+
       <View
         style={{
           alignItems: 'center',
@@ -325,10 +342,11 @@ const Comments = ({navigation, route}) => {
         <View>
           <Text style={[s.HeadingText, {color: textColor}]}>Comments</Text>
         </View>
-        <View style={s.txtView}>
+        {/* <View style={s.txtView}>
           <Text style={s.hTxt}>{post?.created_at}</Text>
-        </View>
+        </View> */}
       </View>
+
       <ScrollView
         contentContainerStyle={[s.container, {backgroundColor: color}]}
       >
@@ -359,7 +377,54 @@ const Comments = ({navigation, route}) => {
           renderItem={renderItem}
           keyExtractor={(e, i) => i.toString()}
           scrollEnabled={true}
+          extraData={refresh}
         />
+        <View>
+          <Input
+            w="100%"
+            variant="rounded"
+            color={textColor}
+            placeholder="Add Comment ..."
+            placeholderTextColor={'grey'}
+            value={comment}
+            onChangeText={text => {
+              setComment(text);
+            }}
+            borderColor={textColor}
+            marginTop={moderateScale(10, 0.1)}
+            fontSize={moderateScale(12, 0.1)}
+            InputLeftElement={
+              <View
+                style={[
+                  s.smallDp,
+                  {
+                    borderColor: getColor(post?.user?.group),
+                  },
+                ]}
+              >
+                <Image
+                  source={{uri: post?.user?.image}}
+                  style={s.dp1}
+                  resizeMode={'cover'}
+                />
+              </View>
+            }
+            InputRightElement={
+              <TouchableOpacity
+                onPress={() => {
+                  addComment(post.id);
+                }}
+                style={{marginRight: moderateScale(10, 0.1)}}
+              >
+                <Feather
+                  name={'send'}
+                  size={moderateScale(15, 0.1)}
+                  color={textColor}
+                />
+              </TouchableOpacity>
+            }
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

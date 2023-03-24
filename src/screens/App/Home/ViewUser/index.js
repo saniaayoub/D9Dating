@@ -31,11 +31,13 @@ const data = [
 ];
 
 const ViewUser = ({navigation, route}) => {
-   const {post} = route.params;
-   const [Userid, setUserid] = useState(post.user.id);
+  const {post, screen} = route.params;
+  const [Userid, setUserid] = useState(
+    screen == 'search' ? post?.id : post.user.id,
+  );
   const [loginId, setLoginId] = useState(null);
 
-  console.log(post,'post');
+  console.log(post, 'post');
   const dispatch = useDispatch();
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
@@ -143,7 +145,7 @@ const ViewUser = ({navigation, route}) => {
       .then(res => {
         console.log('block', res);
         setBlocked(true);
-        setConnected(false)
+        setConnected(false);
         setLoader(false);
       })
       .catch(err => {
@@ -153,6 +155,7 @@ const ViewUser = ({navigation, route}) => {
         // showToast(err.response);
       });
   };
+  console.log('userData', userData);
   const unblock = async () => {
     console.log('aaaa');
     setLoader(true);
@@ -181,16 +184,20 @@ const ViewUser = ({navigation, route}) => {
     <View style={{flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
       <View style={[s.View1]}>
-        <Image
-          style={s.view1Img}
-          source={require('../../../../assets/images/png/dp.png')}
-        />
+        <View style={{width: '100%', height: moderateScale(240, 0.1)}}>
+          <Image
+            style={s.view1Img}
+            resizeMode={'stretch'}
+            source={{uri: userData[0]?.image}}
+          />
+        </View>
         <View
           style={{
             position: 'absolute',
             justifyContent: 'flex-start',
             // paddingHorizontal: moderateScale(15),
-          }}>
+          }}
+        >
           <Header navigation={navigation} />
         </View>
       </View>
@@ -206,7 +213,8 @@ const ViewUser = ({navigation, route}) => {
             bottom: scroll ? moderateScale(50) : moderateScale(5),
           },
         ]}
-        scrollEnabled={true}>
+        scrollEnabled={true}
+      >
         <View>
           <View style={s.line}></View>
           {userData.map((v, i) => {
@@ -229,9 +237,9 @@ const ViewUser = ({navigation, route}) => {
                   </View>
                 </View>
 
-                <View>
+                {/* <View>
                   <Text style={s.txt}>hdjdkdjksd </Text>
-                </View>
+                </View> */}
 
                 <View style={s.row1}>
                   <View>
@@ -246,9 +254,7 @@ const ViewUser = ({navigation, route}) => {
                 </View>
 
                 <View style={s.about}>
-                  <Text style={[s.aboutTxt, {color: textColor}]}>
-                    About Us{' '}
-                  </Text>
+                  <Text style={[s.aboutTxt, {color: textColor}]}>About</Text>
                   <View style={s.abTxt}>
                     <Text style={s.txt}>{v.about_me} </Text>
                   </View>
@@ -285,7 +291,7 @@ const ViewUser = ({navigation, route}) => {
                     </>
                   ) : blocked == true && connected == false ? (
                     <>
-                      <TouchableOpacity  onPress={() => unblock()}>
+                      <TouchableOpacity onPress={() => unblock()}>
                         <View style={s.btn}>
                           <Text style={[s.btnTxt]}>Unblock</Text>
                         </View>

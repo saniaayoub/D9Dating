@@ -32,7 +32,7 @@ import Fun from '../../../assets/images/svg/fun.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
-
+import SearchDropDown from '../../../Components/SearchDropDown';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RNFS from 'react-native-fs';
@@ -54,167 +54,6 @@ const Groups = [
   {id: 'Group 9', color: 'blue'},
 ];
 
-let myData = [
-  {
-    user_id: 1,
-    user_image:
-      'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
-    group: '',
-    user_name: 'name',
-    stories: [
-      {
-        story_id: 1,
-        story_image:
-          'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
-        swipeText: 'Custom swipe text for this story',
-      },
-    ],
-  },
-];
-const data = [
-  {
-    user_id: 1,
-    user_image:
-      'https://images.unsplash.com/photo-1602545164910-81aecfd1413d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjF8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60g',
-    user_name: 'Ahmet Çağlar Durmuş',
-    post: {
-      image: require('../../../assets/images/png/dp.png'),
-      location: 'USA',
-      likes: 233,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam',
-      liked: true,
-    },
-    stories: [
-      {
-        story_id: 1,
-        story_image:
-          'https://image.freepik.com/free-vector/universe-mobile-wallpaper-with-planets_79603-600.jpg',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 1 swiped'),
-      },
-      {
-        story_id: 2,
-        story_image:
-          'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
-      },
-    ],
-  },
-  {
-    user_id: 2,
-    user_image:
-      'https://images.unsplash.com/photo-1627067324578-61af969907fa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjN8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-    user_name: 'Test User',
-    post: {
-      image: require('../../../assets/images/png/dp.png'),
-      location: 'USA',
-      likes: 233,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam',
-      liked: false,
-    },
-    stories: [
-      {
-        story_id: 2,
-        story_image:
-          'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 2 swiped'),
-      },
-    ],
-  },
-  {
-    user_id: 3,
-    post: {
-      image: require('../../../assets/images/png/dp.png'),
-      location: 'USA',
-      likes: 233,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam',
-      liked: false,
-    },
-    user_image:
-      'https://images.unsplash.com/photo-1592861394788-2935b53de467?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mzh8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-    user_name: 'Test User',
-    stories: [
-      {
-        story_id: 1,
-        story_image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjORKvjcbMRGYPR3QIs3MofoWkD4wHzRd_eg&usqp=CAU',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 1 swiped'),
-      },
-      {
-        story_id: 2,
-        story_image:
-          'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 2 swiped'),
-      },
-    ],
-  },
-  {
-    user_id: 4,
-    user_image:
-      'https://plus.unsplash.com/premium_photo-1664124888904-435121e89c74?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTJ8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-    user_name: 'Test User',
-    post: {
-      image: require('../../../assets/images/png/dp.png'),
-      location: 'USA',
-      likes: 233,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam',
-      liked: true,
-    },
-    stories: [
-      {
-        story_id: 1,
-        story_image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjORKvjcbMRGYPR3QIs3MofoWkD4wHzRd_eg&usqp=CAU',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 1 swiped'),
-      },
-      {
-        story_id: 2,
-        story_image:
-          'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 2 swiped'),
-      },
-    ],
-  },
-  {
-    user_id: 5,
-    user_image:
-      'https://images.unsplash.com/photo-1602545164910-81aecfd1413d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjF8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60g',
-    user_name: 'Test User',
-    post: {
-      image: require('../../../assets/images/png/dp.png'),
-      location: 'USA',
-      likes: 233,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam',
-      liked: true,
-    },
-    stories: [
-      {
-        story_id: 1,
-        story_image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjORKvjcbMRGYPR3QIs3MofoWkD4wHzRd_eg&usqp=CAU',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 1 swiped'),
-      },
-      {
-        story_id: 2,
-        story_image:
-          'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 2 swiped'),
-      },
-    ],
-  },
-];
-
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
@@ -227,7 +66,6 @@ const Home = ({navigation}) => {
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [myData1, setMyData1] = useState([]);
   const [searchText, setSearchText] = useState('');
-  const [data1, setData1] = useState(data);
   const [refresh, setRefresh] = useState(true);
   const [path, setPath] = useState(null);
   const [myStories, setMyStories] = useState([]);
@@ -243,7 +81,9 @@ const Home = ({navigation}) => {
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
-
+  const [dataSource, setDataSource] = useState([]);
+  const [filtered, setFiltered] = useState(dataSource);
+  const [searching, setSearching] = useState(false);
   useEffect(() => {
     dispatch(setGroup(Groups));
     getPosts();
@@ -272,59 +112,9 @@ const Home = ({navigation}) => {
     //   });
   }, [isFocused]);
 
-  // const getStory = async () => {
-  //   setLoader(true);
-  //   await axiosconfig
-  //     .get('story_index', {
-  //       headers: {
-  //         Authorization: `Bearer ${userToken}`,
-  //         Accept: 'application/json',
-  //       },
-  //     })
-  //     .then(res => {
-  //       console.log('story', JSON.stringify(res.data.user));
-  //       setMyData1([
-  //         {
-  //           user_id: 1,
-  //           user_image:
-  //             'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
-  //           group: '',
-  //           user_name: 'name',
-  //           stories: [
-  //             {
-  //               story_id: 1,
-  //               story_image:
-  //                 'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
-  //               swipeText: 'Custom swipe text for this story',
-  //             },
-  //           ],
-  //         },
-  //       ]);
-  //       // setPosts(res?.data?.post_friends);
-  //       // setMyStories(res?.data?.stories);
-  //       console.log(myData1);
-  //       setLoader(false);
-  //     })
-  //     .catch(err => {
-  //       setLoader(false);
-  //       console.log(err);
-  //       // showToast(err.response);
-  //     });
-  // };
-
   const getID = async () => {
     const id = await AsyncStorage.getItem('id');
     setUserID(id);
-  };
-
-  const createStoryData = async () => {
-    let data = {
-      user_id: 1,
-      user_image:
-        'https://images.unsplash.com/photo-1616267624976-b45d3a7bac73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTl8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-      user_name: 'Your Story',
-      stories: [{}],
-    };
   };
 
   const getPosts = async () => {
@@ -337,7 +127,9 @@ const Home = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('Posts', JSON.stringify(res.data));
+        console.log('Posts', JSON.stringify(res.data.post_friends));
+        console.log('Other Stories', JSON.stringify(res?.data?.stories));
+
         setPosts(res?.data?.post_friends);
         setOtherStoriesData(res?.data?.stories);
       })
@@ -349,7 +141,6 @@ const Home = ({navigation}) => {
   };
 
   const setOtherStoriesData = data => {
-    console.log('sent data', data);
     let temp = [];
     data?.forEach(elem => {
       let tempelem = {
@@ -362,7 +153,6 @@ const Home = ({navigation}) => {
       temp.push(tempelem);
     });
     setOtherStories(temp);
-    console.log(temp, otherStories[0]?.stories?.length, 'sasasa');
     setLoader(false);
   };
 
@@ -669,15 +459,6 @@ const Home = ({navigation}) => {
         // Alert.alert(err);
       });
   };
-  // const addStory = story => {
-  //   setMyData1([
-  //     {
-  //       ...myData1[0],
-  //       stories: story,
-  //     },
-  //   ]);
-  //   // setLoader(false);
-  // };
 
   const addComment = async (id, index) => {
     setLoader(true);
@@ -913,53 +694,19 @@ const Home = ({navigation}) => {
       </View>
     );
   };
+
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       <View style={[s.container, s.col, {backgroundColor: color}]}>
         {loader ? <Loader /> : null}
-        <View style={s.searchContainer}>
-          <Input
-            placeholder="Search Here"
-            placeholderTextColor={'#B9B9B9'}
-            onChangeText={text => setSearchText(text)}
-            value={searchText}
-            marginTop={moderateScale(10, 0.1)}
-            w={'95%'}
-            h={moderateScale(37, 0.1)}
-            variant="rounded"
-            InputLeftElement={
-              <View style={{paddingLeft: 10}}>
-                <Icon
-                  name="search"
-                  size={moderateScale(25, 0.1)}
-                  color={'#B9B9B9'}
-                />
-              </View>
-            }
-            InputRightElement={
-              <TouchableOpacity
-                // onPress={() => handleCancel()}
-                style={{paddingRight: 10}}
-              >
-                {searchText ? (
-                  <Entypo
-                    name={'cross'}
-                    size={moderateScale(20, 0.1)}
-                    color={'#B9B9B9'}
-                  />
-                ) : null}
-              </TouchableOpacity>
-            }
-            color={'#fff'}
-            backgroundColor={'#595757'}
-          />
-        </View>
+
         <ScrollView
           scrollEnabled
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
             // alignItems: 'center',
+            marginTop: moderateScale(10, 0.1),
             flexDirection: 'row',
           }}
         >
@@ -1059,7 +806,7 @@ const Home = ({navigation}) => {
               </View>
             </>
           )}
-          {otherStories[0]?.stories?.length > 0 ? (
+          {otherStories?.length > 0 ? (
             <InstaStory
               data={otherStories}
               duration={10}

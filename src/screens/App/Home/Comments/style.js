@@ -7,6 +7,7 @@ const PoppinsBold = 'Poppins-Bold';
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: moderateScale(12, 0.1),
+    height: '100%',
     // paddingEnd: moderateScale(-20,0.1),
     // flexDirection: 'column',
     // justifyContent: 'flex-start',
@@ -17,6 +18,18 @@ const styles = StyleSheet.create({
     fontFamily: PoppinsBold,
     lineHeight: moderateScale(30, 0.1),
   },
+  dp1: {
+    width: '100%',
+    height: '100%',
+    borderRadius: moderateScale(36 / 2, 0.1),
+  },
+  smallDp: {
+    width: moderateScale(25, 0.1),
+    height: moderateScale(25, 0.1),
+    borderRadius: moderateScale(25 / 2, 0.1),
+    borderWidth: moderateScale(2, 0.1),
+    marginLeft: moderateScale(10, 0.1),
+  },
   border: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
@@ -25,6 +38,10 @@ const styles = StyleSheet.create({
   },
   btn: {
     flex: 0.5,
+  },
+  input: {
+    flex: 1,
+    marginBottom: 100,
   },
   chats: {
     fontSize: moderateScale(13, 0.1),

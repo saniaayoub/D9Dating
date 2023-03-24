@@ -20,189 +20,108 @@ import Pin from 'react-native-vector-icons/SimpleLineIcons';
 import {ScrollView} from 'react-native';
 import Loader from '../../../../Components/Loader';
 import axiosconfig from '../../../../Providers/axios';
-
-const myData = [];
-
-const data = [
-  {
-    user_id: 1,
-    user_image:
-      'https://images.unsplash.com/photo-1602545164910-81aecfd1413d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjF8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60g',
-    user_name: 'Ahmet Çağlar Durmuş',
-    post: {
-      image: require('../../../../assets/images/png/post1.png'),
-      location: 'USA',
-      likes: 233,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam',
-      liked: true,
-    },
-    stories: [
-      {
-        story_id: 1,
-        story_image:
-          'https://image.freepik.com/free-vector/universe-mobile-wallpaper-with-planets_79603-600.jpg',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 1 swiped'),
-      },
-      {
-        story_id: 2,
-        story_image:
-          'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
-      },
-    ],
-  },
-  {
-    user_id: 2,
-    user_image:
-      'https://images.unsplash.com/photo-1627067324578-61af969907fa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjN8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-    user_name: 'Test User',
-    post: {
-      image: require('../../../../assets/images/png/post1.png'),
-      location: 'USA',
-      likes: 233,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam',
-      liked: true,
-    },
-    stories: [
-      {
-        story_id: 1,
-        story_image:
-          'https://images.unsplash.com/photo-1602545164910-81aecfd1413d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjF8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 1 swiped'),
-      },
-      {
-        story_id: 2,
-        story_image:
-          'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 2 swiped'),
-      },
-    ],
-  },
-  {
-    user_id: 3,
-    post: {
-      image: require('../../../../assets/images/png/post1.png'),
-      location: 'USA',
-      likes: 233,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam',
-      liked: true,
-    },
-    user_image:
-      'https://images.unsplash.com/photo-1592861394788-2935b53de467?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mzh8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-    user_name: 'Test User',
-    stories: [
-      {
-        story_id: 1,
-        story_image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjORKvjcbMRGYPR3QIs3MofoWkD4wHzRd_eg&usqp=CAU',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 1 swiped'),
-      },
-      {
-        story_id: 2,
-        story_image:
-          'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 2 swiped'),
-      },
-    ],
-  },
-  {
-    user_id: 4,
-    user_image:
-      'https://plus.unsplash.com/premium_photo-1664124888904-435121e89c74?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTJ8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-    user_name: 'Test User',
-    post: {
-      image: require('../../../../assets/images/png/post1.png'),
-      location: 'USA',
-      likes: 233,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam',
-      liked: true,
-    },
-    stories: [
-      {
-        story_id: 1,
-        story_image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjORKvjcbMRGYPR3QIs3MofoWkD4wHzRd_eg&usqp=CAU',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 1 swiped'),
-      },
-      {
-        story_id: 2,
-        story_image:
-          'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 2 swiped'),
-      },
-    ],
-  },
-  {
-    user_id: 5,
-    user_image:
-      'https://images.unsplash.com/photo-1616267624976-b45d3a7bac73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTl8fGRwfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
-    user_name: 'Test User',
-    post: {
-      image: require('../../../../assets/images/png/post1.png'),
-      location: 'USA',
-      likes: 233,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam',
-      liked: true,
-    },
-    stories: [
-      {
-        story_id: 1,
-        story_image:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjORKvjcbMRGYPR3QIs3MofoWkD4wHzRd_eg&usqp=CAU',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 1 swiped'),
-      },
-      {
-        story_id: 2,
-        story_image:
-          'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
-        swipeText: 'Custom swipe text for this story',
-        onPress: () => console.log('story 2 swiped'),
-      },
-    ],
-  },
-];
+import Feather from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FunInteraction = ({navigation}) => {
   const dispatch = useDispatch();
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-  const [data1, setData1] = useState(data);
+  const groups = useSelector(state => state.reducer.group);
+  const [comment, setComment] = useState('');
+  const [userID, setUserID] = useState('');
+  const [current, setCurrent] = useState('');
   const [searchText, setSearchText] = useState('');
-  const [lastTap, setLastTap] = useState(null);
-  const [refresh, setReferesh] = useState(true);
-  const [loader, setLoader] = useState(false);
+  const [refresh, setRefresh] = useState(true);
+  const [loader, setLoader] = useState(true);
   const [publicPost, setPublicPost] = useState([]);
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
+  const [dataSource, setDataSource] = useState([]);
+  const [filtered, setFiltered] = useState(dataSource);
+  const [searching, setSearching] = useState(false);
   const userToken = useSelector(state => state.reducer.userToken);
 
   useEffect(() => {
     getPosts();
+    getAllUsers();
+    getID();
   }, []);
 
-  const handleDoubleTap = index => {
+  const getID = async () => {
+    const id = await AsyncStorage.getItem('id');
+    setUserID(id);
+  };
+  const getColor = id => {
+    let color;
+    groups?.forEach(elem => {
+      if (elem.id == id) {
+        color = elem.color;
+      }
+    });
+    return color;
+  };
+
+  const hitLike = async (id, index) => {
+    setLoader(true);
+    await axiosconfig
+      .get(`like/${id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        toggleLike(index);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
+
+  var lastTap = null;
+  const handleDoubleTap = (id, index) => {
     const now = Date.now();
     const DOUBLE_PRESS_DELAY = 300;
     if (lastTap && now - lastTap < DOUBLE_PRESS_DELAY) {
-      toggleLike(index);
+      hitLike(id, index);
     } else {
-      setLastTap(now);
+      lastTap = now;
     }
   };
+
+  const toggleLike = index => {
+    console.log('hello');
+    getPosts();
+    setRefresh(!refresh);
+  };
+  const getAllUsers = async () => {
+    setLoader(true);
+    await axiosconfig
+      .get('users-connect', {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('All Users', JSON.stringify(res.data));
+        setDataSource([...res?.data?.friends, ...res?.data?.public]);
+        setLoader(false);
+        console.log(dataSource);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+      });
+  };
+
   const getPosts = async () => {
     setLoader(true);
     await axiosconfig
@@ -213,109 +132,98 @@ const FunInteraction = ({navigation}) => {
         },
       })
       .then(res => {
-        // console.log('data', JSON.stringify(res.data));
         console.log('public post', JSON.stringify(res?.data?.post_public));
-        const data = res?.data?.post_public
-        // console.log('user id',JSON.stringify(res?.data?.post_public?.user_id));
-        setPublicPost(res?.data?.post_public)
+        const data = res?.data?.post_public;
+
+        setPublicPost(res?.data?.post_public);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
         console.log(err);
-        // showToast(err.response);
       });
   };
 
-  const toggleLike = index => {
-    console.log('hello');
-    data[index].post.liked = !data[index].post.liked;
-    setData1(data);
-    setReferesh(data[index].post.liked);
-    console.log(data[index].post.liked);
+  const addComment = async (id, index) => {
+    setLoader(true);
+    console.log('hisss', id);
+    if (!comment) {
+      setLoader(false);
+      return;
+    }
+    const data = {
+      text: comment,
+      post_id: id,
+    };
+    await axiosconfig
+      .post(`comment_add`, data, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('data', JSON.stringify(res.data));
+        setComment('');
+        getPosts();
+        setRefresh(!refresh);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        setComment('');
+        console.log(err);
+        // Alert.alert(err);
+      });
   };
 
   const renderItem = elem => {
-   
+    if (elem?.item?.privacy_option == '3') {
+      return; //hide friends' only me posts
+    }
+
+    //check if the user already liked the post
+    let liked = false;
+    elem?.item?.post_likes?.forEach(t => {
+      if (t?.user_id == userID) {
+        liked = true;
+      }
+    });
+
     return (
       <View style={s.col}>
-        {/* {optionsModal && elem.index == selectedIndex ? (
-          <View style={[s.modal, {backgroundColor: color}]}>
-            <Button
-              backgroundColor={color}
-              margin={0}
-              padding={0}
-              variant={'link'}
-              justifyContent={'flex-start'}
-            >
-              <View
-                style={[s.optionView, {marginVertical: moderateScale(5, 0.1)}]}
-              >
-                <Icon
-                  name={'eye-slash'}
-                  color={textColor}
-                  size={moderateScale(12, 0.1)}
-                />
-                <Text style={[s.optionBtns, {color: textColor}]}>Hide</Text>
-              </View>
-            </Button>
-            <Button
-              backgroundColor={color}
-              margin={0}
-              padding={0}
-              variant={'link'}
-              justifyContent={'flex-start'}
-            >
-              <View style={s.optionView}>
-                <MaterialIcons
-                  name={'report'}
-                  color={textColor}
-                  size={moderateScale(13, 0.1)}
-                />
-                <Text style={[s.optionBtns, {color: textColor}]}>Report</Text>
-              </View>
-            </Button>
-          </View>
-        ) : null} */}
         <View style={s.header}>
-          <View style={s.dp}>
+          <View
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
+          >
             <Image
               source={{
-                uri: elem?.item?.pfimage ? elem?.item?.pfimage : dummyImage,
+                uri: elem?.item?.user?.image
+                  ? elem?.item?.user?.image
+                  : dummyImage,
               }}
               style={s.dp1}
               resizeMode={'cover'}
             />
           </View>
           <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewUser', {post:elem.item})}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ViewUser', {post: elem.item})}
+            >
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                {elem?.item?.user?.name}{elem?.item?.user?.last_name}
+                {elem?.item?.user?.name}
               </Text>
             </TouchableOpacity>
             <Text style={[s.textRegular, {color: textColor}]}>
               {elem?.item?.user?.location}
             </Text>
           </View>
-          {elem.index === 0 ? (
-            <TouchableOpacity
-              style={[s.options, {marginRight: moderateScale(12, 0.1)}]}
-            >
-              <Pin
-                name={'pin'}
-                color={textColor}
-                size={moderateScale(15, 0.1)}
-              />
-            </TouchableOpacity>
-          ) : null}
           <View style={[s.options]}>
             <Menu
               w="150"
               borderWidth={moderateScale(1, 0.1)}
               borderColor={'grey'}
               backgroundColor={color}
-              // alignItems={'center'}
-              // justifyContent={'center'}
               marginRight={moderateScale(15, 0.1)}
               marginTop={moderateScale(25, 0.1)}
               closeOnSelect={true}
@@ -365,59 +273,172 @@ const FunInteraction = ({navigation}) => {
           </View>
         </View>
         <View style={s.img}>
-          <TouchableWithoutFeedback onPress={() => handleDoubleTap(elem.index)}>
+          <TouchableWithoutFeedback
+            onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}
+          >
             <Image
               source={{uri: elem?.item?.image}}
-              // width={undefined}
-              // height={undefined}
+              width={undefined}
+              height={undefined}
               resizeMode={'cover'}
               style={{
-                width: '100%',
+                width: '95%',
                 height: moderateScale(270, 0.1),
-                paddingHorizontal: moderateScale(15, 0.1),
+                borderRadius: moderateScale(10, 0.1),
+                paddingHorizontal: moderateScale(10, 0.1),
+                alignSelf: 'center',
               }}
             />
           </TouchableWithoutFeedback>
           <TouchableOpacity
             onPress={() => {
-              toggleLike(elem.index);
+              hitLike(elem?.item?.id, elem?.index);
               // console.log(data[elem.index].post.liked);
             }}
             style={s.likes}
           >
             <Text style={s.likesCount}> {elem?.item?.post_likes?.length}</Text>
-            <Text style={s.likesCount}> count</Text>
 
             <Icon
               name="heart"
               size={moderateScale(12, 0.1)}
               solid
-              color={elem?.item === true ? 'yellow' : '#fff'}
+              color={liked === true ? 'yellow' : '#fff'}
             />
           </TouchableOpacity>
         </View>
         <View style={s.footer}>
           <Text style={[s.name, {color: textColor}]}>
-            {elem?.item?.user?.name}{elem?.item?.user?.last_name}
+            {elem?.item?.user?.name}
           </Text>
           <Text style={[s.textRegular, {color: textColor}]}>
             {elem?.item?.caption}
           </Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Comments', {post: elem?.item});
+            }}
+          >
+            <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
+              View all {elem?.item?.post_comments?.length} Comments
+            </Text>
+          </TouchableOpacity>
+          <View style={s.input}>
+            <Input
+              w="100%"
+              variant="unstyled"
+              color={textColor}
+              fontSize={moderateScale(12, 0.1)}
+              InputLeftElement={
+                <View
+                  style={[
+                    s.smallDp,
+                    {
+                      borderColor: getColor(elem?.item?.user?.group),
+                    },
+                  ]}
+                >
+                  <Image
+                    source={{
+                      uri: elem?.item?.user?.image
+                        ? elem?.item?.user?.image
+                        : dummyImage,
+                    }}
+                    style={s.dp1}
+                    resizeMode={'cover'}
+                  />
+                </View>
+              }
+              InputRightElement={
+                <TouchableOpacity
+                  onPress={() => {
+                    addComment(elem?.item?.id, elem?.index);
+                  }}
+                  style={{marginRight: moderateScale(10, 0.1)}}
+                >
+                  <Feather
+                    name={'send'}
+                    size={moderateScale(15, 0.1)}
+                    color={textColor}
+                  />
+                </TouchableOpacity>
+              }
+              // value={fname}
+              onEndEditing={() => {
+                // setDisable1(!disable1);
+              }}
+              // isReadOnly={!disable1}
+              // isFocused={disable1}
+              placeholder="Add Comment ..."
+              placeholderTextColor={'grey'}
+              value={current == elem.index ? comment : ''}
+              onChangeText={text => {
+                setCurrent(elem.index);
+                setComment(text);
+              }}
+            />
+          </View>
         </View>
       </View>
     );
   };
 
+  const searchItem = (elem, i) => {
+    return (
+      <View style={s.card}>
+        <View style={[s.dp, {borderColor: getColor(elem?.item?.group)}]}>
+          <Image
+            source={{uri: elem?.item?.image}}
+            style={s.dp1}
+            resizeMode={'cover'}
+          />
+        </View>
+        <View style={s.details}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('ViewUser', {
+                post: elem?.item,
+                screen: 'search',
+              });
+              setSearching(false);
+            }}
+          >
+            <Text style={[s.name, s.nameBold, {color: textColor}]}>
+              {elem?.item?.name}
+            </Text>
+            <Text style={[s.textRegular, s.nameBold, {color: 'grey'}]}>
+              {elem?.item?.location}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+  const onSearch = text => {
+    if (text) {
+      setSearching(true);
+      const temp = text.toLowerCase();
+
+      const tempList = dataSource.filter(item => {
+        let name = item?.name?.toLowerCase();
+        if (name?.match(temp)) return item;
+      });
+
+      setFiltered(tempList);
+    } else {
+      setSearching(false);
+    }
+  };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       <View style={[s.container, s.col, {backgroundColor: color}]}>
         {loader ? <Loader /> : null}
+
         <View style={s.searchContainer}>
           <Input
             placeholder="Search Here"
             placeholderTextColor={'#B9B9B9'}
-            onChangeText={text => setSearchText(text)}
-            value={searchText}
+            onChangeText={onSearch}
             marginTop={moderateScale(10, 0.1)}
             w={'95%'}
             h={moderateScale(37, 0.1)}
@@ -449,109 +470,45 @@ const FunInteraction = ({navigation}) => {
             backgroundColor={'#595757'}
           />
         </View>
-        <ScrollView
-          scrollEnabled
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            // alignItems: 'center',
-            flexDirection: 'row',
+        <View
+          style={{
+            position: 'absolute',
+            backgroundColor: color,
+            width: '95%',
+            top: moderateScale(60, 0.1),
+            zIndex: 10000,
+            marginHorizontal: moderateScale(10, 0.1),
           }}
         >
-          {myData.length > 0 ? (
-            <>
-              <InstaStory
-                data={myData}
-                duration={10}
-                onStart={item => console.log(item)}
-                onClose={item => console.log('close: ', item)}
-                showAvatarText={true}
-                avatarTextStyle={{
-                  color: textColor,
-                  marginBottom: moderateScale(25, 0.1),
-                }}
-                customSwipeUpComponent={
-                  <View>
-                    <Text>Swipe</Text>
-                  </View>
-                }
-                style={{
-                  marginTop: moderateScale(5, 0.1),
-                  marginRight: moderateScale(-20, 0.1),
-                }}
+          {searching && (
+            <View style={{marginHorizontal: moderateScale(10, 0.1)}}>
+              <FlatList
+                data={filtered}
+                renderItem={searchItem}
+                keyExtractor={(e, i) => i.toString()}
+                scrollEnabled={true}
+                extraData={refresh}
               />
-            </>
-          ) : (
-            <>
-              <TouchableOpacity style={s.myStory}>
-                <Image
-                  source={require('../../../../assets/images/png/mydp.png')}
-                  width={undefined}
-                  height={undefined}
-                  style={{width: '100%', height: '100%'}}
-                  resizeMode={'contain'}
-                />
-                <Text style={[s.userName, {color: textColor}]}>
-                  Julie Watson
-                </Text>
-                <View style={s.addBtn}>
-                  <Icon
-                    name={'plus'}
-                    size={moderateScale(8, 0.1)}
-                    color={'blue'}
-                  />
-                </View>
-              </TouchableOpacity>
-            </>
-          )}
-
-          {/* <LinearGradient
-            colors={['#cc2b5e', '#753a88']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={[
-              s.linearGradient,
-              // <-- Overwrites the preceding style property
-            ]}
-          >
-            <View style={[s.innerContainer]}>
-              <Text style={s.buttonText}>GRADIENT BORDER CIRCLE</Text>
             </View>
-          </LinearGradient> */}
+          )}
+          {searching && filtered?.length == 0 && (
+            <Text
+              style={[
+                s.name,
+                s.nameBold,
+                {
+                  color: textColor,
+                  textAlign: 'center',
+                  marginVertical: moderateScale(40, 0.1),
+                },
+              ]}
+            >
+              No Users Found
+            </Text>
+          )}
+        </View>
 
-          <InstaStory
-            data={data}
-            duration={10}
-            onStart={item => console.log(item)}
-            onClose={item => console.log('close: ', item)}
-            showAvatarText={true}
-            avatarTextStyle={{
-              color: textColor,
-              marginBottom: moderateScale(25, 0.1),
-            }}
-            customSwipeUpComponent={
-              <View>
-                <Text>Swipe</Text>
-              </View>
-            }
-            style={{
-              marginTop: moderateScale(5, 0.1),
-            }}
-          />
-        </ScrollView>
-
-        <TouchableOpacity style={s.funView}>
-          {/* <View style={[s.yellow, s.round]}>
-            <Fun
-              width={moderateScale(12, 0.1)}
-              height={moderateScale(12, 0.1)}
-            />
-          </View>
-          <View style={[s.yellow, s.round2]}>
-            <Text style={s.count}>5</Text>
-          </View>
-          <Text style={[s.funText, {color: textColor}]}>Fun Interaction</Text> */}
-        </TouchableOpacity>
+        <View style={s.funView}></View>
 
         <FlatList
           data={publicPost}
