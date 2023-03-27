@@ -1,6 +1,6 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import CreatePost from '../../../screens/App/CreatePost';
-import Map from '../../../screens/Auth/Register/Map'
+import Map from '../../../screens/Auth/Register/Map';
 const Stack = createStackNavigator();
 
 const CreatePostStack = () => {

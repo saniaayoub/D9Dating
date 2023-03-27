@@ -88,17 +88,16 @@ const styles = StyleSheet.create({
   },
   fText: {
     // paddingHorizontal: moderateScale(12,0.1),
-    alignSelf:'center',
-    fontSize: moderateScale(14,0.1)
+    alignSelf: 'center',
+    fontSize: moderateScale(14, 0.1),
   },
   fView: {
-    width: moderateScale(120, 0.1),
-    marginRight: moderateScale(30,0.1),
+    width: moderateScale(100, 0.1),
+    marginRight: moderateScale(50, 0.1),
     height: moderateScale(32, 0.1),
     borderColor: 'green',
     borderWidth: 1,
-    justifyContent:'center'
-    
+    justifyContent: 'center',
   },
   textRegular: {
     fontFamily: Poppins,
