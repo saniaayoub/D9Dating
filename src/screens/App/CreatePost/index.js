@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {moderateScale} from 'react-native-size-matters';
@@ -15,13 +16,12 @@ import Header from '../../../Components/Header';
 import Vector from '../../../assets/images/png/Vector.png';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Button, Stack, Menu, Pressable, Input, Alert} from 'native-base';
+import {Button, Stack, Menu, Pressable, Input} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Loader from '../../../Components/Loader';
 import {useIsFocused} from '@react-navigation/native';
-
 
 import {
   launchCamera,
@@ -34,35 +34,42 @@ import RNFS from 'react-native-fs';
 // import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreatePost = ({navigation, route}) => {
-  console.log(route?.params?.elem, 'data from home');
-  const cap = route?.params?.elem?.caption
   const privacy = route?.params?.elem?.user?.post_privacy;
 
   useEffect(() => {
- if(privacy=='1'){
-  setStory('Public')
- }else if(privacy=='2'){
-  setStory('Friends')
- }else{
-  setStory('Only Me')
- }
+    if (privacy == '1') {
+      setStory('Public');
+    } else if (privacy == '2') {
+      setStory('Friends');
+    } else {
+      setStory('Only Me');
+    }
     console.log('aaaaa');
-  }, [])
-  
+  }, []);
+
   const theme = useSelector(state => state.reducer.theme);
-  const [filePath, setFilePath] = useState(route?.params?.screen == 'Home' ? route?.params?.elem?.image : []);
+  const [filePath, setFilePath] = useState(
+    route?.params?.screen == 'Home' || 'funInteraction'
+      ? route?.params?.elem?.image
+      : [],
+  );
   const [open, setOpen] = useState(false);
   const [icon, setIcon] = useState('globe');
-  const [caption, setCaption] = useState(route?.params?.screen == 'Home' ? route?.params?.elem?.caption : '');
-  const [story, setStory] = useState('Public')
+  const [caption, setCaption] = useState(
+    route?.params?.screen == 'Home' || 'funInteraction'
+      ? route?.params?.elem?.caption
+      : // : route?.params?.screen == 'map'
+        // ? route?.params?.item.caption
+        '',
+  );
+  const [story, setStory] = useState('Public');
   const [loader, setLoader] = useState(false);
   const isFocused = useIsFocused();
-  const [userData, setUserData] = useState([])
+  const [userData, setUserData] = useState([]);
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
 
-  
   const [value, setValue] = useState([
     {
       label: 'Public',
@@ -100,7 +107,11 @@ const CreatePost = ({navigation, route}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const postLocation = useSelector(state => state.reducer.postLocation);
-  const [location, setLocation] = useState(route?.params?.screen == 'Home' ? route?.params?.elem?.location : [postLocation])
+  const [location, setLocation] = useState(
+    route?.params?.screen == 'Home' || 'funInteraction'
+      ? route?.params?.elem?.location
+      : [postLocation],
+  );
   console.log(postLocation, 'postLocation');
   console.log(location, 'location');
 
@@ -239,17 +250,25 @@ const CreatePost = ({navigation, route}) => {
         caption: caption,
         privacy_option:
           story == 'Public' ? '1' : story == 'Friends' ? '2' : '3',
-          location: `${location}`
+        location:
+          route?.params?.screen == 'Home' || 'funInteraction'
+            ? route?.params?.elem?.location
+            : postLocation,
       };
-      console.log(data,'dataaaa');
+      console.log(data, 'dataaaa');
       // setLoader(true);
       axiosconfig
         .post(
-          route?.params?.screen == 'Home' ? `post_update/${route.params.elem.id}`: 'post_store', data, {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
+          route?.params?.screen == 'Home'
+            ? `post_update/${route.params.elem.id}`
+            : 'post_store',
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
           },
-        })
+        )
         .then(res => {
           // setLoader(false);
           alert(res?.data?.message);
@@ -261,14 +280,14 @@ const CreatePost = ({navigation, route}) => {
         .catch(err => {
           // setLoader(false);
           console.log(err, 'aaa');
-          alert(err?.response?.data?.message);
+          Alert.alert(err?.response?.data?.message);
         });
     }
   };
   useEffect(() => {
-   getData()
-  }, [isFocused])
-  
+    getData();
+  }, [isFocused]);
+
   const getData = async () => {
     console.log('get data ');
     let SP = await AsyncStorage.getItem('id');
@@ -281,7 +300,7 @@ const CreatePost = ({navigation, route}) => {
       })
       .then(res => {
         console.log('data user', res?.data?.user_details);
-        setUserData(res?.data?.user_details)
+        setUserData(res?.data?.user_details);
         // if (res.data.user_details) {
         //   setData(res.data.user_details);
         // }
@@ -311,7 +330,8 @@ const CreatePost = ({navigation, route}) => {
           <View style={{flex: 0.8, alignSelf: 'center'}}>
             <View>
               <Text style={[s.HeadingTxt, {color: Textcolor}]}>
-                {userData?.name}{userData?.last_name}
+                {userData?.name}
+                {userData?.last_name}
               </Text>
             </View>
             <View style={[s.btn]}>
@@ -417,7 +437,6 @@ const CreatePost = ({navigation, route}) => {
                   </View>
                 </Menu.Item>
               </Menu>
-
             </View>
           </View>
         </View>
@@ -434,31 +453,34 @@ const CreatePost = ({navigation, route}) => {
             color={Textcolor}
             fontSize={moderateScale(14, 0.1)}
           />
-          {/* <Text style={[s.mainText, {color: Textcolor}]}>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            route?.params?.screen == 'Home' || 'funInteraction'
+              ? console.log('aajaj')
+              : navigation.navigate('Map', {
+                  screen: 'createPost',
+                });
+          }}
+        >
+          <View style={[s.mText]}>
+            <Input
+              variant="unstyled"
+              placeholder={'Enter location...'}
+              placeholderTextColor={Textcolor}
+              isReadOnly
+              value={postLocation}
+              onChangeText={text => {
+                setCaption(text);
+              }}
+              backgroundColor={color}
+              color={Textcolor}
+              fontSize={moderateScale(14, 0.1)}
+            />
+            {/* <Text style={[s.mainText, {color: Textcolor}]}>
             What's on your Mind
           </Text> */}
-        </View>
-        <TouchableOpacity onPress={()=>navigation.navigate('Map',{
-            screen : 'createPost'
-          })}>
-        <View style={[s.mText]}>
-          <Input
-            variant="unstyled"
-            placeholder= {'Enter location...'}
-            placeholderTextColor={Textcolor}
-            isReadOnly
-            value={location}
-            onChangeText={text => {
-              setCaption(text);
-            }}
-            backgroundColor={color}
-            color={Textcolor}
-            fontSize={moderateScale(14, 0.1)}
-          />
-          {/* <Text style={[s.mainText, {color: Textcolor}]}>
-            What's on your Mind
-          </Text> */}
-        </View>
+          </View>
         </TouchableOpacity>
         {/* <View style={[s.location,]}>
           
@@ -471,7 +493,7 @@ const CreatePost = ({navigation, route}) => {
         </View> */}
         <View style={[s.imgView, {zIndex: -1}]}>
           <TouchableOpacity onPress={() => refRBSheet.current.open()}>
-            {filePath.length != 0 ? (
+            {filePath?.length != 0 ? (
               <>
                 <View style={s.img}>
                   <Image
@@ -480,8 +502,7 @@ const CreatePost = ({navigation, route}) => {
                   ></Image>
                 </View>
               </>
-            ) :
-            (
+            ) : (
               <>
                 <View style={s.img}>
                   <Image

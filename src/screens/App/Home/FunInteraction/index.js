@@ -21,7 +21,6 @@ import {ScrollView} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Loader from '../../../../Components/Loader';
 import axiosconfig from '../../../../Providers/axios';
-import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
 
@@ -260,7 +259,7 @@ const FunInteraction = ({navigation}) => {
               onPress={() => navigation.navigate('ViewUser', {post: elem.item})}
             >
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                {elem?.item?.user?.name}
+                {elem?.item?.user?.name} {elem?.item?.user?.last_name}
               </Text>
             </TouchableOpacity>
             <Text style={[s.textRegular, {color: textColor}]}>
@@ -387,7 +386,7 @@ const FunInteraction = ({navigation}) => {
         </View>
         <View style={s.footer}>
           <Text style={[s.name, {color: textColor}]}>
-            {elem?.item?.user?.name}
+            {elem?.item?.user?.name} {elem?.item?.user?.last_name}
           </Text>
           <Text style={[s.textRegular, {color: textColor}]}>
             {elem?.item?.caption}

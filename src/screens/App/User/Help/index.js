@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  Alert,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -93,12 +94,16 @@ const Help = ({navigation}) => {
         })
         .then(res => {
           console.log('data', res.data);
-          alert(res?.data?.message);
+          Alert.alert(res?.data?.message);
           setLoader(false);
+          setTimeout(() => {
+            navigation.goBack();
+          }, 2000);
         })
         .catch(err => {
           setLoader(false);
           console.log(err);
+          // Alert.alert(err?.message);
           // showToast(err.response);
         });
     }
@@ -110,7 +115,8 @@ const Help = ({navigation}) => {
           style={[
             s.container,
             {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
-          ]}>
+          ]}
+        >
           {loader ? <Loader /> : null}
 
           <View style={s.header}>
@@ -128,41 +134,6 @@ const Help = ({navigation}) => {
             </Text>
           </View>
 
-          {/* <View style={[s.row,{backgroundColor: color}]}>
-        <View style={{flex:0.15}}>
-          <TouchableOpacity style={s.circle}>
-            <Icon
-              name={'smile'}
-              color={'#8F8A8A'}
-              solid
-              size={moderateScale(20, 0.1)}
-            />
-          </TouchableOpacity>
-          </View>
-          <View style={{flex:0.75}}>
-            <Input
-              w={'80%'}
-              variant="unstyled"
-              placeholderTextColor={'#fff'}
-              color={'#fff'}
-              placeholder="Type Message"
-              value={input}
-              onChangeText={text => setInput(text)}
-              size="md"
-            />
-          </View>
-
-    
-        <View style={{flex:0.1}}>
-          <TouchableOpacity onPress={() => help()}>
-            <Inicon
-              name={'md-send'}
-              color={'#8F8A8A'}
-              size={moderateScale(20, 0.1)}
-            />
-          </TouchableOpacity>
-        </View>
-      </View> */}
           <View
             style={{
               marginVertical: moderateScale(12, 0.1),
@@ -171,19 +142,20 @@ const Help = ({navigation}) => {
               // marginBottom: moderateScale(-30,0.1),
               borderWidth: 0.9,
               borderColor: textColor,
-            }}>
+            }}
+          >
             <View style={{flex: 0.2, marginTop: moderateScale(5, 0.1)}}>
               <Input
                 w={{
                   base: '100%',
                   md: '25%',
                 }}
+                color={textColor}
+                fontSize={moderateScale(12, 0.1)}
                 isReadOnly
                 variant="unstyled"
-                color={'#fff'}
                 placeholder="Name"
                 value={fname}
-                onChangeText={text => setInput(text)}
                 size="md"
                 style={{
                   borderBottomColor:
@@ -200,7 +172,8 @@ const Help = ({navigation}) => {
                 }}
                 isReadOnly
                 variant="unstyled"
-                color={'#fff'}
+                color={textColor}
+                fontSize={moderateScale(12, 0.1)}
                 placeholder="Email"
                 value={email}
                 onChangeText={text => setInput(text)}
@@ -221,7 +194,8 @@ const Help = ({navigation}) => {
                 }}
                 isReadOnly
                 variant="unstyled"
-                color={'#fff'}
+                color={textColor}
+                fontSize={moderateScale(12, 0.1)}
                 placeholder="phone"
                 value={phone}
                 onChangeText={text => setInput(text)}
@@ -241,7 +215,8 @@ const Help = ({navigation}) => {
                 }}
                 variant="unstyled"
                 placeholderTextColor={textColor}
-                color={'#fff'}
+                color={textColor}
+                fontSize={moderateScale(12, 0.1)}
                 placeholder="Description"
                 value={descreption}
                 onChangeText={text => setDescreption(text)}
@@ -266,7 +241,8 @@ const Help = ({navigation}) => {
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
-                onPress={() => help()}>
+                onPress={() => help()}
+              >
                 <Text style={s.btnText}>Send</Text>
               </Button>
             </View>

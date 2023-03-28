@@ -12,7 +12,6 @@ import Loader from '../../../Components/Loader';
 import axiosconfig from '../../../Providers/axios';
 import {useIsFocused} from '@react-navigation/native';
 
-
 const messages = [
   {
     from: 'Julie Watson',
@@ -90,13 +89,14 @@ const Notifications = ({navigation}) => {
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [loader, setLoader] = useState(false);
-  const [data, setData] = useState([])
-  const[accept, setAccept] = useState(false)
-  const[decline, setDecline] = useState(false)
+  const [data, setData] = useState([]);
+  const [accept, setAccept] = useState(false);
+  const [decline, setDecline] = useState(false);
+  const [response, setResponse] = useState('');
   useEffect(() => {
-    getList()
-  }, [isFocused])
-  
+    setResponse('');
+    getList();
+  }, [isFocused]);
 
   const getList = async () => {
     setLoader(true);
@@ -107,8 +107,8 @@ const Notifications = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', res.data[0].request_user);
-        setData(res?.data)
+        console.log('elenenen', res.data?.request_user);
+        setData(res?.data);
         setLoader(false);
       })
       .catch(err => {
@@ -117,7 +117,7 @@ const Notifications = ({navigation}) => {
         // showToast(err.response);
       });
   };
-  const connectAccept = async (id) => {
+  const connectAccept = async id => {
     console.log('accept');
     setLoader(true);
     axiosconfig
@@ -128,8 +128,8 @@ const Notifications = ({navigation}) => {
       })
       .then(res => {
         console.log('data', res?.data);
-        setAccept(true)
-        getList()
+        setResponse('Connected');
+        getList();
         setLoader(false);
       })
       .catch(err => {
@@ -138,7 +138,7 @@ const Notifications = ({navigation}) => {
         // showToast(err.response);
       });
   };
-  const connectDecline = async (id) => {
+  const connectDecline = async id => {
     setLoader(true);
     axiosconfig
       .get(`connect-remove/${id}`, {
@@ -148,8 +148,9 @@ const Notifications = ({navigation}) => {
       })
       .then(res => {
         console.log('data', res?.data);
-        setDecline(true)
-        getList()
+        setResponse('Declined');
+
+        getList();
         setLoader(false);
       })
       .catch(err => {
@@ -158,7 +159,6 @@ const Notifications = ({navigation}) => {
         // showToast(err.response);
       });
   };
-
 
   const renderItem = (elem, i) => {
     console.log('elem data', elem?.item);
@@ -172,22 +172,24 @@ const Notifications = ({navigation}) => {
           />
         </View>
         <TouchableOpacity
-        onPress={()=> navigation.navigate('ViewUser')}
+          onPress={() =>
+            navigation.navigate('ViewUser', {
+              post: elem?.item?.request_user,
+              screen: 'search',
+            })
+          }
           style={{flex: 0.7, alignSelf: 'center'}}
         >
           <View>
-            <View style={{flexDirection: 'row', width: moderateScale(200,0.1)}}>
+            <View
+              style={{flexDirection: 'row', width: moderateScale(200, 0.1)}}
+            >
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                {elem?.item?.request_user?.name}{elem?.item?.request_user?.last_name}
-                {
-              accept == false ?(
+                {elem?.item?.request_user?.name}{' '}
+                {elem?.item?.request_user?.last_name}
                 <>
-                <Text style={[s.name1]}>{' '}{' '}requested to follow you</Text>
-                
+                  <Text style={[s.name1]}> requested to follow you</Text>
                 </>
-              ): null
-            }
-
               </Text>
             </View>
             {/* <Text style={[s.textSmall, {color: '#787878'}]}>
@@ -195,51 +197,41 @@ const Notifications = ({navigation}) => {
             </Text> */}
           </View>
         </TouchableOpacity>
-        
 
-        <View style={s.icon}>
-          {
-            accept == false ?(
-              <>
-                <TouchableOpacity onPress={()=>connectAccept(elem?.item?.request_user?.id)}>
-          <View
-            style={{
-              paddingHorizontal: moderateScale(6, 0.1),
-               right: moderateScale(15),
-            }}
-          >
-           <Antdesign name="checkcircle" size={20} color="green" />
+        {response ? (
+          <View style={s.icon}>
+            <View style={s.fView}>
+              <Text style={[s.fText, {color: textColor}]}>{response}</Text>
+            </View>
           </View>
-          </TouchableOpacity>
-              </>
-            ):(
-              <>
-              <View style={s.fView}>
-              <Text style={[s.fText,{color: textColor}]}>Connected</Text>
+        ) : (
+          <View style={s.icon}>
+            <TouchableOpacity
+              onPress={() => connectAccept(elem?.item?.request_user?.id)}
+            >
+              <View
+                style={{
+                  paddingHorizontal: moderateScale(6, 0.1),
+                  right: moderateScale(15),
+                }}
+              >
+                <Antdesign name="checkcircle" size={20} color="green" />
               </View>
-              </>
-            )
-          }
-          {
-            accept == false ?(
-              <>
-              <TouchableOpacity onPress={()=>connectDecline(elem?.item?.request_user?.id)}>
-          <View
-            style={{
-              right: moderateScale(5),
-              
-            }}
-          >
-          <Antdesign name="closecircle" size={20} color="red" />
-          </View>
             </TouchableOpacity>
-              </>
-            ): null
-            
-          }
-      
-         
-        </View>
+
+            <TouchableOpacity
+              onPress={() => connectDecline(elem?.item?.request_user?.id)}
+            >
+              <View
+                style={{
+                  right: moderateScale(5),
+                }}
+              >
+                <Antdesign name="closecircle" size={20} color="red" />
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   };

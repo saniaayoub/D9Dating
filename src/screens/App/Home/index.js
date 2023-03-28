@@ -578,8 +578,7 @@ const Home = ({navigation}) => {
               onPress={() => navigation.navigate('ViewUser', {post: elem.item})}
             >
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                {elem?.item?.user?.name}
-                {elem?.item?.user?.last_name}
+                {elem?.item?.user?.name} {elem?.item?.user?.last_name}
               </Text>
             </TouchableOpacity>
             <Text style={[s.textRegular, {color: textColor}]}>
@@ -707,7 +706,7 @@ const Home = ({navigation}) => {
         </View>
         <View style={s.footer}>
           <Text style={[s.name, {color: textColor}]}>
-            {elem?.item?.user?.name}
+            {elem?.item?.user?.name} {elem?.item?.user?.last_name}
           </Text>
           <Text style={[s.textRegular, {color: textColor}]}>
             {elem?.item?.caption}
@@ -799,7 +798,7 @@ const Home = ({navigation}) => {
                 }}
                 style={[
                   s.addBtn,
-                  {borderColor: color, bottom: moderateScale(15, 0.1)},
+                  {borderColor: color, top: moderateScale(50, 0.1)},
                 ]}
               >
                 <Icon
@@ -911,7 +910,10 @@ const Home = ({navigation}) => {
 
         <TouchableOpacity
           style={s.funView}
-          onPress={() => navigation.navigate('FunInteraction')}
+          onPress={() => {
+            console.log('aaa');
+            navigation.navigate('FunInteraction');
+          }}
         >
           <View style={[s.yellow, s.round]}>
             <Fun
@@ -933,7 +935,7 @@ const Home = ({navigation}) => {
           </View>
           <Text style={[s.funText, {color: textColor}]}>Fun Interaction</Text>
         </TouchableOpacity>
-
+        <View style={{height: moderateScale(35, 0.1)}}></View>
         <FlatList
           data={posts}
           renderItem={(elem, index) => renderItem(elem)}

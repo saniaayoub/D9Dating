@@ -1,5 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Button, Image, TextInput, TouchableOpacity, Dimensions } from 'react-native'
+import React, {useState, useRef, useEffect} from 'react';
+import {
+  Button,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import {
   SafeAreaView,
   ScrollView,
@@ -9,28 +15,29 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import { setLocation } from '../../../Redux/actions';
-import { setPostLocation } from '../../../Redux/actions';
-import { useSelector, useDispatch } from 'react-redux';
-import { Marker } from "react-native-maps";
-import MapView, { PROVIDER_GOOGLE, animateToRegion } from "react-native-maps";
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
+import {setLocation} from '../../../Redux/actions';
+import {setPostLocation} from '../../../Redux/actions';
+import {useSelector, useDispatch} from 'react-redux';
+import {Marker} from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE, animateToRegion} from 'react-native-maps';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Geocoder from 'react-native-geocoding';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
-let LONGITUDE
-let LATITUDE
+let LONGITUDE;
+let LATITUDE;
 
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const App = ({navigation, route}) => {
-  const screen1 = route.params
-  console.log(screen1);
+  const screen1 = route.params;
+
+  console.log(screen1, 'screen');
   const dispatch = useDispatch();
-  const mapRef = useRef()
+  const mapRef = useRef();
   const [markerPosition, setMarkerPosition] = useState({
     latitude: 24.946218,
     longitude: 67.005615,
@@ -44,24 +51,23 @@ const App = ({navigation, route}) => {
     longitudeDelta: LONGITUDE_DELTA,
   });
 
-  const onMapRegionChange = (newRegion) => {
+  const onMapRegionChange = newRegion => {
     console.log(newRegion, 'new region');
     setMarkerPosition(newRegion);
     // if(screen1){
     //   console.log('ddd');
-    //   dispatch(setPostLocation(newRegion))            
+    //   dispatch(setPostLocation(newRegion))
     // }
     // else{
     //   console.log('rr');
     //   dispatch(setLocation(newRegion))
     //   // navigation.goBack()
     // }
-  
-    // dispatch(setLocation(newRegion))
 
+    // dispatch(setLocation(newRegion))
   };
 
-  const onMarkerDragEnd = (event) => {
+  const onMarkerDragEnd = event => {
     setMarkerPosition(event.nativeEvent.coordinate);
   };
   const [position, setPosition] = useState({
@@ -73,16 +79,15 @@ const App = ({navigation, route}) => {
   Geocoder.init('AIzaSyD8i3TGGkBPF757aCT-w36E6zvSer3r2KE');
 
   useEffect(() => {
-    Geolocation.getCurrentPosition((pos) => {
+    Geolocation.getCurrentPosition(pos => {
       const crd = pos.coords;
-      LATITUDE = crd.latitude
-      LONGITUDE = crd.longitude
-    })
+      LATITUDE = crd.latitude;
+      LONGITUDE = crd.longitude;
+    });
   }, []);
   useEffect(() => {
-   console.log('map');
-  }, [])
-  
+    console.log('map');
+  }, []);
 
   const onPress = (data, details) => {
     // setPosition(details.geometry.location);
@@ -106,28 +111,29 @@ const App = ({navigation, route}) => {
   function getLocation() {
     Geolocation.getCurrentPosition(
       //Will give you the current location
-      (position) => {
+      position => {
         //getting the Longitude from the location json
-        const currentLongitude =
-          JSON.stringify(position.coords.longitude);
+        const currentLongitude = JSON.stringify(position.coords.longitude);
         console.log(currentLongitude);
         //getting the Latitude from the location json
-        const currentLatitude =
-          JSON.stringify(position.coords.latitude);
+        const currentLatitude = JSON.stringify(position.coords.latitude);
         console.log(currentLatitude);
         setMarkerPosition({
           longitude: position.coords.longitude,
           latitude: position.coords.latitude,
           longitudeDelta: 0.0421,
-          latitudeDelta: 0.0922
-        })
+          latitudeDelta: 0.0922,
+        });
 
         console.log(markerPosition, 'current marker position');
-      }, (error) => alert(error.message), {
-      enableHighAccuracy: true, timeout: 20000, maximumAge: 1000
-    }
+      },
+      error => alert(error.message),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 1000,
+      },
     );
-
   }
   return (
     <View style={styles.container}>
@@ -142,50 +148,48 @@ const App = ({navigation, route}) => {
         zoomEnabled={true}
         pitchEnabled={true}
         onRegionChangeComplete={onMapRegionChange}
-
-        rotateEnabled={true}>
+        rotateEnabled={true}
+      >
         <Marker
           draggable
           coordinate={markerPosition}
-          title='Yor are here'
-          description='current Location'
-
-          onPress={()=> {
+          title="Yor are here"
+          description="current Location"
+          onPress={() => {
             console.log(markerPosition, 'before');
-            setMarkerPosition(position)
+            setMarkerPosition(position);
             console.log(markerPosition, 'after');
           }}
           onDragEnd={e => {
-            const coordinate = (JSON.stringify(e.nativeEvent.coordinate))
-              if(screen1){
-                console.log('ddd');
-                dispatch(setPostLocation(coordinate))
-                setTimeout(() => {
-                  navigation.goBack()
-                }, 2000);            
-              }
-              else{
-                console.log('rr');
-                dispatch(setLocation(coordinate))
-                setTimeout(() => {
-                  navigation.goBack()
-                }, 2000);
-              }
-            
+            const coordinate = JSON.stringify(e.nativeEvent.coordinate);
+            if (screen1) {
+              console.log('ddd');
+              dispatch(setPostLocation(coordinate));
+              setTimeout(() => {
+                navigation.goBack();
+              }, 2000);
+            } else {
+              console.log('rr');
+              dispatch(setLocation(coordinate));
+              setTimeout(() => {
+                navigation.goBack();
+              }, 2000);
+            }
+
             // getCityName(coordinate)
-            alert(coordinate)
+            alert(coordinate);
             // const city = getCityName(JSON.stringify(e.nativeEvent.coordinate,))
             // console.log(city,'city')
           }}
         />
       </MapView>
 
-      <View style={{ position: 'absolute', top: 10, width: '100%' }}>
+      <View style={{position: 'absolute', top: 10, width: '100%'}}>
         <GooglePlacesAutocomplete
           styles={styles.searchbar}
           placeholder="Search"
           query={{
-            key: "AIzaSyD8i3TGGkBPF757aCT-w36E6zvSer3r2KE",
+            key: 'AIzaSyD8i3TGGkBPF757aCT-w36E6zvSer3r2KE',
             language: 'en', // language of the results
           }}
           GooglePlacesDetailsQuery={{
@@ -193,15 +197,14 @@ const App = ({navigation, route}) => {
           }}
           fetchDetails={true}
           onPress={onPress}
-          onFail={(error) => console.error(error)}
-        // requestUrl={{
-        //   url:
-        //     'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api',
-        //   useOnPlatform: 'web',
-        // }} // this in only required for use on the web. See https://git.io/JflFv more for details.
+          onFail={error => console.error(error)}
+          // requestUrl={{
+          //   url:
+          //     'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api',
+          //   useOnPlatform: 'web',
+          // }} // this in only required for use on the web. See https://git.io/JflFv more for details.
         />
       </View>
-
     </View>
   );
 };
@@ -210,13 +213,12 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     flex: 1, //the container will fill the whole screen.
-    justifyContent: "flex-end",
-    alignItems: "center",
-    position: 'relative'
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    position: 'relative',
   },
   map: {
     ...StyleSheet.absoluteFillObject,
-
   },
   markerFixed: {
     left: '50%',
@@ -224,10 +226,7 @@ const styles = StyleSheet.create({
     marginTop: -48,
     position: 'absolute',
     top: '50%',
-
-
   },
 });
 
 export default App;
-

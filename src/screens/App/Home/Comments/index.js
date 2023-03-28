@@ -103,13 +103,33 @@ const Comments = ({navigation, route}) => {
   const [userID, setUserID] = useState('');
   const [edit, setEdit] = useState(false);
   const [refresh, setRefresh] = useState(false);
-
+  const [userData, setUserData] = useState();
   useEffect(() => {
     getID();
-
+    getUserData();
     // extractDate();
   }, []);
 
+  const getUserData = async () => {
+    setLoader(true);
+    axiosconfig
+      .get(`user_view/${userID}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log(res?.data?.user_details, 'user details');
+        setUserData(res?.data?.user_details);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+
+        console.log(err);
+        // showToast(err.response);
+      });
+  };
   const getDate = old => {
     console.log(old, 'old');
 
@@ -364,7 +384,7 @@ const Comments = ({navigation, route}) => {
                 style={{flexDirection: 'row', width: moderateScale(200, 0.1)}}
               >
                 <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                  {post?.user?.name}
+                  {post.user?.name} {post.user?.last_name}
                   {'  '}
                   <Text style={[s.name1]}> {post?.caption}</Text>
                 </Text>
@@ -403,7 +423,7 @@ const Comments = ({navigation, route}) => {
                 ]}
               >
                 <Image
-                  source={{uri: post?.user?.image}}
+                  source={{uri: userData?.image}}
                   style={s.dp1}
                   resizeMode={'cover'}
                 />
