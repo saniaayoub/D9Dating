@@ -11,6 +11,7 @@ import {setTheme} from '../../../../Redux/actions';
 import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
 
 const data = [
   {
@@ -36,6 +37,7 @@ const ViewUser = ({navigation, route}) => {
     screen == 'search' ? post?.id : post.user.id,
   );
   const [loginId, setLoginId] = useState(null);
+  const isFocused = useIsFocused();
 
   console.log(post, 'post');
   const dispatch = useDispatch();
@@ -43,7 +45,7 @@ const ViewUser = ({navigation, route}) => {
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const userToken = useSelector(state => state.reducer.userToken);
-
+  const [status, setStatus] = useState(null);
   const [scroll, setScroll] = useState(false);
   const [connected, setConnected] = useState(false);
   const [blocked, setBlocked] = useState(false);
@@ -56,7 +58,7 @@ const ViewUser = ({navigation, route}) => {
     getId();
     // connect();
     // Disconnect()
-  }, []);
+  }, [isFocused]);
 
   const getId = async () => {
     const logInId = await AsyncStorage.getItem('id');
@@ -79,6 +81,7 @@ const ViewUser = ({navigation, route}) => {
           JSON.stringify(res.data?.user_details?.connected),
         );
         console.log(res?.data?.user_details, 'user detials');
+        setStatus(res.data?.user_details?.connected);
         if (res?.data?.user_details) {
           // const dd = JSON.stringify(res?.data)
           setUserData([res?.data?.user_details]);
@@ -111,6 +114,7 @@ const ViewUser = ({navigation, route}) => {
       .then(res => {
         console.log('connect', res);
         setConnected(true);
+        getData();
 
         setLoader(false);
       })
@@ -133,6 +137,7 @@ const ViewUser = ({navigation, route}) => {
       .then(res => {
         console.log('Disconnect', res);
         setConnected(false);
+        getData();
         setLoader(false);
       })
       .catch(err => {
@@ -155,9 +160,9 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('block', res);
-        getData();
-        setBlocked(true);
         setConnected(false);
+        setBlocked(true);
+        getData();
         setLoader(false);
       })
       .catch(err => {
@@ -279,7 +284,7 @@ const ViewUser = ({navigation, route}) => {
             <>
               <TouchableOpacity>
                 <View>
-                  {connected == false && blocked == false ? (
+                  {connected == false && blocked == false && status == 0 ? (
                     <>
                       <TouchableOpacity onPress={() => connect()}>
                         <View style={s.btn}>
@@ -287,7 +292,17 @@ const ViewUser = ({navigation, route}) => {
                         </View>
                       </TouchableOpacity>
                     </>
-                  ) : connected == true && blocked == false ? (
+                  ) : connected == true && status == 0 ? (
+                    <>
+                      <View style={s.connected}>
+                        <TouchableOpacity onPress={() => Disconnect()}>
+                          <View style={s.btn}>
+                            <Text style={[s.btnTxt]}>pending</Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+                    </>
+                  ) : blocked == false && status == 1 ? (
                     <>
                       <View style={s.connected}>
                         <TouchableOpacity onPress={() => Disconnect()}>
@@ -302,7 +317,7 @@ const ViewUser = ({navigation, route}) => {
                         </TouchableOpacity>
                       </View>
                     </>
-                  ) : blocked == true && connected == false ? (
+                  ) : blocked == true && connected == false && status == 0 ? (
                     <>
                       <TouchableOpacity onPress={() => unblock()}>
                         <View style={s.btn}>

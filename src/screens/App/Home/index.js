@@ -798,7 +798,7 @@ const Home = ({navigation}) => {
                 }}
                 style={[
                   s.addBtn,
-                  {borderColor: color, bottom: moderateScale(15, 0.1)},
+                  {borderColor: color, top: moderateScale(50, 0.1)},
                 ]}
               >
                 <Icon
@@ -910,7 +910,10 @@ const Home = ({navigation}) => {
 
         <TouchableOpacity
           style={s.funView}
-          onPress={() => navigation.navigate('FunInteraction')}
+          onPress={() => {
+            console.log('aaa');
+            navigation.navigate('FunInteraction');
+          }}
         >
           <View style={[s.yellow, s.round]}>
             <Fun
@@ -932,7 +935,7 @@ const Home = ({navigation}) => {
           </View>
           <Text style={[s.funText, {color: textColor}]}>Fun Interaction</Text>
         </TouchableOpacity>
-
+        <View style={{height: moderateScale(35, 0.1)}}></View>
         <FlatList
           data={posts}
           renderItem={(elem, index) => renderItem(elem)}

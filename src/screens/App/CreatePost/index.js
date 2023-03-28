@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {moderateScale} from 'react-native-size-matters';
@@ -15,7 +16,7 @@ import Header from '../../../Components/Header';
 import Vector from '../../../assets/images/png/Vector.png';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Button, Stack, Menu, Pressable, Input, Alert} from 'native-base';
+import {Button, Stack, Menu, Pressable, Input} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,8 +34,6 @@ import RNFS from 'react-native-fs';
 // import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreatePost = ({navigation, route}) => {
-  console.log(route?.params?.elem, 'data from home');
-  const cap = route?.params?.elem?.caption;
   const privacy = route?.params?.elem?.user?.post_privacy;
 
   useEffect(() => {
@@ -59,7 +58,9 @@ const CreatePost = ({navigation, route}) => {
   const [caption, setCaption] = useState(
     route?.params?.screen == 'Home' || 'funInteraction'
       ? route?.params?.elem?.caption
-      : '',
+      : // : route?.params?.screen == 'map'
+        // ? route?.params?.item.caption
+        '',
   );
   const [story, setStory] = useState('Public');
   const [loader, setLoader] = useState(false);
@@ -107,7 +108,7 @@ const CreatePost = ({navigation, route}) => {
   const refRBSheet = useRef();
   const postLocation = useSelector(state => state.reducer.postLocation);
   const [location, setLocation] = useState(
-    route?.params?.screen == 'Home'
+    route?.params?.screen == 'Home' || 'funInteraction'
       ? route?.params?.elem?.location
       : [postLocation],
   );
@@ -249,7 +250,10 @@ const CreatePost = ({navigation, route}) => {
         caption: caption,
         privacy_option:
           story == 'Public' ? '1' : story == 'Friends' ? '2' : '3',
-        location: `${location}`,
+        location:
+          route?.params?.screen == 'Home' || 'funInteraction'
+            ? route?.params?.elem?.location
+            : postLocation,
       };
       console.log(data, 'dataaaa');
       // setLoader(true);
@@ -276,7 +280,7 @@ const CreatePost = ({navigation, route}) => {
         .catch(err => {
           // setLoader(false);
           console.log(err, 'aaa');
-          alert(err?.response?.data?.message);
+          Alert.alert(err?.response?.data?.message);
         });
     }
   };
@@ -449,16 +453,15 @@ const CreatePost = ({navigation, route}) => {
             color={Textcolor}
             fontSize={moderateScale(14, 0.1)}
           />
-          {/* <Text style={[s.mainText, {color: Textcolor}]}>
-            What's on your Mind
-          </Text> */}
         </View>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('Map', {
-              screen: 'createPost',
-            })
-          }
+          onPress={() => {
+            route?.params?.screen == 'Home' || 'funInteraction'
+              ? console.log('aajaj')
+              : navigation.navigate('Map', {
+                  screen: 'createPost',
+                });
+          }}
         >
           <View style={[s.mText]}>
             <Input
@@ -466,7 +469,7 @@ const CreatePost = ({navigation, route}) => {
               placeholder={'Enter location...'}
               placeholderTextColor={Textcolor}
               isReadOnly
-              value={location}
+              value={postLocation}
               onChangeText={text => {
                 setCaption(text);
               }}
@@ -490,7 +493,7 @@ const CreatePost = ({navigation, route}) => {
         </View> */}
         <View style={[s.imgView, {zIndex: -1}]}>
           <TouchableOpacity onPress={() => refRBSheet.current.open()}>
-            {filePath.length != 0 ? (
+            {filePath?.length != 0 ? (
               <>
                 <View style={s.img}>
                   <Image

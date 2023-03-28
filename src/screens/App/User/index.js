@@ -187,7 +187,7 @@ const Profile = ({navigation}) => {
         setLoader(false);
       })
       .catch(err => {
-        console.log(err);
+        console.log(err, 'sasasas');
         setLoader(false);
         getData();
         showToast(err.message);

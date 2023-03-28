@@ -38,7 +38,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import style from '../../../Components/Header/style';
 import Loader from '../../../Components/Loader';
 const Groups = [
-  {id: 'Group 1', color: 'blue',},
+  {id: 'Group 1', color: 'blue'},
   {id: 'Group 2', color: 'green'},
   {id: 'Group 3', color: 'red'},
   {id: 'Group 4', color: 'yellow'},
@@ -150,14 +150,12 @@ const Register = ({navigation}) => {
     console.log(item.name);
   };
 
-  const validateEmail = () => {
-    if (onsubmit) {
-      const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-      if (emailRegex.test(email)) {
-        setIsEmail(true);
-      } else {
-        setIsEmail(false);
-      }
+  const validateEmail = e => {
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (emailRegex.test(e)) {
+      setIsEmail(true);
+    } else {
+      setIsEmail(false);
     }
   };
   const submit = () => {
@@ -312,10 +310,15 @@ const Register = ({navigation}) => {
             <Header navigation={navigation} />
           </View>
           <View style={s.heading}>
-            <Text style={[s.headingText, {color: Textcolor}]}>
-              Create Your{' '}
-            </Text>
             <Text
+              style={[
+                s.headingText,
+                {fontFamily: 'Poppins-Bold', color: Textcolor},
+              ]}
+            >
+              Sign Up
+            </Text>
+            {/* <Text
               style={[
                 s.headingText,
                 {fontFamily: 'Poppins-Bold', color: Textcolor},
@@ -323,7 +326,7 @@ const Register = ({navigation}) => {
             >
               {' '}
               Account
-            </Text>
+            </Text> */}
           </View>
           <ScrollView
             style={{
@@ -333,6 +336,7 @@ const Register = ({navigation}) => {
               alignItems: 'center',
               justifyContent: 'center',
               paddingBottom: moderateScale(20, 0.1),
+              paddingHorizontal: moderateScale(9, 0.1),
             }}
           >
             <View style={s.input}>
@@ -544,8 +548,9 @@ const Register = ({navigation}) => {
                   color={Textcolor}
                   fontSize={moderateScale(10, 0.1)}
                   onChangeText={e => {
+                    validateEmail(e);
                     setEmail(e);
-                    validateEmail();
+                    // validateEmail();
                   }}
                 />
                 {onsubmit && isEmail === false && email != null ? (
@@ -623,24 +628,23 @@ const Register = ({navigation}) => {
                       </Pressable>
                     );
                   }}
-                >{
-                  Groups.map((v,i)=>{
-                    return(
+                >
+                  {Groups.map((v, i) => {
+                    return (
                       <Menu.Item
-                      onPress={() => {
-                        setGroup(v.id);
-                      }}
-                    >
-                      <View style={s.optionView}>
-                        <Text style={[s.optionBtns, {color: Textcolor}]}>
-                         {v.id}
-                        </Text>
-                      </View>
-                    </Menu.Item>
-                    )
-                  })
-                }
-                   {/* <Menu.Item
+                        onPress={() => {
+                          setGroup(v.id);
+                        }}
+                      >
+                        <View style={s.optionView}>
+                          <Text style={[s.optionBtns, {color: Textcolor}]}>
+                            {v.id}
+                          </Text>
+                        </View>
+                      </Menu.Item>
+                    );
+                  })}
+                  {/* <Menu.Item
                     onPress={() => {
                       setGroup('Group 1');
                     }}
