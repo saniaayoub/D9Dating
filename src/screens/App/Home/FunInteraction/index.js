@@ -18,7 +18,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Pin from 'react-native-vector-icons/SimpleLineIcons';
 import {ScrollView} from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Loader from '../../../../Components/Loader';
 import axiosconfig from '../../../../Providers/axios';

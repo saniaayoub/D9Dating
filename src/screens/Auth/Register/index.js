@@ -459,7 +459,7 @@ const Register = ({navigation}) => {
                       ]}
                     >
                       <Text style={[s.date, {color: Textcolor}]}>
-                        {date ? y : 'YYYY'}
+                        {date ? y : 'YYY'}
                       </Text>
                     </View>
                   </View>
