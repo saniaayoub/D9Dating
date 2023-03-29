@@ -2,6 +2,7 @@ import {
   ImageBackground,
   SafeAreaView,
   Text,
+  Keyboard,
   View,
   ActivityIndicator,
   ToastAndroid,
@@ -59,6 +60,8 @@ const Login = ({navigation}) => {
     };
     console.log({data});
     if (!sub) {
+      Keyboard.dismiss();
+
       axiosconfig
         .post('login', data)
         .then(res => {
@@ -76,7 +79,6 @@ const Login = ({navigation}) => {
           // alert(res?.data?.message)
           getStories(res?.data?.access_token);
           setLoader(false);
-
           // setOnsubmit(true)
         })
         .catch(err => {
