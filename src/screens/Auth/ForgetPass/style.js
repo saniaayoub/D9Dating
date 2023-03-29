@@ -1,12 +1,14 @@
 import {Dimensions, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
-const Poppins = 'Poppins-Regular';
-const PoppinsBold = 'Poppins-Bold';
+const Poppins = '';
+const PoppinsBold = '';
 
 const styles = StyleSheet.create({
   container: {
     height: '100%',
+    flex:1,
+    justifyContent:'space-evenly'
   },
   header: {
     paddingHorizontal: moderateScale(10, 0.1),
@@ -16,13 +18,13 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(60, 0.1),
   },
   headingText: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(32, 0.1),
     lineHeight: moderateScale(48, 0.1),
     fontWeight: '700',
   },
   headingText1: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(32, 0.1),
     lineHeight: moderateScale(48, 0.1),
     fontWeight: '300',
@@ -43,7 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   btnText: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     lineHeight: moderateScale(20, 0.1),
     fontSize: moderateScale(13, 0.1),
     color: '#222222',
@@ -52,16 +54,16 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
   },
   forgetPass1: {
     color: '#FFD700',
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
   },
   bottomLink: {
-    marginTop: moderateScale(200),
+    marginBottom: moderateScale(100),
   },
   error: {
     color: 'red',

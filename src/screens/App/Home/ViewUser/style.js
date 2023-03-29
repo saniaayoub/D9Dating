@@ -1,8 +1,8 @@
 import {Dimensions, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
-const Poppins = 'Poppins-Regular';
-const PoppinsBold = 'Poppins-Bold';
+const Poppins = '';
+const PoppinsBold = '';
 
 const styles = StyleSheet.create({
   View1: {
@@ -31,14 +31,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(18, 0.1),
   },
   headerTxt: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(24, 0.1),
     lineHeight: moderateScale(36, 0.1),
     color: '#fff',
     alignSelf: 'center',
   },
   location: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
     color: '#9F9F9F',
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   txt: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(12, 0.1),
     lineHeight: moderateScale(18, 0.1),
     color: '#9F9F9F',
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     marginVertical: moderateScale(30),
   },
   aboutTxt: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(16, 0.1),
     lineHeight: moderateScale(23, 0.1),
     color: '#fff',
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(25, 0.1),
   },
   btnTxt: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(14, 0.1),
     lineHeight: moderateScale(19.5, 0.1),
     color: '#222222',

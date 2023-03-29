@@ -490,7 +490,7 @@ const CreatePost = ({navigation, route}) => {
         </View> */}
         <View style={[s.imgView, {zIndex: -1}]}>
           <TouchableOpacity onPress={() => refRBSheet.current.open()}>
-            {filePath.length != 0 ? (
+            {filePath?.length != 0 ? (
               <>
                 <View style={s.img}>
                   <Image
@@ -552,7 +552,7 @@ const CreatePost = ({navigation, route}) => {
                   <Button
                     transparent
                     style={s.capturebtn}
-                    onPress={() => captureImage('photo')}
+                    onPressIn={() => captureImage('photo')}
                   >
                     <View style={{flexDirection: 'row'}}>
                       <Ionicons name="camera" style={s.capturebtnicon} />
@@ -562,7 +562,7 @@ const CreatePost = ({navigation, route}) => {
                   <Button
                     transparent
                     style={s.capturebtn}
-                    onPress={() => chooseFile('photo')}
+                    onPressIn={() => chooseFile('photo')}
                   >
                     <View style={{flexDirection: 'row'}}>
                       <Ionicons

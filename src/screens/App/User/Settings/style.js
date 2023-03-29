@@ -1,8 +1,8 @@
 import {Dimensions, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
-const Poppins = 'Poppins-Regular';
-const PoppinsBold = 'Poppins-Bold';
+const Poppins = '';
+const PoppinsBold = '';
 
 const styles = StyleSheet.create({
   container: {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   dltTxt: {
     fontSize: moderateScale(13, 0.1),
     lineHeight: moderateScale(20, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontWeight: '300',
     color: '#222222',
   },
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   textBold: {
     fontSize: moderateScale(20, 0.1),
     lineHeight: moderateScale(30, 0.1),
-    fontFamily: PoppinsBold,
+    //fontFamily: PoppinsBold,
     marginRight: moderateScale(10, 0.1),
   },
   inputSection: {
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     marginHorizontal: moderateScale(15, 0.1),
   },
   text: {
-    fontFamily: PoppinsBold,
+    //fontFamily: PoppinsBold,
     flex: 0.5,
     fontSize: moderateScale(12, 0.1),
   },
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   },
   smallText: {
     fontSize: moderateScale(6, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     position: 'absolute',
     left: moderateScale(40, 0.1),
     width: moderateScale(100, 0.1),

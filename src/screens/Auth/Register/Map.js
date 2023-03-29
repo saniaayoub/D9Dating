@@ -32,7 +32,7 @@ let LONGITUDE;
 let LATITUDE;
 
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-const App = ({navigation, route}) => {
+const Map = ({navigation, route}) => {
   const screen1 = route.params;
   console.log(screen1);
   const dispatch = useDispatch();
@@ -138,9 +138,10 @@ const App = ({navigation, route}) => {
     <View style={styles.container}>
       <MapView
         style={styles.map}
-        provider={PROVIDER_GOOGLE}
+        // provider={PROVIDER_GOOGLE}
         initialRegion={position}
         // showsUserLocation={true}
+        customMapStyle={styles.map}
         followsUserLocation={true}
         showsCompass={true}
         scrollEnabled={true}
@@ -164,15 +165,15 @@ const App = ({navigation, route}) => {
             if (screen1) {
               console.log('ddd');
               dispatch(setPostLocation(coordinate));
-              // setTimeout(() => {
-              //   navigation.goBack()
-              // }, 2000);
+              setTimeout(() => {
+                navigation.goBack()
+              }, 2000);
             } else {
               console.log('rr');
               dispatch(setLocation(coordinate));
-              // setTimeout(() => {
-              //   navigation.goBack()
-              // }, 2000);
+              setTimeout(() => {
+                navigation.goBack()
+              }, 2000);
             }
 
             // getCityName(coordinate)
@@ -228,4 +229,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Map;

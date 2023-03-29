@@ -1,7 +1,7 @@
 import {Dimensions, Platform, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
-const Poppins = 'Poppins-Regular';
+const Poppins = '';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headingText: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     color: '#fff',
     textAlign: 'center',
     fontSize: moderateScale(32, 0.1),
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
     alignItems: 'center',
     color: '#fff',
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     marginTop: moderateScale(17, 0.1),
   },
   radioInput: {
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     bottom: moderateScale(15,0.1)
   },
   btnText: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     lineHeight: moderateScale(20, 0.1),
     fontSize: moderateScale(13, 0.1),
     color: '#222222',
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
   },
   bottomLink: {
     flex: 1,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     fontSize: moderateScale(14, 0.1),
-    fontFamily: 'Gilroy-Medium',
+    //fontFamily: 'Gilroy-Medium',
   },
   inputContainerStyle: {
     width: '75%',
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
   },
 });
 

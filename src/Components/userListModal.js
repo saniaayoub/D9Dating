@@ -17,8 +17,8 @@ import Inicon from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {addUsers} from '../Redux/actions';
-const Poppins = 'Poppins-Regular';
-const PoppinsBold = 'Poppins-Bold';
+const Poppins = '';
+const PoppinsBold = '';
 const Users = [
   {
     id: 1,
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(15, 0.1),
     textAlign: 'center',
     fontSize: moderateScale(16, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
   },
   list: {
     width: '100%',
@@ -282,18 +282,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   name: {
-    fontFamily: PoppinsBold,
+    //fontFamily: PoppinsBold,
     fontSize: moderateScale(15, 0.1),
     lineHeight: moderateScale(22, 0.1),
   },
   textRegular: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(11, 0.1),
     lineHeight: moderateScale(14, 0.1),
     marginVertical: moderateScale(5, 0.1),
   },
   textSmall: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(12, 0.1),
     marginVertical: moderateScale(5, 0.1),

@@ -1,8 +1,8 @@
 import {Dimensions, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
-const Poppins = 'Poppins-Regular';
-const PoppinsBold = 'Poppins-Bold';
+const Poppins = '';
+const PoppinsBold = '';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   },
   HeadingText: {
     fontSize: moderateScale(20, 0.1),
-    fontFamily: PoppinsBold,
+    //fontFamily: PoppinsBold,
     lineHeight: moderateScale(30, 0.1),
   },
   border: {
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   chats: {
     fontSize: moderateScale(13, 0.1),
     lineHeight: moderateScale(18, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
   },
   dp: {
     flex: 0.15,
@@ -74,12 +74,12 @@ const styles = StyleSheet.create({
     marginVertical: moderateScale(15, 0.1),
   },
   name: {
-    fontFamily: PoppinsBold,
+    //fontFamily: PoppinsBold,
     fontSize: moderateScale(13, 0.1),
     lineHeight: moderateScale(17, 0.1),
   },
   name1: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
     // paddingLeft: moderateScale(10),
@@ -100,13 +100,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textRegular: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(11, 0.1),
     lineHeight: moderateScale(14, 0.1),
     marginVertical: moderateScale(5, 0.1),
   },
   textSmall: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(8, 0.1),
     lineHeight: moderateScale(12, 0.1),
     marginVertical: moderateScale(5, 0.1),
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   },
   hTxt: {
     color: '#7B7A7A',
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
   },
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: moderateScale(15, 0.1),
     lineHeight: moderateScale(22, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontWeight: '700',
   },
   hView: {

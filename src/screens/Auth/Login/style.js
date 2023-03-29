@@ -1,8 +1,8 @@
 import {Dimensions, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
-const Poppins = 'Poppins-Regular';
-const PoppinsBold = 'Poppins-Bold';
+const Poppins = '';
+const PoppinsBold = '';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,12 +18,12 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(60, 0.1),
   },
   headingText: {
-    fontFamily: PoppinsBold,
+    //fontFamily: PoppinsBold,
     fontSize: moderateScale(32, 0.1),
     lineHeight: moderateScale(48, 0.1),
   },
   headingText1: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     color: '#fff',
     fontSize: moderateScale(34, 0.1),
     lineHeight: moderateScale(37, 0.1),
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   btnText: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     lineHeight: moderateScale(20, 0.1),
     fontSize: moderateScale(13, 0.1),
     color: '#222222',
@@ -53,13 +53,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
   },
   forgetPass1: {
     color: '#FFD700',
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
   },
   eye: {
     position: 'absolute',
@@ -70,7 +70,8 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(50, 0.1),
     flex: 1,
     justifyContent: 'flex-end',
-    marginBottom: moderateScale(20, 0.1),
+    marginBottom: Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(20, 0.1),
+
     // position: 'absolute',
     // bottom:
     //   Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(40, 0.1),

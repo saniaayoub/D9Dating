@@ -11,9 +11,9 @@ import {
   Alert,
 } from 'react-native';
 import PhotoEditor from 'react-native-photo-editor';
-import React, {useState, useRef, useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {moderateScale} from 'react-native-size-matters';
+import React, { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { moderateScale } from 'react-native-size-matters';
 import s from './style';
 import InstaStory from 'react-native-insta-story';
 import {
@@ -27,34 +27,34 @@ import {
 } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {ScrollView} from 'react-native';
+import { ScrollView } from 'react-native';
 import Fun from '../../../assets/images/svg/fun.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import SearchDropDown from '../../../Components/SearchDropDown';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RNFS from 'react-native-fs';
 import Loader from '../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
-import {useIsFocused} from '@react-navigation/native';
-import {setGroup, setStories} from '../../../Redux/actions';
+import { useIsFocused } from '@react-navigation/native';
+import { setGroup, setStories } from '../../../Redux/actions';
 
 const Groups = [
-  {id: 'Group 1', color: 'blue'},
-  {id: 'Group 2', color: 'green'},
-  {id: 'Group 3', color: 'red'},
-  {id: 'Group 4', color: 'yellow'},
-  {id: 'Group 5', color: 'orange'},
-  {id: 'Group 6', color: 'brown'},
-  {id: 'Group 7', color: 'pink'},
-  {id: 'Group 8', color: 'purple'},
-  {id: 'Group 9', color: 'blue'},
+  { id: 'Group 1', color: 'blue' },
+  { id: 'Group 2', color: 'green' },
+  { id: 'Group 3', color: 'red' },
+  { id: 'Group 4', color: 'yellow' },
+  { id: 'Group 5', color: 'orange' },
+  { id: 'Group 6', color: 'brown' },
+  { id: 'Group 7', color: 'pink' },
+  { id: 'Group 8', color: 'purple' },
+  { id: 'Group 9', color: 'blue' },
 ];
 
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const refRBSheet1 = useRef();
@@ -80,7 +80,7 @@ const Home = ({navigation}) => {
   const [storyImage, setStoryImage] = useState('');
   const [postId, setPostId] = useState(null);
   const [text, setText] = useState(null);
-
+const [funPostsData, setFunPostsData] = useState('')
   // const [myStories, setMyStories] = useState('')
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
@@ -92,28 +92,11 @@ const Home = ({navigation}) => {
     dispatch(setGroup(Groups));
     getPosts();
     getID();
+    funPosts()
     console.log(Stories, 'sstostst');
     // getStory();
     // getStories();
-    // console.log(loginId, 'dataaa');
-    // let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
-    // let binaryFile = Image.resolveAssetSource(
-    //   require('../../../assets/images/jpg/photo.jpg'),
-    // );
-    // RNFetchBlob.config({fileCache: true})
-    //   .fetch('GET', binaryFile.uri)
-    //   .then(resp => {
-    //     RNFS.moveFile(resp.path(), photoPath)
-    //       .then(() => {
-    //         console.log('FILE WRITTEN!');
-    //       })
-    //       .catch(err => {
-    //         console.log(err.message);
-    //       });
-    //   })
-    //   .catch(err => {
-    //     console.log(err.message);
-    //   });
+  
   }, [isFocused]);
 
   const getID = async () => {
@@ -141,6 +124,29 @@ const Home = ({navigation}) => {
         setLoader(false);
         console.log(err);
         // showToast(err.response);
+      });
+  };
+
+  const funPosts = async () => {
+    setLoader(true);
+    await axiosconfig
+      .get('fun-interaction', {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        console.log('public post', JSON.stringify(res?.data?.post_public));
+        const data = res?.data?.post_public;
+
+        setFunPostsData(res?.data?.post_public);
+        
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
       });
   };
   const report = async () => {
@@ -370,6 +376,7 @@ const Home = ({navigation}) => {
         // console.log(source.assets[0].uri, 'uri');
         // setStoryImage(source.assets[0].uri);
         refRBSheet.current.close();
+        // console.log(source)
         convert(source);
         // setStoryImage(true);
       }
@@ -386,53 +393,62 @@ const Home = ({navigation}) => {
     return color;
   };
 
-  const onPress = () => {
-    PhotoEditor.Edit({
-      path: RNFS.DocumentDirectoryPath + '/photo.jpg',
-      stickers: [
-        'sticker0',
-        'sticker1',
-        'sticker2',
-        'sticker3',
-        'sticker4',
-        'sticker5',
-        'sticker6',
-        'sticker7',
-        'sticker8',
-        'sticker9',
-        'sticker10',
-      ],
-      // hiddenControls: [
-      //   'clear',
-      //   'crop',
-      //   'draw',
-      //   'save',
-      //   'share',
-      //   'sticker',
-      //   'text',
-      // ],
-      colors: undefined,
-      onDone: res => {
-        console.log('on done', res);
-        setPath(`file://${res}`);
-        convertToBase64(`file://${res}`);
-        let temp = Stories[0].stories;
-        temp.push({
-          story_id: Stories[0]?.stories?.length + 1,
-          story_image: `file://${res}`,
-          swipeText: 'Custom swipe text for this story',
-          // onPress: () => console.log('story 1 swiped'),
+  const _onPress = async (imageToeEdit) => {
+    setTimeout(() => {
+      console.log(imageToeEdit, 'eitors');
+
+      try {
+        PhotoEditor.Edit({
+          path: Platform.OS == 'ios' ? imageToeEdit : RNFS.DocumentDirectoryPath + '/photo.jpg',
+          // stickers: [
+          //   'sticker0',
+          //   'sticker1',
+          //   'sticker2',
+          //   'sticker3',
+          //   'sticker4',
+          //   'sticker5',
+          //   'sticker6',
+          //   'sticker7',
+          //   'sticker8',
+          //   'sticker9',
+          //   'sticker10',
+          // ],
+          // hiddenControls: [
+          //   'clear',
+          //   'crop',
+          //   'draw',
+          //   'save',
+          //   'share',
+          //   'sticker',
+          //   'text',
+          // ],
+          colors: undefined,
+          onDone: res => {
+
+            console.log('on done', res);
+            setPath(`file://${res}`);
+            convertToBase64(`file://${res}`);
+            let temp = Stories[0].stories;
+            temp.push({
+              story_id: Stories[0]?.stories?.length + 1,
+              story_image: `file://${res}`,
+              swipeText: 'Custom swipe text for this story',
+              // onPress: () => console.log('story 1 swiped'),
+            });
+            // setLoader(true);
+            setMyStories(temp);
+            dispatch(setStories([{...Stories[0], stories: temp}]));
+            setStoryCircle('green');
+            // addStory(myStories);
+          },
+          onCancel: () => {
+            console.log('on cancel');
+          },
         });
-        // setLoader(true);
-        setMyStories(temp);
-        dispatch(setStories([{...Stories[0], stories: temp}]));
-        setStoryCircle('green');
-        // addStory(myStories);
-      },
-      onCancel: () => {
-        console.log('on cancel');
-      },
-    });
+      } catch (err) {
+        console.log(err)
+      }
+    }, 1000);
   };
 
   const getMyStories = () => {
@@ -449,17 +465,23 @@ const Home = ({navigation}) => {
     addStory(myStories);
   };
   const convert = source => {
-    let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
+
     // let binaryFile = Image.resolveAssetSource(require('./assets/photo.jpg'));
 
-    RNFS.moveFile(source.assets[0].uri, photoPath)
-      .then(() => {
-        console.log('FILE WRITTEN!');
-        onPress();
-      })
-      .catch(err => {
-        console.log(err.message);
-      });
+    if (Platform.OS == 'ios') {
+      _onPress(source.assets[0].uri);
+    } else {
+      let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
+      RNFS.moveFile(source.assets[0].uri, photoPath)
+        .then(() => {
+          console.log('FILE WRITTEN!');
+          _onPress();
+        })
+        .catch(err => {
+          console.log(err.message);
+        });
+    }
+
   };
 
   const convertToBase64 = async image => {
@@ -561,7 +583,7 @@ const Home = ({navigation}) => {
       <View style={s.col}>
         <View style={s.header}>
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
+            style={[s.dp, { borderColor: getColor(elem?.item?.user?.group) }]}
           >
             <Image
               source={{
@@ -573,15 +595,15 @@ const Home = ({navigation}) => {
               resizeMode={'cover'}
             />
           </View>
-          <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
+          <View style={[s.col, { flex: 0.9, marginTop: moderateScale(5, 0.1) }]}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('ViewUser', {post: elem.item})}
+              onPress={() => navigation.navigate('ViewUser', { post: elem.item })}
             >
-              <Text style={[s.name, s.nameBold, {color: textColor}]}>
+              <Text style={[s.name, s.nameBold, { color: textColor }]}>
                 {elem?.item?.user?.name} {elem?.item?.user?.last_name}
               </Text>
             </TouchableOpacity>
-            <Text style={[s.textRegular, {color: textColor}]}>
+            <Text style={[s.textRegular, { color: textColor }]}>
               {elem?.item?.user?.location}
             </Text>
           </View>
@@ -620,9 +642,9 @@ const Home = ({navigation}) => {
                     color={textColor}
                     size={moderateScale(13, 0.1)}
                     // style={{marginRight: moderateScale(10, 0.1)}}
-                    style={{flex: 0.3}}
+                    style={{ flex: 0.3 }}
                   />
-                  <Text style={[s.optionBtns, {color: textColor}]}>Hide</Text>
+                  <Text style={[s.optionBtns, { color: textColor }]}>Hide</Text>
                 </View>
               </Menu.Item>
 
@@ -641,9 +663,9 @@ const Home = ({navigation}) => {
                         name={'edit'}
                         color={textColor}
                         size={moderateScale(13, 0.1)}
-                        style={{flex: 0.3}}
+                        style={{ flex: 0.3 }}
                       />
-                      <Text style={[s.optionBtns, {color: textColor}]}>
+                      <Text style={[s.optionBtns, { color: textColor }]}>
                         Edit
                       </Text>
                     </View>
@@ -661,9 +683,9 @@ const Home = ({navigation}) => {
                     name={'report'}
                     color={textColor}
                     size={moderateScale(13, 0.1)}
-                    style={{flex: 0.3}}
+                    style={{ flex: 0.3 }}
                   />
-                  <Text style={[s.optionBtns, {color: textColor}]}>Report</Text>
+                  <Text style={[s.optionBtns, { color: textColor }]}>Report</Text>
                 </View>
               </Menu.Item>
             </Menu>
@@ -674,7 +696,7 @@ const Home = ({navigation}) => {
             onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}
           >
             <Image
-              source={{uri: elem?.item?.image}}
+              source={{ uri: elem?.item?.image }}
               width={undefined}
               height={undefined}
               resizeMode={'cover'}
@@ -705,18 +727,18 @@ const Home = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <View style={s.footer}>
-          <Text style={[s.name, {color: textColor}]}>
+          <Text style={[s.name, { color: textColor }]}>
             {elem?.item?.user?.name} {elem?.item?.user?.last_name}
           </Text>
-          <Text style={[s.textRegular, {color: textColor}]}>
+          <Text style={[s.textRegular, { color: textColor }]}>
             {elem?.item?.caption}
           </Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Comments', {post: elem?.item});
+              navigation.navigate('Comments', { post: elem?.item });
             }}
           >
-            <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
+            <Text style={[s.textRegular, { color: 'grey', marginVertical: 0 }]}>
               View all {elem?.item?.post_comments?.length} Comments
             </Text>
           </TouchableOpacity>
@@ -736,7 +758,7 @@ const Home = ({navigation}) => {
                   ]}
                 >
                   <Image
-                    source={{uri: elem?.item?.user?.image}}
+                    source={{ uri: elem?.item?.user?.image }}
                     style={s.dp1}
                     resizeMode={'cover'}
                   />
@@ -747,12 +769,12 @@ const Home = ({navigation}) => {
                   onPress={() => {
                     addComment(elem?.item?.id, elem?.index);
                   }}
-                  style={{marginRight: moderateScale(10, 0.1)}}
+                  style={{ marginRight: moderateScale(15, 0.1) }}
                 >
                   <Feather
                     name={'send'}
-                    size={moderateScale(15, 0.1)}
-                    color={textColor}
+                    size={moderateScale(20, 0.1)}
+                    color={'grey'}
                   />
                 </TouchableOpacity>
               }
@@ -777,8 +799,8 @@ const Home = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
-      <View style={[s.container, s.col, {backgroundColor: color}]}>
+    <SafeAreaView style={{ display: 'flex', flex: 1, backgroundColor: color }}>
+      <View style={[s.container, s.col, { backgroundColor: color }]}>
         {loader ? <Loader /> : null}
         <ScrollView
           scrollEnabled
@@ -798,7 +820,7 @@ const Home = ({navigation}) => {
                 }}
                 style={[
                   s.addBtn,
-                  {borderColor: color, bottom: moderateScale(15, 0.1)},
+                  { borderColor: color, bottom: moderateScale(15, 0.1) },
                 ]}
               >
                 <Icon
@@ -827,7 +849,7 @@ const Home = ({navigation}) => {
                   >
                     <Button
                       variant={'link'}
-                      onPress={() => {
+                      onPressIn={() => {
                         refRBSheet.current.open();
                       }}
                     >
@@ -866,12 +888,12 @@ const Home = ({navigation}) => {
                   }}
                   resizeMode={'cover'}
                 />
-                <Text style={[s.userName, {color: textColor}]}>Your Story</Text>
+                <Text style={[s.userName, { color: textColor }]}>Your Story</Text>
                 <TouchableOpacity
                   onPress={() => {
                     refRBSheet.current.open();
                   }}
-                  style={[s.addBtn, {borderColor: color}]}
+                  style={[s.addBtn, { borderColor: color }]}
                 >
                   <Icon
                     name={'plus'}
@@ -928,9 +950,10 @@ const Home = ({navigation}) => {
               },
             ]}
           >
-            <Text style={s.count}>5</Text>
+            {funPostsData?  (<Text style={s.count}>{funPostsData?.length}</Text>): (null)}
+            
           </View>
-          <Text style={[s.funText, {color: textColor}]}>Fun Interaction</Text>
+          <Text style={[s.funText, { color: textColor }]}>Fun Interaction</Text>
         </TouchableOpacity>
 
         <FlatList
@@ -972,9 +995,9 @@ const Home = ({navigation}) => {
             <Button
               transparent
               style={s.capturebtn}
-              onPress={() => captureImage('photo')}
+              onPressIn={() => captureImage('photo')}
             >
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 <Ionicons name="camera" style={s.capturebtnicon} />
                 <Text style={s.capturebtntxt}>Open Camera</Text>
               </View>
@@ -982,9 +1005,9 @@ const Home = ({navigation}) => {
             <Button
               transparent
               style={s.capturebtn}
-              onPress={() => chooseFile('photo')}
+              onPressIn={() => chooseFile('photo')}
             >
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 <Ionicons name="md-image-outline" style={s.capturebtnicon} />
                 <Text style={s.capturebtntxt}>Open Gallery</Text>
               </View>
@@ -1013,7 +1036,7 @@ const Home = ({navigation}) => {
           }}
         >
           {/* {loader ? <Loader /> : null} */}
-          <Text style={[s.rb, {color: textColor}]}>Report</Text>
+          <Text style={[s.rb, { color: textColor }]}>Report</Text>
         </View>
         <View
           style={{
@@ -1021,7 +1044,7 @@ const Home = ({navigation}) => {
           }}
         >
           <View style={[s.hv]}>
-            <Text style={[s.hv, {color: textColor}]}>
+            <Text style={[s.hv, { color: textColor }]}>
               Why are you reporting this post?
             </Text>
           </View>
@@ -1033,10 +1056,10 @@ const Home = ({navigation}) => {
               be used as a placeholder before final copy is available
             </Text>
           </View>
-          <View style={{display: 'flex'}}>
+          <View style={{ display: 'flex' }}>
             <TouchableOpacity style={s.list}>
               <View>
-                <Text style={[s.listTxt, {color: textColor}]}></Text>
+                <Text style={[s.listTxt, { color: textColor }]}></Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
@@ -1047,7 +1070,7 @@ const Home = ({navigation}) => {
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, {color: textColor}]}>
+                <Text style={[s.listTxt, { color: textColor }]}>
                   i just don't like it
                 </Text>
               </View>
@@ -1060,7 +1083,7 @@ const Home = ({navigation}) => {
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, {color: textColor}]}>it's spam</Text>
+                <Text style={[s.listTxt, { color: textColor }]}>it's spam</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
@@ -1071,7 +1094,7 @@ const Home = ({navigation}) => {
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, {color: textColor}]}>
+                <Text style={[s.listTxt, { color: textColor }]}>
                   Nudity or sexual activity
                 </Text>
               </View>
@@ -1084,7 +1107,7 @@ const Home = ({navigation}) => {
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, {color: textColor}]}>
+                <Text style={[s.listTxt, { color: textColor }]}>
                   Hate speech or symbols
                 </Text>
               </View>
@@ -1097,7 +1120,7 @@ const Home = ({navigation}) => {
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, {color: textColor}]}>
+                <Text style={[s.listTxt, { color: textColor }]}>
                   Violence or dangerous orgnisations
                 </Text>
               </View>
@@ -1110,7 +1133,7 @@ const Home = ({navigation}) => {
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, {color: textColor}]}>
+                <Text style={[s.listTxt, { color: textColor }]}>
                   Bullying or harrasment
                 </Text>
               </View>

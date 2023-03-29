@@ -1,8 +1,8 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import {Dimensions, Platform, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
-const Poppins = 'Poppins-Regular';
-const PoppinsBold = 'Poppins-Bold';
+const Poppins = '';
+const PoppinsBold = '';
 
 const styles = StyleSheet.create({
   icon: {
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    marginTop: moderateScale(-40, 0.1),
+    marginTop: Platform.OS =='ios'?moderateScale(-100, 0.1): moderateScale(-40, 0.1),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   logoText: {
     color: '#fff',
     textAlign: 'center',
-    fontFamily: PoppinsBold,
+    //fontFamily: PoppinsBold,
     fontSize: moderateScale(12, 0.1),
     marginTop: moderateScale(5, 0.1),
   },
@@ -38,13 +38,13 @@ const styles = StyleSheet.create({
   heading1: {
     lineHeight: moderateScale(28, 0.1),
     color: '#fff',
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(22, 0.1),
   },
   heading2: {
     lineHeight: moderateScale(35, 0.1),
     color: '#fff',
-    fontFamily: PoppinsBold,
+    //fontFamily: PoppinsBold,
     fontSize: moderateScale(30, 0.1),
   },
   // Old One
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   btnText: {
     fontSize: moderateScale(13, 0.1),
     lineHeight: moderateScale(18, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     color: '#fff',
   },
   button: {

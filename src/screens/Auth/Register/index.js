@@ -11,6 +11,7 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  Platform
 } from 'react-native';
 import React, {useRef, useState, useEffect} from 'react';
 import axiosconfig from '../../../provider/axios';
@@ -299,7 +300,7 @@ const Register = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor:theme === 'dark' ? '#222222' : '#fff'}}>
       <ScrollView>
         <View
           style={[
@@ -318,7 +319,7 @@ const Register = ({navigation}) => {
             <Text
               style={[
                 s.headingText,
-                {fontFamily: 'Poppins-Bold', color: Textcolor},
+                { color: Textcolor},
               ]}
             >
               {' '}
@@ -482,7 +483,7 @@ const Register = ({navigation}) => {
               </View>
               <View style={{flex: 0.6}}>
                 <PhoneInput
-                  style={{bottom: moderateScale(-10, 0.1)}}
+                  style={{bottom: Platform.OS=='ios'? 0:moderateScale(-10, 0.1)}}
                   initialCountry={'us'}
                   textProps={{
                     placeholder: 'Enter Phone Number',
@@ -687,12 +688,15 @@ const Register = ({navigation}) => {
                       base: '100%',
                       md: '25%',
                     }}
+
                     style={{
                       borderBottomWidth: 1,
                       borderBottomColor:
                         onsubmit && location == null ? 'red' : Textcolor,
                     }}
                     // onTouchStart={() => navigation.navigate('Maps')}
+                    onPressIn={() => navigation.navigate('Maps')}
+
                     variant="unstyled"
                     editable={false}
                     placeholder={userLocation ? userLocation : 'Enter Location'}
@@ -808,7 +812,7 @@ const Register = ({navigation}) => {
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
-                onPress={() => submit()}
+                onPressIn={() => submit()}
               >
                 <Text style={s.btnText}>Register</Text>
               </Button>
@@ -832,11 +836,11 @@ const Register = ({navigation}) => {
                   Privacy Policy
                 </Text>
               </TouchableOpacity>
-              <Text style={[s.forgetPass, {textDecorationLine: 'none'}]}>
+              <Text style={[s.forgetPass, {color: Textcolor, textDecorationLine: 'none'}]}>
                 {'  '}&{'  '}
               </Text>
               <TouchableOpacity>
-                <Text style={[s.forgetPass, {textDecorationLine: 'underline'}]}>
+                <Text style={[s.forgetPass, {color: Textcolor,textDecorationLine: 'underline'}]}>
                   Terms & conditions
                 </Text>
               </TouchableOpacity>

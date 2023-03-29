@@ -17,6 +17,7 @@ import axiosconfig from './src/Providers/axios';
 const App = () => {
   const dispatch = useDispatch();
   const userToken = useSelector(state => state.reducer.userToken);
+  const theme = useSelector(state => state.reducer.theme);
 
   useEffect(() => {
     // const init = async () => {

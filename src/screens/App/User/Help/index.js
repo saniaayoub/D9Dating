@@ -266,7 +266,7 @@ const Help = ({navigation}) => {
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
-                onPress={() => help()}>
+                onPressIn={() => help()}>
                 <Text style={s.btnText}>Send</Text>
               </Button>
             </View>

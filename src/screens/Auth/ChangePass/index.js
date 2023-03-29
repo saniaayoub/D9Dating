@@ -221,7 +221,7 @@ const ChangePass = ({navigation, route}) => {
 
           <View style={s.button}>
             <Button
-              onPress={() => {
+              onPressIn={() => {
                 // alert('password changed successfully')
                 submit();
               }}

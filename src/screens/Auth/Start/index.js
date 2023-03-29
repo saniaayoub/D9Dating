@@ -497,11 +497,16 @@ const StartScreen = ({navigation}) => {
       <View style={s.button}>
         <Button
           size="sm"
-          onPress={() => {
+          // onPress={() => {
+          //   navigation.navigate('Login');
+          //   // dispatch(setUserToken('sania'));
+          //   console.log('hi');
+          // }}
+          onPressIn={async () => {
+         
             navigation.navigate('Login');
             // dispatch(setUserToken('sania'));
-            console.log('hi');
-          }}
+            console.log('hi'); }}
           variant={'solid'}
           _text={{
             color: '#6627EC',

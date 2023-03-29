@@ -1,8 +1,8 @@
 import {Dimensions, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
-const Poppins = 'Poppins-Regular';
-const PoppinsBold = 'Poppins-Bold';
+const Poppins = '';
+const PoppinsBold = '';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,13 +33,13 @@ const styles = StyleSheet.create({
   },
   optionBtns: {
     fontSize: moderateScale(14, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     // marginLeft: moderateScale(15, 0.1),
     // flex: 0.6,
   },
   smallText: {
     fontSize: moderateScale(12, 0.1),
-    fontFamily: PoppinsBold,
+    //fontFamily: PoppinsBold,
     position: 'absolute',
     left: moderateScale(43, 0.1),
     width: moderateScale(150, 0.1),
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   },
   HeadingTxt: {
     fontSize: moderateScale(15, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     lineHeight: moderateScale(20, 0.1),
   },
 
@@ -73,13 +73,13 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: moderateScale(13, 0.1),
     alignSelf: 'center',
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     textAlign: 'center',
     color: '#fff',
     backgroundColor: 'transparent',
   },
   mainText: {
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     fontSize: moderateScale(15, 0.1),
     lineHeight: moderateScale(19, 0.1),
   },
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     // alignSelf:'center',
     fontSize: moderateScale(13, 0.1),
     alignSelf: 'center',
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     color: '#fff',
     paddingHorizontal: moderateScale(7, 0.1),
   },
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   },
   postTxt: {
     fontSize: moderateScale(13, 0.1),
-    fontFamily: Poppins,
+    //fontFamily: Poppins,
     lineHeight: moderateScale(19.5, 0.1),
     color: '#fff',
   },

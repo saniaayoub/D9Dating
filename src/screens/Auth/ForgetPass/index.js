@@ -143,7 +143,7 @@ const ForgetPassword = ({navigation}) => {
 
           <View style={s.button}>
             <Button
-              onPress={() => {
+              onPressIn={() => {
                 Reset();
                 // navigation.navigate('ChangePass', {email, otp})
               }}
@@ -182,7 +182,7 @@ const ForgetPassword = ({navigation}) => {
             _text={{
               color: Textcolor,
             }}
-            onPress={() => navigation.navigate('Register')}
+            onPressIn={() => navigation.navigate('Register')}
           >
             
           </Button>
