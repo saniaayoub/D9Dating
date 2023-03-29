@@ -131,7 +131,9 @@ const Notifications = ({navigation}) => {
       .then(res => {
         console.log('data', res?.data);
         setResponse('Connected');
-        getList();
+        setTimeout(() => {     
+          getList();
+        }, 7000);
         setLoader(false);
       })
       .catch(err => {
@@ -152,8 +154,9 @@ const Notifications = ({navigation}) => {
       .then(res => {
         console.log('data', res?.data);
         setResponse('Declined');
-
-        getList();
+        setTimeout(() => {     
+          getList();
+        }, 7000);
         setLoader(false);
       })
       .catch(err => {
@@ -175,12 +178,12 @@ const Notifications = ({navigation}) => {
           />
         </View>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ViewUser', {
-              post: elem?.item?.request_user,
-              screen: 'search',
-            })
-          }
+          // onPress={() =>
+          //   navigation.navigate('ViewUser', {
+          //     post: elem?.item?.request_user,
+          //     screen: 'search',
+          //   })
+          // }
           style={{flex: 0.7, alignSelf: 'center'}}
         >
           <View>

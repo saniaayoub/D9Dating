@@ -171,7 +171,7 @@ const validate = ()=>{
           }
 
           
-          <View style={{marginVertical: moderateScale(10,0.1)}}>
+          {/* <View style={{marginVertical: moderateScale(10,0.1)}}>
             <Button
               size="md"
               variant={'link'}
@@ -185,7 +185,7 @@ const validate = ()=>{
               </View>
             </Button>
           </View>
-    
+     */}
         </View>
       </View>
     </SafeAreaView>

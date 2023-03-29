@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   icon: {
     flex: 0.15,
     justifyContent: 'center',
-    paddingTop: moderateScale(5, 0.1),
+    paddingTop: moderateScale(9, 0.1),
     // alignItems:'center',
     // alignItems: 'flex-end',
     flexDirection: 'row',

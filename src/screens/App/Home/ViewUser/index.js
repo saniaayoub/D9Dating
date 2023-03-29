@@ -45,7 +45,8 @@ const ViewUser = ({navigation, route}) => {
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const userToken = useSelector(state => state.reducer.userToken);
-  const [status, setStatus] = useState(null);
+  const [cStatus, setCStatus] = useState(null);
+  const [bStatus, setBStatus] = useState(null);
   const [scroll, setScroll] = useState(false);
   const [connected, setConnected] = useState(false);
   const [blocked, setBlocked] = useState(false);
@@ -67,6 +68,7 @@ const ViewUser = ({navigation, route}) => {
   };
 
   const getData = async () => {
+    console.log('get data');
     setLoader(true);
     axiosconfig
       .get(`user_view/${Userid}`, {
@@ -80,11 +82,12 @@ const ViewUser = ({navigation, route}) => {
           'connect',
           JSON.stringify(res.data?.user_details?.connected),
         );
-        console.log(res?.data?.user_details, 'user detials');
-        setStatus(res.data?.user_details?.connected);
+        console.log('user detials',res?.data?.user_details);
+        setCStatus(res.data?.user_details?.connected);
+        setBStatus(res.data?.user_details?.block_status);
         if (res?.data?.user_details) {
           // const dd = JSON.stringify(res?.data)
-          setUserData([res?.data?.user_details]);
+          // setUserData([res?.data?.user_details]);
           if (res.data?.user_details?.connected == 1) {
             setConnected(true);
           }
@@ -284,7 +287,7 @@ const ViewUser = ({navigation, route}) => {
             <>
               <TouchableOpacity>
                 <View>
-                  {connected == false && blocked == false && status == 0 ? (
+                  {cStatus == 0 && bStatus == 0 ? (
                     <>
                       <TouchableOpacity onPress={() => connect()}>
                         <View style={s.btn}>
@@ -292,17 +295,17 @@ const ViewUser = ({navigation, route}) => {
                         </View>
                       </TouchableOpacity>
                     </>
-                  ) : connected == true && status == 0 ? (
+                  ) : cStatus == 2 && bStatus == 0 ?(
                     <>
-                      <View style={s.connected}>
-                        <TouchableOpacity onPress={() => Disconnect()}>
+                      <View style={s.connected}>       
                           <View style={s.btn}>
                             <Text style={[s.btnTxt]}>pending</Text>
                           </View>
-                        </TouchableOpacity>
+                       
                       </View>
                     </>
-                  ) : blocked == false && status == 1 ? (
+                  )
+                   : cStatus == 1 ? (
                     <>
                       <View style={s.connected}>
                         <TouchableOpacity onPress={() => Disconnect()}>
@@ -317,7 +320,7 @@ const ViewUser = ({navigation, route}) => {
                         </TouchableOpacity>
                       </View>
                     </>
-                  ) : blocked == true && connected == false && status == 0 ? (
+                  ) : cStatus == 0 && bStatus == 1 ?(
                     <>
                       <TouchableOpacity onPress={() => unblock()}>
                         <View style={s.btn}>
@@ -325,7 +328,8 @@ const ViewUser = ({navigation, route}) => {
                         </View>
                       </TouchableOpacity>
                     </>
-                  ) : null}
+                  ) 
+                  : null}
                 </View>
               </TouchableOpacity>
             </>
