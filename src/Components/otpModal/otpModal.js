@@ -7,7 +7,7 @@ import Feather from 'react-native-vector-icons/Feather';
 
 const InterRegular = 'Inter-Medium';
 const InterBold = 'Inter-ExtraBold';
-const Poppins = 'Poppins-Regular';
+const Poppins = '';
 
 const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, setOtp, navigation,handleSubmit, OtpSubmit}) => {
   return (
@@ -23,7 +23,7 @@ const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, setOtp,
         <View style={s.modalView}>
           <Button
             size="sm"
-            onPress={() => setModalVisible(false)}
+            onPressIn={() => setModalVisible(false)}
             variant={'link'}
             style={s.close}
             backgroundColor={'#fff'}
@@ -68,7 +68,7 @@ const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, setOtp,
               w={moderateScale(140, 0.1)}
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
-              onPress={() =>
+              onPressIn={() =>
                { if(screen=="register"){
                  handleSubmit()
                 }
@@ -101,7 +101,7 @@ const s = StyleSheet.create({
     zIndex: 1000,
   },
   headingText: {
-    fontFamily: InterBold,
+    //fontFamily: InterBold,
     color: '#fff',
     fontSize: moderateScale(25, 0.1),
     lineHeight: moderateScale(30, 0.1),
@@ -177,7 +177,7 @@ const s = StyleSheet.create({
     fontSize: moderateScale(22, 0.1),
     marginBottom: moderateScale(10, 0.1),
     lineHeight: moderateScale(26, 0.1),
-    fontFamily: InterBold,
+    //fontFamily: InterBold,
   },
   verifyText: {
     color: 'grey',
@@ -185,7 +185,7 @@ const s = StyleSheet.create({
     width: moderateScale(180, 0.1),
     lineHeight: moderateScale(15, 0.1),
     textAlign: 'center',
-    fontFamily: InterRegular,
+    //fontFamily: InterRegular,
   },
   otpView: {
     height: moderateScale(130, 0.1),

@@ -395,7 +395,7 @@ const FunInteraction = ({navigation}) => {
           </Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Comments', {post: elem?.item});
+              navigation.navigate('Comments', {post: elem?.item, screen:'funInteraction'});
             }}
           >
             <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
@@ -433,12 +433,12 @@ const FunInteraction = ({navigation}) => {
                   onPress={() => {
                     addComment(elem?.item?.id, elem?.index);
                   }}
-                  style={{marginRight: moderateScale(10, 0.1)}}
+                  style={{marginRight: moderateScale(15, 0.1)}}
                 >
                   <Feather
                     name={'send'}
-                    size={moderateScale(15, 0.1)}
-                    color={textColor}
+                    size={moderateScale(20, 0.1)}
+                    color={'grey'}
                   />
                 </TouchableOpacity>
               }

@@ -144,7 +144,7 @@ const ForgetPassword = ({navigation}) => {
 
           <View style={s.button}>
             <Button
-              onPress={() => {
+              onPressIn={() => {
                 Reset();
                 // navigation.navigate('ChangePass', {email, otp})
               }}

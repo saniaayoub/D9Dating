@@ -32,7 +32,7 @@ let LONGITUDE;
 let LATITUDE;
 
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-const App = ({navigation, route}) => {
+const Map = ({navigation, route}) => {
   const screen1 = route.params;
 
   console.log(screen1, 'screen');
@@ -139,9 +139,10 @@ const App = ({navigation, route}) => {
     <View style={styles.container}>
       <MapView
         style={styles.map}
-        provider={PROVIDER_GOOGLE}
+        // provider={PROVIDER_GOOGLE}
         initialRegion={position}
         // showsUserLocation={true}
+        customMapStyle={styles.map}
         followsUserLocation={true}
         showsCompass={true}
         scrollEnabled={true}
@@ -229,4 +230,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Map;

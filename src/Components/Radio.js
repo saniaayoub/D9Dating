@@ -3,7 +3,7 @@ import React, {useEffect} from 'react';
 import {moderateScale} from 'react-native-size-matters';
 import {useDispatch, useSelector} from 'react-redux';
 import {setTheme} from '../Redux/actions';
-const poppins = 'Poppins-Regular';
+const poppins = '';
 const radio = ({onPress, selected, children}) => {
   const theme = useSelector(state => state.reducer.theme);
   const dispatch = useDispatch();
@@ -55,10 +55,10 @@ const styles = StyleSheet.create({
   radioButtonText: {
     marginTop: moderateScale(3, 0.1),
     color: '#FFFFFF',
-    fontFamily: poppins,
+    //fontFamily: poppins,
     fontWeight: '300',
     fontSize: moderateScale(10, 0.1),
-    fontFamily: poppins,
+    //fontFamily: poppins,
     marginLeft: moderateScale(9, 0.1),
     lineHeight: moderateScale(12, 0.1),
   },

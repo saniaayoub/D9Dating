@@ -159,7 +159,7 @@ const validate = ()=>{
               w={moderateScale(140, 0.1)}
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
-              onPress={() =>
+              onPressIn={() =>
                 validate()
               }
             >
@@ -175,7 +175,7 @@ const validate = ()=>{
             <Button
               size="md"
               variant={'link'}
-              onPress={() => navigation.navigate('Forgot')}
+              onPressIn={() => navigation.navigate('Forgot')}
             >
               <View style={{flexDirection: 'row'}}>
                 <Text style={[s.forgetPass, {color: '#FFD700'}]}>Forgot </Text>

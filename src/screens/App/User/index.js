@@ -663,7 +663,7 @@ const Profile = ({navigation}) => {
           <View style={s.button}>
             <Button
               size="sm"
-              onPress={() => save()}
+              onPressIn={() => save()}
               variant={'solid'}
               _text={{
                 color: '#6627EC',
@@ -709,7 +709,7 @@ const Profile = ({navigation}) => {
               <Button
                 transparent
                 style={s.capturebtn}
-                onPress={() => captureImage('photo')}
+                onPressIn={() => captureImage('photo')}
               >
                 <View style={{flexDirection: 'row'}}>
                   <Ionicons name="camera" style={s.capturebtnicon} />
@@ -719,7 +719,7 @@ const Profile = ({navigation}) => {
               <Button
                 transparent
                 style={s.capturebtn}
-                onPress={() => chooseFile('photo')}
+                onPressIn={() => chooseFile('photo')}
               >
                 <View style={{flexDirection: 'row'}}>
                   <Ionicons name="md-image-outline" style={s.capturebtnicon} />

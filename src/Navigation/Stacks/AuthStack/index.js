@@ -4,6 +4,7 @@ import Login from '../../../screens/Auth/Login';
 import Register from '../../../screens/Auth/Register';
 import StartScreen from '../../../screens/Auth/Start';
 import ChangePass from '../..//../screens/Auth/ChangePass';
+import Map from '../../../screens/Auth/Register/Map';
 import GooglePlacesInput from '../../../screens/Auth/Register/Map';
 import Map1 from '../../../screens/Auth/Register/Map1';
 
@@ -18,11 +19,8 @@ const AuthStack = () => {
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
       <Stack.Screen name="ChangePass" component={ChangePass} />
-      <Stack.Screen name="Maps" component={GooglePlacesInput} />
+      <Stack.Screen name="Maps" component={Map} />
       <Stack.Screen name="Map1" component={Map1} />
-
-
-
     </Stack.Navigator>
   );
 };
