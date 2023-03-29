@@ -52,7 +52,7 @@ const FunInteraction = ({navigation}) => {
   useEffect(() => {
     getID();
     getPosts();
-    getAllUsers();
+    getAllUsers()
   }, [isFocused]);
 
   const getID = async () => {

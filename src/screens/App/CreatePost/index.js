@@ -10,7 +10,7 @@ import {
 import React, {useEffect, useRef, useState} from 'react';
 import {moderateScale} from 'react-native-size-matters';
 import s from './style';
-import {setTheme} from '../../../Redux/actions';
+import {setPostLocation, setTheme} from '../../../Redux/actions';
 import {useSelector, useDispatch} from 'react-redux';
 import Header from '../../../Components/Header';
 import Vector from '../../../assets/images/png/Vector.png';
@@ -34,22 +34,27 @@ import RNFS from 'react-native-fs';
 // import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreatePost = ({navigation, route}) => {
-  const privacy = route?.params?.elem?.user?.post_privacy;
+  const privacy = route?.params?.elem?.privacy_option;
 
   useEffect(() => {
     if (privacy == '1') {
+    console.log(privacy,'aaaaa');
+
       setStory('Public');
     } else if (privacy == '2') {
+    console.log(privacy,'aaaaa');
+
       setStory('Friends');
     } else {
+    console.log(privacy,'aaaaa');
+
       setStory('Only Me');
     }
-    console.log('aaaaa');
   }, []);
 
   const theme = useSelector(state => state.reducer.theme);
   const [filePath, setFilePath] = useState(
-    route?.params?.screen == 'Home' || 'funInteraction'
+    route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
       ? route?.params?.elem?.image
       : null,
   );
@@ -57,11 +62,14 @@ const CreatePost = ({navigation, route}) => {
   const [open, setOpen] = useState(false);
   const [icon, setIcon] = useState('globe');
   const [caption, setCaption] = useState(
-    route?.params?.screen == 'Home' || 'funInteraction'
+    route?.params?.screen == 'Home' ||  route?.params?.screen == 'funInteraction'
       ? route?.params?.elem?.caption
-      :  null,
+      : null,
   );
-  const [story, setStory] = useState('Public');
+  const [story, setStory] = useState(
+    route?.params?.screen == 'Home' ||  route?.params?.screen == 'funInteraction'
+    ? route?.params?.elem?.privacy_option :
+    'Public');
   const [loader, setLoader] = useState(false);
   const isFocused = useIsFocused();
   const [userData, setUserData] = useState([]);
@@ -107,9 +115,9 @@ const CreatePost = ({navigation, route}) => {
   const refRBSheet = useRef();
   const postLocation = useSelector(state => state.reducer.postLocation);
   const [location, setLocation] = useState(
-    route?.params?.screen == 'Home' || 'funInteraction'
+    route?.params?.screen == 'Home' ||  route?.params?.screen == 'funInteraction'
       ? route?.params?.elem?.location
-      : [postLocation],
+      : postLocation,
   );
   console.log(postLocation, 'postLocation');
   console.log(location, 'location');
@@ -245,14 +253,11 @@ const CreatePost = ({navigation, route}) => {
       return;
     } else {
       let data = {
-        image:  filePath,
+        image: filePath,
         caption: caption,
         privacy_option:
           story == 'Public' ? '1' : story == 'Friends' ? '2' : '3',
-        location:
-          route?.params?.screen == 'Home' || 'funInteraction'
-            ? route?.params?.elem?.location
-            : postLocation,
+        location: postLocation,
       };
       console.log(data, 'dataaaa');
       // setLoader(true);
@@ -272,18 +277,38 @@ const CreatePost = ({navigation, route}) => {
           // setLoader(false);
           alert(res?.data?.message);
           console.log(res, 'post');
-          setFilePath('');
-          setCaption('');
+              setFilePath(null);
+              setCaption(null)
+              dispatch(setPostLocation(null))
+
           navigation.navigate('Home');
         })
         .catch(err => {
           // setLoader(false);
           console.log(err, 'aaa');
-           Alert.alert(err?.response?.data?.message);
+          Alert.alert(err?.response?.data?.message);
         });
     }
   };
   useEffect(() => {
+    if(!route?.params?.screen){
+      setFilePath(null);
+        setCaption(null)
+        dispatch(setPostLocation(null))
+      }
+      console.log(route?.params?.screen,'ghhgg')
+    // if( route?.params?.screen != 'Home' ||  route?.params?.screen != 'funInteraction'){
+    //   if(route?.params?.screen != 'map'){
+    //     setFilePath(null);
+    //     setCaption(null)
+    //     dispatch(setPostLocation(null))
+    //   }
+    // }
+    // if(route?.params?.screen =='Home'){
+    //   dispatch(setPostLocation(''))
+    // }else{
+    //   dispatch(setPostLocation(''))
+    // }
     getData();
   }, [isFocused]);
 
@@ -449,23 +474,20 @@ const CreatePost = ({navigation, route}) => {
         </View>
         <TouchableOpacity
           onPress={() => {
-            route?.params?.screen != 'Home' || 'funInteraction'
-              ? navigation.navigate('Map', {
-                screen: 'createPost',
-              }) :
-              console.log('aajaj')
-              
+            route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
+              ? null
+              : navigation.navigate('Map', {
+                  screen: 'createPost',
+                });
           }}>
           <View style={[s.mText]}>
             <Input
               variant="unstyled"
-              placeholder={'Enter location...'}
+              placeholder={postLocation ? postLocation :'Enter location...'}
               placeholderTextColor={Textcolor}
               isReadOnly
-              value={postLocation}
-              onChangeText={text => {
-                setCaption(text);
-              }}
+               value={location}
+              onChangeText={() => setLocation(location)}
               backgroundColor={color}
               color={Textcolor}
               fontSize={moderateScale(14, 0.1)}
@@ -475,8 +497,7 @@ const CreatePost = ({navigation, route}) => {
         <View style={[s.imgView]}>
           {filePath != null ? (
             <>
-              <TouchableOpacity 
-              onPress={() => refRBSheet.current.open()}>
+              <TouchableOpacity onPress={() => refRBSheet.current.open()}>
                 <View style={s.img}>
                   <Image
                     source={{uri: filePath}}

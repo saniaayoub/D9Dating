@@ -48,8 +48,6 @@ const ViewUser = ({navigation, route}) => {
   const [cStatus, setCStatus] = useState(null);
   const [bStatus, setBStatus] = useState(null);
   const [scroll, setScroll] = useState(false);
-  const [connected, setConnected] = useState(false);
-  const [blocked, setBlocked] = useState(false);
   const [loader, setLoader] = useState(false);
   const [userData, setUserData] = useState([]);
 
@@ -79,23 +77,6 @@ const ViewUser = ({navigation, route}) => {
       .then(res => {
         console.log('data', JSON.stringify(res.data.user_details));
         setUserData(res?.data?.user_details);
-        // console.log(
-        //   'connect',
-        //   JSON.stringify(res.data?.user_details?.connected),
-        // );
-        // console.log('user detials', res?.data?.user_details);
-        // setCStatus(res.data?.user_details?.connected);
-        // setBStatus(res.data?.user_details?.block_status);
-        // if (res?.data?.user_details) {
-        //   // const dd = JSON.stringify(res?.data)
-        //   setUserData([res?.data?.user_details]);
-        //   if (res.data?.user_details?.connected == 1) {
-        //     setConnected(true);
-        //   }
-        //   if (res.data?.user_details?.connected == 0) {
-        //     setConnected(false);
-        //   }
-        // }
         setLoader(false);
       })
       .catch(err => {
