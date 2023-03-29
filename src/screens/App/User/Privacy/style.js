@@ -69,8 +69,8 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(20, 0.1),
   },
   option: {
-    fontSize: moderateScale(14, 0.1),
-    marginRight: moderateScale(10, 0.1),
+    fontSize: moderateScale(12, 0.1),
+    marginRight: moderateScale(4, 0.1),
   },
   input: {
     marginVertical: moderateScale(15, 0.1),
@@ -106,8 +106,8 @@ const styles = StyleSheet.create({
     paddingBottom: moderateScale(5, 0.1),
   },
   optionBtns: {
-    fontSize: moderateScale(14, 0.1),
-    //fontFamily: Poppins,
+    fontSize: moderateScale(12, 0.1),
+    fontFamily: Poppins,
     // marginLeft: moderateScale(15, 0.1),
     // flex: 0.6,
   },

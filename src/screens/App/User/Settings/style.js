@@ -23,6 +23,13 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(76 / 2, 0.1),
     marginRight: moderateScale(15, 0.1),
   },
+  button: {
+    marginTop: moderateScale(15, 0.1),
+    marginBottom: moderateScale(10, 0.1),
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf:'center'
+  },
   circle: {
     padding: moderateScale(2, 0.1),
     backgroundColor: '#474646',

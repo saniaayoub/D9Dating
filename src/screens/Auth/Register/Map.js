@@ -34,7 +34,8 @@ let LATITUDE;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const Map = ({navigation, route}) => {
   const screen1 = route.params;
-  console.log(screen1);
+
+  console.log(screen1, 'screen');
   const dispatch = useDispatch();
   const mapRef = useRef();
   const [markerPosition, setMarkerPosition] = useState({
@@ -166,13 +167,13 @@ const Map = ({navigation, route}) => {
               console.log('ddd');
               dispatch(setPostLocation(coordinate));
               setTimeout(() => {
-                navigation.goBack()
+                navigation.goBack();
               }, 2000);
             } else {
               console.log('rr');
               dispatch(setLocation(coordinate));
               setTimeout(() => {
-                navigation.goBack()
+                navigation.goBack();
               }, 2000);
             }
 

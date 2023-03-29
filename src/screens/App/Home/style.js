@@ -7,7 +7,6 @@ const PoppinsBold = '';
 const styles = StyleSheet.create({
   container: {
     height: '93%',
-    // justifyContent: 'center',
   },
   stories: {
     alignItems: 'flex-start',
@@ -200,10 +199,17 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(50 / 2, 0.1),
   },
   funView: {
+    position: 'absolute',
+    right: 0,
+    // width: moderateScale(100, 0.1),
+    top: moderateScale(90, 0.1),
+    // height: moderateScale(35, 0.1),
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    // justifyContent: 'flex-end',
     alignItems: 'center',
-    margin: moderateScale(10, 0.1),
+    // backgroundColor: 'red',
+    // marginVertical: moderateScale(12, 0.1),
+    marginRight: moderateScale(10, 0.1),
   },
   yellow: {
     alignItems: 'center',

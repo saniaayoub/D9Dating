@@ -11,6 +11,7 @@ import {setTheme} from '../../../../Redux/actions';
 import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
 
 const data = [
   {
@@ -36,6 +37,7 @@ const ViewUser = ({navigation, route}) => {
     screen == 'search' ? post?.id : post.user.id,
   );
   const [loginId, setLoginId] = useState(null);
+  const isFocused = useIsFocused();
 
   console.log(post, 'post');
   const dispatch = useDispatch();
@@ -43,10 +45,9 @@ const ViewUser = ({navigation, route}) => {
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const userToken = useSelector(state => state.reducer.userToken);
-
+  const [cStatus, setCStatus] = useState(null);
+  const [bStatus, setBStatus] = useState(null);
   const [scroll, setScroll] = useState(false);
-  const [connected, setConnected] = useState(false);
-  const [blocked, setBlocked] = useState(false);
   const [loader, setLoader] = useState(false);
   const [userData, setUserData] = useState([]);
 
@@ -56,7 +57,7 @@ const ViewUser = ({navigation, route}) => {
     getId();
     // connect();
     // Disconnect()
-  }, []);
+  }, [isFocused]);
 
   const getId = async () => {
     const logInId = await AsyncStorage.getItem('id');
@@ -65,6 +66,7 @@ const ViewUser = ({navigation, route}) => {
   };
 
   const getData = async () => {
+    console.log('get data');
     setLoader(true);
     axiosconfig
       .get(`user_view/${Userid}`, {
@@ -73,22 +75,8 @@ const ViewUser = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
-        console.log(
-          'connect',
-          JSON.stringify(res.data?.user_details?.connected),
-        );
-        console.log(res?.data?.user_details, 'user detials');
-        if (res?.data?.user_details) {
-          // const dd = JSON.stringify(res?.data)
-          setUserData([res?.data?.user_details]);
-          if (res.data?.user_details?.connected == 1) {
-            setConnected(true);
-          }
-          if (res.data?.user_details?.connected == 0) {
-            setConnected(false);
-          }
-        }
+        console.log('data', JSON.stringify(res.data.user_details));
+        setUserData(res?.data?.user_details);
         setLoader(false);
       })
       .catch(err => {
@@ -111,6 +99,7 @@ const ViewUser = ({navigation, route}) => {
       .then(res => {
         console.log('connect', res);
         setConnected(true);
+        getData();
 
         setLoader(false);
       })
@@ -133,6 +122,7 @@ const ViewUser = ({navigation, route}) => {
       .then(res => {
         console.log('Disconnect', res);
         setConnected(false);
+        getData();
         setLoader(false);
       })
       .catch(err => {
@@ -155,9 +145,9 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('block', res);
-        getData();
-        setBlocked(true);
         setConnected(false);
+        setBlocked(true);
+        getData();
         setLoader(false);
       })
       .catch(err => {
@@ -230,89 +220,92 @@ const ViewUser = ({navigation, route}) => {
       >
         <View>
           <View style={s.line}></View>
-          {userData.map((v, i) => {
-            console.log('aa');
-            return (
-              <View style={s.container}>
-                <View style={s.row}>
-                  <Text style={[s.headerTxt, {color: textColor}]}>
-                    {v.name} {v.last_name}
-                  </Text>
+          <View style={s.container}>
+            <View style={s.row}>
+              <Text style={[s.headerTxt, {color: textColor}]}>
+                {userData?.name} {userData.last_name}
+              </Text>
 
-                  <View style={s.icon}>
-                    <AntDesign
-                      style={{position: 'absolute'}}
-                      name="message1"
-                      color="#FFD700"
-                      solid
-                      size={moderateScale(22, 0.1)}
-                    />
-                  </View>
-                </View>
-
-                {/* <View>
-                  <Text style={s.txt}>hdjdkdjksd </Text>
-                </View> */}
-
-                <View style={s.row1}>
-                  <View>
-                    <Ionicon
-                      name="location-sharp"
-                      color={textColor}
-                      solid
-                      size={moderateScale(22, 0.1)}
-                    />
-                  </View>
-                  <Text style={s.location}>{v.location} </Text>
-                </View>
-
-                <View style={s.about}>
-                  <Text style={[s.aboutTxt, {color: textColor}]}>About</Text>
-                  <View style={s.abTxt}>
-                    <Text style={s.txt}>{v.about_me} </Text>
-                  </View>
-                </View>
+              <View style={s.icon}>
+                <AntDesign
+                  style={{position: 'absolute'}}
+                  name="message1"
+                  color="#FFD700"
+                  solid
+                  size={moderateScale(22, 0.1)}
+                />
               </View>
-            );
-          })}
+            </View>
+
+            {/* <View>
+        <Text style={s.txt}>hdjdkdjksd </Text>
+      </View> */}
+
+            <View style={s.row1}>
+              <View>
+                <Ionicon
+                  name="location-sharp"
+                  color={textColor}
+                  solid
+                  size={moderateScale(22, 0.1)}
+                />
+              </View>
+              <Text style={s.location}>{userData?.location} </Text>
+            </View>
+
+            <View style={s.about}>
+              <Text style={[s.aboutTxt, {color: textColor}]}>About</Text>
+              <View style={s.abTxt}>
+                <Text style={s.txt}>{userData?.about_me} </Text>
+              </View>
+            </View>
+          </View>
           {Userid != loginId ? (
             <>
-              <TouchableOpacity>
-                <View>
-                  {connected == false && blocked == false ? (
-                    <>
-                      <TouchableOpacity onPress={() => connect()}>
-                        <View style={s.btn}>
-                          <Text style={[s.btnTxt]}>Connect</Text>
-                        </View>
-                      </TouchableOpacity>
-                    </>
-                  ) : connected == true && blocked == false ? (
-                    <>
-                      <View style={s.connected}>
-                        <TouchableOpacity onPress={() => Disconnect()}>
-                          <View style={s.btn}>
-                            <Text style={[s.btnTxt]}>Disconnect</Text>
-                          </View>
-                        </TouchableOpacity>
+              {userData?.connected ? (
+                <>
+                  <View style={s.connected}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        userData?.connected == 2 ? null : Disconnect()
+                      }
+                    >
+                      <View style={s.btn}>
+                        <Text style={[s.btnTxt]}>
+                          {userData?.connected == 2 ? 'Pending' : 'Disconnect'}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    {!userData?.block_status && userData?.connected == 1 ? (
+                      <>
                         <TouchableOpacity onPress={() => block()}>
                           <View style={s.btn}>
-                            <Text style={[s.btnTxt]}>Block</Text>
+                            <Text style={[s.btnTxt]}>{'block'}</Text>
                           </View>
                         </TouchableOpacity>
-                      </View>
-                    </>
-                  ) : blocked == true && connected == false ? (
-                    <>
-                      <TouchableOpacity onPress={() => unblock()}>
-                        <View style={s.btn}>
-                          <Text style={[s.btnTxt]}>Unblock</Text>
-                        </View>
-                      </TouchableOpacity>
-                    </>
-                  ) : null}
-                </View>
-              </TouchableOpacity>
+                      </>
+                    ) : null}
+                  </View>
+                </>
+              ) : (
+                <>
+                  <TouchableOpacity
+                    onPress={() =>
+                      userData?.connected == 0 && userData?.block_status == 0
+                        ? connect()
+                        : unblock()
+                    }
+                  >
+                    <View style={s.btn}>
+                      <Text style={[s.btnTxt]}>
+                        {userData?.connected == 0 && userData?.block_status == 0
+                          ? 'Connect'
+                          : 'Unblock'}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </>
+              )}
             </>
           ) : null}
         </View>
@@ -322,3 +315,92 @@ const ViewUser = ({navigation, route}) => {
 };
 
 export default ViewUser;
+// <TouchableOpacity>
+//               <View>
+//                 {cStatus == 0 && bStatus == 0 ? (
+//                   <>
+//                     <TouchableOpacity onPress={() => connect()}>
+//                       <View style={s.btn}>
+//                         <Text style={[s.btnTxt]}>Connect</Text>
+//                       </View>
+//                     </TouchableOpacity>
+//                   </>
+//                 ) : cStatus == 2 && bStatus == 0 ? (
+//                   <>
+//                     <View style={s.connected}>
+//                       <View style={s.btn}>
+//                         <Text style={[s.btnTxt]}>pending</Text>
+//                       </View>
+//                     </View>
+//                   </>
+//                 ) : cStatus == 1 ? (
+//                   <>
+//                     <View style={s.connected}>
+//                       <TouchableOpacity onPress={() => Disconnect()}>
+//                         <View style={s.btn}>
+//                           <Text style={[s.btnTxt]}>Disconnect</Text>
+//                         </View>
+//                       </TouchableOpacity>
+//                       <TouchableOpacity onPress={() => block()}>
+//                         <View style={s.btn}>
+//                           <Text style={[s.btnTxt]}>Block</Text>
+//                         </View>
+//                       </TouchableOpacity>
+//                     </View>
+//                   </>
+//                 ) : cStatus == 0 && bStatus == 1 ? (
+//                   <>
+//                     <TouchableOpacity onPress={() => unblock()}>
+//                       <View style={s.btn}>
+//                         <Text style={[s.btnTxt]}>Unblock</Text>
+//                       </View>
+//                     </TouchableOpacity>
+//                   </>
+//                 ) : null}
+//               </View>
+//             </TouchableOpacity>
+//  {userData.map((v, i) => {
+//           console.log('aa');
+//           return (
+//             <View style={s.container}>
+//               <View style={s.row}>
+//                 <Text style={[s.headerTxt, {color: textColor}]}>
+//                   {v.name} {v.last_name}
+//                 </Text>
+
+//                 <View style={s.icon}>
+//                   <AntDesign
+//                     style={{position: 'absolute'}}
+//                     name="message1"
+//                     color="#FFD700"
+//                     solid
+//                     size={moderateScale(22, 0.1)}
+//                   />
+//                 </View>
+//               </View>
+
+//               {/* <View>
+//                 <Text style={s.txt}>hdjdkdjksd </Text>
+//               </View> */}
+
+//               <View style={s.row1}>
+//                 <View>
+//                   <Ionicon
+//                     name="location-sharp"
+//                     color={textColor}
+//                     solid
+//                     size={moderateScale(22, 0.1)}
+//                   />
+//                 </View>
+//                 <Text style={s.location}>{v.location} </Text>
+//               </View>
+
+//               <View style={s.about}>
+//                 <Text style={[s.aboutTxt, {color: textColor}]}>About</Text>
+//                 <View style={s.abTxt}>
+//                   <Text style={s.txt}>{v.about_me} </Text>
+//                 </View>
+//               </View>
+//             </View>
+//           );
+//         })}

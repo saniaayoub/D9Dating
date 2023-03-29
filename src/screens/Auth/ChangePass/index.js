@@ -28,6 +28,7 @@ const ChangePass = ({navigation, route}) => {
   const [password, setPassword] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState(null);
   const [showPass, setshowPass] = useState(true);
+  const [showConfPass, setShowConfPass] = useState(true);
   const [submitted, setSubmitted] = useState();
   const [loader, setLoader] = useState(false);
   const theme = useSelector(state => state.reducer.theme);
@@ -199,11 +200,13 @@ const ChangePass = ({navigation, route}) => {
                 setConfirmPassword(password);
               }}
               InputRightElement={
-                password ? (
+                confirmPassword ? (
                   <View style={s.eye}>
-                    <TouchableOpacity onPress={() => setshowPass(!showPass)}>
+                    <TouchableOpacity
+                      onPress={() => setShowConfPass(!showConfPass)}
+                    >
                       <Feather
-                        name={showPass ? 'eye' : 'eye-off'}
+                        name={showConfPass ? 'eye' : 'eye-off'}
                         color={Textcolor}
                         size={20}
                       />
@@ -215,7 +218,7 @@ const ChangePass = ({navigation, route}) => {
               }
               color={Textcolor}
               fontSize={moderateScale(14, 0.1)}
-              secureTextEntry={showPass}
+              secureTextEntry={showConfPass}
             />
           </View>
 

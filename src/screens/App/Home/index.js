@@ -603,9 +603,10 @@ const [funPostsData, setFunPostsData] = useState('')
                 {elem?.item?.user?.name} {elem?.item?.user?.last_name}
               </Text>
             </TouchableOpacity>
-            <Text style={[s.textRegular, { color: textColor }]}>
-              {elem?.item?.user?.location}
-            </Text>
+           {elem?.item?.location? (<><Text style={[s.textRegular, {color: textColor}]}>
+              {elem?.item?.location}
+            </Text></>):null}
+        
           </View>
           <View style={[s.options]}>
             <Menu
@@ -820,7 +821,7 @@ const [funPostsData, setFunPostsData] = useState('')
                 }}
                 style={[
                   s.addBtn,
-                  { borderColor: color, bottom: moderateScale(15, 0.1) },
+                  {borderColor: color, top: moderateScale(50, 0.1)},
                 ]}
               >
                 <Icon
@@ -932,7 +933,10 @@ const [funPostsData, setFunPostsData] = useState('')
 
         <TouchableOpacity
           style={s.funView}
-          onPress={() => navigation.navigate('FunInteraction')}
+          onPress={() => {
+            console.log('aaa');
+            navigation.navigate('FunInteraction');
+          }}
         >
           <View style={[s.yellow, s.round]}>
             <Fun
@@ -955,7 +959,7 @@ const [funPostsData, setFunPostsData] = useState('')
           </View>
           <Text style={[s.funText, { color: textColor }]}>Fun Interaction</Text>
         </TouchableOpacity>
-
+        <View style={{height: moderateScale(35, 0.1)}}></View>
         <FlatList
           data={posts}
           renderItem={(elem, index) => renderItem(elem)}

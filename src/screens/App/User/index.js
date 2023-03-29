@@ -171,8 +171,9 @@ const Profile = ({navigation}) => {
   const save = async base64image => {
     setLoader(true);
     setForm({...form, location: userLocation});
-    setForm({...form, image: base64image});
-
+    if (base64image) {
+      setForm({...form, image: base64image});
+    }
     await axiosconfig
       .post('user_update', form, {
         headers: {
@@ -187,7 +188,7 @@ const Profile = ({navigation}) => {
         setLoader(false);
       })
       .catch(err => {
-        console.log(err);
+        console.log(err, 'sasasas');
         setLoader(false);
         getData();
         showToast(err.message);

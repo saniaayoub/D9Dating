@@ -93,6 +93,7 @@ const Notifications = ({navigation}) => {
   const [accept, setAccept] = useState(false);
   const [decline, setDecline] = useState(false);
   const [response, setResponse] = useState('');
+  const [index, setIndex] = useState('');
   useEffect(() => {
     setResponse('');
     getList();
@@ -119,6 +120,7 @@ const Notifications = ({navigation}) => {
   };
   const connectAccept = async id => {
     console.log('accept');
+    setIndex(id);
     setLoader(true);
     axiosconfig
       .get(`connect-accept/${id}`, {
@@ -129,7 +131,9 @@ const Notifications = ({navigation}) => {
       .then(res => {
         console.log('data', res?.data);
         setResponse('Connected');
-        getList();
+        setTimeout(() => {     
+          getList();
+        }, 7000);
         setLoader(false);
       })
       .catch(err => {
@@ -140,6 +144,7 @@ const Notifications = ({navigation}) => {
   };
   const connectDecline = async id => {
     setLoader(true);
+    setIndex(id);
     axiosconfig
       .get(`connect-remove/${id}`, {
         headers: {
@@ -149,8 +154,9 @@ const Notifications = ({navigation}) => {
       .then(res => {
         console.log('data', res?.data);
         setResponse('Declined');
-
-        getList();
+        setTimeout(() => {     
+          getList();
+        }, 7000);
         setLoader(false);
       })
       .catch(err => {
@@ -172,12 +178,12 @@ const Notifications = ({navigation}) => {
           />
         </View>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ViewUser', {
-              post: elem?.item?.request_user,
-              screen: 'search',
-            })
-          }
+          // onPress={() =>
+          //   navigation.navigate('ViewUser', {
+          //     post: elem?.item?.request_user,
+          //     screen: 'search',
+          //   })
+          // }
           style={{flex: 0.7, alignSelf: 'center'}}
         >
           <View>
@@ -198,7 +204,7 @@ const Notifications = ({navigation}) => {
           </View>
         </TouchableOpacity>
 
-        {response ? (
+        {response && index == elem?.item?.request_user?.id ? (
           <View style={s.icon}>
             <View style={s.fView}>
               <Text style={[s.fText, {color: textColor}]}>{response}</Text>

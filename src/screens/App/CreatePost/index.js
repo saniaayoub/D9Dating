@@ -5,17 +5,18 @@ import {
   Image,
   TouchableOpacity,
   PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {moderateScale} from 'react-native-size-matters';
 import s from './style';
-import {setTheme} from '../../../Redux/actions';
+import {setPostLocation, setTheme} from '../../../Redux/actions';
 import {useSelector, useDispatch} from 'react-redux';
 import Header from '../../../Components/Header';
 import Vector from '../../../assets/images/png/Vector.png';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Button, Stack, Menu, Pressable, Input, Alert} from 'native-base';
+import {Button, Stack, Menu, Pressable, Input} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,35 +34,42 @@ import RNFS from 'react-native-fs';
 // import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreatePost = ({navigation, route}) => {
-  console.log(route?.params?.elem, 'data from home');
-  const cap = route?.params?.elem?.caption;
-  const privacy = route?.params?.elem?.user?.post_privacy;
+  const privacy = route?.params?.elem?.privacy_option;
 
   useEffect(() => {
     if (privacy == '1') {
+    console.log(privacy,'aaaaa');
+
       setStory('Public');
     } else if (privacy == '2') {
+    console.log(privacy,'aaaaa');
+
       setStory('Friends');
     } else {
+    console.log(privacy,'aaaaa');
+
       setStory('Only Me');
     }
-    console.log('aaaaa');
   }, []);
 
   const theme = useSelector(state => state.reducer.theme);
   const [filePath, setFilePath] = useState(
-    route?.params?.screen == 'Home' || 'funInteraction'
+    route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
       ? route?.params?.elem?.image
-      : [],
+      : null,
   );
+  console.log(filePath, 'file path');
   const [open, setOpen] = useState(false);
   const [icon, setIcon] = useState('globe');
   const [caption, setCaption] = useState(
-    route?.params?.screen == 'Home' || 'funInteraction'
+    route?.params?.screen == 'Home' ||  route?.params?.screen == 'funInteraction'
       ? route?.params?.elem?.caption
-      : '',
+      : null,
   );
-  const [story, setStory] = useState('Public');
+  const [story, setStory] = useState(
+    route?.params?.screen == 'Home' ||  route?.params?.screen == 'funInteraction'
+    ? route?.params?.elem?.privacy_option :
+    'Public');
   const [loader, setLoader] = useState(false);
   const isFocused = useIsFocused();
   const [userData, setUserData] = useState([]);
@@ -107,9 +115,9 @@ const CreatePost = ({navigation, route}) => {
   const refRBSheet = useRef();
   const postLocation = useSelector(state => state.reducer.postLocation);
   const [location, setLocation] = useState(
-    route?.params?.screen == 'Home'
+    route?.params?.screen == 'Home' ||  route?.params?.screen == 'funInteraction'
       ? route?.params?.elem?.location
-      : [postLocation],
+      : postLocation,
   );
   console.log(postLocation, 'postLocation');
   console.log(location, 'location');
@@ -236,7 +244,7 @@ const CreatePost = ({navigation, route}) => {
   };
   const onsubmit = () => {
     console.log(userToken);
-    if (caption == '') {
+    if (caption == null) {
       alert('please fill given fields');
       return;
     }
@@ -249,7 +257,7 @@ const CreatePost = ({navigation, route}) => {
         caption: caption,
         privacy_option:
           story == 'Public' ? '1' : story == 'Friends' ? '2' : '3',
-        location: `${location}`,
+        location: postLocation,
       };
       console.log(data, 'dataaaa');
       // setLoader(true);
@@ -269,18 +277,38 @@ const CreatePost = ({navigation, route}) => {
           // setLoader(false);
           alert(res?.data?.message);
           console.log(res, 'post');
-          setFilePath('');
-          setCaption('');
+              setFilePath(null);
+              setCaption(null)
+              dispatch(setPostLocation(null))
+
           navigation.navigate('Home');
         })
         .catch(err => {
           // setLoader(false);
           console.log(err, 'aaa');
-          alert(err?.response?.data?.message);
+          Alert.alert(err?.response?.data?.message);
         });
     }
   };
   useEffect(() => {
+    if(!route?.params?.screen){
+      setFilePath(null);
+        setCaption(null)
+        dispatch(setPostLocation(null))
+      }
+      console.log(route?.params?.screen,'ghhgg')
+    // if( route?.params?.screen != 'Home' ||  route?.params?.screen != 'funInteraction'){
+    //   if(route?.params?.screen != 'map'){
+    //     setFilePath(null);
+    //     setCaption(null)
+    //     dispatch(setPostLocation(null))
+    //   }
+    // }
+    // if(route?.params?.screen =='Home'){
+    //   dispatch(setPostLocation(''))
+    // }else{
+    //   dispatch(setPostLocation(''))
+    // }
     getData();
   }, [isFocused]);
 
@@ -310,8 +338,7 @@ const CreatePost = ({navigation, route}) => {
   };
   return (
     <View
-      style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}
-    >
+      style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}>
       <View style={[s.container]}>
         <View>
           <Header navigation={navigation} />
@@ -356,8 +383,7 @@ const CreatePost = ({navigation, route}) => {
                         height: moderateScale(33, 0.1),
                         // justifyContent:'center',
                         alignItems: 'center',
-                      }}
-                    >
+                      }}>
                       <Entypo
                         name={icon}
                         color={Textcolor}
@@ -376,14 +402,12 @@ const CreatePost = ({navigation, route}) => {
                       />
                     </Pressable>
                   );
-                }}
-              >
+                }}>
                 <Menu.Item
                   onPress={() => {
                     setStory('Public');
                     setIcon('globe');
-                  }}
-                >
+                  }}>
                   <View style={s.optionView}>
                     <Entypo
                       name={'globe'}
@@ -400,8 +424,7 @@ const CreatePost = ({navigation, route}) => {
                   onPress={() => {
                     setStory('Friends');
                     setIcon('users');
-                  }}
-                >
+                  }}>
                   <View style={s.optionView}>
                     <Entypo
                       name={'users'}
@@ -418,8 +441,7 @@ const CreatePost = ({navigation, route}) => {
                   onPress={() => {
                     setStory('Only Me');
                     setIcon('lock');
-                  }}
-                >
+                  }}>
                   <View style={s.optionView}>
                     <Entypo
                       name={'lock'}
@@ -449,69 +471,57 @@ const CreatePost = ({navigation, route}) => {
             color={Textcolor}
             fontSize={moderateScale(14, 0.1)}
           />
-          {/* <Text style={[s.mainText, {color: Textcolor}]}>
-            What's on your Mind
-          </Text> */}
         </View>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('Map', {
-              screen: 'createPost',
-            })
-          }
-        >
+          onPress={() => {
+            route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
+              ? null
+              : navigation.navigate('Map', {
+                  screen: 'createPost',
+                });
+          }}>
           <View style={[s.mText]}>
             <Input
               variant="unstyled"
-              placeholder={'Enter location...'}
+              placeholder={postLocation ? postLocation :'Enter location...'}
               placeholderTextColor={Textcolor}
               isReadOnly
-              value={location}
-              onChangeText={text => {
-                setCaption(text);
-              }}
+               value={location}
+              onChangeText={() => setLocation(location)}
               backgroundColor={color}
               color={Textcolor}
               fontSize={moderateScale(14, 0.1)}
             />
-            {/* <Text style={[s.mainText, {color: Textcolor}]}>
-            What's on your Mind
-          </Text> */}
           </View>
         </TouchableOpacity>
-        {/* <View style={[s.location,]}>
-          
-          <Text style={{color:'red',
-          fontSize: moderateScale(18,0.1),
-          paddingVertical: moderateScale(7,0.1),
-          paddingHorizontal: moderateScale(15,0.1)
-          }}>{location ? location : 'Add location'}</Text>
-          
-        </View> */}
-        <View style={[s.imgView, {zIndex: -1}]}>
-          <TouchableOpacity onPress={() => refRBSheet.current.open()}>
-            {filePath?.length != 0 ? (
-              <>
+        <View style={[s.imgView]}>
+          {filePath != null ? (
+            <>
+              <TouchableOpacity onPress={() => refRBSheet.current.open()}>
                 <View style={s.img}>
                   <Image
                     source={{uri: filePath}}
-                    style={s.galleryImage}
-                  ></Image>
+                    style={s.galleryImage}></Image>
                 </View>
-              </>
-            ) : (
-              <>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <TouchableOpacity onPress={() => refRBSheet.current.open()}>
                 <View style={s.img}>
                   <Image
                     style={{
                       width: moderateScale(153, 0.1),
                       height: moderateScale(136, 0.1),
+                      // backgroundColor: 'white'
                     }}
                     source={require('../../../assets/images/png/Vector.png')}
                   />
                   <View
-                    style={{position: 'absolute', top: moderateScale(100, 0.1)}}
-                  >
+                    style={{
+                      position: 'absolute',
+                      top: moderateScale(100, 0.1),
+                    }}>
                     <Ionicons
                       name="add-circle-sharp"
                       size={45}
@@ -519,63 +529,58 @@ const CreatePost = ({navigation, route}) => {
                     />
                   </View>
                 </View>
-              </>
-            )}
+              </TouchableOpacity>
+            </>
+          )}
 
-            <RBSheet
-              ref={refRBSheet}
-              closeOnDragDown={true}
-              height={300}
-              openDuration={250}
-              customStyles={{
-                container: {
-                  alignItems: 'center',
-                  height: moderateScale(220),
-                  borderRadius: moderateScale(20, 0.1),
-                },
-              }}
-            >
-              <View
-                style={{
-                  marginVertical: moderateScale(30, 0.1),
-                  justifyContent: 'center',
-                  alignContent: 'center',
+          <RBSheet
+            ref={refRBSheet}
+            closeOnDragDown={true}
+            height={300}
+            openDuration={250}
+            customStyles={{
+              container: {
+                alignItems: 'center',
+                height: moderateScale(220),
+                borderRadius: moderateScale(20, 0.1),
+              },
+            }}>
+            <View
+              style={{
+                marginVertical: moderateScale(30, 0.1),
+                justifyContent: 'center',
+                alignContent: 'center',
+              }}>
+              <Stack
+                direction={{
+                  base: 'column',
+                  md: 'row',
                 }}
-              >
-                <Stack
-                  direction={{
-                    base: 'column',
-                    md: 'row',
-                  }}
-                  space={4}
-                >
-                  <Button
-                    transparent
-                    style={s.capturebtn}
-                    onPressIn={() => captureImage('photo')}
-                  >
-                    <View style={{flexDirection: 'row'}}>
-                      <Ionicons name="camera" style={s.capturebtnicon} />
-                      <Text style={s.capturebtntxt}>Open Camera</Text>
-                    </View>
-                  </Button>
-                  <Button
-                    transparent
-                    style={s.capturebtn}
-                    onPressIn={() => chooseFile('photo')}
-                  >
-                    <View style={{flexDirection: 'row'}}>
-                      <Ionicons
-                        name="md-image-outline"
-                        style={s.capturebtnicon}
-                      />
-                      <Text style={s.capturebtntxt}>Open Gallery</Text>
-                    </View>
-                  </Button>
-                </Stack>
-              </View>
-            </RBSheet>
-          </TouchableOpacity>
+                space={4}>
+                <Button
+                  transparent
+                  style={s.capturebtn}
+                  onPress={() => captureImage('photo')}>
+                  <View style={{flexDirection: 'row'}}>
+                    <Ionicons name="camera" style={s.capturebtnicon} />
+                    <Text style={s.capturebtntxt}>Open Camera</Text>
+                  </View>
+                </Button>
+                <Button
+                  transparent
+                  style={s.capturebtn}
+                  onPress={() => chooseFile('photo')}>
+                  <View style={{flexDirection: 'row'}}>
+                    <Ionicons
+                      name="md-image-outline"
+                      style={s.capturebtnicon}
+                    />
+                    <Text style={s.capturebtntxt}>Open Gallery</Text>
+                  </View>
+                </Button>
+              </Stack>
+            </View>
+          </RBSheet>
         </View>
 
         <TouchableOpacity onPress={() => onsubmit()}>
@@ -589,8 +594,7 @@ const CreatePost = ({navigation, route}) => {
               style={{
                 height: moderateScale(50, 0.1),
                 width: moderateScale(60, 0.1),
-              }}
-            ></View>
+              }}></View>
           </>
         ) : (
           <></>

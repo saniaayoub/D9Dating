@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   ToastAndroid,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import s from './style';
@@ -61,7 +62,7 @@ const ForgetPassword = ({navigation}) => {
         .then(res => {
           setLoader(false);
           console.log(res);
-          alert(res?.data?.message);
+          Alert.alert(res?.data?.message);
           setTimeout(() => {
             setModalVisible(!modalVisible);
           }, 3000);
@@ -72,7 +73,7 @@ const ForgetPassword = ({navigation}) => {
         .catch(err => {
           setLoader(false);
           console.log(err?.response, 'aaa');
-          alert(err?.response?.data?.message);
+          Alert.alert(err?.response?.data?.message);
         });
     }
   };
@@ -88,13 +89,13 @@ const ForgetPassword = ({navigation}) => {
       .then(res => {
         setLoader(false);
         console.log(res, 'email');
-        alert(res?.data);
+        Alert.alert(res?.data);
         navigation.navigate('ChangePass', {email, otp});
       })
       .catch(err => {
         setLoader(false);
         console.log(err?.response, 'aaa');
-        alert(err?.response?.data);
+        Alert.alert(err?.response?.data);
       });
   };
 
@@ -160,34 +161,27 @@ const ForgetPassword = ({navigation}) => {
             >
               <Text style={s.btnText}>Send</Text>
             </Button>
-            {/* <OTPInputView
-              style={{ width: '80%', height: 200 }}
-              pinCount={4}
-              // code={this.state.code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
-              // onCodeChanged = {code => { this.setState({code})}}
-              autoFocusOnLoad
-              // codeInputFieldStyle={styles.underlineStyleBase}
-              // codeInputHighlightStyle={styles.underlineStyleHighLighted}
-              onCodeFilled={(code => {
-                console.log(`Code is ${code}, you are good to go!`)
-              })}
-            /> */}
+           
           </View>
         </View>
 
         <View style={s.bottomLink}>
-          <Button
+          {/* <Button
             size="sm"
             variant={'link'}
             _text={{
               color: Textcolor,
             }}
-            onPressIn={() => navigation.navigate('Register')}
-          >
-            
-          </Button>
-        </View>
-        <View style={{flexDirection: 'row', justifyContent:'center', bottom: moderateScale(-45,0.1)}}>
+            onPress={() => navigation.navigate('Register')}
+          ></Button> */}
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                bottom: moderateScale(-45, 0.1),
+              }}
+            >
               <Text style={[s.forgetPass, {color: Textcolor}]}>
                 Don’t Have an Account?
               </Text>
@@ -198,6 +192,9 @@ const ForgetPassword = ({navigation}) => {
                 Sign up Now!
               </Text>
             </View>
+          </TouchableOpacity>
+        </View>
+
         {modalVisible ? (
           <OTPModal
             navigation={navigation}

@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   headerImage: {
     width: moderateScale(54, 0.1),
     height: moderateScale(54, 0.1),
-    borderRadius: moderateScale(54/2, 0.1),
+    borderRadius: moderateScale(54 / 2, 0.1),
   },
   buttonText: {
     fontSize: moderateScale(13, 0.1),
@@ -85,14 +85,13 @@ const styles = StyleSheet.create({
   },
   mText: {
     paddingHorizontal: moderateScale(28, 0.1),
-    marginVertical: moderateScale(8,0.1),
+    marginVertical: moderateScale(8, 0.1),
   },
-  location:{
+  location: {
     paddingHorizontal: moderateScale(28, 0.1),
-    marginVertical: moderateScale(8,0.1),
-    justifyContent:'center',
-    backgroundColor:'gray'
-
+    marginVertical: moderateScale(8, 0.1),
+    justifyContent: 'center',
+    backgroundColor: 'gray',
   },
   imgView: {
     marginVertical: moderateScale(15, 0.1),
