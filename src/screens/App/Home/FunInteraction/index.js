@@ -479,7 +479,7 @@ const FunInteraction = ({navigation}) => {
                 post: elem?.item,
                 screen: 'search',
               });
-              setSearching(false);
+              clear();
             }}
           >
             <Text style={[s.name, s.nameBold, {color: textColor}]}>
@@ -494,6 +494,7 @@ const FunInteraction = ({navigation}) => {
     );
   };
   const onSearch = text => {
+    setSearchText(text);
     if (text) {
       setSearching(true);
       const temp = text.toLowerCase();
@@ -505,8 +506,15 @@ const FunInteraction = ({navigation}) => {
 
       setFiltered(tempList);
     } else {
+      setSearchText('');
       setSearching(false);
     }
+  };
+
+  const clear = () => {
+    setSearchText('');
+    setFiltered([]);
+    setSearching(false);
   };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
@@ -518,6 +526,7 @@ const FunInteraction = ({navigation}) => {
             placeholder="Search Here"
             placeholderTextColor={'#B9B9B9'}
             onChangeText={onSearch}
+            value={searchText}
             marginTop={moderateScale(10, 0.1)}
             w={'95%'}
             h={moderateScale(37, 0.1)}
@@ -533,7 +542,7 @@ const FunInteraction = ({navigation}) => {
             }
             InputRightElement={
               <TouchableOpacity
-                // onPress={() => handleCancel()}
+                onPress={() => clear()}
                 style={{paddingRight: 10}}
               >
                 {searchText ? (
