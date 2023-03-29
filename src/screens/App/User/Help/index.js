@@ -243,7 +243,7 @@ const Help = ({navigation}) => {
                 style={s.shadow}
                 onPress={() => help()}
               >
-                <Text style={s.btnText}>Send</Text>
+                <Text style={{ color:"#222222"}}>Send</Text>
               </Button>
             </View>
           </View>

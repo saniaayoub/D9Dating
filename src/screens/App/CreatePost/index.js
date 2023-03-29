@@ -51,16 +51,15 @@ const CreatePost = ({navigation, route}) => {
   const [filePath, setFilePath] = useState(
     route?.params?.screen == 'Home' || 'funInteraction'
       ? route?.params?.elem?.image
-      : [],
+      : null,
   );
+  console.log(filePath, 'file path');
   const [open, setOpen] = useState(false);
   const [icon, setIcon] = useState('globe');
   const [caption, setCaption] = useState(
     route?.params?.screen == 'Home' || 'funInteraction'
       ? route?.params?.elem?.caption
-      : // : route?.params?.screen == 'map'
-        // ? route?.params?.item.caption
-        '',
+      :  null,
   );
   const [story, setStory] = useState('Public');
   const [loader, setLoader] = useState(false);
@@ -237,7 +236,7 @@ const CreatePost = ({navigation, route}) => {
   };
   const onsubmit = () => {
     console.log(userToken);
-    if (caption == '') {
+    if (caption == null) {
       alert('please fill given fields');
       return;
     }
@@ -246,7 +245,7 @@ const CreatePost = ({navigation, route}) => {
       return;
     } else {
       let data = {
-        image: filePath,
+        image:  filePath,
         caption: caption,
         privacy_option:
           story == 'Public' ? '1' : story == 'Friends' ? '2' : '3',
@@ -280,7 +279,7 @@ const CreatePost = ({navigation, route}) => {
         .catch(err => {
           // setLoader(false);
           console.log(err, 'aaa');
-          Alert.alert(err?.response?.data?.message);
+           Alert.alert(err?.response?.data?.message);
         });
     }
   };
@@ -314,8 +313,7 @@ const CreatePost = ({navigation, route}) => {
   };
   return (
     <View
-      style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}
-    >
+      style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}>
       <View style={[s.container]}>
         <View>
           <Header navigation={navigation} />
@@ -360,8 +358,7 @@ const CreatePost = ({navigation, route}) => {
                         height: moderateScale(33, 0.1),
                         // justifyContent:'center',
                         alignItems: 'center',
-                      }}
-                    >
+                      }}>
                       <Entypo
                         name={icon}
                         color={Textcolor}
@@ -380,14 +377,12 @@ const CreatePost = ({navigation, route}) => {
                       />
                     </Pressable>
                   );
-                }}
-              >
+                }}>
                 <Menu.Item
                   onPress={() => {
                     setStory('Public');
                     setIcon('globe');
-                  }}
-                >
+                  }}>
                   <View style={s.optionView}>
                     <Entypo
                       name={'globe'}
@@ -404,8 +399,7 @@ const CreatePost = ({navigation, route}) => {
                   onPress={() => {
                     setStory('Friends');
                     setIcon('users');
-                  }}
-                >
+                  }}>
                   <View style={s.optionView}>
                     <Entypo
                       name={'users'}
@@ -422,8 +416,7 @@ const CreatePost = ({navigation, route}) => {
                   onPress={() => {
                     setStory('Only Me');
                     setIcon('lock');
-                  }}
-                >
+                  }}>
                   <View style={s.optionView}>
                     <Entypo
                       name={'lock'}
@@ -456,13 +449,13 @@ const CreatePost = ({navigation, route}) => {
         </View>
         <TouchableOpacity
           onPress={() => {
-            route?.params?.screen == 'Home' || 'funInteraction'
-              ? console.log('aajaj')
-              : navigation.navigate('Map', {
-                  screen: 'createPost',
-                });
-          }}
-        >
+            route?.params?.screen != 'Home' || 'funInteraction'
+              ? navigation.navigate('Map', {
+                screen: 'createPost',
+              }) :
+              console.log('aajaj')
+              
+          }}>
           <View style={[s.mText]}>
             <Input
               variant="unstyled"
@@ -477,44 +470,37 @@ const CreatePost = ({navigation, route}) => {
               color={Textcolor}
               fontSize={moderateScale(14, 0.1)}
             />
-            {/* <Text style={[s.mainText, {color: Textcolor}]}>
-            What's on your Mind
-          </Text> */}
           </View>
         </TouchableOpacity>
-        {/* <View style={[s.location,]}>
-          
-          <Text style={{color:'red',
-          fontSize: moderateScale(18,0.1),
-          paddingVertical: moderateScale(7,0.1),
-          paddingHorizontal: moderateScale(15,0.1)
-          }}>{location ? location : 'Add location'}</Text>
-          
-        </View> */}
-        <View style={[s.imgView, {zIndex: -1}]}>
-          <TouchableOpacity onPress={() => refRBSheet.current.open()}>
-            {filePath?.length != 0 ? (
-              <>
+        <View style={[s.imgView]}>
+          {filePath != null ? (
+            <>
+              <TouchableOpacity 
+              onPress={() => refRBSheet.current.open()}>
                 <View style={s.img}>
                   <Image
                     source={{uri: filePath}}
-                    style={s.galleryImage}
-                  ></Image>
+                    style={s.galleryImage}></Image>
                 </View>
-              </>
-            ) : (
-              <>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <TouchableOpacity onPress={() => refRBSheet.current.open()}>
                 <View style={s.img}>
                   <Image
                     style={{
                       width: moderateScale(153, 0.1),
                       height: moderateScale(136, 0.1),
+                      // backgroundColor: 'white'
                     }}
                     source={require('../../../assets/images/png/Vector.png')}
                   />
                   <View
-                    style={{position: 'absolute', top: moderateScale(100, 0.1)}}
-                  >
+                    style={{
+                      position: 'absolute',
+                      top: moderateScale(100, 0.1),
+                    }}>
                     <Ionicons
                       name="add-circle-sharp"
                       size={45}
@@ -522,63 +508,58 @@ const CreatePost = ({navigation, route}) => {
                     />
                   </View>
                 </View>
-              </>
-            )}
+              </TouchableOpacity>
+            </>
+          )}
 
-            <RBSheet
-              ref={refRBSheet}
-              closeOnDragDown={true}
-              height={300}
-              openDuration={250}
-              customStyles={{
-                container: {
-                  alignItems: 'center',
-                  height: moderateScale(220),
-                  borderRadius: moderateScale(20, 0.1),
-                },
-              }}
-            >
-              <View
-                style={{
-                  marginVertical: moderateScale(30, 0.1),
-                  justifyContent: 'center',
-                  alignContent: 'center',
+          <RBSheet
+            ref={refRBSheet}
+            closeOnDragDown={true}
+            height={300}
+            openDuration={250}
+            customStyles={{
+              container: {
+                alignItems: 'center',
+                height: moderateScale(220),
+                borderRadius: moderateScale(20, 0.1),
+              },
+            }}>
+            <View
+              style={{
+                marginVertical: moderateScale(30, 0.1),
+                justifyContent: 'center',
+                alignContent: 'center',
+              }}>
+              <Stack
+                direction={{
+                  base: 'column',
+                  md: 'row',
                 }}
-              >
-                <Stack
-                  direction={{
-                    base: 'column',
-                    md: 'row',
-                  }}
-                  space={4}
-                >
-                  <Button
-                    transparent
-                    style={s.capturebtn}
-                    onPress={() => captureImage('photo')}
-                  >
-                    <View style={{flexDirection: 'row'}}>
-                      <Ionicons name="camera" style={s.capturebtnicon} />
-                      <Text style={s.capturebtntxt}>Open Camera</Text>
-                    </View>
-                  </Button>
-                  <Button
-                    transparent
-                    style={s.capturebtn}
-                    onPress={() => chooseFile('photo')}
-                  >
-                    <View style={{flexDirection: 'row'}}>
-                      <Ionicons
-                        name="md-image-outline"
-                        style={s.capturebtnicon}
-                      />
-                      <Text style={s.capturebtntxt}>Open Gallery</Text>
-                    </View>
-                  </Button>
-                </Stack>
-              </View>
-            </RBSheet>
-          </TouchableOpacity>
+                space={4}>
+                <Button
+                  transparent
+                  style={s.capturebtn}
+                  onPress={() => captureImage('photo')}>
+                  <View style={{flexDirection: 'row'}}>
+                    <Ionicons name="camera" style={s.capturebtnicon} />
+                    <Text style={s.capturebtntxt}>Open Camera</Text>
+                  </View>
+                </Button>
+                <Button
+                  transparent
+                  style={s.capturebtn}
+                  onPress={() => chooseFile('photo')}>
+                  <View style={{flexDirection: 'row'}}>
+                    <Ionicons
+                      name="md-image-outline"
+                      style={s.capturebtnicon}
+                    />
+                    <Text style={s.capturebtntxt}>Open Gallery</Text>
+                  </View>
+                </Button>
+              </Stack>
+            </View>
+          </RBSheet>
         </View>
 
         <TouchableOpacity onPress={() => onsubmit()}>
@@ -592,8 +573,7 @@ const CreatePost = ({navigation, route}) => {
               style={{
                 height: moderateScale(50, 0.1),
                 width: moderateScale(60, 0.1),
-              }}
-            ></View>
+              }}></View>
           </>
         ) : (
           <></>

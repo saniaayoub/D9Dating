@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(20, 0.1),
   },
   option: {
-    fontSize: moderateScale(14, 0.1),
+    fontSize: moderateScale(12, 0.1),
     marginRight: moderateScale(4, 0.1),
   },
   input: {

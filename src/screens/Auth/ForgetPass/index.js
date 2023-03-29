@@ -161,18 +161,7 @@ const ForgetPassword = ({navigation}) => {
             >
               <Text style={s.btnText}>Send</Text>
             </Button>
-            {/* <OTPInputView
-              style={{ width: '80%', height: 200 }}
-              pinCount={4}
-              // code={this.state.code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
-              // onCodeChanged = {code => { this.setState({code})}}
-              autoFocusOnLoad
-              // codeInputFieldStyle={styles.underlineStyleBase}
-              // codeInputHighlightStyle={styles.underlineStyleHighLighted}
-              onCodeFilled={(code => {
-                console.log(`Code is ${code}, you are good to go!`)
-              })}
-            /> */}
+           
           </View>
         </View>
 

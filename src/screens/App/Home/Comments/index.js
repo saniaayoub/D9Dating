@@ -284,15 +284,15 @@ const Comments = ({navigation, route}) => {
             />
           </View>
           <View style={s.details}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 navigation.navigate('ViewUser', {post: post});
               }}
-            >
+            > */}
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
                 {elem?.item?.user_name}
               </Text>
-            </TouchableOpacity>
+            {/* </TouchableOpacity> */}
             <View>
               <Text style={[s.textSmall, {color: textColor}]}>
                 {elem?.item?.text}

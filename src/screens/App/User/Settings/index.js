@@ -19,7 +19,7 @@ import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Iconn from 'react-native-vector-icons/Fontisto';
 import Icon3 from 'react-native-vector-icons/AntDesign';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Input} from 'native-base';
+import {Input, Button} from 'native-base';
 import SwitchWithIcons from 'react-native-switch-with-icons';
 import sun from '../../../../assets/images/png/sun.png';
 import moon from '../../../../assets/images/png/moon.png';
@@ -28,12 +28,14 @@ import Feather from 'react-native-vector-icons/Feather';
 import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
 
 const Settings = ({navigation, route}) => {
   const dispatch = useDispatch();
-  const {data} = route.params;
+  // const {data} = route?.params;
   const userToken = useSelector(state => state.reducer.userToken);
   const userData = useSelector(state => state.reducer.userData);
+  const isFocused = useIsFocused();
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
@@ -54,8 +56,8 @@ const Settings = ({navigation, route}) => {
   const [submitted, setSubmitted] = useState();
 
   useEffect(() => {
-    console.log(data, 'datsa');
-  }, []);
+    console.log(route?.params, 'datsa');
+  }, [isFocused]);
   const showToast = msg => {
     Alert.alert(msg);
   };
@@ -63,23 +65,21 @@ const Settings = ({navigation, route}) => {
   const deleteAccount = async () => {
     // refRBSheet.current.close();
     console.log('submit');
-    setSubmitted(false);
-    let sub = false;
+    setSubmitted(true);
+    let sub = true;
 
     if (password == null || password == '') {
-      setSubmitted(true);
-      sub = true;
-      return;
+      // setSubmitted(true);
+      sub = false;
+      return false;
     }
     if (confirmPassword == null || confirmPassword == '') {
-      setSubmitted(true);
-      sub = true;
-      return;
+      // setSubmitted(true);
+      sub = false;
+      return false;
     }
-    if (password != confirmPassword) {
-      Alert.alert('password does not match');
-    }
-    if (!sub) {
+
+    if (sub) {
       console.log('avvv');
       const body = {
         old_password: password,
@@ -115,7 +115,7 @@ const Settings = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        console.log('data', JSON.stringify(res?.data));
         dispatch(setTheme(theme));
 
         // console.log('public post', JSON.stringify(res?.data?.post_public));
@@ -129,13 +129,6 @@ const Settings = ({navigation, route}) => {
         // showToast(err.response);
       });
   };
-
-  // const clear = message => {
-  //   showToast(message);
-  //   setPassword('');
-  //   setConfirmPassword('');
-  //   setLoader(false);
-  // };
 
   const LogoutApi = async () => {
     console.log(userToken);
@@ -151,11 +144,10 @@ const Settings = ({navigation, route}) => {
       .then(res => {
         setLoader(false);
         clearToken();
-        console.log(res.data, 'logoutToken');
+        console.log(res?.data, 'logoutToken');
       })
       .catch(err => {
         setLoader(false);
-
         console.log(err, 'errrr');
       });
   };
@@ -164,50 +156,31 @@ const Settings = ({navigation, route}) => {
     await AsyncStorage.removeItem('userToken');
     await AsyncStorage.removeItem('password');
   };
-  const getData = async () => {
-    console.log(context.myData, 'mydata');
-    try {
-      const value = await AsyncStorage.getItem('@auth_token');
-      console.log(value, 'valueToken');
-      if (value !== null) {
-        axiosconfig
-          .get('my-data', {
-            headers: {
-              Authorization: 'Bearer ' + value,
-            },
-          })
-          .then(res => {
-            console.log(res.data, 'jjkjhkhkhk');
-            context.setMyData(res.data);
-            setfromU(res.data?._from);
-          })
-          .catch(err => {
-            console.log(err, 'errrr');
-          });
-      }
-    } catch (e) {
-      console.log(e, 'getdata error');
-    }
-  };
+
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
 
       <Header navigation={navigation} />
       <ScrollView
-        contentContainerStyle={[s.container, {backgroundColor: color}]}
-      >
+        contentContainerStyle={[s.container, {backgroundColor: color}]}>
         <View style={{flexDirection: 'row'}}>
           <View style={s.dp}>
             <Image
-              source={{uri: data?.image ? data?.image : dummyImage}}
+              source={{
+                uri: route?.params?.data?.image
+                  ? route?.params?.data?.image
+                  : dummyImage,
+              }}
               style={s.dp1}
               resizeMode={'cover'}
             />
           </View>
 
           <View style={s.username}>
-            <Text style={[s.textBold, {color: textColor}]}>{data?.name}</Text>
+            <Text style={[s.textBold, {color: textColor}]}>
+              {route?.params?.name}
+            </Text>
           </View>
         </View>
         <View style={s.inputSection}>
@@ -216,8 +189,7 @@ const Settings = ({navigation, route}) => {
               console.log('hiii');
               navigation.navigate('Privacy');
             }}
-            style={s.input}
-          >
+            style={s.input}>
             <Input
               w="100%"
               isReadOnly
@@ -243,8 +215,7 @@ const Settings = ({navigation, route}) => {
             onPress={() => {
               navigation.navigate('Help');
             }}
-            style={s.input}
-          >
+            style={s.input}>
             <Input
               w="100%"
               isReadOnly
@@ -269,8 +240,7 @@ const Settings = ({navigation, route}) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={s.input}
-            onPress={() => navigation.navigate('ResetPass')}
-          >
+            onPress={() => navigation.navigate('ResetPass')}>
             <Input
               w="100%"
               isReadOnly
@@ -295,8 +265,7 @@ const Settings = ({navigation, route}) => {
 
           <TouchableOpacity
             style={s.input}
-            onPress={() => navigation.navigate('Block')}
-          >
+            onPress={() => navigation.navigate('Block')}>
             <Input
               w="100%"
               isReadOnly
@@ -321,8 +290,7 @@ const Settings = ({navigation, route}) => {
 
           <TouchableOpacity
             style={s.input}
-            onPress={() => refRBSheet.current.open()}
-          >
+            onPress={() => refRBSheet.current.open()}>
             <Input
               w="100%"
               isReadOnly
@@ -358,8 +326,7 @@ const Settings = ({navigation, route}) => {
                 draggableIcon: {
                   backgroundColor: color,
                 },
-              }}
-            >
+              }}>
               <View style={s.input1}>
                 <Input
                   w={{
@@ -384,8 +351,7 @@ const Settings = ({navigation, route}) => {
                     password ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowPass(!showPass)}
-                        >
+                          onPress={() => setshowPass(!showPass)}>
                           <Feather
                             name={showPass ? 'eye' : 'eye-off'}
                             color={color}
@@ -402,29 +368,7 @@ const Settings = ({navigation, route}) => {
                   fontSize={moderateScale(14, 0.1)}
                   secureTextEntry={showPass}
                 />
-                {passwordError ? (
-                  <Text style={{color: 'red'}}>{passwordError}</Text>
-                ) : null}
               </View>
-              {submitted && (password == null || password == '') ? (
-                <>
-                  <View
-                    style={{
-                      alignSelf: 'flex-end',
-                      top: moderateScale(-15, 0.1),
-                      marginRight: moderateScale(35, 0.1),
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: 'red',
-                      }}
-                    >
-                      Required
-                    </Text>
-                  </View>
-                </>
-              ) : null}
 
               <View style={s.input1}>
                 <Input
@@ -460,8 +404,7 @@ const Settings = ({navigation, route}) => {
                     confirmPassword ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowConfPass(!showConfPass)}
-                        >
+                          onPress={() => setshowConfPass(!showConfPass)}>
                           <Feather
                             name={showConfPass ? 'eye' : 'eye-off'}
                             color={color}
@@ -478,36 +421,24 @@ const Settings = ({navigation, route}) => {
                   secureTextEntry={showConfPass}
                 />
               </View>
-              {submitted &&
-              (confirmPassword == null || confirmPassword == '') ? (
-                <>
-                  <View
-                    style={{
-                      alignSelf: 'flex-end',
-                      top: moderateScale(-15, 0.1),
-                      marginRight: moderateScale(35, 0.1),
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: 'red',
-                      }}
-                    >
-                      Required
-                    </Text>
-                  </View>
-                </>
-              ) : null}
-
-              <TouchableOpacity
-                onPress={() => {
-                  console.log('dlt');
-                  deleteAccount();
-                }}
-                style={s.dltbtn}
-              >
-                <Text style={s.dltTxt}>Delete Account</Text>
-              </TouchableOpacity>
+              <View style={s.button}>
+                <Button
+                  onPress={() => {
+                    deleteAccount();
+                  }}
+                  size="sm"
+                  variant={'solid'}
+                  _text={{
+                    color: '#6627EC',
+                  }}
+                  backgroundColor={'#FFD700'}
+                  borderRadius={50}
+                  w={moderateScale(140, 0.1)}
+                  h={moderateScale(35, 0.1)}
+                  alignItems={'center'}>
+                  <Text style={s.btnText}>Delete Account</Text>
+                </Button>
+              </View>
             </RBSheet>
           </TouchableOpacity>
 
@@ -515,8 +446,7 @@ const Settings = ({navigation, route}) => {
             onPress={() => {
               LogoutApi();
             }}
-            style={s.input}
-          >
+            style={s.input}>
             <Input
               w="100%"
               isReadOnly
