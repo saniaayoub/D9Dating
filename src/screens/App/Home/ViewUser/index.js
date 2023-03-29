@@ -48,8 +48,6 @@ const ViewUser = ({navigation, route}) => {
   const [cStatus, setCStatus] = useState(null);
   const [bStatus, setBStatus] = useState(null);
   const [scroll, setScroll] = useState(false);
-  const [connected, setConnected] = useState(false);
-  const [blocked, setBlocked] = useState(false);
   const [loader, setLoader] = useState(false);
   const [userData, setUserData] = useState([]);
 
@@ -87,13 +85,8 @@ const ViewUser = ({navigation, route}) => {
         setBStatus(res.data?.user_details?.block_status);
         if (res?.data?.user_details) {
           // const dd = JSON.stringify(res?.data)
-          // setUserData([res?.data?.user_details]);
-          if (res.data?.user_details?.connected == 1) {
-            setConnected(true);
-          }
-          if (res.data?.user_details?.connected == 0) {
-            setConnected(false);
-          }
+           setUserData([res?.data?.user_details]);
+          
         }
         setLoader(false);
       })

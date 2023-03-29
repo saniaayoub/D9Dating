@@ -581,9 +581,10 @@ const Home = ({navigation}) => {
                 {elem?.item?.user?.name} {elem?.item?.user?.last_name}
               </Text>
             </TouchableOpacity>
-            <Text style={[s.textRegular, {color: textColor}]}>
-              {elem?.item?.user?.location}
-            </Text>
+           {elem?.item?.location? (<><Text style={[s.textRegular, {color: textColor}]}>
+              {elem?.item?.location}
+            </Text></>):null}
+        
           </View>
           <View style={[s.options]}>
             <Menu

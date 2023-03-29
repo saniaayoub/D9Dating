@@ -171,11 +171,7 @@ const Profile = ({navigation}) => {
   const save = async base64image => {
     setLoader(true);
     setForm({...form, location: userLocation});
-<<<<<<< HEAD
     if(base64image){
-=======
-    if (base64image) {
->>>>>>> 315e9382adbc3e0537caf6911debca7a1aa57a2f
       setForm({...form, image: base64image});
     }
     await axiosconfig
