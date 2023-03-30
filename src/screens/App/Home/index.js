@@ -803,6 +803,7 @@ const [funPostsData, setFunPostsData] = useState('')
     <SafeAreaView style={{ display: 'flex', flex: 1, backgroundColor: color }}>
       <View style={[s.container, s.col, { backgroundColor: color }]}>
         {loader ? <Loader /> : null}
+        
         <ScrollView
           scrollEnabled
           horizontal
@@ -960,14 +961,37 @@ const [funPostsData, setFunPostsData] = useState('')
           <Text style={[s.funText, { color: textColor }]}>Fun Interaction</Text>
         </TouchableOpacity>
         <View style={{height: moderateScale(35, 0.1)}}></View>
-        <FlatList
+        {!posts?.length ? (  <View style={{flex:1, alignItems:'center', marginBottom:moderateScale(120,0.1)}}>
+          <Text style={[s.textCreate,{color:textColor}]}>
+                        {`What's on your mind ${Stories[0].user_name}?`}
+                        </Text>
+                    <TouchableOpacity
+                    style={s.btn}
+                      onPress={() =>
+                       navigation.navigate('createPost') }
+                    >
+                      <View style={s.connected}>
+                      <Text style={[s.btnTxt]}>
+                         Create Post
+                        </Text>
+                        <Icon
+                  name={'plus'}
+                  size={moderateScale(15, 0.1)}
+                  solid
+                  color={'#000'}
+                />
+                      </View>                   
+                    </TouchableOpacity>
+                   
+                  </View>): ( <FlatList
           data={posts}
           renderItem={(elem, index) => renderItem(elem)}
           keyExtractor={(elem, index) => {
             index.toString();
           }}
           extraData={refresh}
-        />
+        />)}
+       
       </View>
       <RBSheet
         ref={refRBSheet}
@@ -1145,8 +1169,6 @@ const [funPostsData, setFunPostsData] = useState('')
           </View>
         </View>
       </RBSheet>
-      {/* </>
-      )} */}
     </SafeAreaView>
   );
 };

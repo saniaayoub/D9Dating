@@ -291,12 +291,12 @@ const CreatePost = ({navigation, route}) => {
     }
   };
   useEffect(() => {
-    if(!route?.params?.screen){
-      setFilePath(null);
-        setCaption(null)
-        dispatch(setPostLocation(null))
-      }
-      console.log(route?.params?.screen,'ghhgg')
+    // if(!route?.params?.screen){
+    //   setFilePath(null);
+    //     setCaption(null)
+    //     dispatch(setPostLocation(null))
+    //   }
+    //   console.log(route?.params?.screen,'ghhgg')
     // if( route?.params?.screen != 'Home' ||  route?.params?.screen != 'funInteraction'){
     //   if(route?.params?.screen != 'map'){
     //     setFilePath(null);

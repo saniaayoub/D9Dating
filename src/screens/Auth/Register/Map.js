@@ -76,7 +76,7 @@ const Map = ({navigation, route}) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  Geocoder.init('AIzaSyD8i3TGGkBPF757aCT-w36E6zvSer3r2KE');
+  Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
 
   useEffect(() => {
     Geolocation.getCurrentPosition(pos => {
@@ -190,7 +190,7 @@ const Map = ({navigation, route}) => {
           styles={styles.searchbar}
           placeholder="Search"
           query={{
-            key: 'AIzaSyD8i3TGGkBPF757aCT-w36E6zvSer3r2KE',
+            key: 'AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU',
             language: 'en', // language of the results
           }}
           GooglePlacesDetailsQuery={{
