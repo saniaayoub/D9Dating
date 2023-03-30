@@ -174,6 +174,7 @@ const Profile = ({navigation}) => {
     if (base64image) {
       setForm({...form, image: base64image});
     }
+    console.log(form, 'form');
     await axiosconfig
       .post('user_update', form, {
         headers: {
@@ -199,9 +200,9 @@ const Profile = ({navigation}) => {
     await RNFS.readFile(image, 'base64')
       .then(res => {
         let base64 = `data:image/png;base64,${res}`;
-        setForm({...form, image: base64});
+        setForm({...form, image: `data:image/png;base64,${res}`});
         console.log(base64);
-        save(base64);
+        save(`data:image/png;base64,${res}`);
       })
       .catch(err => {
         console.log(err);
