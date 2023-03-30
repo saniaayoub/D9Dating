@@ -37,16 +37,17 @@ const CreatePost = ({navigation, route}) => {
   const privacy = route?.params?.elem?.privacy_option;
 
   useEffect(() => {
+    console.log('sefsst', route?.params?.elem);
     if (privacy == '1') {
-    console.log(privacy,'aaaaa');
+      console.log(privacy, 'aaaaa');
 
       setStory('Public');
     } else if (privacy == '2') {
-    console.log(privacy,'aaaaa');
+      console.log(privacy, 'aaaaa');
 
       setStory('Friends');
     } else {
-    console.log(privacy,'aaaaa');
+      console.log(privacy, 'aaaaa');
 
       setStory('Only Me');
     }
@@ -62,14 +63,15 @@ const CreatePost = ({navigation, route}) => {
   const [open, setOpen] = useState(false);
   const [icon, setIcon] = useState('globe');
   const [caption, setCaption] = useState(
-    route?.params?.screen == 'Home' ||  route?.params?.screen == 'funInteraction'
+    route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
       ? route?.params?.elem?.caption
       : null,
   );
   const [story, setStory] = useState(
-    route?.params?.screen == 'Home' ||  route?.params?.screen == 'funInteraction'
-    ? route?.params?.elem?.privacy_option :
-    'Public');
+    route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
+      ? route?.params?.elem?.privacy_option
+      : 'Public',
+  );
   const [loader, setLoader] = useState(false);
   const isFocused = useIsFocused();
   const [userData, setUserData] = useState([]);
@@ -115,7 +117,7 @@ const CreatePost = ({navigation, route}) => {
   const refRBSheet = useRef();
   const postLocation = useSelector(state => state.reducer.postLocation);
   const [location, setLocation] = useState(
-    route?.params?.screen == 'Home' ||  route?.params?.screen == 'funInteraction'
+    route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
       ? route?.params?.elem?.location
       : postLocation,
   );
@@ -257,7 +259,10 @@ const CreatePost = ({navigation, route}) => {
         caption: caption,
         privacy_option:
           story == 'Public' ? '1' : story == 'Friends' ? '2' : '3',
-        location: postLocation,
+        location:
+          route?.params?.screen == 'Home'
+            ? route.params.elem.location
+            : postLocation,
       };
       console.log(data, 'dataaaa');
       // setLoader(true);
@@ -277,9 +282,9 @@ const CreatePost = ({navigation, route}) => {
           // setLoader(false);
           alert(res?.data?.message);
           console.log(res, 'post');
-              setFilePath(null);
-              setCaption(null)
-              dispatch(setPostLocation(null))
+          setFilePath(null);
+          setCaption(null);
+          dispatch(setPostLocation(null));
 
           navigation.navigate('Home');
         })
@@ -291,12 +296,12 @@ const CreatePost = ({navigation, route}) => {
     }
   };
   useEffect(() => {
-    if(!route?.params?.screen){
-      setFilePath(null);
-        setCaption(null)
-        dispatch(setPostLocation(null))
-      }
-      console.log(route?.params?.screen,'ghhgg')
+    // if(!route?.params?.screen){
+    //   setFilePath(null);
+    //     setCaption(null)
+    //     dispatch(setPostLocation(null))
+    //   }
+    console.log(route?.params?.screen, 'ghhgg');
     // if( route?.params?.screen != 'Home' ||  route?.params?.screen != 'funInteraction'){
     //   if(route?.params?.screen != 'map'){
     //     setFilePath(null);
@@ -338,7 +343,8 @@ const CreatePost = ({navigation, route}) => {
   };
   return (
     <View
-      style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}>
+      style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}
+    >
       <View style={[s.container]}>
         <View>
           <Header navigation={navigation} />
@@ -383,7 +389,8 @@ const CreatePost = ({navigation, route}) => {
                         height: moderateScale(33, 0.1),
                         // justifyContent:'center',
                         alignItems: 'center',
-                      }}>
+                      }}
+                    >
                       <Entypo
                         name={icon}
                         color={Textcolor}
@@ -402,12 +409,14 @@ const CreatePost = ({navigation, route}) => {
                       />
                     </Pressable>
                   );
-                }}>
+                }}
+              >
                 <Menu.Item
                   onPress={() => {
                     setStory('Public');
                     setIcon('globe');
-                  }}>
+                  }}
+                >
                   <View style={s.optionView}>
                     <Entypo
                       name={'globe'}
@@ -424,7 +433,8 @@ const CreatePost = ({navigation, route}) => {
                   onPress={() => {
                     setStory('Friends');
                     setIcon('users');
-                  }}>
+                  }}
+                >
                   <View style={s.optionView}>
                     <Entypo
                       name={'users'}
@@ -441,7 +451,8 @@ const CreatePost = ({navigation, route}) => {
                   onPress={() => {
                     setStory('Only Me');
                     setIcon('lock');
-                  }}>
+                  }}
+                >
                   <View style={s.optionView}>
                     <Entypo
                       name={'lock'}
@@ -474,19 +485,21 @@ const CreatePost = ({navigation, route}) => {
         </View>
         <TouchableOpacity
           onPress={() => {
-            route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
+            route?.params?.screen == 'Home' ||
+            route?.params?.screen == 'funInteraction'
               ? null
               : navigation.navigate('Map', {
                   screen: 'createPost',
                 });
-          }}>
+          }}
+        >
           <View style={[s.mText]}>
             <Input
               variant="unstyled"
-              placeholder={postLocation ? postLocation :'Enter location...'}
+              placeholder={postLocation ? postLocation : 'Enter location...'}
               placeholderTextColor={Textcolor}
               isReadOnly
-               value={location}
+              value={location}
               onChangeText={() => setLocation(location)}
               backgroundColor={color}
               color={Textcolor}
@@ -497,11 +510,20 @@ const CreatePost = ({navigation, route}) => {
         <View style={[s.imgView]}>
           {filePath != null ? (
             <>
-              <TouchableOpacity onPress={() => refRBSheet.current.open()}>
+              <TouchableOpacity
+                onPress={() => {
+                  if (route.params.screen == 'Home') {
+                    return;
+                  } else {
+                    refRBSheet.current.open();
+                  }
+                }}
+              >
                 <View style={s.img}>
                   <Image
                     source={{uri: filePath}}
-                    style={s.galleryImage}></Image>
+                    style={s.galleryImage}
+                  ></Image>
                 </View>
               </TouchableOpacity>
             </>
@@ -521,7 +543,8 @@ const CreatePost = ({navigation, route}) => {
                     style={{
                       position: 'absolute',
                       top: moderateScale(100, 0.1),
-                    }}>
+                    }}
+                  >
                     <Ionicons
                       name="add-circle-sharp"
                       size={45}
@@ -544,23 +567,27 @@ const CreatePost = ({navigation, route}) => {
                 height: moderateScale(220),
                 borderRadius: moderateScale(20, 0.1),
               },
-            }}>
+            }}
+          >
             <View
               style={{
                 marginVertical: moderateScale(30, 0.1),
                 justifyContent: 'center',
                 alignContent: 'center',
-              }}>
+              }}
+            >
               <Stack
                 direction={{
                   base: 'column',
                   md: 'row',
                 }}
-                space={4}>
+                space={4}
+              >
                 <Button
                   transparent
                   style={s.capturebtn}
-                  onPress={() => captureImage('photo')}>
+                  onPress={() => captureImage('photo')}
+                >
                   <View style={{flexDirection: 'row'}}>
                     <Ionicons name="camera" style={s.capturebtnicon} />
                     <Text style={s.capturebtntxt}>Open Camera</Text>
@@ -569,7 +596,8 @@ const CreatePost = ({navigation, route}) => {
                 <Button
                   transparent
                   style={s.capturebtn}
-                  onPress={() => chooseFile('photo')}>
+                  onPress={() => chooseFile('photo')}
+                >
                   <View style={{flexDirection: 'row'}}>
                     <Ionicons
                       name="md-image-outline"
@@ -594,7 +622,8 @@ const CreatePost = ({navigation, route}) => {
               style={{
                 height: moderateScale(50, 0.1),
                 width: moderateScale(60, 0.1),
-              }}></View>
+              }}
+            ></View>
           </>
         ) : (
           <></>

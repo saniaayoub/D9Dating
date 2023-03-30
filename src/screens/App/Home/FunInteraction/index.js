@@ -321,7 +321,7 @@ const FunInteraction = ({navigation}) => {
                     onPress={() =>
                       navigation.navigate('createPost', {
                         elem: elem?.item,
-                        screen: 'funInteraction',
+                        screen: 'Home',
                       })
                     }
                   >

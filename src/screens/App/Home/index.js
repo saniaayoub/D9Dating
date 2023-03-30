@@ -564,10 +564,8 @@ const Home = ({navigation}) => {
   };
 
   const renderItem = elem => {
-    if (
-      elem?.item?.privacy_option == '3' &&
-      elem?.item?.user?.id != Stories[0]?.user_id
-    ) {
+    console.log(Stories[0]?.user_id, 'jjj');
+    if (elem?.item?.privacy_option == '3' && elem?.item?.user?.id != userID) {
       return; //hide friends' only me posts
     }
     //check if the user already liked the post
@@ -764,7 +762,11 @@ const Home = ({navigation}) => {
                   ]}
                 >
                   <Image
-                    source={{uri: elem?.item?.user?.image}}
+                    source={{
+                      uri: elem?.item?.user?.image
+                        ? elem?.item?.user?.image
+                        : dummyImage,
+                    }}
                     style={s.dp1}
                     resizeMode={'cover'}
                   />

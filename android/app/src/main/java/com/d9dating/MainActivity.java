@@ -5,7 +5,8 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
-import com.zoontek.rnbootsplash.RNBootSplash;
+// import com.zoontek.rnbootsplash.RNBootSplash;
+import org.devio.rn.splashscreen.SplashScreen;
 
 public class MainActivity extends ReactActivity {
 
@@ -16,6 +17,12 @@ public class MainActivity extends ReactActivity {
   @Override
   protected String getMainComponentName() {
     return "D9Dating";
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    SplashScreen.show(this); // <- initialize the splash screen
+    super.onCreate(savedInstanceState); // or super.onCreate(null) with react-native-screens
   }
 
   /**
@@ -34,9 +41,4 @@ public class MainActivity extends ReactActivity {
       DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
     );
   }
-  // @Override
-  // protected void onCreate(Bundle savedInstanceState) {
-  //   RNBootSplash.init(this); // <- initialize the splash screen
-  //   super.onCreate(savedInstanceState); // or super.onCreate(null) with react-native-screens
-  // }
 }

@@ -156,7 +156,6 @@ const ViewUser = ({navigation, route}) => {
       .then(res => {
         console.log('block', res);
         getData();
-        setBlocked(false);
         setLoader(false);
       })
       .catch(err => {
