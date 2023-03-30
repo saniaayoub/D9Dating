@@ -40,13 +40,10 @@ const ViewUser = ({navigation, route}) => {
   const isFocused = useIsFocused();
 
   console.log(post, 'post');
-  const dispatch = useDispatch();
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const userToken = useSelector(state => state.reducer.userToken);
-  const [cStatus, setCStatus] = useState(null);
-  const [bStatus, setBStatus] = useState(null);
   const [scroll, setScroll] = useState(false);
   const [loader, setLoader] = useState(false);
   const [userData, setUserData] = useState([]);
@@ -55,8 +52,6 @@ const ViewUser = ({navigation, route}) => {
     console.log(userToken, 'ggg');
     getData();
     getId();
-    // connect();
-    // Disconnect()
   }, [isFocused]);
 
   const getId = async () => {
@@ -75,15 +70,13 @@ const ViewUser = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data.user_details));
+        console.log('data', res.data.user_details);
         setUserData(res?.data?.user_details);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-
         console.log(err);
-        // showToast(err.response);
       });
   };
   const connect = async () => {
@@ -98,16 +91,12 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('connect', res);
-        setConnected(true);
         getData();
-
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-
         console.log(err, 'her');
-        // showToast(err.response);
       });
   };
   const Disconnect = async () => {
@@ -121,15 +110,12 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('Disconnect', res);
-        setConnected(false);
         getData();
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-
         console.log(err, 'her');
-        // showToast(err.response);
       });
   };
   const block = async () => {
@@ -145,14 +131,12 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('block', res);
-        setConnected(false);
-        setBlocked(true);
+
         getData();
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-
         console.log(err, 'her');
         // showToast(err.response);
       });
@@ -172,7 +156,6 @@ const ViewUser = ({navigation, route}) => {
       .then(res => {
         console.log('block', res);
         getData();
-        setBlocked(false);
         setLoader(false);
       })
       .catch(err => {
@@ -191,7 +174,7 @@ const ViewUser = ({navigation, route}) => {
           <Image
             style={s.view1Img}
             resizeMode={'stretch'}
-            source={{uri: userData[0]?.image}}
+            source={{uri: userData?.image}}
           />
         </View>
         <View

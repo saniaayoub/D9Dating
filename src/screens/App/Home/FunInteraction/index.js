@@ -34,6 +34,8 @@ const FunInteraction = ({navigation}) => {
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [searchText, setSearchText] = useState('');
+  const [postId, setPostId] = useState(null);
+
   const [refresh, setRefresh] = useState(true);
   const [loader, setLoader] = useState(true);
   const [publicPost, setPublicPost] = useState([]);
@@ -52,7 +54,7 @@ const FunInteraction = ({navigation}) => {
   useEffect(() => {
     getID();
     getPosts();
-    getAllUsers()
+    getAllUsers();
   }, [isFocused]);
 
   const getID = async () => {
@@ -154,6 +156,7 @@ const FunInteraction = ({navigation}) => {
       post_id: postId,
       text: text,
     };
+    console.log(data);
     await axiosconfig
       .post('post-report', data, {
         headers: {
@@ -162,7 +165,7 @@ const FunInteraction = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('Posts', res.data);
+        console.log('stttr', res.data);
         getPosts();
         refRBSheet1.current.close();
         setLoader(false);
@@ -173,17 +176,17 @@ const FunInteraction = ({navigation}) => {
         // showToast(err.response);
       });
   };
-  const hide = async () => {
+  const hide = async id => {
     setLoader(true);
     await axiosconfig
-      .get(`post_action/${postId}`, {
+      .get(`post_action/${id}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
           Accept: 'application/json',
         },
       })
       .then(res => {
-        console.log('Posts', res.data);
+        console.log('sasa', res.data);
         getPosts();
         setLoader(false);
       })
@@ -296,7 +299,11 @@ const FunInteraction = ({navigation}) => {
                 );
               }}
             >
-              <Menu.Item onPress={() => {}}>
+              <Menu.Item
+                onPress={() => {
+                  hide(elem?.item?.id);
+                }}
+              >
                 <View style={s.optionView}>
                   <Icon
                     name={'eye-slash'}
@@ -314,7 +321,7 @@ const FunInteraction = ({navigation}) => {
                     onPress={() =>
                       navigation.navigate('createPost', {
                         elem: elem?.item,
-                        screen: 'funInteraction',
+                        screen: 'Home',
                       })
                     }
                   >
@@ -395,7 +402,10 @@ const FunInteraction = ({navigation}) => {
           </Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Comments', {post: elem?.item, screen:'funInteraction'});
+              navigation.navigate('Comments', {
+                post: elem?.item,
+                screen: 'funInteraction',
+              });
             }}
           >
             <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
@@ -558,6 +568,22 @@ const FunInteraction = ({navigation}) => {
             backgroundColor={'#595757'}
           />
         </View>
+        {searching && (
+          <View
+            style={{
+              marginHorizontal: moderateScale(10, 0.1),
+              marginBottom: moderateScale(60, 0.1),
+            }}
+          >
+            <FlatList
+              data={filtered}
+              renderItem={searchItem}
+              keyExtractor={(e, i) => i.toString()}
+              scrollEnabled
+              extraData={refresh}
+            />
+          </View>
+        )}
         <View
           style={{
             position: 'absolute',
@@ -568,17 +594,6 @@ const FunInteraction = ({navigation}) => {
             marginHorizontal: moderateScale(10, 0.1),
           }}
         >
-          {searching && (
-            <View style={{marginHorizontal: moderateScale(10, 0.1)}}>
-              <FlatList
-                data={filtered}
-                renderItem={searchItem}
-                keyExtractor={(e, i) => i.toString()}
-                scrollEnabled={true}
-                extraData={refresh}
-              />
-            </View>
-          )}
           {searching && filtered?.length == 0 && (
             <Text
               style={[
@@ -631,7 +646,7 @@ const FunInteraction = ({navigation}) => {
           </View>
           <View
             style={{
-              paddingHorizontal: moderateScale(13, 0.1),
+              paddingHorizontal: moderateScale(15, 0.1),
             }}
           >
             <View style={[s.hv]}>

@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet, Platform} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
 const Poppins = '';
@@ -7,8 +7,8 @@ const PoppinsBold = '';
 const styles = StyleSheet.create({
   container: {
     height: '100%',
-    flex:1,
-    justifyContent:'space-evenly'
+    flex: 1,
+    justifyContent: 'space-evenly',
   },
   header: {
     paddingHorizontal: moderateScale(10, 0.1),
@@ -63,7 +63,8 @@ const styles = StyleSheet.create({
     //fontFamily: Poppins,
   },
   bottomLink: {
-    marginBottom: moderateScale(100),
+    marginBottom: Platform.OS == 'ios' ? moderateScale(100, 0.1) : 0,
+    marginTop: Platform.OS == 'android' ? moderateScale(100, 0.1) : 0,
   },
   error: {
     color: 'red',

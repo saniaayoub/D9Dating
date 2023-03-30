@@ -70,7 +70,8 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(50, 0.1),
     flex: 1,
     justifyContent: 'flex-end',
-    marginBottom: Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(20, 0.1),
+    marginBottom:
+      Platform.OS == 'ios' ? moderateScale(120, 0.1) : moderateScale(50, 0.1),
 
     // position: 'absolute',
     // bottom:
