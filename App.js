@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import {KeyboardAvoidingView} from 'react-native';
+import {KeyboardAvoidingView, Platform} from 'react-native';
 import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {NativeBaseProvider, Box} from 'native-base';
@@ -20,18 +20,21 @@ const App = () => {
   const theme = useSelector(state => state.reducer.theme);
 
   useEffect(() => {
-    // const init = async () => {
+    const init = async () => {
     // …do multiple sync or async task
-    SplashScreen.hide();
+    if(Platform.OS=='android'){
+      SplashScreen.hide();
+
+    }
 
     getToken();
     dispatch(setTheme('dark'));
-    // };
+    };
 
-    // init().finally(async () => {
-    //   await RNBootSplash.hide({fade: true, duration: 500});
-    //   console.log('Bootsplash has been hidden successfully');
-    // });
+    init().finally(async () => {
+      await RNBootSplash.hide({fade: true, duration: 500});
+      console.log('Bootsplash has been hidden successfully');
+    });
   }, []);
 
   const getToken = async () => {

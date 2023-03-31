@@ -92,6 +92,11 @@ const Profile = ({navigation}) => {
       name: 'Female',
       selected: false,
     },
+    {
+      id: 3,
+      name: 'Other',
+      selected: false,
+    },
   ]);
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -157,6 +162,9 @@ const Profile = ({navigation}) => {
       if (item == 'location') {
         dispatch(setLocation(data[item]));
       }
+      if (item == 'last_name') {
+        formData['name'] = formData['name'] + ' ' + data[item];
+      }
       if (item == 'gender') {
         let updatedState = isSelected.map(isSelectedItem =>
           isSelectedItem.name == data[item]
@@ -178,6 +186,7 @@ const Profile = ({navigation}) => {
     if (base64image) {
       setForm({...form, image: base64image});
     }
+    // setForm({...form, last_n})
     console.log(form, 'form');
     await axiosconfig
       .post(

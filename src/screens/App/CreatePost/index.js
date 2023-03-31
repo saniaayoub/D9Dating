@@ -494,7 +494,11 @@ const CreatePost = ({navigation, route}) => {
           }}
         >
           <View style={[s.mText]}>
-            <Input
+          <Text style={{backgroundColor:color,
+          marginLeft:moderateScale(10,0.1),
+              color:Textcolor,
+              fontSize:moderateScale(14, 0.1)}}>{postLocation ? postLocation : 'Enter location...'}</Text>
+            {/* <Input
               variant="unstyled"
               placeholder={postLocation ? postLocation : 'Enter location...'}
               placeholderTextColor={Textcolor}
@@ -504,7 +508,7 @@ const CreatePost = ({navigation, route}) => {
               backgroundColor={color}
               color={Textcolor}
               fontSize={moderateScale(14, 0.1)}
-            />
+            /> */}
           </View>
         </TouchableOpacity>
         <View style={[s.imgView]}>

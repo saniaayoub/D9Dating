@@ -5,8 +5,8 @@ import { moderateScale } from 'react-native-size-matters';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import Feather from 'react-native-vector-icons/Feather';
 
-const InterRegular = 'Inter-Medium';
-const InterBold = 'Inter-ExtraBold';
+// const InterRegular = 'Inter-Medium';
+// const InterBold = 'Inter-ExtraBold';
 const Poppins = '';
 
 const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, setOtp, navigation,handleSubmit, OtpSubmit}) => {
