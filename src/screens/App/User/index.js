@@ -20,7 +20,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import PhoneInput from 'react-native-phone-input';
 import img1 from '../../../assets/images/png/mydp.png';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -39,11 +39,14 @@ import Loader from '../../../Components/Loader';
 import RNFS from 'react-native-fs';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
+import {useIsFocused} from '@react-navigation/native';
 
 const Profile = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
-  // const isFocused = useIsFocused();
+  const phonenum = useRef();
+
+  const isFocused = useIsFocused();
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
@@ -58,7 +61,7 @@ const Profile = ({navigation}) => {
   const [disable6, setDisable6] = useState(false);
   const [date, setDate] = useState(null);
   const [id, setId] = useState('');
-
+  const [borderColor, setBorderColor] = useState(textColor);
   let formData = {
     id: '',
     name: '',
@@ -105,7 +108,7 @@ const Profile = ({navigation}) => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [isFocused]);
 
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
@@ -186,6 +189,8 @@ const Profile = ({navigation}) => {
         let message = res?.data?.message;
         showToast(message);
         dispatch(setUserData(form));
+        getData();
+        setDisable4(!disable4);
         setLoader(false);
       })
       .catch(err => {
@@ -481,8 +486,9 @@ const Profile = ({navigation}) => {
               InputRightElement={
                 <TouchableOpacity
                   onPress={() => {
-                    setDisable3(!disable3);
-                  }}>
+                    // setDisable3(!disable3);
+                  }}
+                >
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -505,8 +511,132 @@ const Profile = ({navigation}) => {
               }}
             />
           </View>
-          <View style={s.input}>
-            <Input
+          {disable4 ? (
+            <View
+              style={[
+                s.input,
+                s.inputContainerStyle,
+                {
+                  borderBottomColor: borderColor,
+                  borderBottomWidth: 1,
+                  // flexDirection: 'row',
+                },
+              ]}
+            >
+              <PhoneInput
+                initialCountry={'us'}
+                textProps={{
+                  placeholder: 'Enter Phone Number',
+                  placeholderTextColor: textColor,
+                }}
+                // isReadOnly={!disable4}
+                autoFormat={true}
+                textStyle={s.inputStyle}
+                isValidNumber={e => console.log(e, 'here')}
+                ref={phonenum}
+                onChangePhoneNumber={phNumber => {
+                  if (phonenum.current.isValidNumber()) {
+                    setForm({
+                      ...form,
+                      phone_number: phonenum?.current?.getValue(),
+                    });
+                    setBorderColor(textColor);
+                  } else {
+                    setBorderColor('red');
+                  }
+                }}
+              />
+            </View>
+          ) : (
+            <View style={s.input}>
+              <Input
+                w="100%"
+                variant="underlined"
+                color={textColor}
+                fontSize={moderateScale(12, 0.1)}
+                InputLeftElement={
+                  <View style={s.icon}>
+                    <Icon
+                      name={'phone-alt'}
+                      size={moderateScale(20, 0.1)}
+                      solid
+                      color={textColor}
+                    />
+                  </View>
+                }
+                InputRightElement={
+                  <TouchableOpacity
+                    onPress={() => {
+                      setDisable4(!disable4);
+                    }}
+                  >
+                    <Entypo
+                      name={'edit'}
+                      size={moderateScale(15, 0.1)}
+                      color={textColor}
+                    />
+                  </TouchableOpacity>
+                }
+                onEndEditing={() => {
+                  setDisable4(!disable4);
+                }}
+                isReadOnly={!disable4}
+                isFocused={disable4}
+                placeholder="Phone"
+                keyboardType="numeric"
+                placeholderTextColor={textColor}
+                value={form?.phone_number}
+                onChangeText={text => {
+                  setForm({...form, phone_number: text});
+                }}
+              />
+            </View>
+          )}
+
+          {/* <View
+            style={[
+              s.input,
+              {
+                borderBottomColor: phonenum?.current?.isValidNumber()
+                  ? textColor
+                  : 'red',
+                borderBottomWidth: moderateScale(1, 0.1),
+                paddingBottom: moderateScale(10, 0.1),
+              },
+            ]}
+          >
+            <PhoneInput
+              style={{
+                bottom: Platform.OS == 'ios' ? 0 : moderateScale(-10, 0.1),
+                top: Platform.OS == 'android' ? moderateScale(22, 0.1) : 0,
+                marginLeft: moderateScale(40, 0.1),
+              }}
+              initialCountry={'us'}
+              textProps={{
+                placeholder: 'Enter Phone Number',
+                placeholderTextColor: textColor,
+              }}
+              pickerBackgroundColor={'grey'}
+              pickerButtonColor={'#fff'}
+              // isReadOnly={disable}
+              value={phonenum?.current?.getValue()}
+              autoFormat={true}
+              textStyle={[s.inputStyle, {color: textColor}]}
+              isValidNumber={e => console.log(e, 'here')}
+              ref={phonenum}
+              onChangePhoneNumber={phNumber => {
+                if (phonenum.current.isValidNumber()) {
+                  setForm({
+                    ...form,
+                    phone_number: phonenum?.current?.getValue(),
+                  });
+                } else {
+                  return;
+                }
+              }}
+            /> */}
+
+          {/* <Input
               w="100%"
               variant="underlined"
               color={textColor}
@@ -545,8 +675,8 @@ const Profile = ({navigation}) => {
               onChangeText={text => {
                 setForm({...form, phone_number: text});
               }}
-            />
-          </View>
+            /> */}
+          {/* </View> */}
           <View style={s.input}>
             <Input
               w="100%"

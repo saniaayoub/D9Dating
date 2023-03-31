@@ -85,6 +85,15 @@ const styles = StyleSheet.create({
     marginHorizontal: moderateScale(15, 0.1),
     marginTop: moderateScale(-15, 0.1),
   },
+  inputContainerStyle: {
+    width: '100%',
+    paddingVertical: moderateScale(15, 0.1),
+  },
+  inputStyle: {
+    fontSize: moderateScale(14, 0.1),
+    fontFamily: 'Inter-Medium',
+    color: '#fff',
+  },
   text: {
     //fontFamily: PoppinsBold,
     fontSize: moderateScale(12, 0.1),
