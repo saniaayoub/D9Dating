@@ -98,7 +98,7 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('connect', res);
-        setConnected(true);
+      
         getData();
 
         setLoader(false);
@@ -121,7 +121,7 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('Disconnect', res);
-        setConnected(false);
+    
         getData();
         setLoader(false);
       })
@@ -145,8 +145,7 @@ const ViewUser = ({navigation, route}) => {
       })
       .then(res => {
         console.log('block', res);
-        setConnected(false);
-        setBlocked(true);
+   
         getData();
         setLoader(false);
       })
@@ -276,7 +275,7 @@ const ViewUser = ({navigation, route}) => {
                         </Text>
                       </View>
                     </TouchableOpacity>
-                    {!userData?.block_status && userData?.connected == 1 ? (
+                    {userData?.block_status == 0 && userData?.connected == 1 ? (
                       <>
                         <TouchableOpacity onPress={() => block()}>
                           <View style={s.btn}>

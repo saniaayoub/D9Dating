@@ -1,4 +1,5 @@
 #import "AppDelegate.h"
+#import "RNBootSplash.h"
 #import <GoogleMaps/GoogleMaps.h>
 #import <React/RCTBundleURLProvider.h>
 @implementation AppDelegate
@@ -11,6 +12,7 @@
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
 
+[RNBootSplash initWithStoryboard:@"BootSplash" rootView:self.window.rootViewController.view]; 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 

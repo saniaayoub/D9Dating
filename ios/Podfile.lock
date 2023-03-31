@@ -358,7 +358,7 @@ PODS:
     - glog
   - react-native-date-picker (4.2.8):
     - React-Core
-  - react-native-flipper (0.187.1):
+  - react-native-flipper (0.163.0):
     - React-Core
   - react-native-geolocation (3.0.5):
     - React-Core
@@ -777,14 +777,14 @@ SPEC CHECKSUMS:
   React-jsinspector: ea8101acf525ec08b2d87ddf0637d45f8e3b4148
   React-logger: 97987f46779d8dd24656474ad0c43a5b459f31d6
   react-native-date-picker: f9cc1c37e8db8e393d87d7b7227c2cbf164e6f11
-  react-native-flipper: 9645ebaaae25790d3a46725497ef35e2b4afaf3a
-  react-native-geolocation: 7383cbe9fa75b168bbbe40b566070fd0b44d30d6
+  react-native-flipper: 2d552a8178d839ef378220101fb7f0cd5b2a8003
+  react-native-geolocation: e7c11139f1c0543d65a74e248b5c1b8dd54a4e75
   react-native-geolocation-service: 608e1da71a1ac31b4de64d9ef2815f697978c55b
-  react-native-google-maps: f4cf51c3c6360eb4f945adc12dc89575ec3d944a
-  react-native-image-picker: a5dddebb4d2955ac4712a4ed66b00a85f62a63ac
+  react-native-google-maps: 247de10063a5b102523d3b883ea2f5bd1830f0ff
+  react-native-image-picker: 82dc3991c5b92be04ca6f47696553ab711a9a279
   react-native-insta-story: c06a8c91c0341a75070dca5c1cd9f27515133e02
-  react-native-maps: 7135a33610202745d08fdf151ce6b0d01952a99c
-  react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc
+  react-native-maps: 3556d0fd5f559805f11777c1f59fc01eeb9f6405
+  react-native-safe-area-context: 366f55da044348b534b54cedbfa8df2e79394131
   React-perflogger: c7ccda3d1d1da837f7ff4e54e816022a6803ee87
   React-RCTActionSheet: 01c125aebbad462a24228f68c584c7a921d6c28e
   React-RCTAnimation: 5277a9440acffc4a5b7baa6ae3880fe467277ae6
@@ -798,18 +798,18 @@ SPEC CHECKSUMS:
   React-RCTVibration: 0af3babdeee1b2d052811a2f86977d1e1c81ebd1
   React-runtimeexecutor: 4bf9a9086d27f74065fce1dddac274aa95216952
   ReactCommon: f697c0ac52e999aa818e43e2b6f277787c735e2d
-  ReactNativeGetLocation: d6b15cb2a2023ab7703f756501bad86d3ecf6fea
+  ReactNativeGetLocation: 8517f44ae7364ac45fa3946f8bffeaa73594ff0d
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
-  RNBootSplash: 364ec0f6a61d96bce40e8630d80d949c214a5749
-  RNCAsyncStorage: 8616bd5a58af409453ea4e1b246521bb76578d60
-  RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
-  RNCMaskedView: bc0170f389056201c82a55e242e5d90070e18e5a
+  RNBootSplash: 1f7039d1397a2009358ca97450ce6e3227bd25e4
+  RNCAsyncStorage: 889cea2408e52fe71da475306dcef43951577da0
+  RNCClipboard: 5e299c6df8e0c98f3d7416b86ae563d3a9f768a3
+  RNCMaskedView: 1f6cd0cb5e38ec01960e12fd8f95ecad809f8fbb
   RNCPicker: 567de6dc0c6735cf249700d940c80b90b090e4db
-  RNCPushNotificationIOS: 87b8d16d3ede4532745e05b03c42cff33a36cc45
-  RNDateTimePicker: 65e1d202799460b286ff5e741d8baf54695e8abd
+  RNCPushNotificationIOS: 089da3b657e1e3d464f38195fd2e3069608ef5af
+  RNDateTimePicker: 74353cf8939677358c75d3473947002daff97934
   RNFS: 3ab21fa6c56d65566d1fb26c2228e2b6132e5e32
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
-  RNPhotoEditor: dae3b766e42ff5c184e74be0a95ff6af107a5ecc
+  RNPhotoEditor: b9adab8282ef006fdf6ab1cfde7060f96f17a88b
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSVG: c1e76b81c76cdcd34b4e1188852892dc280eb902
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
