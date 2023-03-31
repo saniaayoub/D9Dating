@@ -14,6 +14,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Alert,
 } from 'react-native';
 import {setLocation} from '../../../Redux/actions';
 import {setPostLocation} from '../../../Redux/actions';
@@ -27,6 +28,7 @@ import Geocoder from 'react-native-geocoding';
 import {moderateScale} from 'react-native-size-matters';
 import Modal from 'react-native-modal';
 import Inicon from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -38,7 +40,7 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const Map = ({navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [loc, setLoc] = useState(null);
-
+  const searchBarRef = useRef();
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
     // if (screen1) {
@@ -122,7 +124,7 @@ const Map = ({navigation, route}) => {
   }, []);
 
   const onPress = (data, details) => {
-    console.log(data,'aaa');
+    console.log(data, 'aaa');
     // console.log(JSON.stringify(details.geometry.location), 'details');
     setLoc(data.description);
     Geocoder.from(data.description)
@@ -193,9 +195,10 @@ const Map = ({navigation, route}) => {
         zoomEnabled={true}
         pitchEnabled={true}
         onRegionChangeComplete={onMapRegionChange}
-        rotateEnabled={true}>
+        rotateEnabled={true}
+      >
         <Marker
-          draggable
+          // draggable
           coordinate={markerPosition}
           title="Yor are here"
           description="current Location"
@@ -212,10 +215,39 @@ const Map = ({navigation, route}) => {
         />
       </MapView>
 
-      <View style={{position: 'absolute', top: 10, width: '100%'}}>
+      <View style={{position: 'absolute', top: 10, width: '95%'}}>
         <GooglePlacesAutocomplete
-          styles={styles.searchbar}
+          ref={searchBarRef}
+          styles={{
+            textInput: {
+              height: moderateScale(38, 0.1),
+
+              color: 'black',
+              fontSize: moderateScale(16, 0.1),
+            },
+          }}
+          renderRightButton={() => (
+            <TouchableOpacity
+              onPress={() => searchBarRef?.current?.clear()}
+              style={{
+                backgroundColor: '#fff',
+                alignItems: 'center',
+                height: moderateScale(38, 0.1),
+
+                padding: moderateScale(5, 0.1),
+                borderTopRightRadius: moderateScale(10, 0.1),
+                borderBottomRightRadius: moderateScale(10, 0.1),
+              }}
+            >
+              <Entypo
+                name="cross"
+                size={moderateScale(25, 0.1)}
+                color={'grey'}
+              />
+            </TouchableOpacity>
+          )}
           placeholder="Search"
+          textInputProps={{placeholderTextColor: 'black'}}
           query={{
             key: 'AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU',
             language: 'en', // language of the results
@@ -234,7 +266,13 @@ const Map = ({navigation, route}) => {
         />
       </View>
       <TouchableOpacity
-        onPress={setModalVisible}
+        onPress={() => {
+          if (loc) {
+            setModalVisible(!isModalVisible);
+          } else {
+            Alert.alert('Please select location');
+          }
+        }}
         style={{
           width: moderateScale(250, 0.1),
           height: moderateScale(38, 0.1),
@@ -242,38 +280,53 @@ const Map = ({navigation, route}) => {
           justifyContent: 'center',
           marginVertical: moderateScale(15, 0.1),
           borderRadius: moderateScale(12, 0.1),
-        }}>
-        <View>
-          <Text
-            style={{
-              alignSelf: 'center',
-              lineHeight: moderateScale(20, 0.1),
-              fontSize: moderateScale(15, 0.1),
-              color: '#222222',
-            }}>
-            {' '}
-            Add location{' '}
-          </Text>
-        </View>
+        }}
+      >
+        <Text
+          style={{
+            alignSelf: 'center',
+            lineHeight: moderateScale(20, 0.1),
+            fontSize: moderateScale(15, 0.1),
+            color: '#222222',
+          }}
+        >
+          Add location
+        </Text>
+
         <Modal isVisible={isModalVisible}>
           <View
             style={{
               height: moderateScale(300, 0.1),
               backgroundColor: 'white',
-            }}>
+              borderRadius: moderateScale(10, 0, 1),
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => setModalVisible(!isModalVisible)}
+              style={{alignItems: 'flex-end', padding: moderateScale(10, 0.1)}}
+            >
+              <Entypo name="cross" size={moderateScale(30)} color={'grey'} />
+            </TouchableOpacity>
             <View
               style={{
                 marginVertical: moderateScale(25, 0.1),
                 flexDirection: 'row',
-                justifyContent: 'space-between',
-                paddingHorizontal: moderateScale(15, 0.1),
-                width: moderateScale(280,0.1)
-              }}>
-              <Text style={{fontSize: moderateScale(18, 0.1), color: 'black'}}>
-                {' '}
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingLeft: moderateScale(20, 0.1),
+                width: '80%',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: moderateScale(18, 0.1),
+                  marginRight: moderateScale(10, 0.1),
+                  color: 'black',
+                }}
+              >
                 {loc}
               </Text>
-              <View style={{marginRight: moderateScale(-50,0.1)}}>
+              <View style={{marginRight: moderateScale(-50, 0.1)}}>
                 <Inicon
                   name="location"
                   size={moderateScale(30)}
@@ -307,15 +360,17 @@ const Map = ({navigation, route}) => {
                 marginVertical: moderateScale(15, 0.1),
                 borderRadius: moderateScale(12, 0.1),
                 alignSelf: 'center',
-                top: moderateScale(15,0.1)
-              }}>
+                top: moderateScale(15, 0.1),
+              }}
+            >
               <Text
                 style={{
                   alignSelf: 'center',
                   lineHeight: moderateScale(20, 0.1),
                   fontSize: moderateScale(15, 0.1),
                   color: '#222222',
-                }}>
+                }}
+              >
                 Save
               </Text>
             </TouchableOpacity>
