@@ -189,6 +189,43 @@ const styles = StyleSheet.create({
     top: moderateScale(20, 0.1),
     right: moderateScale(30, 0.1),
   },
+  btn: {
+    marginBottom: moderateScale(10, 0.1),
+    alignSelf: 'center',
+    width: moderateScale(155, 0.1),
+    height: moderateScale(40, 0.1),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFD700',
+    borderRadius: moderateScale(25, 0.1),
+  },
+  btnTxt: {
+    //fontFamily: Poppins,
+    fontSize: moderateScale(15, 0.1),
+    lineHeight: moderateScale(19, 0.1),
+    color: '#222222',
+    marginRight:moderateScale(10,0.1)
+  },
+  textCreate:{
+    
+    fontSize:moderateScale(15,0.1),
+    marginBottom:moderateScale(15,0.1)
+  },
+  line: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: moderateScale(80, 0.1),
+    borderWidth: moderateScale(2.5, 0.1),
+    borderColor: 'rgba(255, 255, 255, 0.44)',
+    borderRadius: moderateScale(4, 0.1),
+    alignSelf: 'center',
+    marginTop: moderateScale(25, 0.1),
+  },
+  connected: {
+    flexDirection: 'row',
+    justifyContent:'space-evenly',
+    alignItems:'center'
+  },
   likesCount: {
     fontSize: moderateScale(10, 0.1),
     color: '#fff',

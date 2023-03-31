@@ -236,6 +236,25 @@ const styles = StyleSheet.create({
     width: moderateScale(180, 0.1),
     backgroundColor: '#302D2D',
   },
+  rb: {
+    fontSize: moderateScale(16, 0.1),
+    //fontFamily: Poppins,
+    lineHeight: moderateScale(18, 0.1),
+  },
+  hText: {
+    fontSize: moderateScale(13, 0.1),
+  },
+  txt: {
+    color: 'gray',
+    //fontFamily: Poppins,
+    fontSize: moderateScale(12, 0.1),
+  },
+  hv: {
+    marginVertical: moderateScale(10, 0.1),
+  },
+  list: {
+    marginVertical: moderateScale(7, 0.1),
+  },
 });
 
 export default styles;

@@ -13,7 +13,7 @@ import AuthStack from './src/Navigation/Stacks/AuthStack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from './src/Providers/axios';
 // import PushNotification from 'react-native-push-notification';
-
+import SplashScreen from 'react-native-splash-screen';
 const App = () => {
   const dispatch = useDispatch();
   const userToken = useSelector(state => state.reducer.userToken);
@@ -22,6 +22,8 @@ const App = () => {
   useEffect(() => {
     const init = async () => {
     // …do multiple sync or async task
+    SplashScreen.hide();
+
     getToken();
     dispatch(setTheme('dark'));
     };
@@ -50,11 +52,13 @@ const App = () => {
         .then(res => {
           console.log('storylo', JSON.stringify(res.data?.user));
           createStoryData(res.data?.user, token);
+          SplashScreen.hide();
           // setLoader(false);
         })
         .catch(err => {
           // setLoader(false);
           console.log(err);
+          SplashScreen.hide();
           // showToast(err.response);
         });
     }

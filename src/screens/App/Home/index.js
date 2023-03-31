@@ -11,9 +11,9 @@ import {
   Alert,
 } from 'react-native';
 import PhotoEditor from 'react-native-photo-editor';
-import React, { useState, useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { moderateScale } from 'react-native-size-matters';
+import React, {useState, useRef, useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {moderateScale} from 'react-native-size-matters';
 import s from './style';
 import InstaStory from 'react-native-insta-story';
 import {
@@ -27,34 +27,34 @@ import {
 } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { ScrollView } from 'react-native';
+import {ScrollView} from 'react-native';
 import Fun from '../../../assets/images/svg/fun.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import SearchDropDown from '../../../Components/SearchDropDown';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RNFS from 'react-native-fs';
 import Loader from '../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
-import { useIsFocused } from '@react-navigation/native';
-import { setGroup, setStories } from '../../../Redux/actions';
+import {useIsFocused} from '@react-navigation/native';
+import {setGroup, setStories} from '../../../Redux/actions';
 
 const Groups = [
-  { id: 'Group 1', color: 'blue' },
-  { id: 'Group 2', color: 'green' },
-  { id: 'Group 3', color: 'red' },
-  { id: 'Group 4', color: 'yellow' },
-  { id: 'Group 5', color: 'orange' },
-  { id: 'Group 6', color: 'brown' },
-  { id: 'Group 7', color: 'pink' },
-  { id: 'Group 8', color: 'purple' },
-  { id: 'Group 9', color: 'blue' },
+  {id: 'Group 1', color: 'blue'},
+  {id: 'Group 2', color: 'green'},
+  {id: 'Group 3', color: 'red'},
+  {id: 'Group 4', color: 'yellow'},
+  {id: 'Group 5', color: 'orange'},
+  {id: 'Group 6', color: 'brown'},
+  {id: 'Group 7', color: 'pink'},
+  {id: 'Group 8', color: 'purple'},
+  {id: 'Group 9', color: 'blue'},
 ];
 
-const Home = ({ navigation }) => {
+const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const refRBSheet1 = useRef();
@@ -80,7 +80,7 @@ const Home = ({ navigation }) => {
   const [storyImage, setStoryImage] = useState('');
   const [postId, setPostId] = useState(null);
   const [text, setText] = useState(null);
-const [funPostsData, setFunPostsData] = useState('')
+  const [funPostsData, setFunPostsData] = useState('');
   // const [myStories, setMyStories] = useState('')
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
@@ -92,11 +92,10 @@ const [funPostsData, setFunPostsData] = useState('')
     dispatch(setGroup(Groups));
     getPosts();
     getID();
-    funPosts()
+    funPosts();
     console.log(Stories, 'sstostst');
     // getStory();
     // getStories();
-  
   }, [isFocused]);
 
   const getID = async () => {
@@ -141,7 +140,7 @@ const [funPostsData, setFunPostsData] = useState('')
         const data = res?.data?.post_public;
 
         setFunPostsData(res?.data?.post_public);
-        
+
         setLoader(false);
       })
       .catch(err => {
@@ -149,11 +148,11 @@ const [funPostsData, setFunPostsData] = useState('')
         console.log(err);
       });
   };
-  const report = async () => {
+  const report = async repText => {
     setLoader(true);
     const data = {
       post_id: postId,
-      text: text,
+      text: repText,
     };
     await axiosconfig
       .post('post-report', data, {
@@ -174,10 +173,10 @@ const [funPostsData, setFunPostsData] = useState('')
         // showToast(err.response);
       });
   };
-  const hide = async () => {
+  const hide = async id => {
     setLoader(true);
     await axiosconfig
-      .get(`post_action/${postId}`, {
+      .get(`post_action/${id}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
           Accept: 'application/json',
@@ -393,13 +392,16 @@ const [funPostsData, setFunPostsData] = useState('')
     return color;
   };
 
-  const _onPress = async (imageToeEdit) => {
+  const _onPress = async imageToeEdit => {
     setTimeout(() => {
       console.log(imageToeEdit, 'eitors');
 
       try {
         PhotoEditor.Edit({
-          path: Platform.OS == 'ios' ? imageToeEdit : RNFS.DocumentDirectoryPath + '/photo.jpg',
+          path:
+            Platform.OS == 'ios'
+              ? imageToeEdit
+              : RNFS.DocumentDirectoryPath + '/photo.jpg',
           // stickers: [
           //   'sticker0',
           //   'sticker1',
@@ -424,7 +426,6 @@ const [funPostsData, setFunPostsData] = useState('')
           // ],
           colors: undefined,
           onDone: res => {
-
             console.log('on done', res);
             setPath(`file://${res}`);
             convertToBase64(`file://${res}`);
@@ -446,7 +447,7 @@ const [funPostsData, setFunPostsData] = useState('')
           },
         });
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     }, 1000);
   };
@@ -465,7 +466,6 @@ const [funPostsData, setFunPostsData] = useState('')
     addStory(myStories);
   };
   const convert = source => {
-
     // let binaryFile = Image.resolveAssetSource(require('./assets/photo.jpg'));
 
     if (Platform.OS == 'ios') {
@@ -481,7 +481,6 @@ const [funPostsData, setFunPostsData] = useState('')
           console.log(err.message);
         });
     }
-
   };
 
   const convertToBase64 = async image => {
@@ -520,7 +519,7 @@ const [funPostsData, setFunPostsData] = useState('')
       .then(res => {
         console.log('data', JSON.stringify(res.data));
         // setComment('');
-        // getPosts();
+        getPosts();
         // setRefresh(!refresh);
         setLoader(false);
       })
@@ -565,13 +564,9 @@ const [funPostsData, setFunPostsData] = useState('')
   };
 
   const renderItem = elem => {
-    if (
-      elem?.item?.privacy_option == '3' &&
-      elem?.item?.user?.id != Stories[0].user_id
-    ) {
+    if (elem?.item?.privacy_option == '3' && elem?.item?.user?.id != userID) {
       return; //hide friends' only me posts
     }
-
     //check if the user already liked the post
     let liked = false;
     elem?.item?.post_likes?.forEach(t => {
@@ -583,7 +578,7 @@ const [funPostsData, setFunPostsData] = useState('')
       <View style={s.col}>
         <View style={s.header}>
           <View
-            style={[s.dp, { borderColor: getColor(elem?.item?.user?.group) }]}
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
           >
             <Image
               source={{
@@ -595,18 +590,21 @@ const [funPostsData, setFunPostsData] = useState('')
               resizeMode={'cover'}
             />
           </View>
-          <View style={[s.col, { flex: 0.9, marginTop: moderateScale(5, 0.1) }]}>
+          <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('ViewUser', { post: elem.item })}
+              onPress={() => navigation.navigate('ViewUser', {post: elem.item})}
             >
-              <Text style={[s.name, s.nameBold, { color: textColor }]}>
+              <Text style={[s.name, s.nameBold, {color: textColor}]}>
                 {elem?.item?.user?.name} {elem?.item?.user?.last_name}
               </Text>
             </TouchableOpacity>
-           {elem?.item?.location? (<><Text style={[s.textRegular, {color: textColor}]}>
-              {elem?.item?.location}
-            </Text></>):null}
-        
+            {elem?.item?.location ? (
+              <>
+                <Text style={[s.textRegular, {color: textColor}]}>
+                  {elem?.item?.location}
+                </Text>
+              </>
+            ) : null}
           </View>
           <View style={[s.options]}>
             <Menu
@@ -636,16 +634,20 @@ const [funPostsData, setFunPostsData] = useState('')
                 );
               }}
             >
-              <Menu.Item onPress={() => hide()}>
+              <Menu.Item
+                onPress={() => {
+                  hide(elem?.item?.id);
+                }}
+              >
                 <View style={s.optionView}>
                   <Icon
                     name={'eye-slash'}
                     color={textColor}
                     size={moderateScale(13, 0.1)}
                     // style={{marginRight: moderateScale(10, 0.1)}}
-                    style={{ flex: 0.3 }}
+                    style={{flex: 0.3}}
                   />
-                  <Text style={[s.optionBtns, { color: textColor }]}>Hide</Text>
+                  <Text style={[s.optionBtns, {color: textColor}]}>Hide</Text>
                 </View>
               </Menu.Item>
 
@@ -664,9 +666,9 @@ const [funPostsData, setFunPostsData] = useState('')
                         name={'edit'}
                         color={textColor}
                         size={moderateScale(13, 0.1)}
-                        style={{ flex: 0.3 }}
+                        style={{flex: 0.3}}
                       />
-                      <Text style={[s.optionBtns, { color: textColor }]}>
+                      <Text style={[s.optionBtns, {color: textColor}]}>
                         Edit
                       </Text>
                     </View>
@@ -684,9 +686,9 @@ const [funPostsData, setFunPostsData] = useState('')
                     name={'report'}
                     color={textColor}
                     size={moderateScale(13, 0.1)}
-                    style={{ flex: 0.3 }}
+                    style={{flex: 0.3}}
                   />
-                  <Text style={[s.optionBtns, { color: textColor }]}>Report</Text>
+                  <Text style={[s.optionBtns, {color: textColor}]}>Report</Text>
                 </View>
               </Menu.Item>
             </Menu>
@@ -697,7 +699,7 @@ const [funPostsData, setFunPostsData] = useState('')
             onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}
           >
             <Image
-              source={{ uri: elem?.item?.image }}
+              source={{uri: elem?.item?.image}}
               width={undefined}
               height={undefined}
               resizeMode={'cover'}
@@ -728,18 +730,18 @@ const [funPostsData, setFunPostsData] = useState('')
           </TouchableOpacity>
         </View>
         <View style={s.footer}>
-          <Text style={[s.name, { color: textColor }]}>
+          <Text style={[s.name, {color: textColor}]}>
             {elem?.item?.user?.name} {elem?.item?.user?.last_name}
           </Text>
-          <Text style={[s.textRegular, { color: textColor }]}>
+          <Text style={[s.textRegular, {color: textColor}]}>
             {elem?.item?.caption}
           </Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Comments', { post: elem?.item });
+              navigation.navigate('Comments', {post: elem?.item});
             }}
           >
-            <Text style={[s.textRegular, { color: 'grey', marginVertical: 0 }]}>
+            <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
               View all {elem?.item?.post_comments?.length} Comments
             </Text>
           </TouchableOpacity>
@@ -759,7 +761,11 @@ const [funPostsData, setFunPostsData] = useState('')
                   ]}
                 >
                   <Image
-                    source={{ uri: elem?.item?.user?.image }}
+                    source={{
+                      uri: elem?.item?.user?.image
+                        ? elem?.item?.user?.image
+                        : dummyImage,
+                    }}
                     style={s.dp1}
                     resizeMode={'cover'}
                   />
@@ -770,7 +776,7 @@ const [funPostsData, setFunPostsData] = useState('')
                   onPress={() => {
                     addComment(elem?.item?.id, elem?.index);
                   }}
-                  style={{ marginRight: moderateScale(15, 0.1) }}
+                  style={{marginRight: moderateScale(15, 0.1)}}
                 >
                   <Feather
                     name={'send'}
@@ -800,9 +806,10 @@ const [funPostsData, setFunPostsData] = useState('')
   };
 
   return (
-    <SafeAreaView style={{ display: 'flex', flex: 1, backgroundColor: color }}>
-      <View style={[s.container, s.col, { backgroundColor: color }]}>
+    <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
+      <View style={[s.container, s.col, {backgroundColor: color}]}>
         {loader ? <Loader /> : null}
+
         <ScrollView
           scrollEnabled
           horizontal
@@ -889,12 +896,12 @@ const [funPostsData, setFunPostsData] = useState('')
                   }}
                   resizeMode={'cover'}
                 />
-                <Text style={[s.userName, { color: textColor }]}>Your Story</Text>
+                <Text style={[s.userName, {color: textColor}]}>Your Story</Text>
                 <TouchableOpacity
                   onPress={() => {
                     refRBSheet.current.open();
                   }}
-                  style={[s.addBtn, { borderColor: color }]}
+                  style={[s.addBtn, {borderColor: color}]}
                 >
                   <Icon
                     name={'plus'}
@@ -954,20 +961,49 @@ const [funPostsData, setFunPostsData] = useState('')
               },
             ]}
           >
-            {funPostsData?  (<Text style={s.count}>{funPostsData?.length}</Text>): (null)}
-            
+            {funPostsData ? (
+              <Text style={s.count}>{funPostsData?.length}</Text>
+            ) : null}
           </View>
-          <Text style={[s.funText, { color: textColor }]}>Fun Interaction</Text>
+          <Text style={[s.funText, {color: textColor}]}>Fun Interaction</Text>
         </TouchableOpacity>
         <View style={{height: moderateScale(35, 0.1)}}></View>
-        <FlatList
-          data={posts}
-          renderItem={(elem, index) => renderItem(elem)}
-          keyExtractor={(elem, index) => {
-            index.toString();
-          }}
-          extraData={refresh}
-        />
+        {!posts?.length ? (
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              marginBottom: moderateScale(120, 0.1),
+            }}
+          >
+            <Text style={[s.textCreate, {color: textColor}]}>
+              {`What's on your mind ${Stories[0]?.user_name}?`}
+            </Text>
+            <TouchableOpacity
+              style={s.btn}
+              onPress={() => navigation.navigate('createPost')}
+            >
+              <View style={s.connected}>
+                <Text style={[s.btnTxt]}>Create Post</Text>
+                <Icon
+                  name={'plus'}
+                  size={moderateScale(15, 0.1)}
+                  solid
+                  color={'#000'}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <FlatList
+            data={posts}
+            renderItem={(elem, index) => renderItem(elem)}
+            keyExtractor={(elem, index) => {
+              index.toString();
+            }}
+            extraData={refresh}
+          />
+        )}
       </View>
       <RBSheet
         ref={refRBSheet}
@@ -1001,7 +1037,7 @@ const [funPostsData, setFunPostsData] = useState('')
               style={s.capturebtn}
               onPressIn={() => captureImage('photo')}
             >
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{flexDirection: 'row'}}>
                 <Ionicons name="camera" style={s.capturebtnicon} />
                 <Text style={s.capturebtntxt}>Open Camera</Text>
               </View>
@@ -1011,7 +1047,7 @@ const [funPostsData, setFunPostsData] = useState('')
               style={s.capturebtn}
               onPressIn={() => chooseFile('photo')}
             >
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{flexDirection: 'row'}}>
                 <Ionicons name="md-image-outline" style={s.capturebtnicon} />
                 <Text style={s.capturebtntxt}>Open Gallery</Text>
               </View>
@@ -1040,7 +1076,7 @@ const [funPostsData, setFunPostsData] = useState('')
           }}
         >
           {/* {loader ? <Loader /> : null} */}
-          <Text style={[s.rb, { color: textColor }]}>Report</Text>
+          <Text style={[s.rb, {color: textColor}]}>Report</Text>
         </View>
         <View
           style={{
@@ -1048,7 +1084,7 @@ const [funPostsData, setFunPostsData] = useState('')
           }}
         >
           <View style={[s.hv]}>
-            <Text style={[s.hv, { color: textColor }]}>
+            <Text style={[s.hv, {color: textColor}]}>
               Why are you reporting this post?
             </Text>
           </View>
@@ -1060,21 +1096,21 @@ const [funPostsData, setFunPostsData] = useState('')
               be used as a placeholder before final copy is available
             </Text>
           </View>
-          <View style={{ display: 'flex' }}>
+          <View style={{display: 'flex'}}>
             <TouchableOpacity style={s.list}>
               <View>
-                <Text style={[s.listTxt, { color: textColor }]}></Text>
+                <Text style={[s.listTxt, {color: textColor}]}></Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
                 setText('i just dont like it');
-                report();
+                report('i just dont like it');
               }}
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, { color: textColor }]}>
+                <Text style={[s.listTxt, {color: textColor}]}>
                   i just don't like it
                 </Text>
               </View>
@@ -1082,23 +1118,23 @@ const [funPostsData, setFunPostsData] = useState('')
             <TouchableOpacity
               onPress={() => {
                 setText('its spam');
-                report();
+                report('its spam');
               }}
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, { color: textColor }]}>it's spam</Text>
+                <Text style={[s.listTxt, {color: textColor}]}>it's spam</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
                 setText('Nudity or sexual activity');
-                report();
+                report('Nudity or sexual activity');
               }}
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, { color: textColor }]}>
+                <Text style={[s.listTxt, {color: textColor}]}>
                   Nudity or sexual activity
                 </Text>
               </View>
@@ -1106,12 +1142,12 @@ const [funPostsData, setFunPostsData] = useState('')
             <TouchableOpacity
               onPress={() => {
                 setText('Hate speech or symbols');
-                report();
+                report('Hate speech or symbols');
               }}
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, { color: textColor }]}>
+                <Text style={[s.listTxt, {color: textColor}]}>
                   Hate speech or symbols
                 </Text>
               </View>
@@ -1119,12 +1155,12 @@ const [funPostsData, setFunPostsData] = useState('')
             <TouchableOpacity
               onPress={() => {
                 setText('Violence or dangerous orgnisations');
-                report();
+                report('Violence or dangerous orgnisations');
               }}
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, { color: textColor }]}>
+                <Text style={[s.listTxt, {color: textColor}]}>
                   Violence or dangerous orgnisations
                 </Text>
               </View>
@@ -1132,12 +1168,12 @@ const [funPostsData, setFunPostsData] = useState('')
             <TouchableOpacity
               onPress={() => {
                 setText('Bullying or harrasment');
-                report();
+                report('Bullying or harrasment');
               }}
               style={s.list}
             >
               <View>
-                <Text style={[s.listTxt, { color: textColor }]}>
+                <Text style={[s.listTxt, {color: textColor}]}>
                   Bullying or harrasment
                 </Text>
               </View>
@@ -1145,8 +1181,6 @@ const [funPostsData, setFunPostsData] = useState('')
           </View>
         </View>
       </RBSheet>
-      {/* </>
-      )} */}
     </SafeAreaView>
   );
 };

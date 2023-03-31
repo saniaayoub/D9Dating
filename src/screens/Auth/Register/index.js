@@ -11,7 +11,7 @@ import {
   ScrollView,
   Image,
   Dimensions,
-  Platform
+  Platform,
 } from 'react-native';
 import React, {useRef, useState, useEffect} from 'react';
 import axiosconfig from '../../../provider/axios';
@@ -151,6 +151,10 @@ const Register = ({navigation}) => {
     console.log(item.name);
   };
 
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() - 18);
+
+
   const validateEmail = e => {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     if (emailRegex.test(e)) {
@@ -221,7 +225,7 @@ const Register = ({navigation}) => {
       .catch(err => {
         setLoader(false);
         console.log(err, 'errors');
-        console.log(err.response?.data?.message, 'error message');
+        console.log(err.response?.data?.message, 'error messagaae');
         alert(err?.response?.data?.message);
       });
   };
@@ -298,7 +302,9 @@ const Register = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor:theme === 'dark' ? '#222222' : '#fff'}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: theme === 'dark' ? '#222222' : '#fff'}}
+    >
       <ScrollView>
         <View
           style={[
@@ -311,14 +317,7 @@ const Register = ({navigation}) => {
             <Header navigation={navigation} />
           </View>
           <View style={s.heading}>
-            <Text
-              style={[
-                s.headingText,
-                { color: Textcolor},
-              ]}
-            >
-              Sign Up
-            </Text>
+            <Text style={[s.headingText, {color: Textcolor}]}>Sign Up</Text>
             {/* <Text
               style={[
                 s.headingText,
@@ -473,6 +472,7 @@ const Register = ({navigation}) => {
                 <DateTimePickerModal
                   isVisible={isDatePickerVisible}
                   mode="date"
+                  maximumDate={maxDate}
                   onConfirm={handleConfirm}
                   onCancel={hideDatePicker}
                 />
@@ -487,7 +487,9 @@ const Register = ({navigation}) => {
               </View>
               <View style={{flex: 0.6}}>
                 <PhoneInput
-                  style={{bottom: Platform.OS=='ios'? 0:moderateScale(-10, 0.1)}}
+                  style={{
+                    bottom: Platform.OS == 'ios' ? 0 : moderateScale(-10, 0.1),
+                  }}
                   initialCountry={'us'}
                   textProps={{
                     placeholder: 'Enter Phone Number',
@@ -692,7 +694,6 @@ const Register = ({navigation}) => {
                       base: '100%',
                       md: '25%',
                     }}
-
                     style={{
                       borderBottomWidth: 1,
                       borderBottomColor:
@@ -700,7 +701,6 @@ const Register = ({navigation}) => {
                     }}
                     // onTouchStart={() => navigation.navigate('Maps')}
                     onPressIn={() => navigation.navigate('Maps')}
-
                     variant="unstyled"
                     editable={false}
                     placeholder={userLocation ? userLocation : 'Enter Location'}
@@ -840,11 +840,21 @@ const Register = ({navigation}) => {
                   Privacy Policy
                 </Text>
               </TouchableOpacity>
-              <Text style={[s.forgetPass, {color: Textcolor, textDecorationLine: 'none'}]}>
+              <Text
+                style={[
+                  s.forgetPass,
+                  {color: Textcolor, textDecorationLine: 'none'},
+                ]}
+              >
                 {'  '}&{'  '}
               </Text>
               <TouchableOpacity>
-                <Text style={[s.forgetPass, {color: Textcolor,textDecorationLine: 'underline'}]}>
+                <Text
+                  style={[
+                    s.forgetPass,
+                    {color: Textcolor, textDecorationLine: 'underline'},
+                  ]}
+                >
                   Terms & conditions
                 </Text>
               </TouchableOpacity>

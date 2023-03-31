@@ -14,6 +14,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Alert,
 } from 'react-native';
 import {setLocation} from '../../../Redux/actions';
 import {setPostLocation} from '../../../Redux/actions';
@@ -24,6 +25,10 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import Geolocation from '@react-native-community/geolocation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Geocoder from 'react-native-geocoding';
+import {moderateScale} from 'react-native-size-matters';
+import Modal from 'react-native-modal';
+import Inicon from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -33,6 +38,26 @@ let LATITUDE;
 
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const Map = ({navigation, route}) => {
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [loc, setLoc] = useState(null);
+  const searchBarRef = useRef();
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+    // if (screen1) {
+    //   console.log('ddd');
+    //   dispatch(setPostLocation(loc));
+    //   setTimeout(() => {
+    //     navigation.goBack();
+    //   }, 2000);
+    // } else {
+    //   console.log('rr');
+    //   dispatch(setLocation(loc));
+    //   setModalVisible(!isModalVisible);
+    //   setTimeout(() => {
+    //     navigation.goBack();
+    //   }, 2000);
+    // }
+  };
   const screen1 = route.params;
 
   console.log(screen1, 'screen');
@@ -54,6 +79,16 @@ const Map = ({navigation, route}) => {
   const onMapRegionChange = newRegion => {
     console.log(newRegion, 'new region');
     setMarkerPosition(newRegion);
+    console.log('get city name');
+    Geocoder.from(newRegion.latitude, newRegion.longitude).then(json => {
+      var addressComponent = json.results[0].address_components;
+      console.log(
+        addressComponent[1].short_name,
+        addressComponent[2].short_name,
+        'acc',
+      );
+      setLoc(addressComponent[1].short_name, addressComponent[2].short_name);
+    });
     // if(screen1){
     //   console.log('ddd');
     //   dispatch(setPostLocation(newRegion))
@@ -76,7 +111,7 @@ const Map = ({navigation, route}) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  Geocoder.init('AIzaSyD8i3TGGkBPF757aCT-w36E6zvSer3r2KE');
+  Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
 
   useEffect(() => {
     Geolocation.getCurrentPosition(pos => {
@@ -90,24 +125,36 @@ const Map = ({navigation, route}) => {
   }, []);
 
   const onPress = (data, details) => {
-    // setPosition(details.geometry.location);
-    // setMarker(details.geometry.location);
+    console.log(data, 'aaa');
+    // console.log(JSON.stringify(details.geometry.location), 'details');
+    setLoc(data.description);
+    Geocoder.from(data.description)
+      .then(json => {
+        const location = json.results[0].geometry.location;
+        console.log(location.lat, location.lng);
+        setMarkerPosition({
+          latitude: location.lat,
+          longitude: location.lng,
+        });
+        setPosition({
+          latitude: location.lat,
+          longitude: location.lng,
+        });
+      })
+      .catch(error => console.warn(error));
+    // setPosition(data.description);
   };
-  // const getCityName = async (coordinate) => {
-  //   const { latitude, longitude } = coordinate;
-  //   try {
-  //     const response = await Geocoder.from(latitude, longitude);
-  //     const address = response.results[0].address_components;
-  //     for (let i = 0; i < address.length; i++) {
-  //       if (address[i].types.includes('locality')) {
-  //         return address[i].long_name;
-
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const getCityName = async coordinate => {
+    console.log('get city name');
+    await Geocoder.from(coordinate)
+      .then(json => {
+        const cityName = json.results[0].address_components.find(ac =>
+          ac.types.includes('locality'),
+        ).long_name;
+        console.log(cityName);
+      })
+      .catch(error => console.warn(error));
+  };
   function getLocation() {
     Geolocation.getCurrentPosition(
       //Will give you the current location
@@ -152,7 +199,7 @@ const Map = ({navigation, route}) => {
         rotateEnabled={true}
       >
         <Marker
-          draggable
+          // draggable
           coordinate={markerPosition}
           title="Yor are here"
           description="current Location"
@@ -163,41 +210,73 @@ const Map = ({navigation, route}) => {
           }}
           onDragEnd={e => {
             const coordinate = JSON.stringify(e.nativeEvent.coordinate);
-            if (screen1) {
-              console.log('ddd');
-              dispatch(setPostLocation(coordinate));
-              setTimeout(() => {
-                navigation.goBack();
-              }, 2000);
-            } else {
-              console.log('rr');
-              dispatch(setLocation(coordinate));
-              setTimeout(() => {
-                navigation.goBack();
-              }, 2000);
-            }
 
-            // getCityName(coordinate)
-            alert(coordinate);
-            // const city = getCityName(JSON.stringify(e.nativeEvent.coordinate,))
-            // console.log(city,'city')
+            getCityName(coordinate);
           }}
         />
       </MapView>
 
-      <View style={{position: 'absolute', top: 10, width: '100%'}}>
+      <View style={{position: 'absolute', top: 10, width: '95%'}}>
         <GooglePlacesAutocomplete
-          styles={styles.searchbar}
+          ref={searchBarRef}
+          styles={{
+            textInput: {
+              height: moderateScale(38, 0.1),
+
+              color: 'black',
+              fontSize: moderateScale(16, 0.1),
+            },
+          }}
+          renderRow={rowData => {
+            const title = rowData.structured_formatting.main_text;
+            const address = rowData.structured_formatting.secondary_text;
+            return (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  width: '100%',
+                  height: moderateScale(30, 0.1),
+                }}
+              >
+                <Text
+                  style={{fontSize: moderateScale(15, 0.1), color: 'black'}}
+                >
+                  {title} {address}
+                </Text>
+              </View>
+            );
+          }}
+          renderRightButton={() => (
+            <TouchableOpacity
+              onPress={() => searchBarRef?.current?.clear()}
+              style={{
+                backgroundColor: '#fff',
+                alignItems: 'center',
+                height: moderateScale(38, 0.1),
+
+                padding: moderateScale(5, 0.1),
+                borderTopRightRadius: moderateScale(10, 0.1),
+                borderBottomRightRadius: moderateScale(10, 0.1),
+              }}
+            >
+              <Entypo
+                name="cross"
+                size={moderateScale(25, 0.1)}
+                color={'grey'}
+              />
+            </TouchableOpacity>
+          )}
           placeholder="Search"
+          textInputProps={{placeholderTextColor: 'black'}}
           query={{
-            key: 'AIzaSyD8i3TGGkBPF757aCT-w36E6zvSer3r2KE',
+            key: 'AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU',
             language: 'en', // language of the results
           }}
           GooglePlacesDetailsQuery={{
             fields: 'geometry',
           }}
           fetchDetails={true}
-          onPress={onPress}
+          onPress={e => onPress(e)}
           onFail={error => console.error(error)}
           // requestUrl={{
           //   url:
@@ -206,6 +285,121 @@ const Map = ({navigation, route}) => {
           // }} // this in only required for use on the web. See https://git.io/JflFv more for details.
         />
       </View>
+      <TouchableOpacity
+        onPress={() => {
+          if (loc) {
+            setModalVisible(!isModalVisible);
+          } else {
+            Alert.alert('Please select location');
+          }
+        }}
+        style={{
+          width: moderateScale(250, 0.1),
+          height: moderateScale(38, 0.1),
+          backgroundColor: '#FFD700',
+          justifyContent: 'center',
+          marginVertical: moderateScale(15, 0.1),
+          borderRadius: moderateScale(12, 0.1),
+          bottom: moderateScale(70, 0.1),
+        }}
+      >
+        <View>
+          <Text
+            style={{
+              alignSelf: 'center',
+              lineHeight: moderateScale(20, 0.1),
+              fontSize: moderateScale(15, 0.1),
+              color: '#222222',
+            }}
+          >
+            {' '}
+            Add location{' '}
+          </Text>
+        </View>
+        <Modal isVisible={isModalVisible}>
+          <View
+            style={{
+              height: moderateScale(300, 0.1),
+              backgroundColor: 'white',
+              borderRadius: moderateScale(10, 0, 1),
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => setModalVisible(!isModalVisible)}
+              style={{alignItems: 'flex-end', padding: moderateScale(10, 0.1)}}
+            >
+              <Entypo name="cross" size={moderateScale(30)} color={'grey'} />
+            </TouchableOpacity>
+            <View
+              style={{
+                marginVertical: moderateScale(25, 0.1),
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingLeft: moderateScale(20, 0.1),
+                width: '80%',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: moderateScale(18, 0.1),
+                  marginRight: moderateScale(10, 0.1),
+                  color: 'black',
+                }}
+              >
+                {loc}
+              </Text>
+              <View style={{marginRight: moderateScale(-50, 0.1)}}>
+                <Inicon
+                  name="location"
+                  size={moderateScale(30)}
+                  color={'red'}
+                />
+              </View>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                setModalVisible(!isModalVisible);
+                if (screen1) {
+                  console.log('ddd');
+                  dispatch(setPostLocation(loc));
+                  setTimeout(() => {
+                    navigation.goBack();
+                  }, 2000);
+                } else {
+                  console.log('rr');
+                  dispatch(setLocation(loc));
+                  setModalVisible(!isModalVisible);
+                  setTimeout(() => {
+                    navigation.goBack();
+                  }, 2000);
+                }
+              }}
+              style={{
+                width: moderateScale(250, 0.1),
+                height: moderateScale(38, 0.1),
+                backgroundColor: '#FFD700',
+                justifyContent: 'center',
+                marginVertical: moderateScale(15, 0.1),
+                borderRadius: moderateScale(12, 0.1),
+                alignSelf: 'center',
+                top: moderateScale(15, 0.1),
+              }}
+            >
+              <Text
+                style={{
+                  alignSelf: 'center',
+                  lineHeight: moderateScale(20, 0.1),
+                  fontSize: moderateScale(15, 0.1),
+                  color: '#222222',
+                }}
+              >
+                Save
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </TouchableOpacity>
     </View>
   );
 };

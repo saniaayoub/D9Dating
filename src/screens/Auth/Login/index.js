@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   ToastAndroid,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import s from './style';
@@ -34,7 +34,7 @@ const Login = ({navigation}) => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [submitted, setSubmitted] = useState();
-  const [showPass, setshowPass] = useState(false);
+  const [showPass, setshowPass] = useState(true);
   const [validEmail, setValidEmail] = useState('');
   const [loader, setLoader] = useState(false);
   const theme = useSelector(state => state.reducer.theme);
@@ -136,12 +136,15 @@ const Login = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, height:'100%'}}>
+    <SafeAreaView style={{flex: 1, height: '100%'}}>
       <View
         style={[
           s.container,
-          { width: width,
-            height: height, backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
+          {
+            width: width,
+            height: height,
+            backgroundColor: theme === 'dark' ? '#222222' : '#fff',
+          },
         ]}
       >
         {loader ? <Loader /> : null}
@@ -267,7 +270,6 @@ const Login = ({navigation}) => {
                 onSignInUser();
                 //  dispatch(setUserToken('eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5ODk1ZTI5Ni00NGE0LTQ3NGQtODk3Zi1mZTMxNDI4ZjM5Y2UiLCJqdGkiOiJhYjk3Mzk5YzA4MWQ0ZjdhNmIyNjJiNzM2OTg5YjQyYTBjMjY4ZTE5YzdkNDhkMmViNWQwMzhkYWVjNzAyY2M5MzdiZDY4OTBiMTdhNjY0NiIsImlhdCI6MTY3ODQyNDYwNC42OTczOTIsIm5iZiI6MTY3ODQyNDYwNC42OTczOTUsImV4cCI6MTcxMDA0NzAwNC42OTE3MTEsInN1YiI6IjMiLCJzY29wZXMiOltdfQ.FVxin8JM9tjUOMHO8RZIWCsUH-iqhgDSerZlr9cUfl95YrcRMpJFNOhHc4wWe84ydYCMGfJtAz1RU0pgvMVJmXsnThnTtQIC4A68JC_w_F6RCX3iO_OBoFt81KdWzUQSlulnJA351zn1dEf-S5sojm9vVnjWEqEAav81BdNuJu2h0x6Fpr94bw4NnvZtClxR1ZuOWv6LIEwFqMap0zHMExr9UljzlQ0QZ9BEcfXwPerp6SFCil9piRrSXoaGaz24O2VzgMG9qJq50n7IxaDTy8maToJEf_bbPHvJOhmmTQt7l2YVgmFynTKsVQpB8YgXj2kbi2mKLPEYQNwYELMGPmD2O0jL48rbO0kQgUC-JEQgrOByYf9Rq4QnNx5k6swELGe0IcXIqbjE4O7C9nc86ppO0lRJLgRYCgvwoxxiu2CJaHo60dRhBdyClRcNyO6cjRZaRqrB8z8oazD2grlA_O2mEBdc2vg7gNegJK1cUwUKTxkiwYtZ9NbKhVeKKlrDmHu6KkXCVSAX2_b3DxA-6uGbEJkDfLrQebe9qvcZ4JUC5pI0uG_VODQySOiFZGaMFuunMLGB63Vp-j9RZDiJZ_67fsiIc7dBVeTZMGbKzAuHU0j8spMXbsNGSf5eOEhkIqhm6Sz6U7sNz8G_kp7bPLWA8lZDPWa3ezmkYljPr08'));
               }}
-        
             >
               <Text style={s.btnText}>Login</Text>
             </Button>
@@ -327,11 +329,21 @@ const Login = ({navigation}) => {
                 Privacy Policy
               </Text>
             </TouchableOpacity>
-            <Text style={[s.forgetPass, {color: Textcolor,textDecorationLine: 'none'}]}>
+            <Text
+              style={[
+                s.forgetPass,
+                {color: Textcolor, textDecorationLine: 'none'},
+              ]}
+            >
               {'  '}&{'  '}
             </Text>
             <TouchableOpacity>
-              <Text style={[s.forgetPass, {color: Textcolor,textDecorationLine: 'underline'}]}>
+              <Text
+                style={[
+                  s.forgetPass,
+                  {color: Textcolor, textDecorationLine: 'underline'},
+                ]}
+              >
                 Terms & conditions
               </Text>
             </TouchableOpacity>
