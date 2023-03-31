@@ -380,6 +380,8 @@ PODS:
     - RCTTypeSafety
     - React-Core
     - ReactCommon/turbomodule/core
+  - react-native-splash-screen (3.3.0):
+    - React-Core
   - React-perflogger (0.71.2)
   - React-RCTActionSheet (0.71.2):
     - React-Core/RCTActionSheetHeaders (= 0.71.2)
@@ -560,6 +562,7 @@ DEPENDENCIES:
   - react-native-insta-story (from `../node_modules/react-native-insta-story`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -674,6 +677,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-maps"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-splash-screen:
+    :path: "../node_modules/react-native-splash-screen"
   React-perflogger:
     :path: "../node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -785,6 +790,7 @@ SPEC CHECKSUMS:
   react-native-insta-story: c06a8c91c0341a75070dca5c1cd9f27515133e02
   react-native-maps: 3556d0fd5f559805f11777c1f59fc01eeb9f6405
   react-native-safe-area-context: 366f55da044348b534b54cedbfa8df2e79394131
+  react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   React-perflogger: c7ccda3d1d1da837f7ff4e54e816022a6803ee87
   React-RCTActionSheet: 01c125aebbad462a24228f68c584c7a921d6c28e
   React-RCTAnimation: 5277a9440acffc4a5b7baa6ae3880fe467277ae6

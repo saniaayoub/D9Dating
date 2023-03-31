@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
+  Platform
 } from 'react-native';
 import {
   SafeAreaView,
@@ -246,8 +247,9 @@ const Map = ({navigation, route}) => {
               </View>
             );
           }}
-          renderRightButton={() => (
-            <TouchableOpacity
+         
+          renderRightButton={() => 
+            {Platform.OS =='android'?null:( <TouchableOpacity
               onPress={() => searchBarRef?.current?.clear()}
               style={{
                 backgroundColor: '#fff',
@@ -264,8 +266,8 @@ const Map = ({navigation, route}) => {
                 size={moderateScale(25, 0.1)}
                 color={'grey'}
               />
-            </TouchableOpacity>
-          )}
+            </TouchableOpacity>) }}
+          
           placeholder="Search"
           textInputProps={{placeholderTextColor: 'black'}}
           query={{
@@ -282,7 +284,8 @@ const Map = ({navigation, route}) => {
           //   url:
           //     'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api',
           //   useOnPlatform: 'web',
-          // }} // this in only required for use on the web. See https://git.io/JflFv more for details.
+          // }} 
+          // this in only required for use on the web. See https://git.io/JflFv more for details.
         />
       </View>
       <TouchableOpacity
@@ -300,7 +303,7 @@ const Map = ({navigation, route}) => {
           justifyContent: 'center',
           marginVertical: moderateScale(15, 0.1),
           borderRadius: moderateScale(12, 0.1),
-          bottom: moderateScale(70, 0.1),
+          bottom: Platform.OS=='ios'? moderateScale(100, 0.1): moderateScale(70, 0.1),
         }}
       >
         <View>
