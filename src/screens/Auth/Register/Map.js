@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import {setLocation} from '../../../Redux/actions';
 import {setPostLocation} from '../../../Redux/actions';
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector, useDispatch,} from 'react-redux';
 import {Marker} from 'react-native-maps';
 import MapView, {PROVIDER_GOOGLE, animateToRegion} from 'react-native-maps';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
@@ -83,8 +83,9 @@ const Map = ({navigation, route}) => {
       console.log(
         addressComponent[1].short_name,
         addressComponent[2].short_name,
+        'acc'
       );
-      setLoc(addressComponent[1].short_name, addressComponent[2].short_name);
+      setLoc(addressComponent[1].short_name,addressComponent[2].short_name);
     });
     // if(screen1){
     //   console.log('ddd');
@@ -223,6 +224,7 @@ const Map = ({navigation, route}) => {
           GooglePlacesDetailsQuery={{
             fields: 'geometry',
           }}
+          
           fetchDetails={true}
           onPress={e => onPress(e)}
           onFail={error => console.error(error)}
@@ -242,6 +244,7 @@ const Map = ({navigation, route}) => {
           justifyContent: 'center',
           marginVertical: moderateScale(15, 0.1),
           borderRadius: moderateScale(12, 0.1),
+          bottom: moderateScale(70,0.1)
         }}>
         <View>
           <Text

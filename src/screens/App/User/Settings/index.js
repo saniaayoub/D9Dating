@@ -446,7 +446,7 @@ const Settings = ({navigation, route}) => {
                   h={moderateScale(35, 0.1)}
                   alignItems={'center'}
                 >
-                  <Text style={s.btnText}>Delete Account</Text>
+                  <Text style={{color:'#222222'}}>Delete Account</Text>
                 </Button>
               </View>
             </RBSheet>

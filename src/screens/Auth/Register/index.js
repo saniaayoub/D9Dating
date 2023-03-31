@@ -151,6 +151,10 @@ const Register = ({navigation}) => {
     console.log(item.name);
   };
 
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() - 18);
+
+
   const validateEmail = e => {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     if (emailRegex.test(e)) {
@@ -468,6 +472,7 @@ const Register = ({navigation}) => {
                 <DateTimePickerModal
                   isVisible={isDatePickerVisible}
                   mode="date"
+                  maximumDate={maxDate}
                   onConfirm={handleConfirm}
                   onCancel={hideDatePicker}
                 />

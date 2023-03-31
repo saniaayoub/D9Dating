@@ -337,14 +337,15 @@ const Profile = ({navigation}) => {
     console.log(date, 'c date');
     hideDatePicker();
   };
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() - 18);
 
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
       <Header navigation={navigation} />
       <ScrollView
-        contentContainerStyle={[s.container, {backgroundColor: color}]}
-      >
+        contentContainerStyle={[s.container, {backgroundColor: color}]}>
         <View style={s.dp}>
           <Image
             source={{uri: form?.image ? form?.image : dummyImage}}
@@ -354,8 +355,7 @@ const Profile = ({navigation}) => {
           <View style={s.circle}>
             <TouchableOpacity
               onPress={() => refRBSheet.current.open()}
-              style={s.edit}
-            >
+              style={s.edit}>
               <Entypo
                 name={'edit'}
                 size={moderateScale(10, 0.1)}
@@ -368,8 +368,7 @@ const Profile = ({navigation}) => {
         <View style={s.username}>
           <Text style={[s.textBold, {color: textColor}]}>{form?.name}</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Settings', {data: form})}
-          >
+            onPress={() => navigation.navigate('Settings', {data: form})}>
             <Inicon
               name={'settings-sharp'}
               size={moderateScale(20, 0.1)}
@@ -399,8 +398,7 @@ const Profile = ({navigation}) => {
                 <TouchableOpacity
                   onPress={() => {
                     setDisable1(!disable1);
-                  }}
-                >
+                  }}>
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -442,8 +440,7 @@ const Profile = ({navigation}) => {
                 <TouchableOpacity
                   onPress={() => {
                     setDisable2(!disable2);
-                  }}
-                >
+                  }}>
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -485,8 +482,7 @@ const Profile = ({navigation}) => {
                 <TouchableOpacity
                   onPress={() => {
                     setDisable3(!disable3);
-                  }}
-                >
+                  }}>
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -529,8 +525,7 @@ const Profile = ({navigation}) => {
                 <TouchableOpacity
                   onPress={() => {
                     setDisable4(!disable4);
-                  }}
-                >
+                  }}>
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -576,8 +571,7 @@ const Profile = ({navigation}) => {
                   onPress={() => {
                     showDatePicker();
                     // setDisable5(!disable5);
-                  }}
-                >
+                  }}>
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -621,8 +615,7 @@ const Profile = ({navigation}) => {
                   onPress={() => {
                     navigation.navigate('Map');
                     setDisable6(!disable6);
-                  }}
-                >
+                  }}>
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -644,6 +637,7 @@ const Profile = ({navigation}) => {
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
             mode="date"
+            maximumDate={maxDate}
             onConfirm={handleConfirm}
             onCancel={hideDatePicker}
           />
@@ -654,8 +648,7 @@ const Profile = ({navigation}) => {
                 <RadioButton
                   onPress={() => onRadioBtnClick(item)}
                   selected={item.selected}
-                  key={item.id}
-                >
+                  key={item.id}>
                   {item.name}
                 </RadioButton>
               </View>
@@ -674,8 +667,7 @@ const Profile = ({navigation}) => {
               w={moderateScale(140, 0.1)}
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
-              style={s.shadow}
-            >
+              style={s.shadow}>
               <Text style={s.btnText}>Save</Text>
             </Button>
           </View>
@@ -691,27 +683,23 @@ const Profile = ({navigation}) => {
               height: moderateScale(220),
               borderRadius: moderateScale(20, 0.1),
             },
-          }}
-        >
+          }}>
           <View
             style={{
               marginVertical: moderateScale(30, 0.1),
               justifyContent: 'center',
               alignContent: 'center',
-            }}
-          >
+            }}>
             <Stack
               direction={{
                 base: 'column',
                 md: 'row',
               }}
-              space={4}
-            >
+              space={4}>
               <Button
                 transparent
                 style={s.capturebtn}
-                onPressIn={() => captureImage('photo')}
-              >
+                onPressIn={() => captureImage('photo')}>
                 <View style={{flexDirection: 'row'}}>
                   <Ionicons name="camera" style={s.capturebtnicon} />
                   <Text style={s.capturebtntxt}>Open Camera</Text>
@@ -720,8 +708,7 @@ const Profile = ({navigation}) => {
               <Button
                 transparent
                 style={s.capturebtn}
-                onPressIn={() => chooseFile('photo')}
-              >
+                onPressIn={() => chooseFile('photo')}>
                 <View style={{flexDirection: 'row'}}>
                   <Ionicons name="md-image-outline" style={s.capturebtnicon} />
                   <Text style={s.capturebtntxt}>Open Gallery</Text>
