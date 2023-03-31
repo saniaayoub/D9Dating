@@ -150,11 +150,11 @@ const FunInteraction = ({navigation}) => {
         console.log(err);
       });
   };
-  const report = async () => {
+  const report = async (reptext) => {
     setLoader(true);
     const data = {
       post_id: postId,
-      text: text,
+      text: reptext,
     };
     console.log(data);
     await axiosconfig
@@ -671,7 +671,7 @@ const FunInteraction = ({navigation}) => {
               <TouchableOpacity
                 onPress={() => {
                   setText('i just dont like it');
-                  report();
+                  report('i just dont like it');
                 }}
                 style={s.list}
               >
@@ -684,7 +684,7 @@ const FunInteraction = ({navigation}) => {
               <TouchableOpacity
                 onPress={() => {
                   setText('its spam');
-                  report();
+                  report('its spam');
                 }}
                 style={s.list}
               >
@@ -695,7 +695,7 @@ const FunInteraction = ({navigation}) => {
               <TouchableOpacity
                 onPress={() => {
                   setText('Nudity or sexual activity');
-                  report();
+                  report('its spam');
                 }}
                 style={s.list}
               >
@@ -708,7 +708,7 @@ const FunInteraction = ({navigation}) => {
               <TouchableOpacity
                 onPress={() => {
                   setText('Hate speech or symbols');
-                  report();
+                  report('Hate speech or symbols');
                 }}
                 style={s.list}
               >
@@ -721,7 +721,7 @@ const FunInteraction = ({navigation}) => {
               <TouchableOpacity
                 onPress={() => {
                   setText('Violence or dangerous orgnisations');
-                  report();
+                  report('Violence or dangerous orgnisations');
                 }}
                 style={s.list}
               >
@@ -734,7 +734,7 @@ const FunInteraction = ({navigation}) => {
               <TouchableOpacity
                 onPress={() => {
                   setText('Bullying or harrasment');
-                  report();
+                  report('Bullying or harrasment');
                 }}
                 style={s.list}
               >

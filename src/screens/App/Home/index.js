@@ -148,11 +148,11 @@ const Home = ({navigation}) => {
         console.log(err);
       });
   };
-  const report = async () => {
+  const report = async repText => {
     setLoader(true);
     const data = {
       post_id: postId,
-      text: text,
+      text: repText,
     };
     await axiosconfig
       .post('post-report', data, {
@@ -564,7 +564,6 @@ const Home = ({navigation}) => {
   };
 
   const renderItem = elem => {
-    console.log(Stories[0]?.user_id, 'jjj');
     if (elem?.item?.privacy_option == '3' && elem?.item?.user?.id != userID) {
       return; //hide friends' only me posts
     }
@@ -810,7 +809,7 @@ const Home = ({navigation}) => {
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       <View style={[s.container, s.col, {backgroundColor: color}]}>
         {loader ? <Loader /> : null}
-        
+
         <ScrollView
           scrollEnabled
           horizontal
@@ -969,37 +968,42 @@ const Home = ({navigation}) => {
           <Text style={[s.funText, {color: textColor}]}>Fun Interaction</Text>
         </TouchableOpacity>
         <View style={{height: moderateScale(35, 0.1)}}></View>
-        {!posts?.length ? (  <View style={{flex:1, alignItems:'center', marginBottom:moderateScale(120,0.1)}}>
-          <Text style={[s.textCreate,{color:textColor}]}>
-                        {`What's on your mind ${Stories[0].user_name}?`}
-                        </Text>
-                    <TouchableOpacity
-                    style={s.btn}
-                      onPress={() =>
-                       navigation.navigate('createPost') }
-                    >
-                      <View style={s.connected}>
-                      <Text style={[s.btnTxt]}>
-                         Create Post
-                        </Text>
-                        <Icon
+        {!posts?.length ? (
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              marginBottom: moderateScale(120, 0.1),
+            }}
+          >
+            <Text style={[s.textCreate, {color: textColor}]}>
+              {`What's on your mind ${Stories[0]?.user_name}?`}
+            </Text>
+            <TouchableOpacity
+              style={s.btn}
+              onPress={() => navigation.navigate('createPost')}
+            >
+              <View style={s.connected}>
+                <Text style={[s.btnTxt]}>Create Post</Text>
+                <Icon
                   name={'plus'}
                   size={moderateScale(15, 0.1)}
                   solid
                   color={'#000'}
                 />
-                      </View>                   
-                    </TouchableOpacity>
-                   
-                  </View>): ( <FlatList
-          data={posts}
-          renderItem={(elem, index) => renderItem(elem)}
-          keyExtractor={(elem, index) => {
-            index.toString();
-          }}
-          extraData={refresh}
-        />)}
-       
+              </View>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <FlatList
+            data={posts}
+            renderItem={(elem, index) => renderItem(elem)}
+            keyExtractor={(elem, index) => {
+              index.toString();
+            }}
+            extraData={refresh}
+          />
+        )}
       </View>
       <RBSheet
         ref={refRBSheet}
@@ -1101,7 +1105,7 @@ const Home = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 setText('i just dont like it');
-                report();
+                report('i just dont like it');
               }}
               style={s.list}
             >
@@ -1114,7 +1118,7 @@ const Home = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 setText('its spam');
-                report();
+                report('its spam');
               }}
               style={s.list}
             >
@@ -1125,7 +1129,7 @@ const Home = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 setText('Nudity or sexual activity');
-                report();
+                report('Nudity or sexual activity');
               }}
               style={s.list}
             >
@@ -1138,7 +1142,7 @@ const Home = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 setText('Hate speech or symbols');
-                report();
+                report('Hate speech or symbols');
               }}
               style={s.list}
             >
@@ -1151,7 +1155,7 @@ const Home = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 setText('Violence or dangerous orgnisations');
-                report();
+                report('Violence or dangerous orgnisations');
               }}
               style={s.list}
             >
@@ -1164,7 +1168,7 @@ const Home = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 setText('Bullying or harrasment');
-                report();
+                report('Bullying or harrasment');
               }}
               style={s.list}
             >
