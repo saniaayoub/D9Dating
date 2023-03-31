@@ -78,15 +78,14 @@ const Map = ({navigation, route}) => {
     console.log(newRegion, 'new region');
     setMarkerPosition(newRegion);
     console.log('get city name');
-    Geocoder.from(newRegion.latitude, newRegion.longitude)
-      .then(json => {
-        const cityName = json.results[0].address_components.find(ac =>
-          ac.types.includes('locality'),
-        ).long_name;
-        console.log(cityName);
-        setLoc(cityName);
-      })
-      .catch(error => console.warn(error));
+    Geocoder.from(newRegion.latitude, newRegion.longitude).then(json => {
+      var addressComponent = json.results[0].address_components;
+      console.log(
+        addressComponent[1].short_name,
+        addressComponent[2].short_name,
+      );
+      setLoc(addressComponent[1].short_name, addressComponent[2].short_name);
+    });
     // if(screen1){
     //   console.log('ddd');
     //   dispatch(setPostLocation(newRegion))
@@ -123,7 +122,7 @@ const Map = ({navigation, route}) => {
   }, []);
 
   const onPress = (data, details) => {
-    console.log(data);
+    console.log(data,'aaa');
     // console.log(JSON.stringify(details.geometry.location), 'details');
     setLoc(data.description);
     Geocoder.from(data.description)
@@ -194,8 +193,7 @@ const Map = ({navigation, route}) => {
         zoomEnabled={true}
         pitchEnabled={true}
         onRegionChangeComplete={onMapRegionChange}
-        rotateEnabled={true}
-      >
+        rotateEnabled={true}>
         <Marker
           draggable
           coordinate={markerPosition}
@@ -244,8 +242,7 @@ const Map = ({navigation, route}) => {
           justifyContent: 'center',
           marginVertical: moderateScale(15, 0.1),
           borderRadius: moderateScale(12, 0.1),
-        }}
-      >
+        }}>
         <View>
           <Text
             style={{
@@ -253,8 +250,7 @@ const Map = ({navigation, route}) => {
               lineHeight: moderateScale(20, 0.1),
               fontSize: moderateScale(15, 0.1),
               color: '#222222',
-            }}
-          >
+            }}>
             {' '}
             Add location{' '}
           </Text>
@@ -264,21 +260,20 @@ const Map = ({navigation, route}) => {
             style={{
               height: moderateScale(300, 0.1),
               backgroundColor: 'white',
-            }}
-          >
+            }}>
             <View
               style={{
                 marginVertical: moderateScale(25, 0.1),
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 paddingHorizontal: moderateScale(15, 0.1),
-              }}
-            >
+                width: moderateScale(280,0.1)
+              }}>
               <Text style={{fontSize: moderateScale(18, 0.1), color: 'black'}}>
                 {' '}
                 {loc}
               </Text>
-              <View>
+              <View style={{marginRight: moderateScale(-50,0.1)}}>
                 <Inicon
                   name="location"
                   size={moderateScale(30)}
@@ -287,7 +282,23 @@ const Map = ({navigation, route}) => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => setModalVisible(!isModalVisible)}
+              onPress={() => {
+                setModalVisible(!isModalVisible);
+                if (screen1) {
+                  console.log('ddd');
+                  dispatch(setPostLocation(loc));
+                  setTimeout(() => {
+                    navigation.goBack();
+                  }, 2000);
+                } else {
+                  console.log('rr');
+                  dispatch(setLocation(loc));
+                  setModalVisible(!isModalVisible);
+                  setTimeout(() => {
+                    navigation.goBack();
+                  }, 2000);
+                }
+              }}
               style={{
                 width: moderateScale(250, 0.1),
                 height: moderateScale(38, 0.1),
@@ -296,16 +307,15 @@ const Map = ({navigation, route}) => {
                 marginVertical: moderateScale(15, 0.1),
                 borderRadius: moderateScale(12, 0.1),
                 alignSelf: 'center',
-              }}
-            >
+                top: moderateScale(15,0.1)
+              }}>
               <Text
                 style={{
                   alignSelf: 'center',
                   lineHeight: moderateScale(20, 0.1),
                   fontSize: moderateScale(15, 0.1),
                   color: '#222222',
-                }}
-              >
+                }}>
                 Save
               </Text>
             </TouchableOpacity>

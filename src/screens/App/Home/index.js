@@ -971,7 +971,7 @@ const Home = ({navigation}) => {
         <View style={{height: moderateScale(35, 0.1)}}></View>
         {!posts?.length ? (  <View style={{flex:1, alignItems:'center', marginBottom:moderateScale(120,0.1)}}>
           <Text style={[s.textCreate,{color:textColor}]}>
-                        {`What's on your mind ${Stories[0].user_name}?`}
+                        {`What's on your mind ${Stories[0]?.user_name}?`}
                         </Text>
                     <TouchableOpacity
                     style={s.btn}
