@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     fontSize: moderateScale(14, 0.1),
-    fontFamily: 'Inter-Medium',
+    // fontFamily: 'Inter-Medium',
     color: '#fff',
   },
   text: {
