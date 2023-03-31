@@ -150,7 +150,7 @@ const FunInteraction = ({navigation}) => {
         console.log(err);
       });
   };
-  const report = async (reptext) => {
+  const report = async reptext => {
     setLoader(true);
     const data = {
       post_id: postId,
@@ -474,7 +474,7 @@ const FunInteraction = ({navigation}) => {
 
   const searchItem = (elem, i) => {
     return (
-      <View style={s.card}>
+      <TouchableOpacity style={s.card}>
         <View style={[s.dp, {borderColor: getColor(elem?.item?.group)}]}>
           <Image
             source={{uri: elem?.item?.image}}
@@ -500,7 +500,7 @@ const FunInteraction = ({navigation}) => {
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
   const onSearch = text => {

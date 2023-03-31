@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import {setLocation} from '../../../Redux/actions';
 import {setPostLocation} from '../../../Redux/actions';
-import {useSelector, useDispatch,} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {Marker} from 'react-native-maps';
 import MapView, {PROVIDER_GOOGLE, animateToRegion} from 'react-native-maps';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
@@ -85,9 +85,9 @@ const Map = ({navigation, route}) => {
       console.log(
         addressComponent[1].short_name,
         addressComponent[2].short_name,
-        'acc'
+        'acc',
       );
-      setLoc(addressComponent[1].short_name,addressComponent[2].short_name);
+      setLoc(addressComponent[1].short_name, addressComponent[2].short_name);
     });
     // if(screen1){
     //   console.log('ddd');
@@ -227,6 +227,25 @@ const Map = ({navigation, route}) => {
               fontSize: moderateScale(16, 0.1),
             },
           }}
+          renderRow={rowData => {
+            const title = rowData.structured_formatting.main_text;
+            const address = rowData.structured_formatting.secondary_text;
+            return (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  width: '100%',
+                  height: moderateScale(30, 0.1),
+                }}
+              >
+                <Text
+                  style={{fontSize: moderateScale(15, 0.1), color: 'black'}}
+                >
+                  {title} {address}
+                </Text>
+              </View>
+            );
+          }}
           renderRightButton={() => (
             <TouchableOpacity
               onPress={() => searchBarRef?.current?.clear()}
@@ -256,7 +275,6 @@ const Map = ({navigation, route}) => {
           GooglePlacesDetailsQuery={{
             fields: 'geometry',
           }}
-          
           fetchDetails={true}
           onPress={e => onPress(e)}
           onFail={error => console.error(error)}
@@ -282,8 +300,9 @@ const Map = ({navigation, route}) => {
           justifyContent: 'center',
           marginVertical: moderateScale(15, 0.1),
           borderRadius: moderateScale(12, 0.1),
-          bottom: moderateScale(70,0.1)
-        }}>
+          bottom: moderateScale(70, 0.1),
+        }}
+      >
         <View>
           <Text
             style={{
@@ -291,7 +310,8 @@ const Map = ({navigation, route}) => {
               lineHeight: moderateScale(20, 0.1),
               fontSize: moderateScale(15, 0.1),
               color: '#222222',
-            }}>
+            }}
+          >
             {' '}
             Add location{' '}
           </Text>
