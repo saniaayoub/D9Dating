@@ -59,7 +59,6 @@ const Profile = ({navigation}) => {
   const [disable4, setDisable4] = useState(false);
   const [disable5, setDisable5] = useState(false);
   const [disable6, setDisable6] = useState(false);
-  const [num, setNum] = useState('');
   const [date, setDate] = useState(null);
   const [id, setId] = useState('');
   const [borderColor, setBorderColor] = useState(textColor);
@@ -112,10 +111,6 @@ const Profile = ({navigation}) => {
     console.log(disable4);
   }, []);
 
-  useEffect(() => {
-    console.log(num, 'num');
-  }, [isFocused]);
-
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
       isSelectedItem.name === item.name
@@ -159,7 +154,6 @@ const Profile = ({navigation}) => {
   const setData = data => {
     for (let item of Object.keys(formData)) {
       formData[item] = data[item];
-      console.log(item, data[item], 'phonehggggg');
       if (item == 'location') {
         dispatch(setLocation(data[item]));
       }
@@ -531,40 +525,24 @@ const Profile = ({navigation}) => {
               }}
             />
           </View>
-
-          <View
-            style={[
-              s.input,
-              s.inputContainerStyle,
-              {
-                borderBottomColor: borderColor,
-                borderBottomWidth: 1,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                // flexDirection: 'row',
-              },
-            ]}
-          >
-            <View style={{flex: 0.9}}>
-              {/* <PhoneInput
-                // ref={ref => {
-                //   num = ref;
-                // }}
-                initialCountry="us" // Set the initial country to United States
-                initialValue={num} // Set the default value to the state value
-                onChangePhoneNumber={phoneNumber => {
-                  setNum(phoneNumber);
-                }}
-              /> */}
+          {disable4 ? (
+            <View
+              style={[
+                s.input,
+                s.inputContainerStyle,
+                {
+                  borderBottomColor: borderColor,
+                  borderBottomWidth: 1,
+                  // flexDirection: 'row',
+                },
+              ]}
+            >
               <PhoneInput
-                // initialCountry="us"
-                initialValue={
-                  form?.phone_number ? form?.phone_number : '443334543333'
-                }
-                // textProps={{
-                //   placeholder: 'Enter Phone Number',
-                //   placeholderTextColor: textColor,
-                // }}
+                initialCountry={'us'}
+                textProps={{
+                  placeholder: 'Enter Phone Number',
+                  placeholderTextColor: textColor,
+                }}
                 // isReadOnly={!disable4}
                 autoFormat={true}
                 textStyle={s.inputStyle}
@@ -576,7 +554,6 @@ const Profile = ({navigation}) => {
                       ...form,
                       phone_number: phonenum?.current?.getValue(),
                     });
-                    setNum(phonenum?.current?.getValue());
                     setBorderColor(textColor);
                   } else {
                     setBorderColor('red');
@@ -584,22 +561,8 @@ const Profile = ({navigation}) => {
                 }}
               />
             </View>
-
-            <TouchableOpacity
-              style={{flex: 0.1, right: moderateScale(-17, 0.1)}}
-              onPress={() => {
-                setDisable4(!disable4);
-              }}
-            >
-              <Entypo
-                name={'edit'}
-                size={moderateScale(15, 0.1)}
-                color={textColor}
-              />
-            </TouchableOpacity>
-          </View>
-
-          {/* <View style={s.input}>
+          ) : (
+            <View style={s.input}>
               <Input
                 w="100%"
                 variant="underlined"
@@ -641,7 +604,8 @@ const Profile = ({navigation}) => {
                   setForm({...form, phone_number: text});
                 }}
               />
-            </View> */}
+            </View>
+          )}
 
           {/* <View
             style={[
