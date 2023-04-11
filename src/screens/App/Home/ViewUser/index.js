@@ -12,6 +12,7 @@ import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
+import ImageView from 'react-native-image-viewing';
 
 const data = [
   {
@@ -36,10 +37,14 @@ const ViewUser = ({navigation, route}) => {
   const [Userid, setUserid] = useState(
     screen == 'search' ? post?.id : post.user.id,
   );
+  const [dummyImage, setDummyImage] = useState(
+    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  );
   const [loginId, setLoginId] = useState(null);
   const isFocused = useIsFocused();
-
-  console.log(post, 'post');
+  const [previewImage, setPreviewImage] = useState('');
+  const [previewTitle, setPreviewTitle] = useState('');
+  const [imgView, setImgView] = useState(false);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
@@ -49,19 +54,16 @@ const ViewUser = ({navigation, route}) => {
   const [userData, setUserData] = useState([]);
 
   useEffect(() => {
-    console.log(userToken, 'ggg');
     getData();
     getId();
-  }, [isFocused]);
+  }, []);
 
   const getId = async () => {
     const logInId = await AsyncStorage.getItem('id');
-    console.log(logInId, 'login id');
     setLoginId(logInId);
   };
 
   const getData = async () => {
-    console.log('get data');
     setLoader(true);
     axiosconfig
       .get(`user_view/${Userid}`, {
@@ -70,7 +72,7 @@ const ViewUser = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('data', res.data.user_details);
+        console.log('data11', res.data.user_details);
         setUserData(res?.data?.user_details);
         setLoader(false);
       })
@@ -81,7 +83,7 @@ const ViewUser = ({navigation, route}) => {
   };
   const connect = async () => {
     setLoader(true);
-    console.log(userToken, 'hgh');
+
     await axiosconfig
       .get(`connect/${Userid}`, {
         headers: {
@@ -140,7 +142,6 @@ const ViewUser = ({navigation, route}) => {
         // showToast(err.response);
       });
   };
-  console.log('userData', userData);
   const unblock = async () => {
     console.log('aaaa');
     setLoader(true);
@@ -169,13 +170,20 @@ const ViewUser = ({navigation, route}) => {
     <View style={{flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
       <View style={[s.View1]}>
-        <View style={{width: '100%', height: moderateScale(240, 0.1)}}>
+        <TouchableOpacity
+          onPress={() => {
+            setPreviewImage(userData?.image ? userData?.image : dummyImage);
+
+            setImgView(!imgView);
+          }}
+          style={{width: '100%', height: moderateScale(240, 0.1)}}
+        >
           <Image
             style={s.view1Img}
-            resizeMode={'stretch'}
-            source={{uri: userData?.image}}
+            resizeMode={'cover'}
+            source={{uri: userData?.image ? userData?.image : dummyImage}}
           />
-        </View>
+        </TouchableOpacity>
         <View
           style={{
             position: 'absolute',
@@ -262,7 +270,7 @@ const ViewUser = ({navigation, route}) => {
                       <>
                         <TouchableOpacity onPress={() => block()}>
                           <View style={s.btn}>
-                            <Text style={[s.btnTxt]}>{'block'}</Text>
+                            <Text style={[s.btnTxt]}>{'Block'}</Text>
                           </View>
                         </TouchableOpacity>
                       </>
@@ -292,6 +300,16 @@ const ViewUser = ({navigation, route}) => {
           ) : null}
         </View>
       </ScrollView>
+      <ImageView
+        images={[
+          {
+            uri: previewImage,
+          },
+        ]}
+        imageIndex={0}
+        visible={imgView}
+        onRequestClose={() => setImgView(!imgView)}
+      />
     </View>
   );
 };

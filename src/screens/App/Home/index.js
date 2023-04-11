@@ -9,6 +9,7 @@ import {
   PermissionsAndroid,
   Platform,
   Alert,
+  Dimensions,
 } from 'react-native';
 import PhotoEditor from 'react-native-photo-editor';
 import React, {useState, useRef, useEffect} from 'react';
@@ -25,6 +26,7 @@ import {
   HStack,
   Spinner,
 } from 'native-base';
+import Stories from '../../../Stories/App';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {ScrollView} from 'react-native';
@@ -32,6 +34,7 @@ import Fun from '../../../assets/images/svg/fun.svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
+import Antdesign from 'react-native-vector-icons/AntDesign';
 import SearchDropDown from '../../../Components/SearchDropDown';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -41,6 +44,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
 import {useIsFocused} from '@react-navigation/native';
 import {setGroup, setStories} from '../../../Redux/actions';
+const win = Dimensions.get('window');
 
 const Groups = [
   {id: 'Group 1', color: 'blue'},
@@ -54,6 +58,68 @@ const Groups = [
   {id: 'Group 9', color: 'blue'},
 ];
 
+// const data = [
+//   {
+//     username: 'Guilherme',
+//     title: 'Title story',
+//     profile:
+//       'https://avatars2.githubusercontent.com/u/26286830?s=460&u=5d586a3783a6edeb226c557240c0ba47294a4229&v=4',
+//     stories: [
+//       {
+//         id: 1,
+//         url:
+//           'https://images.unsplash.com/photo-1532579853048-ec5f8f15f88d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
+//         type: 'image',
+//         duration: 2,
+//         isReadMore: true,
+//         url_readmore: 'https://github.com/iguilhermeluis',
+//         created: '2021-01-07T03:24:00',
+//       },
+//     ],
+//   },
+
+//   {
+//     username: 'Steve Jobs',
+//     profile:
+//       'https://s3.amazonaws.com/media.eremedia.com/uploads/2012/05/15181015/stevejobs.jpg',
+//     title: 'Tech',
+//     stories: [
+//       {
+//         id: 1,
+//         url:
+//           'https://images.unsplash.com/photo-1515578706925-0dc1a7bfc8cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60',
+//         type: 'image',
+//         duration: 2,
+//         isReadMore: true,
+//         url_readmore: 'https://github.com/iguilhermeluis',
+//         created: '2021-01-07T03:24:00',
+//       },
+//       {
+//         id: 3,
+//         url:
+//           'https://images.unsplash.com/photo-1496287437689-3c24997cca99?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
+//         type: 'image',
+//         duration: 2,
+
+//         isReadMore: true,
+//         url_readmore: 'https://github.com/iguilhermeluis',
+//         created: '2021-01-07T03:24:00',
+//       },
+//       {
+//         id: 4,
+//         url:
+//           'https://images.unsplash.com/photo-1514870262631-55de0332faf6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
+//         type: 'image',
+//         duration: 2,
+
+//         isReadMore: true,
+//         url_readmore: 'https://github.com/iguilhermeluis',
+//         created: '2021-01-07T03:24:00',
+//       },
+//     ],
+//   },
+// ];
+
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
@@ -62,13 +128,11 @@ const Home = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const userToken = useSelector(state => state.reducer.userToken);
   const groups = useSelector(state => state.reducer.group);
-  const Stories = useSelector(state => state.reducer.stories);
+  const storyID = useSelector(state => state.reducer.storyID);
+  const storiesData = useSelector(state => state.reducer.stories);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-  const [myData1, setMyData1] = useState([]);
-  const [searchText, setSearchText] = useState('');
   const [refresh, setRefresh] = useState(true);
-  const [path, setPath] = useState(null);
   const [myStories, setMyStories] = useState([]);
   const [storyCircle, setStoryCircle] = useState('green');
   const [loader, setLoader] = useState(false);
@@ -77,30 +141,47 @@ const Home = ({navigation}) => {
   const [comment, setComment] = useState('');
   const [current, setCurrent] = useState('');
   const [otherStories, setOtherStories] = useState([]);
-  const [storyImage, setStoryImage] = useState('');
   const [postId, setPostId] = useState(null);
-  const [text, setText] = useState(null);
+  const [userData, setUserData] = useState('');
   const [funPostsData, setFunPostsData] = useState('');
-  // const [myStories, setMyStories] = useState('')
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
-  const [dataSource, setDataSource] = useState([]);
-  const [filtered, setFiltered] = useState(dataSource);
-  const [searching, setSearching] = useState(false);
+
   useEffect(() => {
     dispatch(setGroup(Groups));
-    getPosts();
     getID();
+    getPosts();
+    getStories();
+    getData();
     funPosts();
-    console.log(Stories, 'sstostst');
-    // getStory();
-    // getStories();
+    console.log(storyID, 'setUD');
   }, [isFocused]);
 
   const getID = async () => {
     const id = await AsyncStorage.getItem('id');
     setUserID(id);
+    getData(id);
+  };
+
+  const getData = async id => {
+    // console.log('get data');
+    setLoader(true);
+    axiosconfig
+      .get(`user_view/${id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data.user_details);
+        setUserData(res?.data?.user_details);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+      });
   };
 
   const getPosts = async () => {
@@ -113,8 +194,8 @@ const Home = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('Posts', JSON.stringify(res.data.post_friends));
-        console.log('Other Stories', JSON.stringify(res?.data?.stories));
+        // console.log('Posts', JSON.stringify(res.data.post_friends));
+        // console.log('Other Stories', JSON.stringify(res?.data?.stories));
 
         setPosts(res?.data?.post_friends);
         setOtherStoriesData(res?.data?.stories);
@@ -136,7 +217,7 @@ const Home = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('public post', JSON.stringify(res?.data?.post_public));
+        // console.log('public post', JSON.stringify(res?.data?.post_public));
         const data = res?.data?.post_public;
 
         setFunPostsData(res?.data?.post_public);
@@ -162,7 +243,7 @@ const Home = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('Posts', res.data);
+        // console.log('Posts', res.data);
         getPosts();
         refRBSheet1.current.close();
         setLoader(false);
@@ -183,7 +264,7 @@ const Home = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('Posts', res.data);
+        // console.log('Posts', res.data);
         getPosts();
         setLoader(false);
       })
@@ -196,13 +277,25 @@ const Home = ({navigation}) => {
 
   const setOtherStoriesData = data => {
     let temp = [];
+
     data?.forEach(elem => {
       let tempelem = {
         user_id: elem.id,
-        user_image: elem.image,
+        profile: elem.image ? elem?.image : dummyImage,
         group: elem.group,
-        user_name: elem.name,
-        stories: elem.stories,
+        username: elem.name + ' ' + elem.last_name,
+        title: elem.name + ' ' + elem.last_name,
+        stories: elem.stories.map(item => {
+          return {
+            id: item.story_id,
+            url: item.story_image,
+            type: 'image',
+            duration: 10,
+            isReadMore: true,
+            url_readmore: 'https://github.com/iguilhermeluis',
+            created: elem.created_at,
+          };
+        }),
       };
       temp.push(tempelem);
     });
@@ -220,7 +313,7 @@ const Home = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        // console.log('data', JSON.stringify(res.data));
         toggleLike(index);
         setLoader(false);
       })
@@ -243,7 +336,7 @@ const Home = ({navigation}) => {
   };
 
   const toggleLike = index => {
-    console.log('hello');
+    // console.log('hello');
     getPosts();
     setRefresh(!refresh);
   };
@@ -310,8 +403,8 @@ const Home = ({navigation}) => {
   const captureImage = async type => {
     let options = {
       mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
+      maxWidth: Dimensions.get('screen').width,
+      maxHeight: moderateScale(370, 0.1),
       quality: 1,
       videoQuality: 'low',
       durationLimit: 30, //Video max duration in seconds
@@ -394,7 +487,7 @@ const Home = ({navigation}) => {
 
   const _onPress = async imageToeEdit => {
     setTimeout(() => {
-      console.log(imageToeEdit, 'eitors');
+      // console.log(imageToeEdit, 'eitors');
 
       try {
         PhotoEditor.Edit({
@@ -415,31 +508,33 @@ const Home = ({navigation}) => {
           //   'sticker9',
           //   'sticker10',
           // ],
-          // hiddenControls: [
-          //   'clear',
-          //   'crop',
-          //   'draw',
-          //   'save',
-          //   'share',
-          //   'sticker',
-          //   'text',
-          // ],
+          hiddenControls: ['save'],
           colors: undefined,
           onDone: res => {
             console.log('on done', res);
-            setPath(`file://${res}`);
+            // setPath(`file://${res}`);
             convertToBase64(`file://${res}`);
-            let temp = Stories[0].stories;
+            let temp = storiesData[0].stories;
+            // temp.push({
+            //   story_id: Stories[0]?.stories?.length + 1,
+            //   story_image: `file://${res}`,
+            //   swipeText: 'Custom swipe text for this story',
+            //   onPress: () => console.log('story 1 swiped'),
+            // });
             temp.push({
-              story_id: Stories[0]?.stories?.length + 1,
-              story_image: `file://${res}`,
-              swipeText: 'Custom swipe text for this story',
-              // onPress: () => console.log('story 1 swiped'),
+              id: storiesData[0]?.stories?.length + 1,
+              url: `file://${res}`,
+              type: 'image',
+              duration: 30,
+              isReadMore: true,
+              url_readmore: 'https://github.com/iguilhermeluis',
+              created: new Date(),
             });
+
             // setLoader(true);
             setMyStories(temp);
-            dispatch(setStories([{...Stories[0], stories: temp}]));
-            setStoryCircle('green');
+            dispatch(setStories([{...storiesData[0], stories: temp}]));
+
             // addStory(myStories);
           },
           onCancel: () => {
@@ -487,7 +582,7 @@ const Home = ({navigation}) => {
     await RNFS.readFile(image, 'base64')
       .then(res => {
         let base64 = `data:image/png;base64,${res}`;
-        setStoryImage(base64);
+        // setStoryImage(base64);
         createStory(base64);
       })
       .catch(err => {
@@ -500,15 +595,26 @@ const Home = ({navigation}) => {
   const createStory = async base64 => {
     setLoader(true);
     if (!base64) {
+      s;
       setLoader(false);
       return;
     }
     const data = {
-      story_id: Stories[0]?.stories?.length + 1,
+      story_id: storiesData[0]?.stories?.length + 1,
       image: base64,
       swipe_text: 'Custom swipe text for this story',
       privacy_option: '1',
     };
+
+    // const data = {
+    //   id: storiesData[0]?.stories?.length + 1,
+    //   url: base64,
+    //   type: 'image',
+    //   duration: 30,
+    //   isReadMore: true,
+    //   url_readmore: 'https://github.com/iguilhermeluis',
+    //   created: new Date(),
+    // };
     await axiosconfig
       .post(`story_store`, data, {
         headers: {
@@ -517,22 +623,25 @@ const Home = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        // console.log('data', JSON.stringify(res.data));
         // setComment('');
-        getPosts();
+        setStoryCircle('green');
+        getStories();
         // setRefresh(!refresh);
+        dispatch(set);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
         console.log(err);
+        getStories();
         // Alert.alert(err);
       });
   };
 
   const addComment = async (id, index) => {
     setLoader(true);
-    console.log('hisss', id);
+    // console.log('hisss', id);
     if (!comment) {
       setLoader(false);
       return;
@@ -549,7 +658,7 @@ const Home = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        // console.log('data', JSON.stringify(res.data));
         setComment('');
         getPosts();
         setRefresh(!refresh);
@@ -561,6 +670,134 @@ const Home = ({navigation}) => {
         console.log(err);
         // Alert.alert(err);
       });
+  };
+
+  const getStories = async token => {
+    setLoader(true);
+    await axiosconfig
+      .get('story_index', {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        // console.log('storylo', JSON.stringify(res.data?.user));
+        createStoryData(res.data?.user, token);
+        // console.log(myData1);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err, 'jhjj');
+        // showToast(err.response);
+      });
+  };
+
+  const createStoryData = (data, token) => {
+    // console.log('sent data', data);
+    // let temp = {
+    //   user_id: data.id,
+    //   user_image: data.image ? data.image : dummyImage,
+    //   group: data.group,
+    //   user_name: data.name,
+    //   stories: data.stories.map(elem => {
+    //     return {...elem, onPress: () => console.log('story 1 swiped')};
+    //   }),
+    // };
+
+    // dispatch(setStories([temp]));
+    // setLoader(false);
+
+    console.log('sent data', data);
+    let temp = {
+      user_id: data.id,
+      profile: data.image ? data.image : dummyImage,
+      group: data.group,
+      username: data.name + ' ' + data.last_name,
+      title: data.name + ' ' + data.last_name,
+      stories: data.stories.map(elem => {
+        return {
+          id: elem.story_id,
+          url: elem.story_image,
+          type: 'image',
+          duration: 10,
+          isReadMore: true,
+          url_readmore: 'https://github.com/iguilhermeluis',
+          created: data.created_at,
+        };
+      }),
+    };
+    dispatch(setStories([temp]));
+    setLoader(false);
+  };
+
+  const deleteStory = async id => {
+    setLoader(true);
+    // console.log(id);
+    await axiosconfig
+      .get(`story_delete/${storyID}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        // console.log('afterDelete', res?.data?.message);
+        Alert.alert(res?.data?.message);
+        getStories(userToken);
+        id(false);
+        // console.log(myData1);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err, 'hhe');
+        // showToast(err.response);
+      });
+  };
+
+  const deletePost = async id => {
+    setLoader(true);
+    console.log(id);
+    await axiosconfig
+      .get(`post_delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        // console.log('afterDelete', res?.data?.message);
+        Alert.alert(res?.data?.message);
+        getPosts(userToken);
+        // console.log(myData1);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err, 'hhe');
+        // showToast(err.response);
+      });
+  };
+
+  const deleteAlert = (title, text, id) => {
+    //function to make two option alert
+    Alert.alert(
+      //This is title
+      title,
+      //This is body text
+      text,
+      [
+        {
+          text: 'Yes',
+          onPress: () =>
+            title == 'Delete Post' ? deletePost(id) : deleteStory(id),
+        },
+        {text: 'No', onPress: () => console.log('No Pressed'), style: 'cancel'},
+      ],
+      {cancelable: false},
+      //on clicking out side, Alert will not dismiss
+    );
   };
 
   const renderItem = elem => {
@@ -657,7 +894,7 @@ const Home = ({navigation}) => {
                     onPress={() =>
                       navigation.navigate('createPost', {
                         elem: elem?.item,
-                        screen: 'Home',
+                        from: 'Home',
                       })
                     }
                   >
@@ -670,6 +907,31 @@ const Home = ({navigation}) => {
                       />
                       <Text style={[s.optionBtns, {color: textColor}]}>
                         Edit
+                      </Text>
+                    </View>
+                  </Menu.Item>
+                </>
+              ) : null}
+              {userID == elem?.item?.user?.id ? (
+                <>
+                  <Menu.Item
+                    onPress={() =>
+                      deleteAlert(
+                        'Delete Post',
+                        'Are you sure you want to delete this post?',
+                        elem?.item?.id,
+                      )
+                    }
+                  >
+                    <View style={s.optionView}>
+                      <Antdesign
+                        name={'delete'}
+                        color={textColor}
+                        size={moderateScale(13, 0.1)}
+                        style={{flex: 0.3}}
+                      />
+                      <Text style={[s.optionBtns, {color: textColor}]}>
+                        Delete
                       </Text>
                     </View>
                   </Menu.Item>
@@ -698,19 +960,13 @@ const Home = ({navigation}) => {
           <TouchableWithoutFeedback
             onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}
           >
-            <Image
-              source={{uri: elem?.item?.image}}
-              width={undefined}
-              height={undefined}
-              resizeMode={'cover'}
-              style={{
-                width: '95%',
-                height: moderateScale(270, 0.1),
-                borderRadius: moderateScale(10, 0.1),
-                paddingHorizontal: moderateScale(10, 0.1),
-                alignSelf: 'center',
-              }}
-            />
+            <View style={s.img}>
+              <Image
+                source={{uri: elem?.item?.image}}
+                resizeMode={'cover'}
+                style={s.galleryImage}
+              ></Image>
+            </View>
           </TouchableWithoutFeedback>
           <TouchableOpacity
             onPress={() => {
@@ -730,12 +986,37 @@ const Home = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <View style={s.footer}>
-          <Text style={[s.name, {color: textColor}]}>
-            {elem?.item?.user?.name} {elem?.item?.user?.last_name}
-          </Text>
-          <Text style={[s.textRegular, {color: textColor}]}>
-            {elem?.item?.caption}
-          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Likes', {data: elem?.item?.post_likes});
+            }}
+            style={{marginBottom: moderateScale(5, 0.1)}}
+          >
+            {elem?.item?.post_likes?.length ? (
+              <Text style={[s.name, {color: textColor}]}>
+                {`Liked by ${elem?.item?.post_likes[0]?.users?.name} ${elem?.item?.post_likes[0]?.users?.last_name} `}
+                {elem?.item?.post_likes?.length - 1
+                  ? `and ${elem?.item?.post_likes?.length - 1} other`
+                  : null}
+              </Text>
+            ) : null}
+          </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              marginBottom: moderateScale(5, 0.1),
+            }}
+          >
+            <Text style={[s.name, {color: textColor}]}>
+              {elem?.item?.user?.name} {elem?.item?.user?.last_name}{' '}
+              <Text style={[s.textRegular, {color: textColor}]}>
+                {elem?.item?.caption}
+              </Text>
+            </Text>
+          </View>
+
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('Comments', {post: elem?.item});
@@ -789,8 +1070,6 @@ const Home = ({navigation}) => {
               onEndEditing={() => {
                 // setDisable1(!disable1);
               }}
-              // isReadOnly={!disable1}
-              // isFocused={disable1}
               placeholder="Add Comment ..."
               placeholderTextColor={'grey'}
               value={current == elem.index ? comment : ''}
@@ -799,6 +1078,11 @@ const Home = ({navigation}) => {
                 setComment(text);
               }}
             />
+          </View>
+          <View>
+            <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
+              {`${new Date(elem?.item?.created_at)}`}
+            </Text>
           </View>
         </View>
       </View>
@@ -816,11 +1100,12 @@ const Home = ({navigation}) => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
             // alignItems: 'center',
-            marginTop: moderateScale(10, 0.1),
+            height: moderateScale(120, 0.1),
+            marginVertical: moderateScale(20, 0.1),
             flexDirection: 'row',
           }}
         >
-          {Stories[0]?.stories?.length ? (
+          {storiesData[0]?.stories?.length ? (
             <View>
               <TouchableOpacity
                 onPress={() => {
@@ -838,10 +1123,31 @@ const Home = ({navigation}) => {
                   color={'blue'}
                 />
               </TouchableOpacity>
-              <InstaStory
+              <Stories
+                data={storiesData}
+                theme={theme}
+                deleteFunc={func =>
+                  deleteAlert(
+                    'Delete Story',
+                    'Are you sure you want to delete this story?',
+                    func,
+                  )
+                }
+                color={storyCircle}
+                setColorFun={setStoryCircle}
+                navigation={navigation}
+              />
+              {/* <InstaStory
                 data={Stories}
                 duration={10}
-                onStart={item => setStoryCircle('grey')}
+                onStart={item => {
+                  setStoryCircle('grey');
+                  // setStoryID(13);
+                  // console.log(item, 'storyryy');
+                }}
+                customStoryCircleListItem={item => {
+                  console.log('hi');
+                }}
                 onClose={item => console.log('close: ', item)}
                 showAvatarText={true}
                 avatarTextStyle={{
@@ -853,19 +1159,24 @@ const Home = ({navigation}) => {
                     style={{
                       backgroundColor: '#000',
                       borderRadius: moderateScale(25, 0.1),
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
                     <Button
                       variant={'link'}
                       onPressIn={() => {
-                        refRBSheet.current.open();
+                        deleteAlert(
+                          'Delete Story',
+                          'Are you sure you want to delete this story?',
+                          '15',
+                        );
                       }}
                     >
-                      <Icon
-                        name={'plus'}
-                        size={moderateScale(14, 0.1)}
-                        solid
-                        color={'#fff'}
+                      <Antdesign
+                        name={'delete'}
+                        size={moderateScale(20, 0.1)}
+                        color={textColor}
                       />
                     </Button>
                   </View>
@@ -876,16 +1187,14 @@ const Home = ({navigation}) => {
                 }}
                 pressedBorderColor={storyCircle}
                 unPressedBorderColor={'green'}
-              />
+              /> */}
             </View>
           ) : (
             <>
               <View style={s.myStory}>
                 <Image
                   source={{
-                    uri: Stories[0]?.user_image
-                      ? Stories[0]?.user_image
-                      : dummyImage,
+                    uri: userData?.image ? userData?.image : dummyImage,
                   }}
                   width={undefined}
                   height={undefined}
@@ -896,7 +1205,9 @@ const Home = ({navigation}) => {
                   }}
                   resizeMode={'cover'}
                 />
-                <Text style={[s.userName, {color: textColor}]}>Your Story</Text>
+                <Text style={[s.userName, {color: textColor}]}>
+                  {userData?.name} {userData?.last_name}
+                </Text>
                 <TouchableOpacity
                   onPress={() => {
                     refRBSheet.current.open();
@@ -914,34 +1225,45 @@ const Home = ({navigation}) => {
             </>
           )}
           {otherStories?.length > 0 ? (
-            <InstaStory
+            <Stories
               data={otherStories}
-              duration={10}
-              onStart={item => console.log(item)}
-              onClose={item => console.log('close: ', item)}
-              showAvatarText={true}
-              avatarTextStyle={{
-                color: textColor,
-                marginBottom: moderateScale(34, 0.1),
-              }}
-              pressedBorderColor={'grey'}
-              unPressedBorderColor={'green'}
-              customSwipeUpComponent={
-                <View>
-                  <Text>Swipe</Text>
-                </View>
+              theme={theme}
+              deleteFunc={() =>
+                deleteAlert(
+                  'Delete Story',
+                  'Are you sure you want to delete this story?',
+                )
               }
-              style={{
-                marginTop: moderateScale(5, 0.1),
-              }}
+              navigation={navigation}
             />
-          ) : null}
+          ) : // <InstaStory
+          //   data={otherStories}
+          //   duration={10}
+          //   onStart={item => console.log(item)}
+          //   onClose={item => console.log('close: ', item)}
+          //   showAvatarText={true}
+          //   avatarTextStyle={{
+          //     color: textColor,
+          //     marginBottom: moderateScale(34, 0.1),
+          //   }}
+          //   pressedBorderColor={'grey'}
+          //   unPressedBorderColor={'green'}
+          //   customSwipeUpComponent={
+          //     <View>
+          //       <Text>Swipe</Text>
+          //     </View>
+          //   }
+          //   style={{
+          //     marginTop: moderateScale(5, 0.1),
+          //   }}
+          // />
+          null}
         </ScrollView>
 
         <TouchableOpacity
           style={s.funView}
           onPress={() => {
-            console.log('aaa');
+            // console.log('aaa');
             navigation.navigate('FunInteraction');
           }}
         >
@@ -967,7 +1289,7 @@ const Home = ({navigation}) => {
           </View>
           <Text style={[s.funText, {color: textColor}]}>Fun Interaction</Text>
         </TouchableOpacity>
-        <View style={{height: moderateScale(35, 0.1)}}></View>
+        <View style={{height: moderateScale(22, 0.1)}}></View>
         {!posts?.length ? (
           <View
             style={{
@@ -977,7 +1299,8 @@ const Home = ({navigation}) => {
             }}
           >
             <Text style={[s.textCreate, {color: textColor}]}>
-              {`What's on your mind ${Stories[0]?.user_name}?`}
+              {`What's on your mind`}{' '}
+              {userData?.name ? `${userData?.name}?` : null}
             </Text>
             <TouchableOpacity
               style={s.btn}

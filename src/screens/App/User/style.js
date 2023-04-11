@@ -81,6 +81,11 @@ const styles = StyleSheet.create({
   input: {
     marginVertical: moderateScale(15, 0.1),
   },
+  HeadingText: {
+    fontSize: moderateScale(20, 0.1),
+    //fontFamily: PoppinsBold,
+    lineHeight: moderateScale(30, 0.1),
+  },
   radio: {
     marginHorizontal: moderateScale(15, 0.1),
     marginTop: moderateScale(-15, 0.1),

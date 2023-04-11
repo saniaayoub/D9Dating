@@ -93,6 +93,9 @@ const Notifications = ({navigation}) => {
   const [accept, setAccept] = useState(false);
   const [decline, setDecline] = useState(false);
   const [response, setResponse] = useState('');
+  const [dummyImage, setDummyImage] = useState(
+    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  );
   const [index, setIndex] = useState('');
   useEffect(() => {
     setResponse('');
@@ -131,7 +134,7 @@ const Notifications = ({navigation}) => {
       .then(res => {
         console.log('data', res?.data);
         setResponse('Connected');
-        setTimeout(() => {     
+        setTimeout(() => {
           getList();
         }, 7000);
         setLoader(false);
@@ -154,7 +157,7 @@ const Notifications = ({navigation}) => {
       .then(res => {
         console.log('data', res?.data);
         setResponse('Declined');
-        setTimeout(() => {     
+        setTimeout(() => {
           getList();
         }, 7000);
         setLoader(false);
@@ -172,18 +175,22 @@ const Notifications = ({navigation}) => {
       <View style={s.card}>
         <View style={s.dp}>
           <Image
-            source={{uri: elem?.item?.request_user?.image}}
+            source={{
+              uri: elem?.item?.request_user?.image
+                ? elem?.item?.request_user?.image
+                : dummyImage,
+            }}
             style={s.dp1}
             resizeMode={'cover'}
           />
         </View>
         <TouchableOpacity
-          // onPress={() =>
-          //   navigation.navigate('ViewUser', {
-          //     post: elem?.item?.request_user,
-          //     screen: 'search',
-          //   })
-          // }
+          onPress={() => {
+            navigation.navigate('ViewUser', {
+              screen: 'search',
+              post: {id: elem?.item?.request_user?.id},
+            });
+          }}
           style={{flex: 0.7, alignSelf: 'center'}}
         >
           <View>

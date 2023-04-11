@@ -21,6 +21,7 @@ const Block = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
+  const groups = useSelector(state => state.reducer.group);
   const userToken = useSelector(state => state.reducer.userToken);
   const [data, setData] = useState([]);
   const isFocused = useIsFocused();
@@ -32,7 +33,17 @@ const Block = ({navigation}) => {
     block_list();
   }, [isFocused]);
 
-  const unblock = async (id) => {
+  const getColor = id => {
+    let color;
+    groups?.forEach(elem => {
+      if (elem.id == id) {
+        color = elem.color;
+      }
+    });
+    return color;
+  };
+
+  const unblock = async id => {
     console.log('aaaa');
     setLoader(true);
     console.log(userToken, 'hgh');
@@ -45,7 +56,7 @@ const Block = ({navigation}) => {
       })
       .then(res => {
         console.log('block', res);
-        block_list()
+        block_list();
         setLoader(false);
       })
       .catch(err => {
@@ -76,15 +87,13 @@ const Block = ({navigation}) => {
       });
   };
   const renderItem = (elem, i) => {
-    console.log(elem.item,'a');
+    console.log(elem.item, 'a');
     return (
       <View style={s.card}>
-        <View style={s.dp}>
+        <View style={[s.dp, {borderColor: getColor(elem?.item?.group)}]}>
           <Image
             source={{
-               uri: elem?.item?.image
-                  ? elem?.item?.image
-                  : dummyImage,
+              uri: elem?.item?.image ? elem?.item?.image : dummyImage,
             }}
             style={s.dp1}
             resizeMode={'cover'}
@@ -93,7 +102,8 @@ const Block = ({navigation}) => {
         <TouchableOpacity style={{flex: 0.7, alignSelf: 'center'}}>
           <View>
             <View
-              style={{flexDirection: 'row', width: moderateScale(200, 0.1)}}>
+              style={{flexDirection: 'row', width: moderateScale(200, 0.1)}}
+            >
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
                 {elem?.item?.name}
                 {elem?.item?.last_name}
@@ -101,10 +111,9 @@ const Block = ({navigation}) => {
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>unblock(elem?.item?.id)}
-         style={s.btn}>
+        <TouchableOpacity onPress={() => unblock(elem?.item?.id)} style={s.btn}>
           <View>
-            <Text style={{ color:"#222222"}}>Unblock</Text>
+            <Text style={{color: '#222222'}}>Unblock</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -122,11 +131,12 @@ const Block = ({navigation}) => {
         </View>
       </View>
       <ScrollView
-        contentContainerStyle={[s.container, {backgroundColor: color}]}>
+        contentContainerStyle={[s.container, {backgroundColor: color}]}
+      >
         {/* <View>
           <Text style={[s.HeadingText, {color: textColor}]}>Blocked</Text>
         </View> */}
-        {data. length > 0 ? (
+        {data.length > 0 ? (
           <>
             <FlatList
               data={data}
@@ -137,9 +147,10 @@ const Block = ({navigation}) => {
           </>
         ) : (
           <>
-            <View style={{justifyContent: 'center', alignItems:'center'}}>
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
               <Text
-                style={{fontSize: moderateScale(16, 0.1), color: textColor}}>
+                style={{fontSize: moderateScale(16, 0.1), color: textColor}}
+              >
                 No blocked Users
               </Text>
             </View>

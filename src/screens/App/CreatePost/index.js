@@ -35,6 +35,7 @@ import RNFS from 'react-native-fs';
 
 const CreatePost = ({navigation, route}) => {
   const privacy = route?.params?.elem?.privacy_option;
+  const groups = useSelector(state => state.reducer.group);
 
   useEffect(() => {
     console.log('sefsst', route?.params?.elem);
@@ -55,20 +56,20 @@ const CreatePost = ({navigation, route}) => {
 
   const theme = useSelector(state => state.reducer.theme);
   const [filePath, setFilePath] = useState(
-    route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
+    route?.params?.from == 'Home' || route?.params?.from == 'funInteraction'
       ? route?.params?.elem?.image
       : null,
   );
-  console.log(filePath, 'file path');
+
   const [open, setOpen] = useState(false);
   const [icon, setIcon] = useState('globe');
   const [caption, setCaption] = useState(
-    route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
+    route?.params?.from == 'Home' || route?.params?.from == 'funInteraction'
       ? route?.params?.elem?.caption
       : null,
   );
   const [story, setStory] = useState(
-    route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
+    route?.params?.from == 'Home' || route?.params?.from == 'funInteraction'
       ? route?.params?.elem?.privacy_option
       : 'Public',
   );
@@ -117,12 +118,10 @@ const CreatePost = ({navigation, route}) => {
   const refRBSheet = useRef();
   const postLocation = useSelector(state => state.reducer.postLocation);
   const [location, setLocation] = useState(
-    route?.params?.screen == 'Home' || route?.params?.screen == 'funInteraction'
+    route?.params?.from == 'Home' || route?.params?.from == 'funInteraction'
       ? route?.params?.elem?.location
       : postLocation,
   );
-  console.log(postLocation, 'postLocation');
-  console.log(location, 'location');
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
@@ -166,8 +165,9 @@ const CreatePost = ({navigation, route}) => {
   const captureImage = async type => {
     let options = {
       mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
+      maxWidth: moderateScale(300, 0.1),
+
+      maxHeight: moderateScale(270, 0.1),
       quality: 1,
       videoQuality: 'low',
       durationLimit: 30, //Video max duration in seconds
@@ -195,9 +195,19 @@ const CreatePost = ({navigation, route}) => {
 
         convertImage(response.assets[0].uri);
         refRBSheet.current.close();
-        console.log(filePath, 'image');
+        console.log(response, 'image');
       });
     }
+  };
+  const getColor = id => {
+    let color;
+
+    groups?.forEach(elem => {
+      if (elem.id == id) {
+        color = elem.color;
+      }
+    });
+    return color;
   };
 
   const convertImage = async image => {
@@ -245,13 +255,13 @@ const CreatePost = ({navigation, route}) => {
     });
   };
   const onsubmit = () => {
-    console.log(userToken);
-    if (caption == null) {
-      alert('please fill given fields');
+    // console.log(filePath, 'fkekre');
+    if (caption == '' || caption == null) {
+      alert('please write caption');
       return;
-    }
-    if (filePath == '') {
-      alert('please fill given fields');
+    } else if (filePath == '' || filePath == null) {
+      console.log('h11ea');
+      alert('please select an image');
       return;
     } else {
       let data = {
@@ -260,15 +270,15 @@ const CreatePost = ({navigation, route}) => {
         privacy_option:
           story == 'Public' ? '1' : story == 'Friends' ? '2' : '3',
         location:
-          route?.params?.screen == 'Home'
+          route?.params?.from == 'Home'
             ? route.params.elem.location
             : postLocation,
       };
       console.log(data, 'dataaaa');
-      // setLoader(true);
+      setLoader(true);
       axiosconfig
         .post(
-          route?.params?.screen == 'Home'
+          route?.params?.from == 'Home'
             ? `post_update/${route.params.elem.id}`
             : 'post_store',
           data,
@@ -279,7 +289,7 @@ const CreatePost = ({navigation, route}) => {
           },
         )
         .then(res => {
-          // setLoader(false);
+          setLoader(false);
           alert(res?.data?.message);
           console.log(res, 'post');
           setFilePath(null);
@@ -289,38 +299,28 @@ const CreatePost = ({navigation, route}) => {
           navigation.navigate('Home');
         })
         .catch(err => {
-          // setLoader(false);
+          setLoader(false);
           console.log(err, 'aaa');
           Alert.alert(err?.response?.data?.message);
         });
     }
   };
+
   useEffect(() => {
-    // if(!route?.params?.screen){
-    //   setFilePath(null);
-    //     setCaption(null)
-    //     dispatch(setPostLocation(null))
-    //   }
-    console.log(route?.params?.screen, 'ghhgg');
-    // if( route?.params?.screen != 'Home' ||  route?.params?.screen != 'funInteraction'){
-    //   if(route?.params?.screen != 'map'){
-    //     setFilePath(null);
-    //     setCaption(null)
-    //     dispatch(setPostLocation(null))
-    //   }
-    // }
-    // if(route?.params?.screen =='Home'){
-    //   dispatch(setPostLocation(''))
-    // }else{
-    //   dispatch(setPostLocation(''))
-    // }
+    if (
+      route?.params?.from == 'Home' ||
+      route?.params?.from == 'funInteraction'
+    ) {
+      dispatch(setPostLocation(route?.params?.elem?.location));
+    }
+
     getData();
-  }, [isFocused]);
+  }, []);
 
   const getData = async () => {
     console.log('get data ');
     let SP = await AsyncStorage.getItem('id');
-    setLoader(true);
+    // setLoader(true);
     axiosconfig
       .get(`user_view/${SP}`, {
         headers: {
@@ -333,10 +333,10 @@ const CreatePost = ({navigation, route}) => {
         // if (res.data.user_details) {
         //   setData(res.data.user_details);
         // }
-        setLoader(false);
+        // setLoader(false);
       })
       .catch(err => {
-        setLoader(false);
+        // setLoader(false);
         console.log(err);
         // showToast(err.response);
       });
@@ -346,11 +346,22 @@ const CreatePost = ({navigation, route}) => {
       style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}
     >
       <View style={[s.container]}>
+        {loader ? <Loader /> : null}
+
         <View>
           <Header navigation={navigation} />
         </View>
         <View style={s.row}>
-          <View style={{flex: 0.2}}>
+          <View
+            style={{
+              borderWidth: moderateScale(2, 0.1),
+              borderColor: getColor(userData?.group),
+              width: moderateScale(58, 0.1),
+              height: moderateScale(58, 0.1),
+              borderRadius: moderateScale(58 / 2, 0.1),
+              marginHorizontal: moderateScale(10, 0.1),
+            }}
+          >
             <Image
               style={s.headerImage}
               source={{uri: userData?.image ? userData?.image : dummyImage}}
@@ -359,8 +370,7 @@ const CreatePost = ({navigation, route}) => {
           <View style={{flex: 0.8, alignSelf: 'center'}}>
             <View>
               <Text style={[s.HeadingTxt, {color: Textcolor}]}>
-                {userData?.name}
-                {userData?.last_name}
+                {userData?.name} {userData?.last_name}
               </Text>
             </View>
             <View style={[s.btn]}>
@@ -471,6 +481,8 @@ const CreatePost = ({navigation, route}) => {
         </View>
         <View style={[s.mText]}>
           <Input
+            cursorColor={Textcolor}
+            selectionColor={Textcolor}
             variant="unstyled"
             placeholder={'Write a caption....'}
             placeholderTextColor={Textcolor}
@@ -485,19 +497,25 @@ const CreatePost = ({navigation, route}) => {
         </View>
         <TouchableOpacity
           onPress={() => {
-            route?.params?.screen == 'Home' ||
-            route?.params?.screen == 'funInteraction'
+            route?.params?.from == 'Home' ||
+            route?.params?.from == 'funInteraction'
               ? null
               : navigation.navigate('Map', {
-                  screen: 'createPost',
+                  from: 'createPost',
                 });
           }}
         >
           <View style={[s.mText]}>
-          <Text style={{backgroundColor:color,
-          marginLeft:moderateScale(10,0.1),
-              color:Textcolor,
-              fontSize:moderateScale(14, 0.1)}}>{postLocation ? postLocation : 'Enter location...'}</Text>
+            <Text
+              style={{
+                backgroundColor: color,
+                marginLeft: moderateScale(10, 0.1),
+                color: Textcolor,
+                fontSize: moderateScale(14, 0.1),
+              }}
+            >
+              {postLocation ? postLocation : 'Enter location...'}
+            </Text>
             {/* <Input
               variant="unstyled"
               placeholder={postLocation ? postLocation : 'Enter location...'}
@@ -516,9 +534,10 @@ const CreatePost = ({navigation, route}) => {
             <>
               <TouchableOpacity
                 onPress={() => {
-                  if (route.params.screen == 'Home') {
+                  if (route?.params?.from == 'Home') {
                     return;
                   } else {
+                    console.log('here');
                     refRBSheet.current.open();
                   }
                 }}
@@ -526,6 +545,7 @@ const CreatePost = ({navigation, route}) => {
                 <View style={s.img}>
                   <Image
                     source={{uri: filePath}}
+                    resizeMode={'cover'}
                     style={s.galleryImage}
                   ></Image>
                 </View>
@@ -546,7 +566,7 @@ const CreatePost = ({navigation, route}) => {
                   <View
                     style={{
                       position: 'absolute',
-                      top: moderateScale(100, 0.1),
+                      top: moderateScale(120, 0.1),
                     }}
                   >
                     <Ionicons

@@ -22,6 +22,7 @@ import e5 from '../../../assets/images/png/e5.png';
 import e6 from '../../../assets/images/png/e6.png';
 import e7 from '../../../assets/images/png/e7.png';
 import Logo from '../../../assets/images/png/logo.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -503,10 +504,11 @@ const StartScreen = ({navigation}) => {
           //   console.log('hi');
           // }}
           onPressIn={async () => {
-         
             navigation.navigate('Login');
+            await AsyncStorage.setItem('already', 'already');
             // dispatch(setUserToken('sania'));
-            console.log('hi'); }}
+            console.log('hi');
+          }}
           variant={'solid'}
           _text={{
             color: '#6627EC',
@@ -526,108 +528,6 @@ const StartScreen = ({navigation}) => {
 };
 
 export default StartScreen;
-
-// import {Svg, Path, Rect, G, Circle} from 'react-native-svg';
-
-// const AnimatedG = Animated.createAnimatedComponent(G);
-
-// export class TestLogo extends Component {
-//   state = {
-//     rotation: new Animated.Value(0),
-//     offset: 0,
-//   };
-
-//   componentDidMount() {
-//     Animated.loop(
-//       Animated.timing(this.state.rotation, {
-//         useNativeDriver: true,
-//         duration: 3000,
-//         toValue: 1,
-//       }),
-//     ).start();
-//   }
-
-//   onLayout =
-//     Platform.OS === 'android'
-//       ? a => {
-//           this.setState({offset: a.nativeEvent.layout.width / 2});
-//         }
-//       : null;
-
-//   render() {
-//     const offsetAndroid = this.state.offset;
-//     const [pivotX, pivotY] = [25, 25];
-//       // const progressAnimation = useRef(new Animated.Value(0)).current;
-//   // const progressRef = useRef(null);
-//   // const size = 128;
-//   // const strokeWidth = 2;
-//   // const center = size / 2;
-//   // const radius = size / 2 - strokeWidth / 2;
-//   // const cirumference = 2 * Math.PI * radius;
-
-//   // let percentage = 60;
-//   // useEffect(() => {
-//   //   starAnim();
-//   //   // animation(percentage);
-//   // }, []);
-
-//   // const animation = toValue => {
-//   //   return Animated.timing(progressAnimation, {
-//   //     toValue: toValue,
-//   //     duration: 250,
-//   //     useNativeDriver: true,
-//   //   }).start();
-//   // };
-
-//   // const starAnim = () => {
-//   //   Animated.timing(spinValue, {
-//   //     toValue: 1,
-//   //     duration: 10000,
-//   //     // Easing is an additional import from react-native
-//   //     useNativeDriver: true, // To make use of native driver for performance
-//   //   }).start();
-//   //   console.log(spinValue);
-//   // };
-
-//   // let spin = spinValue.interpolate({
-//   //   inputRange: [0, 1],
-//   //   outputRange: [0, 100],
-//   // });
-//     return (
-//       <Svg
-//         width="100%"
-//         height="100%"
-//         onLayout={this.onLayout}
-//         viewBox={`0 0 50 50`}
-//       >
-//         <Rect width="50" height="50" />
-//         <G transform={`translate(${pivotX}, ${pivotY})`}>
-//           <Circle r="5" fill="white" />
-//           <AnimatedG
-//             style={{
-//               transform: [
-//                 {translateX: -offsetAndroid},
-//                 {
-//                   rotate: this.state.rotation.interpolate({
-//                     inputRange: [0, 1],
-//                     outputRange: ['0deg', '360deg'], // I would like to set pivot point at 25 25
-//                   }),
-//                 },
-//                 {translateX: offsetAndroid},
-//               ],
-//             }}
-//           >
-//             <Path
-//               fill="#FFF"
-//               d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z"
-//               transform={`translate(-${pivotX} -${pivotY})`}
-//             />
-//           </AnimatedG>
-//         </G>
-//       </Svg>
-//     );
-//   }
-// }
 
 // Animated Functions
 //  const spinValue = useRef(new Animated.Value(0)).current;

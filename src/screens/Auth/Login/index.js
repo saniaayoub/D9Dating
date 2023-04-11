@@ -67,21 +67,13 @@ const Login = ({navigation}) => {
       axiosconfig
         .post('login', data)
         .then(res => {
-          // console.log(res)
-          // alert(res?.data?.message);
           AsyncStorage.setItem('password', password);
           console.log(res?.data?.userInfo, 'id');
           let id = res?.data?.userInfo.toString();
           AsyncStorage.setItem('id', id);
           AsyncStorage.setItem('userToken', res?.data?.access_token);
-
-          // AsyncStorage.setItem('data' , data)
-
-          // console.log(res, 'Login data ');
-          // alert(res?.data?.message)
-          getStories(res?.data?.access_token);
+          dispatch(setUserToken(res?.data?.access_token));
           setLoader(false);
-          // setOnsubmit(true)
         })
         .catch(err => {
           console.log(err.response);
@@ -103,7 +95,6 @@ const Login = ({navigation}) => {
       .then(res => {
         console.log('storylo', JSON.stringify(res.data?.user));
         createStoryData(res.data?.user, token);
-        // console.log(myData1);
       })
       .catch(err => {
         setLoader(false);

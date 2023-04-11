@@ -4,6 +4,7 @@ import {
   Text,
   View,
   Image,
+  Alert,
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
@@ -24,6 +25,7 @@ import axiosconfig from '../../../../Providers/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Feather from 'react-native-vector-icons/Feather';
 import {useIsFocused} from '@react-navigation/native';
+import Antdesign from 'react-native-vector-icons/AntDesign';
 
 const FunInteraction = ({navigation}) => {
   const dispatch = useDispatch();
@@ -81,7 +83,7 @@ const FunInteraction = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        // console.log('data', JSON.stringify(res.data));
         toggleLike(index);
         setLoader(false);
       })
@@ -104,10 +106,11 @@ const FunInteraction = ({navigation}) => {
   };
 
   const toggleLike = index => {
-    console.log('hello');
+    // console.log('hello');
     getPosts();
     setRefresh(!refresh);
   };
+
   const getAllUsers = async () => {
     setLoader(true);
     await axiosconfig
@@ -118,10 +121,10 @@ const FunInteraction = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('All Users', JSON.stringify(res.data));
+        // console.log('All Users', JSON.stringify(res.data));
         setDataSource([...res?.data?.friends, ...res?.data?.public]);
         setLoader(false);
-        console.log(dataSource);
+        // console.log(dataSource);
       })
       .catch(err => {
         setLoader(false);
@@ -139,7 +142,7 @@ const FunInteraction = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('public post', JSON.stringify(res?.data?.post_public));
+        console.log('public post', res?.data?.post_public);
         const data = res?.data?.post_public;
 
         setPublicPost(res?.data?.post_public);
@@ -150,13 +153,14 @@ const FunInteraction = ({navigation}) => {
         console.log(err);
       });
   };
+
   const report = async reptext => {
     setLoader(true);
     const data = {
       post_id: postId,
       text: reptext,
     };
-    console.log(data);
+    // console.log(data);
     await axiosconfig
       .post('post-report', data, {
         headers: {
@@ -165,7 +169,7 @@ const FunInteraction = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('stttr', res.data);
+        // console.log('stttr', res.data);
         getPosts();
         refRBSheet1.current.close();
         setLoader(false);
@@ -228,6 +232,50 @@ const FunInteraction = ({navigation}) => {
         console.log(err);
         // Alert.alert(err);
       });
+  };
+
+  const deletePost = async id => {
+    setLoader(true);
+    // console.log(id);
+    await axiosconfig
+      .get(`post_delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: 'application/json',
+        },
+      })
+      .then(res => {
+        // console.log('afterDelete', res?.data?.message);
+        Alert.alert(res?.data?.message);
+        getPosts(userToken);
+        // console.log(myData1);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err, 'hhe');
+        // showToast(err.response);
+      });
+  };
+
+  const deleteAlert = (title, text, id) => {
+    //function to make two option alert
+    Alert.alert(
+      //This is title
+      title,
+      //This is body text
+      text,
+      [
+        {
+          text: 'Yes',
+          onPress: () =>
+            title == 'Delete Post' ? deletePost(id) : deleteStory(id),
+        },
+        {text: 'No', onPress: () => console.log('No Pressed'), style: 'cancel'},
+      ],
+      {cancelable: false},
+      //on clicking out side, Alert will not dismiss
+    );
   };
 
   const renderItem = elem => {
@@ -321,7 +369,7 @@ const FunInteraction = ({navigation}) => {
                     onPress={() =>
                       navigation.navigate('createPost', {
                         elem: elem?.item,
-                        screen: 'Home',
+                        from: 'Home',
                       })
                     }
                   >
@@ -334,6 +382,31 @@ const FunInteraction = ({navigation}) => {
                       />
                       <Text style={[s.optionBtns, {color: textColor}]}>
                         Edit
+                      </Text>
+                    </View>
+                  </Menu.Item>
+                </>
+              ) : null}
+              {userID == elem?.item?.user?.id ? (
+                <>
+                  <Menu.Item
+                    onPress={() =>
+                      deleteAlert(
+                        'Delete Post',
+                        'Are you sure you want to delete this post?',
+                        elem?.item?.id,
+                      )
+                    }
+                  >
+                    <View style={s.optionView}>
+                      <Antdesign
+                        name={'delete'}
+                        color={textColor}
+                        size={moderateScale(13, 0.1)}
+                        style={{flex: 0.3}}
+                      />
+                      <Text style={[s.optionBtns, {color: textColor}]}>
+                        Delete
                       </Text>
                     </View>
                   </Menu.Item>
@@ -362,19 +435,13 @@ const FunInteraction = ({navigation}) => {
           <TouchableWithoutFeedback
             onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}
           >
-            <Image
-              source={{uri: elem?.item?.image}}
-              width={undefined}
-              height={undefined}
-              resizeMode={'cover'}
-              style={{
-                width: '95%',
-                height: moderateScale(270, 0.1),
-                borderRadius: moderateScale(10, 0.1),
-                paddingHorizontal: moderateScale(10, 0.1),
-                alignSelf: 'center',
-              }}
-            />
+            <View style={s.img}>
+              <Image
+                source={{uri: elem?.item?.image}}
+                resizeMode={'cover'}
+                style={s.galleryImage}
+              ></Image>
+            </View>
           </TouchableWithoutFeedback>
           <TouchableOpacity
             onPress={() => {
@@ -394,17 +461,41 @@ const FunInteraction = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <View style={s.footer}>
-          <Text style={[s.name, {color: textColor}]}>
-            {elem?.item?.user?.name} {elem?.item?.user?.last_name}
-          </Text>
-          <Text style={[s.textRegular, {color: textColor}]}>
-            {elem?.item?.caption}
-          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Likes', {data: elem?.item?.post_likes});
+            }}
+            style={{marginBottom: moderateScale(5, 0.1)}}
+          >
+            {elem?.item?.post_likes?.length ? (
+              <Text style={[s.name, {color: textColor}]}>
+                {`Liked by ${elem?.item?.post_likes[0]?.users?.name} ${elem?.item?.post_likes[0]?.users?.last_name} `}
+                {elem?.item?.post_likes?.length - 1
+                  ? `and ${elem?.item?.post_likes?.length - 1} other`
+                  : null}
+              </Text>
+            ) : null}
+          </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              marginBottom: moderateScale(5, 0.1),
+            }}
+          >
+            <Text style={[s.name, {color: textColor}]}>
+              {elem?.item?.user?.name} {elem?.item?.user?.last_name}{' '}
+              <Text style={[s.textRegular, {color: textColor}]}>
+                {elem?.item?.caption}
+              </Text>
+            </Text>
+          </View>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('Comments', {
                 post: elem?.item,
-                screen: 'funInteraction',
+                from: 'funInteraction',
               });
             }}
           >
@@ -466,6 +557,11 @@ const FunInteraction = ({navigation}) => {
                 setComment(text);
               }}
             />
+          </View>
+          <View>
+            <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
+              {`${new Date(elem?.item?.created_at)}`}
+            </Text>
           </View>
         </View>
       </View>

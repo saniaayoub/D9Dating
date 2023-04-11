@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     height: moderateScale(50, 0.1),
     borderRadius: moderateScale(50 / 2, 0.1),
     borderWidth: moderateScale(2, 0.1),
-    marginHorizontal: moderateScale(10, 0.1),
+    marginHorizontal: moderateScale(15, 0.1),
   },
 
   smallDp: {
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     //fontFamily: PoppinsBold,
   },
   footer: {
-    marginHorizontal: moderateScale(10, 0.1),
+    marginHorizontal: moderateScale(15, 0.1),
     marginVertical: moderateScale(10, 0.1),
   },
   capturebtntxt: {
@@ -235,6 +235,25 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(10, 0.1),
     width: moderateScale(180, 0.1),
     backgroundColor: '#302D2D',
+  },
+  img: {
+    marginTop: moderateScale(5, 0.1),
+    alignSelf: 'center',
+    width: moderateScale(360, 0.1),
+    height: moderateScale(350, 0.1),
+    backgroundColor: '#302D2D',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: moderateScale(12, 0.1),
+  },
+  vectorImg: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  galleryImage: {
+    width: moderateScale(360, 0.1),
+    height: moderateScale(350, 0.1),
+    borderRadius: moderateScale(12, 0.1),
   },
   rb: {
     fontSize: moderateScale(16, 0.1),

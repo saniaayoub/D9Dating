@@ -9,6 +9,7 @@ import {
   PermissionsAndroid,
   Platform,
   Alert,
+  Dimensions,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -23,6 +24,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PhoneInput from 'react-native-phone-input';
 import img1 from '../../../assets/images/png/mydp.png';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon1 from 'react-native-vector-icons/FontAwesome';
+
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Input, Stack, Button} from 'native-base';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -59,6 +62,9 @@ const Profile = ({navigation}) => {
   const [disable4, setDisable4] = useState(false);
   const [disable5, setDisable5] = useState(false);
   const [disable6, setDisable6] = useState(false);
+  const [disable7, setDisable7] = useState(false);
+  const [userName, setUserName] = useState('');
+
   const [date, setDate] = useState(null);
   const [id, setId] = useState('');
   const [borderColor, setBorderColor] = useState(textColor);
@@ -162,9 +168,6 @@ const Profile = ({navigation}) => {
       if (item == 'location') {
         dispatch(setLocation(data[item]));
       }
-      if (item == 'last_name') {
-        formData['name'] = formData['name'] + ' ' + data[item];
-      }
       if (item == 'gender') {
         let updatedState = isSelected.map(isSelectedItem =>
           isSelectedItem.name == data[item]
@@ -175,6 +178,7 @@ const Profile = ({navigation}) => {
       }
     }
     setForm(formData);
+    setUserName(formData.name + ' ' + formData.last_name);
     // console.log(form);
     dispatch(setUserData(formData));
     setLoader(false);
@@ -204,6 +208,8 @@ const Profile = ({navigation}) => {
         console.log(res.data, 'message');
         let message = res?.data?.message;
         showToast(message);
+        setUserName(form.name + ' ' + form.last_name);
+
         dispatch(setUserData(form));
         setDisable4(false);
         setLoader(false);
@@ -273,8 +279,8 @@ const Profile = ({navigation}) => {
   const captureImage = async type => {
     let options = {
       mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
+      maxWidth: Dimensions.get('screen').width,
+      maxHeight: 300,
       quality: 1,
       videoQuality: 'low',
       durationLimit: 30, //Video max duration in seconds
@@ -300,7 +306,7 @@ const Profile = ({navigation}) => {
           return;
         }
         let source = response;
-        console.log(source.assets[0].uri, 'uri');
+        console.log(source, 'uri');
         // setFilePath(source.assets[0].uri);
         convertImage(source.assets[0].uri);
         refRBSheet.current.close();
@@ -363,7 +369,29 @@ const Profile = ({navigation}) => {
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
-      <Header navigation={navigation} />
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginVertical: moderateScale(20, 0.1),
+        }}
+      >
+        <View
+          style={{
+            position: 'absolute',
+            left: moderateScale(10, 0.1),
+          }}
+        >
+          <Header navigation={navigation} />
+        </View>
+        <View>
+          <Text style={[s.HeadingText, {color: textColor}]}>Profile</Text>
+        </View>
+        {/* <View style={s.txtView}>
+          <Text style={s.hTxt}>{post?.created_at}</Text>
+        </View> */}
+      </View>
+
       <ScrollView
         contentContainerStyle={[s.container, {backgroundColor: color}]}
       >
@@ -388,10 +416,7 @@ const Profile = ({navigation}) => {
         </View>
 
         <View style={s.username}>
-          <Text style={[s.textBold, {color: textColor}]}>
-            {form?.name} {''}
-            {form?.last_name}
-          </Text>
+          <Text style={[s.textBold, {color: textColor}]}>{userName}</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Settings', {data: form})}
           >
@@ -444,6 +469,49 @@ const Profile = ({navigation}) => {
               value={form?.name}
               onChangeText={text => {
                 setForm({...form, name: text});
+              }}
+            />
+          </View>
+          <View style={s.input}>
+            <Input
+              w="100%"
+              variant="underlined"
+              color={textColor}
+              fontSize={moderateScale(12, 0.1)}
+              InputLeftElement={
+                <View style={s.icon}>
+                  <Icon1
+                    name={'user-circle-o'}
+                    size={moderateScale(20, 0.1)}
+                    solid
+                    color={textColor}
+                  />
+                </View>
+              }
+              InputRightElement={
+                <TouchableOpacity
+                  onPress={() => {
+                    setDisable7(!disable7);
+                  }}
+                >
+                  <Entypo
+                    name={'edit'}
+                    size={moderateScale(15, 0.1)}
+                    color={textColor}
+                  />
+                </TouchableOpacity>
+              }
+              // value={fname}
+              onEndEditing={() => {
+                setDisable7(!disable7);
+              }}
+              isReadOnly={!disable7}
+              isFocused={disable7}
+              placeholder="Last Name"
+              placeholderTextColor={textColor}
+              value={form?.last_name}
+              onChangeText={text => {
+                setForm({...form, last_name: text});
               }}
             />
           </View>
@@ -534,7 +602,61 @@ const Profile = ({navigation}) => {
               }}
             />
           </View>
-          {disable4 ? (
+          {form?.phone_number ? (
+            <View
+              style={[
+                s.input,
+                s.inputContainerStyle,
+                {
+                  borderBottomColor: borderColor,
+                  borderBottomWidth: 1,
+                  // flexDirection: 'row',
+                },
+              ]}
+            >
+              <PhoneInput
+                initialCountry={'us'}
+                initialValue={form?.phone_number}
+                textProps={{
+                  placeholder: 'Enter Phone Number',
+                  placeholderTextColor: textColor,
+                }}
+                disabled={!disable4}
+                autoFormat={true}
+                textStyle={s.inputStyle}
+                isValidNumber={e => console.log(e, 'here')}
+                ref={phonenum}
+                onChangePhoneNumber={phNumber => {
+                  if (phonenum.current.isValidNumber()) {
+                    setForm({
+                      ...form,
+                      phone_number: phonenum?.current?.getValue(),
+                    });
+                    setBorderColor(textColor);
+                  } else {
+                    setBorderColor('red');
+                  }
+                }}
+              />
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: moderateScale(15, 0.1),
+                }}
+                onPress={() => {
+                  setDisable4(!disable4);
+                }}
+              >
+                <Entypo
+                  name={'edit'}
+                  size={moderateScale(15, 0.1)}
+                  color={textColor}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          {/* {disable4 ? (
             <View
               style={[
                 s.input,
@@ -614,7 +736,7 @@ const Profile = ({navigation}) => {
                 }}
               />
             </View>
-          )}
+          )} */}
 
           {/* <View
             style={[

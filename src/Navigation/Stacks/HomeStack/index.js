@@ -5,6 +5,8 @@ import FunInteraction from '../../../screens/App/Home/FunInteraction';
 import Test from '../../../screens/App/Home/Test';
 import Comments from '../../../screens/App/Home/Comments';
 import CreatePost from '../../../screens/App/CreatePost';
+import Map from '../../../screens/Auth/Register/Map';
+import Likes from '../../../screens/App/Home/Likes';
 const Stack = createStackNavigator();
 
 const HomeStack = () => {
@@ -14,9 +16,10 @@ const HomeStack = () => {
       <Stack.Screen name="ViewUser" component={ViewUser} />
       <Stack.Screen name="FunInteraction" component={FunInteraction} />
       <Stack.Screen name="Comments" component={Comments} />
+      <Stack.Screen name="Likes" component={Likes} />
       <Stack.Screen name="Test" component={Test} />
       <Stack.Screen name="createPost" component={CreatePost} />
-
+      <Stack.Screen name="Map" component={Map} />
     </Stack.Navigator>
   );
 };

@@ -10,7 +10,7 @@ import {
 import React, {useEffect, useState, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
-import {setUserToken, setTheme} from '../../../../Redux/actions';
+import {setUserToken, setTheme, setExist} from '../../../../Redux/actions';
 import s from './style';
 import Header from '../../../../Components/Header';
 import Inicon from 'react-native-vector-icons/Ionicons';
@@ -141,9 +141,11 @@ const Settings = ({navigation, route}) => {
           Authorization: `Bearer ${userToken}`,
         },
       })
-      .then(res => {
+      .then(async res => {
         setLoader(false);
         clearToken();
+        let exist = await AsyncStorage.getItem('already');
+        dispatch(setExist(exist));
         console.log(res?.data, 'logoutToken');
       })
       .catch(err => {
@@ -289,6 +291,31 @@ const Settings = ({navigation, route}) => {
               }
               // value={fname}
               placeholder="Blocked Users"
+              placeholderTextColor={textColor}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={s.input}
+            onPress={() => navigation.navigate('HiddenPosts')}
+          >
+            <Input
+              w="100%"
+              isReadOnly
+              variant="underlined"
+              color={textColor}
+              fontSize={moderateScale(12, 0.1)}
+              InputLeftElement={
+                <View style={s.icon}>
+                  <MaterialIcon
+                    name={'folder-hidden'}
+                    size={moderateScale(20, 0.1)}
+                    solid
+                    color={textColor}
+                  />
+                </View>
+              }
+              // value={fname}
+              placeholder="Hidden Posts"
               placeholderTextColor={textColor}
             />
           </TouchableOpacity>
@@ -446,7 +473,7 @@ const Settings = ({navigation, route}) => {
                   h={moderateScale(35, 0.1)}
                   alignItems={'center'}
                 >
-                  <Text style={{color:'#222222'}}>Delete Account</Text>
+                  <Text style={{color: '#222222'}}>Delete Account</Text>
                 </Button>
               </View>
             </RBSheet>

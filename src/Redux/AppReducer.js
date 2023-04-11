@@ -8,6 +8,9 @@ import {
   SET_GROUP,
   POST_LOCATION,
   SET_STORIES,
+  SET_EXIST,
+  SET_STORYID,
+  SET_STORY_COLOR,
 } from './Constants';
 
 const initialState = {
@@ -21,6 +24,9 @@ const initialState = {
   group: [],
   postLocation: '',
   stories: [],
+  exist: '',
+  storyID: '',
+  storyColor: 'green',
 };
 
 const AppReducer = (state = initialState, action) => {
@@ -70,6 +76,21 @@ const AppReducer = (state = initialState, action) => {
       return {
         ...state,
         stories: action.payload,
+      };
+    case SET_EXIST:
+      return {
+        ...state,
+        exist: action.payload,
+      };
+    case SET_STORYID:
+      return {
+        ...state,
+        storyID: action.payload,
+      };
+    case SET_STORY_COLOR:
+      return {
+        ...state,
+        storyColor: action.payload,
       };
 
     default:

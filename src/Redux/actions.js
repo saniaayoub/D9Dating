@@ -8,6 +8,9 @@ import {
   SET_GROUP,
   POST_LOCATION,
   SET_STORIES,
+  SET_EXIST,
+  SET_STORYID,
+  SET_STORY_COLOR,
 } from './Constants';
 
 export const setUserToken = value => {
@@ -66,6 +69,27 @@ export const setPostLocation = value => {
 export const setStories = value => {
   return {
     type: SET_STORIES,
+    payload: value,
+  };
+};
+
+export const setExist = value => {
+  return {
+    type: SET_EXIST,
+    payload: value,
+  };
+};
+
+export const setStoryID = value => {
+  return {
+    type: SET_STORYID,
+    payload: value,
+  };
+};
+
+export const setStoryColor = value => {
+  return {
+    type: SET_STORY_COLOR,
     payload: value,
   };
 };

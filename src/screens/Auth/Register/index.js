@@ -154,7 +154,6 @@ const Register = ({navigation}) => {
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() - 18);
 
-
   const validateEmail = e => {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     if (emailRegex.test(e)) {
@@ -305,6 +304,7 @@ const Register = ({navigation}) => {
     <SafeAreaView
       style={{flex: 1, backgroundColor: theme === 'dark' ? '#222222' : '#fff'}}
     >
+      {loader ? <Loader /> : null}
       <ScrollView>
         <View
           style={[
@@ -312,7 +312,6 @@ const Register = ({navigation}) => {
             {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
           ]}
         >
-          {loader ? <Loader /> : null}
           <View style={s.header}>
             <Header navigation={navigation} />
           </View>

@@ -13,8 +13,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     paddingHorizontal: moderateScale(22, 0.1),
-    height: moderateScale(70, 0.1),
-    justifyContent: 'center',
+    // height: moderateScale(70, 0.1),
+    justifyContent: 'flex-start',
     marginVertical: moderateScale(12, 0.1),
   },
   option: {
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   img: {
     alignSelf: 'center',
     width: moderateScale(300, 0.1),
-    height: moderateScale(270, 0.1),
+    height: moderateScale(300, 0.1),
     backgroundColor: '#302D2D',
     alignItems: 'center',
     justifyContent: 'center',
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   galleryImage: {
     width: moderateScale(300, 0.1),
-    height: moderateScale(270, 0.1),
+    height: moderateScale(300, 0.1),
     borderRadius: moderateScale(12, 0.1),
   },
   capturebtntxt: {

@@ -7,9 +7,10 @@ import Resetpass from '../../../screens/App/User/ResetPass';
 import ForgetPassword from '../../../screens/Auth/ForgetPass';
 import About from '../../../screens/App/User/About/About';
 import ChangePass from '../../../screens/Auth/ChangePass';
-import Map from '../../../screens/Auth/Register/Map'
+import Map from '../../../screens/Auth/Register/Map';
 import Login from '../../../screens/Auth/Login';
 import Block from '../../../screens/App/User/Blocked';
+import HiddenPosts from '../../../screens/App/User/Hidden Posts';
 const Stack = createStackNavigator();
 
 const ProfileStack = () => {
@@ -24,9 +25,10 @@ const ProfileStack = () => {
       <Stack.Screen name="ChangePass" component={ChangePass} />
       <Stack.Screen name="About" component={About} />
       <Stack.Screen name="Block" component={Block} />
+      <Stack.Screen name="HiddenPosts" component={HiddenPosts} />
+
       <Stack.Screen name="Map" component={Map} />
       <Stack.Screen name="Login" component={Login} />
-
     </Stack.Navigator>
   );
 };

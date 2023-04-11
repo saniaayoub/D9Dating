@@ -5,7 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
-  Platform
+  Platform,
 } from 'react-native';
 import {
   SafeAreaView,
@@ -42,6 +42,7 @@ const Map = ({navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [loc, setLoc] = useState(null);
   const searchBarRef = useRef();
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
     // if (screen1) {
@@ -83,12 +84,10 @@ const Map = ({navigation, route}) => {
     console.log('get city name');
     Geocoder.from(newRegion.latitude, newRegion.longitude).then(json => {
       var addressComponent = json.results[0].address_components;
-      console.log(
-        addressComponent[1].short_name,
-        addressComponent[2].short_name,
-        'acc',
+      console.log(json.results, 'acc');
+      setLoc(
+        addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
       );
-      setLoc(addressComponent[1].short_name, addressComponent[2].short_name);
     });
     // if(screen1){
     //   console.log('ddd');
@@ -132,10 +131,17 @@ const Map = ({navigation, route}) => {
     Geocoder.from(data.description)
       .then(json => {
         const location = json.results[0].geometry.location;
-        console.log(location.lat, location.lng);
+        console.log(location.lat, location.lng, 'position');
+
         setMarkerPosition({
           latitude: location.lat,
           longitude: location.lng,
+        });
+        mapRef.current.animateToRegion({
+          latitude: location.lat,
+          longitude: location.lng,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
         });
         setPosition({
           latitude: location.lat,
@@ -186,8 +192,9 @@ const Map = ({navigation, route}) => {
   return (
     <View style={styles.container}>
       <MapView
+        ref={mapRef}
         style={styles.map}
-        // provider={PROVIDER_GOOGLE}
+        provider={PROVIDER_GOOGLE}
         initialRegion={position}
         // showsUserLocation={true}
         customMapStyle={styles.map}
@@ -217,7 +224,23 @@ const Map = ({navigation, route}) => {
         />
       </MapView>
 
-      <View style={{position: 'absolute', top: 10, width: '95%'}}>
+      <View
+        style={{
+          position: 'absolute',
+          top: 10,
+          justifyContent: 'center',
+          // alignItems: 'center'
+          width: '95%',
+          flexDirection: 'row',
+        }}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Inicon
+            name="arrow-back-circle-outline"
+            size={moderateScale(30)}
+            color={'#000'}
+          />
+        </TouchableOpacity>
         <GooglePlacesAutocomplete
           ref={searchBarRef}
           styles={{
@@ -247,27 +270,30 @@ const Map = ({navigation, route}) => {
               </View>
             );
           }}
-         
-          renderRightButton={() => 
-            {Platform.OS =='android'?null:( <TouchableOpacity
-              onPress={() => searchBarRef?.current?.clear()}
-              style={{
-                backgroundColor: '#fff',
-                alignItems: 'center',
-                height: moderateScale(38, 0.1),
+          renderRightButton={() => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  searchBarRef?.current?.clear();
+                }}
+                style={{
+                  backgroundColor: '#fff',
+                  alignItems: 'center',
+                  height: moderateScale(38, 0.1),
 
-                padding: moderateScale(5, 0.1),
-                borderTopRightRadius: moderateScale(10, 0.1),
-                borderBottomRightRadius: moderateScale(10, 0.1),
-              }}
-            >
-              <Entypo
-                name="cross"
-                size={moderateScale(25, 0.1)}
-                color={'grey'}
-              />
-            </TouchableOpacity>) }}
-          
+                  padding: moderateScale(5, 0.1),
+                  borderTopRightRadius: moderateScale(10, 0.1),
+                  borderBottomRightRadius: moderateScale(10, 0.1),
+                }}
+              >
+                <Entypo
+                  name="cross"
+                  size={moderateScale(25, 0.1)}
+                  color={'grey'}
+                />
+              </TouchableOpacity>
+            );
+          }}
           placeholder="Search"
           textInputProps={{placeholderTextColor: 'black'}}
           query={{
@@ -284,10 +310,11 @@ const Map = ({navigation, route}) => {
           //   url:
           //     'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api',
           //   useOnPlatform: 'web',
-          // }} 
+          // }}
           // this in only required for use on the web. See https://git.io/JflFv more for details.
         />
       </View>
+
       <TouchableOpacity
         onPress={() => {
           if (loc) {
@@ -303,7 +330,10 @@ const Map = ({navigation, route}) => {
           justifyContent: 'center',
           marginVertical: moderateScale(15, 0.1),
           borderRadius: moderateScale(12, 0.1),
-          bottom: Platform.OS=='ios'? moderateScale(100, 0.1): moderateScale(70, 0.1),
+          bottom:
+            Platform.OS == 'ios'
+              ? moderateScale(100, 0.1)
+              : moderateScale(70, 0.1),
         }}
       >
         <View>

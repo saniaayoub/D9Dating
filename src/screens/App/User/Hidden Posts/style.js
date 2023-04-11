@@ -6,38 +6,46 @@ const PoppinsBold = '';
 
 const styles = StyleSheet.create({
   container: {
-    height: '93%',
+    // paddingHorizontal: moderateScale(12, 0.1),
+    marginTop: moderateScale(10, 0.1),
+    paddingBottom: moderateScale(70, 0.1),
   },
-  stories: {
-    alignItems: 'flex-start',
+  HeadingText: {
+    fontSize: moderateScale(20, 0.1),
+    //fontFamily: PoppinsBold,
+
+    lineHeight: moderateScale(30, 0.1),
+  },
+  border: {
     flexDirection: 'row',
-  },
-  rb: {
-    fontSize: moderateScale(16, 0.1),
-    //fontFamily: Poppins,
-    lineHeight: moderateScale(18, 0.1),
-  },
-  hText: {
-    fontSize: moderateScale(13, 0.1),
-  },
-  txt: {
-    color: 'gray',
-    //fontFamily: Poppins,
-    fontSize: moderateScale(12, 0.1),
-  },
-  hv: {
-    marginVertical: moderateScale(10, 0.1),
-  },
-  list: {
-    marginVertical: moderateScale(7, 0.1),
+    justifyContent: 'flex-start',
+    paddingVertical: moderateScale(10, 0.1),
+    borderBottomWidth: moderateScale(2, 0.1),
   },
 
-  searchContainer: {
-    flexDirection: 'column',
+  chats: {
+    fontSize: moderateScale(13, 0.1),
+    lineHeight: moderateScale(18, 0.1),
+    //fontFamily: Poppins,
+  },
+  img: {
+    marginTop: moderateScale(5, 0.1),
+    alignSelf: 'center',
+    width: moderateScale(360, 0.1),
+    height: moderateScale(350, 0.1),
+    backgroundColor: '#302D2D',
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: moderateScale(5, 0.1),
-    marginTop: moderateScale(10, 0.1),
+    borderRadius: moderateScale(12, 0.1),
+  },
+  vectorImg: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  galleryImage: {
+    width: moderateScale(360, 0.1),
+    height: moderateScale(350, 0.1),
+    borderRadius: moderateScale(12, 0.1),
   },
   dp: {
     width: moderateScale(50, 0.1),
@@ -100,30 +108,9 @@ const styles = StyleSheet.create({
   },
 
   img: {
-    marginTop: moderateScale(5, 0.1),
-    alignSelf: 'center',
-    width: moderateScale(360, 0.1),
-    height: moderateScale(350, 0.1),
-    backgroundColor: '#302D2D',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: moderateScale(12, 0.1),
+    // height: moderateScale(300, 0.1),
+    paddingHorizontal: moderateScale(10, 0.1),
   },
-  vectorImg: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  galleryImage: {
-    width: moderateScale(360, 0.1),
-    height: moderateScale(350, 0.1),
-    borderRadius: moderateScale(12, 0.1),
-  },
-
-  // img: {
-  //   height: moderateScale(400, 0.1),
-  //   paddingHorizontal: moderateScale(10, 0.1),
-  //   borderRadius: moderateScale(10, 0.1),
-  // },
   optionView: {
     flexDirection: 'row',
     borderBottomWidth: moderateScale(1, 0.1),
@@ -142,7 +129,7 @@ const styles = StyleSheet.create({
   },
   userName: {
     marginBottom: moderateScale(25, 0.1),
-    marginTop: moderateScale(5, 0.1),
+    marginTop: moderateScale(3, 0.1),
     fontSize: moderateScale(11, 0.1),
     width: moderateScale(100, 0.1),
   },
@@ -160,12 +147,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   myStory: {
-    width: moderateScale(70, 0.1),
-    height: moderateScale(70, 0.1),
-    // marginTop: moderateScale(10, 0.1),
-    marginLeft: moderateScale(15, 0.1),
+    width: moderateScale(65, 0.1),
+    height: moderateScale(65, 0.1),
+    marginTop: moderateScale(8, 0.1),
+    marginLeft: moderateScale(12, 0.1),
     marginBottom: moderateScale(50, 0.1),
-    borderRadius: moderateScale(70 / 2, 0.1),
+    borderRadius: moderateScale(65 / 2, 0.1),
   },
   col: {
     flexDirection: 'column',
@@ -186,10 +173,10 @@ const styles = StyleSheet.create({
     marginVertical: moderateScale(5, 0.1),
     // height: moderateScale(30, 0.1),
   },
-  // img: {
-  //   width: '100%',
-  //   alignItems: 'center',
-  // },
+  img: {
+    width: '100%',
+    alignItems: 'center',
+  },
   option: {
     fontSize: moderateScale(14, 0.1),
     marginRight: moderateScale(10, 0.1),
@@ -298,7 +285,7 @@ const styles = StyleSheet.create({
     //fontFamily: PoppinsBold,
   },
   footer: {
-    marginHorizontal: moderateScale(15, 0.1),
+    marginHorizontal: moderateScale(10, 0.1),
     marginVertical: moderateScale(10, 0.1),
   },
   capturebtntxt: {

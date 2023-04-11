@@ -8,6 +8,7 @@ import Header from '../../../../Components/Header';
 import {FlatList} from 'react-native';
 import {ScrollView} from 'react-native';
 import Antdesign from 'react-native-vector-icons/AntDesign';
+
 import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../../provider/axios';
@@ -106,12 +107,11 @@ const Comments = ({navigation, route}) => {
   const [userData, setUserData] = useState('');
   useEffect(() => {
     getID();
-   
 
     // extractDate();
   }, []);
 
-  const getUserData = async (id) => {
+  const getUserData = async id => {
     setLoader(true);
     axiosconfig
       .get(`user_view/${id}`, {
@@ -120,7 +120,7 @@ const Comments = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log(res?.data?.user_details, 'user data');
+        // console.log(res?.data?.user_details, 'user data');
         setUserData(res?.data?.user_details);
         setLoader(false);
       })
@@ -132,7 +132,7 @@ const Comments = ({navigation, route}) => {
       });
   };
   const getDate = old => {
-    console.log(old, 'old');
+    // console.log(old, 'old');
 
     let code = new Date(old);
     let min = new Date(code).getMinutes();
@@ -147,11 +147,11 @@ const Comments = ({navigation, route}) => {
   // };
 
   const extractDate = () => {
-    console.log('Example to Subtract two dates');
+    // console.log('Example to Subtract two dates');
     var d1 = new Date('March 16, 2022');
     var d2 = new Date('April 6, 2022');
     var sub = d2.getTime() - d1.getTime();
-    console.log(sub);
+    // console.log(sub);
   };
 
   const getID = async () => {
@@ -199,17 +199,16 @@ const Comments = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        // console.log('data', JSON.stringify(res.data));
         setComment('');
         setEdit(false);
         setCommentID('');
-        if(route?.params?.screen == 'funInteraction'){
+        if (route?.params?.screen == 'funInteraction') {
           getPublicPosts(postid);
-        }else{
+        } else {
           getPosts(postid);
-
         }
-      
+
         // setRefresh(!refresh);
       })
       .catch(err => {
@@ -230,7 +229,7 @@ const Comments = ({navigation, route}) => {
 
   const deleteComment = async commentid => {
     setLoader(true);
-    console.log(userToken, 'get');
+    // console.log(userToken, 'get');
     await axiosconfig
       .get(`comment-delete/${commentid}`, {
         headers: {
@@ -239,13 +238,12 @@ const Comments = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        // console.log('data', JSON.stringify(res.data));
         // showToast(res?.data?.success);
-        if(route?.params?.screen == 'funInteraction'){
+        if (route?.params?.screen == 'funInteraction') {
           getPublicPosts(post?.id);
-        }else{
+        } else {
           getPosts(post?.id);
-
         }
       })
       .catch(err => {
@@ -256,7 +254,7 @@ const Comments = ({navigation, route}) => {
   };
 
   const getPosts = async postid => {
-    console.log('swer')
+    // console.log('swer');
     await axiosconfig
       .get('user_details', {
         headers: {
@@ -265,7 +263,7 @@ const Comments = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('friendx',res.data.post_friends, postid)
+        // console.log('friendx', res.data.post_friends, postid);
         getUpdatedComments(res.data.post_friends, postid);
       })
       .catch(err => {
@@ -276,7 +274,7 @@ const Comments = ({navigation, route}) => {
   };
 
   const getPublicPosts = async postid => {
-    console.log('swer')
+    // console.log('swer');
     await axiosconfig
       .get('fun-interaction', {
         headers: {
@@ -285,7 +283,7 @@ const Comments = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('public',res?.data?.post_public, postid)
+        // console.log('public', res?.data?.post_public, postid);
         getUpdatedComments(res?.data?.post_public, postid);
       })
       .catch(err => {
@@ -300,11 +298,11 @@ const Comments = ({navigation, route}) => {
     setComments(temp[0]?.post_comments);
     setLoader(false);
     setRefresh(!refresh);
-    console.log(temp[0]?.post_comments, comments, 'whhwyw');
+    // console.log(temp[0]?.post_comments, comments, 'whhwyw');
   };
 
   const renderItem = (elem, i) => {
-    console.log(elem?.item?.group)
+    // console.log(elem?.item);
     return (
       <View style={s.card}>
         <View
@@ -312,30 +310,35 @@ const Comments = ({navigation, route}) => {
             flexDirection: 'row',
           }}
         >
-          <View style={[s.dp, {borderColor: getColor(elem?.item?.group)}]}>
+          <View
+            style={[s.dp, {borderColor: getColor(elem?.item?.users?.group)}]}
+          >
             <Image
-              source={{uri: elem?.item?.image}}
+              source={{uri: elem?.item?.users?.image}}
               style={s.dp1}
               resizeMode={'cover'}
             />
           </View>
           <View style={s.details}>
-            {/* <TouchableOpacity
+            <TouchableOpacity
               onPress={() => {
-                navigation.navigate('ViewUser', {post: post});
+                navigation.navigate('ViewUser', {
+                  screen: 'search',
+                  post: {id: elem?.item?.users?.id},
+                });
               }}
-            > */}
+            >
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                {elem?.item?.user_name}
+                {elem?.item?.users?.name} {elem?.item?.users?.last_name}
               </Text>
-            {/* </TouchableOpacity> */}
+            </TouchableOpacity>
             <View>
               <Text style={[s.textSmall, {color: textColor}]}>
                 {elem?.item?.text}
               </Text>
             </View>
             <Text style={[s.textSmall, {color: '#787878'}]}>
-              {getDate(elem?.item?.created_at)}
+              {`${new Date(elem?.item?.created_at)}`}
             </Text>
           </View>
         </View>
@@ -414,14 +417,11 @@ const Comments = ({navigation, route}) => {
               resizeMode={'cover'}
             />
           </View>
-          <TouchableOpacity style={{flex: 0.7, alignSelf: 'center'}}>
+          <TouchableOpacity style={{width: '75%', alignSelf: 'center'}}>
             <View>
-              <View
-                style={{flexDirection: 'row', width: moderateScale(200, 0.1)}}
-              >
+              <View style={{flexDirection: 'row'}}>
                 <Text style={[s.name, s.nameBold, {color: textColor}]}>
                   {post.user?.name} {post.user?.last_name}
-                
                   <Text style={[s.name1]}> {post?.caption}</Text>
                 </Text>
               </View>
@@ -435,54 +435,57 @@ const Comments = ({navigation, route}) => {
           scrollEnabled={true}
           extraData={refresh}
         />
-        {userData?(<View style={{marginBottom:20}}>
-          <Input
-            w="100%"
-            height={moderateScale(50,0.1)}
-            variant="rounded"
-            color={textColor}
-            placeholder="Add Comment ..."
-            placeholderTextColor={'grey'}
-            value={comment}
-            onChangeText={text => {
-              setComment(text);
-            }}
-            borderColor={textColor}
-            marginTop={moderateScale(10, 0.1)}
-            fontSize={moderateScale(12, 0.1)}
-            InputLeftElement={
-              <View
-                style={[
-                  s.smallDp,
-                  {
-                    borderColor: getColor(userData?.group),
-                  },
-                ]}
-              >
-                {userData?.image? ( <Image
-                  source={{uri: userData?.image}}
-                  style={s.dp1}
-                  resizeMode={'cover'}
-                />):(null)}
-              </View>
-            }
-            InputRightElement={
-              <TouchableOpacity
-                onPress={() => {
-                  addComment(post.id);
-                }}
-                style={{marginRight: moderateScale(20, 0.1)}}
-              >
-                <Feather
-                  name={'send'}
-                  size={moderateScale(20, 0.1)}
-                  color={textColor}
-                />
-              </TouchableOpacity>
-            }
-          />
-        </View>):(null)}
-        
+        {userData ? (
+          <View style={{marginBottom: 20}}>
+            <Input
+              w="100%"
+              height={moderateScale(50, 0.1)}
+              variant="rounded"
+              color={textColor}
+              placeholder="Add Comment ..."
+              placeholderTextColor={'grey'}
+              value={comment}
+              onChangeText={text => {
+                setComment(text);
+              }}
+              borderColor={textColor}
+              marginTop={moderateScale(10, 0.1)}
+              fontSize={moderateScale(12, 0.1)}
+              InputLeftElement={
+                <View
+                  style={[
+                    s.smallDp,
+                    {
+                      borderColor: getColor(userData?.group),
+                    },
+                  ]}
+                >
+                  {userData?.image ? (
+                    <Image
+                      source={{uri: userData?.image}}
+                      style={s.dp1}
+                      resizeMode={'cover'}
+                    />
+                  ) : null}
+                </View>
+              }
+              InputRightElement={
+                <TouchableOpacity
+                  onPress={() => {
+                    addComment(post.id);
+                  }}
+                  style={{marginRight: moderateScale(20, 0.1)}}
+                >
+                  <Feather
+                    name={'send'}
+                    size={moderateScale(20, 0.1)}
+                    color={textColor}
+                  />
+                </TouchableOpacity>
+              }
+            />
+          </View>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
