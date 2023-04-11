@@ -8,13 +8,14 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     flex: 1,
-    justifyContent: 'space-evenly',
+    // justifyContent: 'space-evenly',
+    
   },
   header: {
     paddingHorizontal: moderateScale(10, 0.1),
   },
   heading: {
-    marginTop: moderateScale(30, 0.1),
+     marginTop: moderateScale(30, 0.1),
     marginBottom: moderateScale(60, 0.1),
   },
   headingText: {

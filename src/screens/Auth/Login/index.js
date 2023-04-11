@@ -8,6 +8,7 @@ import {
   ToastAndroid,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import s from './style';
@@ -77,7 +78,7 @@ const Login = ({navigation}) => {
         })
         .catch(err => {
           console.log(err.response);
-          alert(err.response.data.message);
+          Alert.alert(err.response.data.message);
           setLoader(false);
         });
     }

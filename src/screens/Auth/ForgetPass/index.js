@@ -102,9 +102,12 @@ const ForgetPassword = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
+      <View>
       <Header navigation={navigation} />
+      </View>
       <View style={[s.container, {backgroundColor: color}]}>
-        <View style={{width: '100%', alignItems: 'center'}}>
+        <View style={{width: '100%', alignItems: 'center', 
+      }}>
           <View style={s.heading}>
             <Text style={[s.headingText, {color: Textcolor}]}>
               Forgot{' '}
@@ -178,8 +181,9 @@ const ForgetPassword = ({navigation}) => {
             <View
               style={{
                 flexDirection: 'row',
-                justifyContent: 'center',
-                bottom: moderateScale(-45, 0.1),
+                bottom: moderateScale(-210,0.1),
+                alignSelf:'center'
+                // bottom: moderateScale(-45, 0.1),
               }}
             >
               <Text style={[s.forgetPass, {color: Textcolor}]}>

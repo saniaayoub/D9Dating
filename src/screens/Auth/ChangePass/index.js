@@ -4,11 +4,12 @@ import {
   View,
   ToastAndroid,
   TouchableOpacity,
+  Alert
 } from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import s from './style';
 import Feather from 'react-native-vector-icons/Feather';
-import {Input, FormControl, Button, Alert} from 'native-base';
+import {Input, FormControl, Button,} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Icon2 from 'react-native-vector-icons/Fontisto';
 import {useDispatch, useSelector} from 'react-redux';
@@ -93,7 +94,7 @@ const ChangePass = ({navigation, route}) => {
         .then(res => {
           setLoader(false);
           console.log(res?.data, 'change password data');
-          alert(res?.data?.message);
+          Alert.alert(res?.data?.message);
           {
             screen == 'Reset'
               ? (AsyncStorage.setItem('password', password),
