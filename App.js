@@ -22,16 +22,15 @@ const App = () => {
   useEffect(() => {
     const init = async () => {
       // …do multiple sync or async task
-      if (Platform.OS == 'android') {
-        SplashScreen.hide();
-      }
 
       getToken();
-      dispatch(setTheme('dark'));
     };
 
     init().finally(async () => {
-      await RNBootSplash.hide({fade: true, duration: 500});
+      if (Platform.OS == 'ios') {
+        await RNBootSplash.hide({fade: true, duration: 500});
+      }
+
       console.log('Bootsplash has been hidden successfully');
     });
   }, []);
@@ -41,7 +40,43 @@ const App = () => {
     let exist = await AsyncStorage.getItem('already');
     console.log('app');
     dispatch(setExist(exist));
+    setThemeMode(token);
     dispatch(setUserToken(token));
+  };
+
+  const setThemeMode = async token => {
+    let SP = await AsyncStorage.getItem('id');
+
+    axiosconfig
+      .get(`user_view/${SP}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log('data1', res.data);
+
+        if (
+          res?.data?.user_details?.theme_mode == null ||
+          res?.data?.user_details?.theme_mode == '' ||
+          res?.data?.user_details?.theme_mode == 0
+        ) {
+          dispatch(setTheme('dark'));
+        } else {
+          dispatch(setTheme('light'));
+        }
+        if (Platform.OS == 'android') {
+          SplashScreen.hide();
+        }
+      })
+      .catch(err => {
+        if (Platform.OS == 'android') {
+          SplashScreen.hide();
+        }
+        setLoader(false);
+        console.log(err);
+        // showToast(err.response);
+      });
   };
 
   return (

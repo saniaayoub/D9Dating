@@ -314,7 +314,11 @@ const Comments = ({navigation, route}) => {
             style={[s.dp, {borderColor: getColor(elem?.item?.users?.group)}]}
           >
             <Image
-              source={{uri: elem?.item?.users?.image}}
+              source={{
+                uri: elem?.item?.users?.image
+                  ? elem?.item?.users?.image
+                  : dummyImage,
+              }}
               style={s.dp1}
               resizeMode={'cover'}
             />
@@ -338,7 +342,7 @@ const Comments = ({navigation, route}) => {
               </Text>
             </View>
             <Text style={[s.textSmall, {color: '#787878'}]}>
-              {`${new Date(elem?.item?.created_at)}`}
+              {`${new Date(elem?.item?.created_at).toLocaleString()}`}
             </Text>
           </View>
         </View>
@@ -412,7 +416,7 @@ const Comments = ({navigation, route}) => {
         <View style={s.caption}>
           <View style={[s.dp, {borderColor: getColor(post?.user?.group)}]}>
             <Image
-              source={{uri: post?.user?.image}}
+              source={{uri: post?.user?.image ? post?.user?.image : dummyImage}}
               style={s.dp1}
               resizeMode={'cover'}
             />

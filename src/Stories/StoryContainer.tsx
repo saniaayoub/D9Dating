@@ -177,7 +177,7 @@ getID()
             user_id={dataStories.user_id}
             name={dataStories.username}
             profile={dataStories.profile}
-            // datePublication={stories[currentIndex].created}
+            datePublication={stories[currentIndex].created}
             onClosePress={props.onClose}
             navigation={props.navigation}
           />

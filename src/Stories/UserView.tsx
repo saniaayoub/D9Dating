@@ -8,32 +8,33 @@ type Props = {
   user_id:any,
   profile: string;
   name: string;
-  // datePublication: string;
+  datePublication: string;
   navigation:()=> void
 };
 
 const diffDateWithNow = (date) => {
   let startDate = new Date(date);
+  return startDate.toLocaleString()
   // Do your operations
-  let endDate = new Date();
-  let seconds = (endDate.getTime() - startDate.getTime()) / 1000;
-  let minutes = seconds / 60;
-  let hours = minutes / 60;
-  let days = hours / 24;
-  let current: string;
-  if (days >= 1) {
-    current = days == 1 ? "day" : "days";
-    return Math.trunc(days) + " " + current;
-  } else if (hours > 1) {
-    current = days == 1 ? "hour" : "hours";
-    return Math.trunc(hours) + " " + current;
-  } else if(minutes>1){
-    current = minutes == 1 ? "minute" : "minutes";
-    return Math.trunc(hours) + " " + current;
-  }else{
-     current = seconds == 1 ? "second" : "seconds";
-    return Math.trunc(hours) + " " + current;
-  }
+  // let endDate = new Date();
+  // let seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+  // let minutes = seconds / 60;
+  // let hours = minutes / 60;
+  // let days = hours / 24;
+  // let current: string;
+  // if (days >= 1) {
+  //   current = days == 1 ? "day" : "days";
+  //   return Math.trunc(days) + " " + current;
+  // } else if (hours > 1) {
+  //   current = days == 1 ? "hour" : "hours";
+  //   return Math.trunc(hours) + " " + current;
+  // } else if(minutes>1){
+  //   current = minutes == 1 ? "minute" : "minutes";
+  //   return Math.trunc(hours) + " " + current;
+  // }else{
+  //    current = seconds == 1 ? "second" : "seconds";
+  //   return Math.trunc(hours) + " " + current;
+  // }
 };
 
 export default memo(function UserView(props: Props) {
@@ -52,10 +53,10 @@ export default memo(function UserView(props: Props) {
           /> */}
         </TouchableOpacity>
 
-        {/* <Text style={styles.time}>
+        <Text style={styles.time}>
           {!!props.datePublication &&
-            `${diffDateWithNow(props.datePublication)} ago`}
-        </Text> */}
+            `${diffDateWithNow(props.datePublication)}`}
+        </Text>
       </View>
       <TouchableOpacity onPress={props.onClosePress}>
         <Icon name="close" color="white" size={25} style={{ marginRight: 8 }} />

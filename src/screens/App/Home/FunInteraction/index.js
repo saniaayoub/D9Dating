@@ -573,7 +573,7 @@ const FunInteraction = ({navigation}) => {
       <TouchableOpacity style={s.card}>
         <View style={[s.dp, {borderColor: getColor(elem?.item?.group)}]}>
           <Image
-            source={{uri: elem?.item?.image}}
+            source={{uri: elem?.item?.image ? elem?.item?.image : dummyImage}}
             style={s.dp1}
             resizeMode={'cover'}
           />
