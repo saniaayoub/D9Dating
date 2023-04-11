@@ -55,9 +55,7 @@ const Settings = ({navigation, route}) => {
   const [loader, setLoader] = useState(false);
   const [submitted, setSubmitted] = useState();
 
-  useEffect(() => {
-    console.log(route?.params, 'datsa');
-  }, [isFocused]);
+  useEffect(() => {}, []);
   const showToast = msg => {
     Alert.alert(msg);
   };
@@ -115,7 +113,7 @@ const Settings = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res?.data));
+        console.log('data', res?.data);
         dispatch(setTheme(theme));
 
         // console.log('public post', JSON.stringify(res?.data?.post_public));

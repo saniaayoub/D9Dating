@@ -1081,7 +1081,7 @@ const Home = ({navigation}) => {
           </View>
           <View>
             <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
-              {`${new Date(elem?.item?.created_at)}`}
+              {`${new Date(elem?.item?.created_at).toLocaleString()}`}
             </Text>
           </View>
         </View>

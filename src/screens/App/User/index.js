@@ -118,9 +118,9 @@ const Profile = ({navigation}) => {
   var year;
 
   useEffect(() => {
+    // console.log(phonenum?.current?.getValue(), form.phone_number);
     getData();
-    console.log(disable4);
-  }, []);
+  }, [isFocused]);
 
   const onRadioBtnClick = item => {
     let updatedState = isSelected.map(isSelectedItem =>
@@ -149,7 +149,7 @@ const Profile = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', JSON.stringify(res.data));
+        console.log('data1', res.data);
         if (res.data.user_details) {
           setData(res.data.user_details);
         }
@@ -168,6 +168,9 @@ const Profile = ({navigation}) => {
       if (item == 'location') {
         dispatch(setLocation(data[item]));
       }
+      if (item == 'phone_number') {
+        formData[item] = data[item];
+      }
       if (item == 'gender') {
         let updatedState = isSelected.map(isSelectedItem =>
           isSelectedItem.name == data[item]
@@ -185,13 +188,17 @@ const Profile = ({navigation}) => {
   };
 
   const save = async base64image => {
-    setLoader(true);
     setForm({...form, location: userLocation});
     if (base64image) {
       setForm({...form, image: base64image});
     }
+    if (!phonenum.current.isValidNumber()) {
+      Alert.alert('Please enter valid phone number');
+      return;
+    }
     // setForm({...form, last_n})
     console.log(form, 'form');
+    setLoader(true);
     await axiosconfig
       .post(
         'user_update',
@@ -623,7 +630,7 @@ const Profile = ({navigation}) => {
                 }}
                 disabled={!disable4}
                 autoFormat={true}
-                textStyle={s.inputStyle}
+                textStyle={[s.inputStyle, {color: textColor}]}
                 isValidNumber={e => console.log(e, 'here')}
                 ref={phonenum}
                 onChangePhoneNumber={phNumber => {

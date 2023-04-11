@@ -256,7 +256,7 @@ const Register = ({navigation}) => {
       .post('register', data)
       .then(res => {
         console.log(res?.data, 'user register data');
-        alert(res?.data?.message);
+        Alert.alert(res?.data?.message);
         AsyncStorage.setItem('password', password);
         AsyncStorage.setItem('userToken', res?.data?.access_token);
         let id = res?.data?.userInfo.toString();
@@ -269,7 +269,7 @@ const Register = ({navigation}) => {
         setLoader(false);
         console.log(err, 'errors');
         console.log(err?.response?.data?.message, 'msg');
-        alert(err.response?.data?.message);
+        Alert.alert(err.response?.data?.message);
       });
   };
   // const context = useContext(AppContext)
