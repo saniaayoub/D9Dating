@@ -365,8 +365,8 @@ const Profile = ({navigation}) => {
     console.log(month, 'month');
     console.log(dateex, 'dateeee');
     console.log(year, 'year');
-    setDate(`${dateex}/${month}/${year}`);
-    setForm({...form, date: `${dateex}/${month}/${year}`});
+    setDate(`${month}/${dateex}/${year}`);
+    setForm({...form, date: `${month}/${dateex}/${year}`});
     console.log(date, 'c date');
     hideDatePicker();
   };

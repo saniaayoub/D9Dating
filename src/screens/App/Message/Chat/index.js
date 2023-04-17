@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   FlatList,
+  TextInput
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -17,10 +18,10 @@ import Inicon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Input, FormControl, Button} from 'native-base';
 import io from 'socket.io-client';
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
-//  const socket = io('http://192.168.18.226');
-//     socket.connect();
 
 const messages = [
   {
@@ -28,8 +29,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/u2.png'),
   },
   {
@@ -37,8 +37,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/mydp.png'),
   },
   {
@@ -46,8 +45,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/u2.png'),
   },
   {
@@ -55,8 +53,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/mydp.png'),
   },
   {
@@ -64,250 +61,74 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/u2.png'),
   },
 ];
 
-const Chat = ({navigation, route}) => {
-  const [msg, setMsg] = useState([]);
-  const [input, setInput] = useState('');
-  const [socket, setSocket] = useState(
-    io('http://192.168.18.226:3000'),
-  );
-  socket.emit('join', { username: name });
-
-
-  const dispatch = useDispatch();
-  console.log(route.params);
-  const data = route?.params;
-  const [text, setText] = useState([]);
+const Chat = ({navigation, route, chatId, id, user }) => {
   const theme = useSelector(state => state.reducer.theme);
+  const loginId = useSelector(state => state.reducer.userToken);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-  const recieverId = route.params.id;
-  const name = route.params.name;
-  const senderId = useSelector(state => state.reducer.userToken);
-
-  console.log(senderId, 'senderId');
-  console.log(recieverId, 'recieverId');
-  let currDate = new Date();
-  let hoursMin = currDate.getHours() + ':' + currDate.getMinutes();
-  console.log(hoursMin)
-
-useEffect(() => {
-  console.log('usermm');
-  socket.emit('join', { username: name, id: recieverId });
-}, [])
-
+  const userToken = useSelector(state => state.reducer.userToken);
+  // const id = route.params.id
+//  console.log(route.params.id,'id')
+//  console.log(route.params.name, 'name');
+const [messages, setMessages] = useState([]);
+  const [text, setText] = useState('');
 
   useEffect(() => {
-    console.log('msg?');
-    socket.on('receive message', message => {
-      console.log(message, 'recieve');
-      setMsg(prevMessages => [...prevMessages, message]);
-    });
-    socket.on("show_notification", (data)=> {
-      console.log("show_notification", data);
-    });
+    const db = firebase.firestore();
+    const unsubscribe = db.collection('messages')
+      .orderBy('createdAt')
+      .onSnapshot(querySnapshot => {
+        const messages = [];
+        querySnapshot.forEach(doc => {
+          messages.push({
+            ...doc.data(),
+            id: doc.id,
+          });
+        });
+        setMessages(messages);
+      });
+    return unsubscribe;
   }, []);
 
-  const sendMessage = () => { 
-    if (input.trim() === '') return;
-    socket.emit('send message', {
-      text: input,
-      recieverId: recieverId,
-      senderId: senderId,
-      avatar: 'https://placeimg.com/140/140/people',
-      time: hoursMin,
+  const handleSend = () => {
+    const db = firebase.firestore();
+    db.collection('messages').add({
+      text,
+      createdAt: new Date(),
+    }).then(() => {
+      setText('');
+    }).catch(error => {
+      console.error('Error sending message:', error);
     });
-    // setMsg((prevMessages) => [...prevMessages, {
-    //   text: input,
-    //   recieverId: recieverId,
-    //   senderId: senderId,
-    //   avatar: 'https://placeimg.com/140/140/people',
-    //   time: new Date()
-    // }]);
-    // console.log(msg, 'msg send ');
-    setInput('');
   };
 
-  const renderItem = elem => {
-    console.log(elem, 'msgsssss');
-    if (elem.item.senderId === senderId) {
-      return (
-        <View
-          style={[s.messege, {justifyContent: 'flex-end'}]}
-          key={elem.index}
-        >
-          <View
-            style={[
-              {
-                maxWidth: '80%',
-                marginRight: moderateScale(10, 0.1),
-              },
-            ]}
-          >
-            <View style={s.textFrom}>
-              <Text style={s.textSmall1}>{elem.item.text}</Text>
-              <Text style={[s.textSmall1, {textAlign: 'right'}]}>
-                {elem.item.time.toLocaleString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
-            </View>
-          </View>
-          {/* <View style={[s.dp]}>
-          <Image
-            source={{ uri: elem.item.avatar }}
-            style={s.dp1}
-            resizeMode={'cover'}
-          />
-        </View> */}
-        </View>
-      );
-    } else {
-      return (
-        <View
-          style={[s.messege, {justifyContent: 'flex-start'}]}
-          key={elem.index}
-        >
-          {/* <View style={[s.dp]}>
-          <Image
-            source={{ uri: 'https://placeimg.com/140/140/people' }}
-            style={s.dp1}
-            resizeMode={'cover'}
-          />
-        </View> */}
-          <View
-            style={[
-              {
-                maxWidth: '80%',
-                marginRight: moderateScale(10, 0.1),
-              },
-            ]}
-          >
-            <View style={s.textTo}>
-              <Text style={s.textSmall1}>{elem.item.text}</Text>
-              <Text style={[s.textSmall1, {textAlign: 'right'}]}>
-                {elem.item.time.toLocaleString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
-            </View>
-          </View>
-        </View>
-      );
-    }
-  };
+
+// <Button
+//   title="Send"
+//   onPress={sendMessage}
+// />
 
   return (
-    <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
-      <View style={[s.container, {backgroundColor: color}]}>
-        <View style={s.header}>
-          <TouchableOpacity
-            style={{flex: 0.1}}
-            onPress={() => navigation.goBack()}
-          >
-            <Inicon
-              name="arrow-back-circle-outline"
-              size={moderateScale(30)}
-              color={textColor}
-            />
-          </TouchableOpacity>
-          <View style={s.card}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('ViewUser');
-              }}
-              style={s.dp}
-            >
-              <Image
-                source={messages[0].userImage}
-                style={s.dp1}
-                resizeMode={'cover'}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
-              <Text style={[s.name, {color: textColor}]}>{name}</Text>
-
-              <Text style={s.textSmall}>Last Seen 5:52 PM</Text>
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity style={s.options}>
-            <Entypo
-              name={'dots-three-vertical'}
-              color={textColor}
-              size={moderateScale(15, 0.1)}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={{height: '80%', paddingBottom: moderateScale(15, 0.1)}}>
-          <FlatList
-            data={msg}
-            renderItem={renderItem}
-            keyExtractor={item => item.index}
-            // initialScrollIndex={messages.length - 1}
-            showsVerticalScrollIndicator={true}
-          />
-        </View>
-
-        <View style={{height: '80%', paddingBottom: moderateScale(15, 0.1)}}>
-          <FlatList
-            data={msg}
-            renderItem={renderItem}
-            keyExtractor={item => item.to}
-            // initialScrollIndex={messages.length - 1}
-            showsVerticalScrollIndicator={true}
-          />
-        </View>
+    <View>
+      {messages.map(message => (
+        <Text key={message.id}>{message.text}</Text>
+      ))}
+      <View>
+        <TextInput
+          value={text}
+          onChangeText={setText}
+          placeholder="Type a message"
+        />
+        <TouchableOpacity onPress={handleSend}>
+          <Text>Send</Text>
+        </TouchableOpacity>
       </View>
-      <View style={s.row}>
-        <View style={s.input}>
-          <TouchableOpacity style={s.circle}>
-            <Icon
-              name={'smile'}
-              color={'#8F8A8A'}
-              solid
-              size={moderateScale(20, 0.1)}
-            />
-          </TouchableOpacity>
-          <View style={s.inputText}>
-            <Input
-              w={'80%'}
-              variant="unstyled"
-              placeholderTextColor={'#fff'}
-              color={'#fff'}
-              placeholder="Type Message"
-              value={input}
-              onChangeText={text => setInput(text)}
-              size="md"
-            />
-          </View>
-
-          <TouchableOpacity style={s.attach}>
-            <Entypo
-              name={'attachment'}
-              color={'#8F8A8A'}
-              size={moderateScale(20, 0.1)}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={s.sendBtn}>
-          <TouchableOpacity onPress={() => sendMessage()} style={s.circle}>
-            <Inicon
-              name={'md-send'}
-              color={'#8F8A8A'}
-              size={moderateScale(20, 0.1)}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

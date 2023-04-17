@@ -9,7 +9,7 @@ import Feather from 'react-native-vector-icons/Feather';
 // const InterBold = 'Inter-ExtraBold';
 const Poppins = '';
 
-const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, setOtp, navigation,handleSubmit, OtpSubmit}) => {
+const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, onSignupUser, setOtp, navigation,handleSubmit, OtpSubmit}) => {
   return (
     <Modal
       animationType="slide"
@@ -78,7 +78,23 @@ const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, setOtp,
               }}
                 }
             >
-              <Text style={s.btnText}>Send</Text>
+              <Text style={s.btnText}>Submit</Text>
+            </Button>
+            <Button
+            style={{marginTop: moderateScale(10,0.1)}}
+              size="sm"
+              variant={'solid'}
+              _text={{
+                color: '#6627EC',
+              }}
+              backgroundColor={'#FFD700'}
+              borderRadius={50}
+              w={moderateScale(140, 0.1)}
+              h={moderateScale(35, 0.1)}
+              alignItems={'center'}
+              onPressIn={() => submit()}
+            >
+              <Text style={s.btnText}>Resend</Text>
             </Button>
           </View>
         </View>
@@ -115,6 +131,7 @@ const s = StyleSheet.create({
     marginBottom: moderateScale(10, 0.1),
     alignItems: 'center',
     justifyContent: 'center',
+   
   },
 
   borderStyleHighLighted: {

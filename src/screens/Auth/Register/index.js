@@ -213,19 +213,24 @@ const Register = ({navigation}) => {
     axiosconfig
       .post('otp', data)
       .then(res => {
-        alert(res?.data?.message);
-        console.log(res, 'signup data ');
-        setTimeout(() => {
-          setModalVisible(!modalVisible);
-        }, 3000);
-        // setOnsubmit(true)
-        setLoader(false);
+        if(modalVisible == false){
+          Alert.alert(res?.data?.message);
+          console.log(res, 'signup data ');
+          setTimeout(() => {
+            setModalVisible(!modalVisible);
+          }, 3000);
+          // setOnsubmit(true)
+          setLoader(false);
+        }else{
+          Alert.alert('code sent')
+        }
+       
       })
       .catch(err => {
         setLoader(false);
         console.log(err, 'errors');
         console.log(err.response?.data?.message, 'error messagaae');
-        alert(err?.response?.data?.message);
+        Alert.alert(err?.response?.data?.message);
       });
   };
   const storeData = async value => {
@@ -432,7 +437,7 @@ const Register = ({navigation}) => {
                       ]}
                     >
                       <Text style={[s.date, {color: Textcolor}]}>
-                        {date ? d : 'DD'}
+                      {date ? m : 'MM'}
                       </Text>
                     </View>
 
@@ -447,7 +452,7 @@ const Register = ({navigation}) => {
                       ]}
                     >
                       <Text style={[s.date, {color: Textcolor}]}>
-                        {date ? m : 'MM'}
+                      {date ? d : 'DD'}
                       </Text>
                     </View>
 
@@ -865,7 +870,8 @@ const Register = ({navigation}) => {
             navigation={navigation}
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
-            //  submit={submit}
+          submit={submit}
+          onSignupUser ={onSignupUser}
             setOtp={setOtp}
             handleSubmit={handleSubmit}
             screen={'register'}
