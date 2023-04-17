@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, Modal, ActivityIndicator } from 'react-native';
+import {StyleSheet, Text, View, Modal, ActivityIndicator} from 'react-native';
 import React from 'react';
-import { Input, Button } from 'native-base';
-import { moderateScale } from 'react-native-size-matters';
+import {Input, Button} from 'native-base';
+import {moderateScale} from 'react-native-size-matters';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -9,7 +9,18 @@ import Feather from 'react-native-vector-icons/Feather';
 // const InterBold = 'Inter-ExtraBold';
 const Poppins = '';
 
-const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, onSignupUser, setOtp, navigation,handleSubmit, OtpSubmit}) => {
+const OTPModal = ({
+  loader,
+  modalVisible,
+  screen,
+  setModalVisible,
+  submit,
+  onSignupUser,
+  setOtp,
+  navigation,
+  handleSubmit,
+  OtpSubmit,
+}) => {
   return (
     <Modal
       animationType="slide"
@@ -42,18 +53,18 @@ const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, onSignu
           </Text>
 
           <OTPInputView
-            style={{ width: '80%', height: 200 }}
+            style={{width: '80%', height: 200}}
             pinCount={4}
             // code={this.state.code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
             // onCodeChanged = {code => { this.setState({code})}}
             autoFocusOnLoad
             codeInputFieldStyle={s.underlineStyleBase}
             codeInputHighlightStyle={s.underlineStyleHighLighted}
-            onCodeFilled={(code => {
-              console.log(`Code is ${code}, you are good to go!`)
-            })}
-            onCodeChanged={(code)=>{
-              setOtp(code)
+            onCodeFilled={code => {
+              console.log(`Code is ${code}, you are good to go!`);
+            }}
+            onCodeChanged={code => {
+              setOtp(code);
             }}
           />
           <View style={s.button}>
@@ -68,20 +79,20 @@ const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, onSignu
               w={moderateScale(140, 0.1)}
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
-              onPressIn={() =>
-               { if(screen=="register"){
-                 handleSubmit()
+              onPressIn={() => {
+                if (screen == 'register') {
+                  handleSubmit();
                 }
-                if(screen == "Forgot"){
-                  OtpSubmit()
-                // navigation.navigate('ChangePass')
+                if (screen == 'Forgot') {
+                  OtpSubmit();
+                  // navigation.navigate('ChangePass')
+                }
               }}
-                }
             >
-              <Text style={s.btnText}>Submit</Text>
+              <Text style={[s.btnText, {color: '#222222'}]}>Submit</Text>
             </Button>
             <Button
-            style={{marginTop: moderateScale(10,0.1)}}
+              style={{marginTop: moderateScale(10, 0.1)}}
               size="sm"
               variant={'solid'}
               _text={{
@@ -94,7 +105,7 @@ const OTPModal = ({ loader, modalVisible,screen,setModalVisible, submit, onSignu
               alignItems={'center'}
               onPressIn={() => submit()}
             >
-              <Text style={s.btnText}>Resend</Text>
+              <Text style={[s.btnText, {color: '#222222'}]}>Resend</Text>
             </Button>
           </View>
         </View>
@@ -131,7 +142,6 @@ const s = StyleSheet.create({
     marginBottom: moderateScale(10, 0.1),
     alignItems: 'center',
     justifyContent: 'center',
-   
   },
 
   borderStyleHighLighted: {
