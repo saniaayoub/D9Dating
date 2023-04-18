@@ -213,7 +213,7 @@ const Register = ({navigation}) => {
     axiosconfig
       .post('otp', data)
       .then(res => {
-        if(modalVisible == false){
+        if (modalVisible == false) {
           Alert.alert(res?.data?.message);
           console.log(res, 'signup data ');
           setTimeout(() => {
@@ -221,10 +221,9 @@ const Register = ({navigation}) => {
           }, 3000);
           // setOnsubmit(true)
           setLoader(false);
-        }else{
-          Alert.alert('code sent')
+        } else {
+          Alert.alert('code sent');
         }
-       
       })
       .catch(err => {
         setLoader(false);
@@ -300,7 +299,7 @@ const Register = ({navigation}) => {
     setY(year);
     setD(dateex);
     console.log(year, 'year');
-    setDate(`${dateex}/${month}/${year}`);
+    setDate(`${month}/${dateex}/${year}`);
 
     hideDatePicker();
   };
@@ -437,7 +436,7 @@ const Register = ({navigation}) => {
                       ]}
                     >
                       <Text style={[s.date, {color: Textcolor}]}>
-                      {date ? m : 'MM'}
+                        {date ? m : 'MM'}
                       </Text>
                     </View>
 
@@ -452,7 +451,7 @@ const Register = ({navigation}) => {
                       ]}
                     >
                       <Text style={[s.date, {color: Textcolor}]}>
-                      {date ? d : 'DD'}
+                        {date ? d : 'DD'}
                       </Text>
                     </View>
 
@@ -870,8 +869,8 @@ const Register = ({navigation}) => {
             navigation={navigation}
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
-          submit={submit}
-          onSignupUser ={onSignupUser}
+            submit={submit}
+            onSignupUser={onSignupUser}
             setOtp={setOtp}
             handleSubmit={handleSubmit}
             screen={'register'}
