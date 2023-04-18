@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(10, 0.1),
     lineHeight: moderateScale(15, 0.1),
     // paddingLeft: moderateScale(10),
-    alignSelf: 'center',
+    // alignSelf: 'center',
     color: '#7B7A7A',
   },
   fText: {

@@ -16,7 +16,7 @@ import Header from '../../../Components/Header';
 import Vector from '../../../assets/images/png/Vector.png';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Button, Stack, Menu, Pressable, Input} from 'native-base';
+import {Button, Stack, Menu, Pressable, Input, ScrollView} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -342,8 +342,9 @@ const CreatePost = ({navigation, route}) => {
       });
   };
   return (
-    <View
-      style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}
+    <ScrollView style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}>
+ <View
+      
     >
       <View style={[s.container]}>
         {loader ? <Loader /> : null}
@@ -390,7 +391,7 @@ const CreatePost = ({navigation, route}) => {
                       {...triggerProps}
                       style={{
                         flexDirection: 'row',
-                        borderColor: 'white',
+                        borderColor: Textcolor,
                         borderWidth: 1,
                         marginVertical: moderateScale(7),
                         borderRadius: moderateScale(8, 0.1),
@@ -654,6 +655,8 @@ const CreatePost = ({navigation, route}) => {
         )}
       </View>
     </View>
+    </ScrollView>
+   
   );
 };
 

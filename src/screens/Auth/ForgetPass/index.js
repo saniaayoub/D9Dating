@@ -102,102 +102,89 @@ const ForgetPassword = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
-      <View>
-      <Header navigation={navigation} />
-      </View>
-      <View style={[s.container, {backgroundColor: color}]}>
-        <View style={{width: '100%', alignItems: 'center', 
-      }}>
-          <View style={s.heading}>
-            <Text style={[s.headingText, {color: Textcolor}]}>
-              Forgot{' '}
-              <Text style={[s.headingText1, {color: Textcolor}]}>Password</Text>
-            </Text>
-          </View>
-          <View style={s.input}>
-            <Input
-              w={{
-                base: '83%',
-                md: '25%',
-              }}
-              variant="underlined"
-              InputLeftElement={
-                <View style={s.iconCircle}>
-                  <Icon name={'envelope'} color={Textcolor} size={18} />
-                </View>
-              }
-              // style={{
-              //   borderBottomColor:
-              //     submitted && email == null ? 'red' : Textcolor,
-              //   borderBottomWidth: 1,
-              // }}
-              placeholder="Email"
-              placeholderTextColor={Textcolor}
-              value={email}
-              keyboardType="email-address"
-              onChangeText={email => {
-                setEmail(email);
-                let valid = emailReg.test(email);
-                setValidEmail(valid);
-              }}
-              color={Textcolor}
-              fontSize={moderateScale(14, 0.1)}
-            />
-          </View>
-
-          <View style={s.button}>
-            <Button
-              onPressIn={() => {
-                Reset();
-                // navigation.navigate('ChangePass', {email, otp})
-              }}
-              size="sm"
-              variant={'solid'}
-              _text={{
-                color: '#6627EC',
-              }}
-              backgroundColor={'#FFD700'}
-              borderRadius={50}
-              w={moderateScale(140, 0.1)}
-              h={moderateScale(35, 0.1)}
-              alignItems={'center'}
-            >
-              <Text style={s.btnText}>Send</Text>
-            </Button>
-           
-          </View>
+      <View style={{flex: 0.9,}}>
+        <View>
+          <Header navigation={navigation} />
         </View>
-
-        <View style={s.bottomLink}>
-          {/* <Button
-            size="sm"
-            variant={'link'}
-            _text={{
-              color: Textcolor,
-            }}
-            onPress={() => navigation.navigate('Register')}
-          ></Button> */}
-          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <View
-              style={{
-                flexDirection: 'row',
-                bottom: moderateScale(-210,0.1),
-                alignSelf:'center'
-                // bottom: moderateScale(-45, 0.1),
-              }}
-            >
-              <Text style={[s.forgetPass, {color: Textcolor}]}>
-                Don’t Have an Account?
-              </Text>
-              <Text
-                style={[s.forgetPass, {fontWeight: '700', color: '#FFD700'}]}
-              >
-                {' '}
-                Sign up Now!
+        <View style={[s.container,{backgroundColor: color}]}>
+            <View style={s.heading}>
+              <Text style={[s.headingText, {color: Textcolor}]}>
+                Forgot{' '}
+                <Text style={[s.headingText1, {color: Textcolor}]}>
+                  Password
+                </Text>
               </Text>
             </View>
-          </TouchableOpacity>
+            <View style={s.input}>
+              <Input
+                w={{
+                  base: '83%',
+                  md: '25%',
+                }}
+                variant="underlined"
+                InputLeftElement={
+                  <View style={s.iconCircle}>
+                    <Icon name={'envelope'} color={Textcolor} size={18} />
+                  </View>
+                }
+                // style={{
+                //   borderBottomColor:
+                //     submitted && email == null ? 'red' : Textcolor,
+                //   borderBottomWidth: 1,
+                // }}
+                placeholder="Email"
+                placeholderTextColor={Textcolor}
+                value={email}
+                keyboardType="email-address"
+                onChangeText={email => {
+                  setEmail(email);
+                  let valid = emailReg.test(email);
+                  setValidEmail(valid);
+                }}
+                color={Textcolor}
+                fontSize={moderateScale(14, 0.1)}
+              />
+            </View>
+
+            <View style={s.button}>
+              <Button
+                onPressIn={() => {
+                  Reset();
+                  // navigation.navigate('ChangePass', {email, otp})
+                }}
+                size="sm"
+                variant={'solid'}
+                _text={{
+                  color: '#6627EC',
+                }}
+                backgroundColor={'#FFD700'}
+                borderRadius={50}
+                w={moderateScale(140, 0.1)}
+                h={moderateScale(35, 0.1)}
+                alignItems={'center'}>
+                <Text style={s.btnText}>Send</Text>
+              </Button>
+            </View>
+
         </View>
+        </View>
+          <TouchableOpacity
+            style={{
+              flexDirection: 'row',
+              alignSelf: 'center',
+              flex: 0.1, 
+              // bottom: moderateScale(-45, 0.1),
+            }}
+            onPress={() => navigation.navigate('Register')}>
+            <Text style={[s.forgetPass, {color: Textcolor}]}>
+              Don’t Have an Account?
+            </Text>
+            <Text style={[s.forgetPass, {fontWeight: '700', color: '#FFD700'}]}>
+              {' '}
+              Sign up Now!
+            </Text>
+          </TouchableOpacity>
+
 
         {modalVisible ? (
           <OTPModal
@@ -214,7 +201,7 @@ const ForgetPassword = ({navigation}) => {
         ) : (
           <></>
         )}
-      </View>
+      
     </SafeAreaView>
   );
 };

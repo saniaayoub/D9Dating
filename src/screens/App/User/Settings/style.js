@@ -94,6 +94,8 @@ const styles = StyleSheet.create({
   },
   input: {
     marginVertical: moderateScale(15, 0.1),
+    alignSelf:'center',
+    justifyContent:'center'
     // marginHorizontal: moderateScale(10, 0.1),
   },
   input1: {

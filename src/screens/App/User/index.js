@@ -10,6 +10,7 @@ import {
   Platform,
   Alert,
   Dimensions,
+  TouchableWithoutFeedback
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -44,11 +45,11 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 
-const Profile = ({navigation}) => {
+const Profile = ({navigation,route}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const phonenum = useRef();
-
+console.log('param1' , route?.params?.data)
   const isFocused = useIsFocused();
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
@@ -56,6 +57,7 @@ const Profile = ({navigation}) => {
   const textColor = theme === 'light' ? '#000' : '#fff';
   const color2 = theme === 'dark' ? '#2E2D2D' : '#fff';
   const userLocation = useSelector(state => state.reducer.location);
+  console.log(userLocation, 'user location');
   const [disable1, setDisable1] = useState(false);
   const [disable2, setDisable2] = useState(false);
   const [disable3, setDisable3] = useState(false);
@@ -64,6 +66,7 @@ const Profile = ({navigation}) => {
   const [disable6, setDisable6] = useState(false);
   const [disable7, setDisable7] = useState(false);
   const [userName, setUserName] = useState('');
+  const[loc, setLoc] = useState('')
 
   const [date, setDate] = useState(null);
   const [id, setId] = useState('');
@@ -119,7 +122,11 @@ const Profile = ({navigation}) => {
 
   useEffect(() => {
     // console.log(phonenum?.current?.getValue(), form.phone_number);
-    getData();
+   if(route?.params?.data === undefined){
+    getData()
+   }else{
+console.log('nothing');
+   }
   }, [isFocused]);
 
   const onRadioBtnClick = item => {
@@ -151,7 +158,8 @@ const Profile = ({navigation}) => {
       .then(res => {
         console.log('data1', res.data);
         if (res.data.user_details) {
-          setData(res.data.user_details);
+          setData(res?.data?.user_details);
+          setLoc(res?.data?.user_details?.location)
         }
         setLoader(false);
       })
@@ -874,6 +882,7 @@ const Profile = ({navigation}) => {
               // }}
             />
           </View>
+          <TouchableWithoutFeedback onPress={()=>console.log('pressed')}>
           <View style={s.input}>
             <Input
               w="100%"
@@ -918,6 +927,7 @@ const Profile = ({navigation}) => {
               // }}
             />
           </View>
+          </TouchableWithoutFeedback>
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
             mode="date"

@@ -217,7 +217,7 @@ const Settings = ({navigation, route}) => {
             onPress={() => {
               navigation.navigate('Help');
             }}
-            style={s.input}
+            style={[s.input]}
           >
             <Input
               w="100%"

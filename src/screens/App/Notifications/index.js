@@ -195,15 +195,14 @@ const Notifications = ({navigation}) => {
         >
           <View>
             <View
-              style={{flexDirection: 'row', width: moderateScale(200, 0.1)}}
+              style={{flexDirection: 'column', width: moderateScale(200, 0.1)}}
             >
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
                 {elem?.item?.request_user?.name}{' '}
                 {elem?.item?.request_user?.last_name}
-                <>
-                  <Text style={[s.name1]}> requested to follow you</Text>
-                </>
+               
               </Text>
+              <Text style={[s.name1]}> requested to follow you</Text>
             </View>
             {/* <Text style={[s.textSmall, {color: '#787878'}]}>
               {elem?.item?.active}
@@ -218,7 +217,7 @@ const Notifications = ({navigation}) => {
             </View>
           </View>
         ) : (
-          <View style={s.icon}>
+          <View style={[s.icon]}>
             <TouchableOpacity
               onPress={() => connectAccept(elem?.item?.request_user?.id)}
             >

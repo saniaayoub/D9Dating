@@ -109,19 +109,18 @@ const Help = ({navigation}) => {
     }
   };
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: color}}>
-      <ScrollView>
+
+      <ScrollView style={{backgroundColor: color , flex:1}}>
         <View
           style={[
             s.container,
-            {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
+            
           ]}
         >
           {loader ? <Loader /> : null}
 
-          <View style={s.header}>
             <Header navigation={navigation} />
-          </View>
+        
           <View style={s.hView}>
             <Text style={[s.hTxt, {color: textColor}]}>Help</Text>
           </View>
@@ -249,7 +248,7 @@ const Help = ({navigation}) => {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+  
   );
 };
 

@@ -154,7 +154,8 @@ const FunInteraction = ({navigation}) => {
       });
   };
 
-  const report = async reptext => {
+  const report = async (reptext) => {
+    console.log('report');
     setLoader(true);
     const data = {
       post_id: postId,
@@ -170,6 +171,8 @@ const FunInteraction = ({navigation}) => {
       })
       .then(res => {
         // console.log('stttr', res.data);
+        console.log(res, 'response');
+        Alert.alert('post reported successfully')
         getPosts();
         refRBSheet1.current.close();
         setLoader(false);
@@ -412,7 +415,10 @@ const FunInteraction = ({navigation}) => {
                   </Menu.Item>
                 </>
               ) : null}
-              <Menu.Item
+              {
+                userID != elem?.item?.user?.id  ?(
+                  <>
+                  <Menu.Item
                 onPress={() => {
                   refRBSheet1.current.open();
                   setPostId(elem?.item?.id);
@@ -421,13 +427,17 @@ const FunInteraction = ({navigation}) => {
                 <View style={s.optionView}>
                   <MaterialIcons
                     name={'report'}
-                    color={textColor}
+                    color= 'red'
                     size={moderateScale(13, 0.1)}
                     style={{flex: 0.3}}
                   />
-                  <Text style={[s.optionBtns, {color: textColor}]}>Report</Text>
+                  <Text style={[s.optionBtns,]}>Report</Text>
                 </View>
               </Menu.Item>
+                  </>
+                ): null
+              }
+              
             </Menu>
           </View>
         </View>
@@ -485,7 +495,7 @@ const FunInteraction = ({navigation}) => {
             }}
           >
             <Text style={[s.name, {color: textColor}]}>
-              {elem?.item?.user?.name} {elem?.item?.user?.last_name}{' '}
+              {elem?.item?.user?.name}{elem?.item?.user?.last_name}{' '}
               <Text style={[s.textRegular, {color: textColor}]}>
                 {elem?.item?.caption}
               </Text>
@@ -560,7 +570,7 @@ const FunInteraction = ({navigation}) => {
           </View>
           <View>
             <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
-              {`${new Date(elem?.item?.created_at)}`}
+              {`${new Date(elem?.item?.created_at).toLocaleString()}`}
             </Text>
           </View>
         </View>
@@ -624,8 +634,9 @@ const FunInteraction = ({navigation}) => {
   };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
-      <View style={[s.container, s.col, {backgroundColor: color}]}>
         {loader ? <Loader /> : null}
+
+      <View style={[s.container, s.col, {backgroundColor: color}]}>
 
         <View style={s.searchContainer}>
           <Input
@@ -726,7 +737,7 @@ const FunInteraction = ({navigation}) => {
               alignItems: 'center',
               height: moderateScale(480),
               borderRadius: moderateScale(20, 0.1),
-              backgroundColor: '#222222',
+              backgroundColor: color,
             },
           }}
         >

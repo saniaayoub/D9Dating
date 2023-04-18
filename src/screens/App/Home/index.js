@@ -946,11 +946,11 @@ const Home = ({navigation}) => {
                 <View style={s.optionView}>
                   <MaterialIcons
                     name={'report'}
-                    color={textColor}
+                    color= 'red'
                     size={moderateScale(13, 0.1)}
                     style={{flex: 0.3}}
                   />
-                  <Text style={[s.optionBtns, {color: textColor}]}>Report</Text>
+                  <Text style={[s.optionBtns]}>Report</Text>
                 </View>
               </Menu.Item>
             </Menu>
@@ -1010,7 +1010,7 @@ const Home = ({navigation}) => {
             }}
           >
             <Text style={[s.name, {color: textColor}]}>
-              {elem?.item?.user?.name} {elem?.item?.user?.last_name}{' '}
+              {elem?.item?.user?.name}{elem?.item?.user?.last_name}{' '}
               <Text style={[s.textRegular, {color: textColor}]}>
                 {elem?.item?.caption}
               </Text>
@@ -1091,9 +1091,8 @@ const Home = ({navigation}) => {
 
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
-      <View style={[s.container, s.col, {backgroundColor: color}]}>
         {loader ? <Loader /> : null}
-
+      <View style={[s.container, s.col, {backgroundColor: color}]}>
         <ScrollView
           scrollEnabled
           horizontal
@@ -1387,7 +1386,7 @@ const Home = ({navigation}) => {
             alignItems: 'center',
             height: moderateScale(480),
             borderRadius: moderateScale(20, 0.1),
-            backgroundColor: '#222222',
+            backgroundColor: color,
           },
         }}
       >

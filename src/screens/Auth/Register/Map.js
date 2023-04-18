@@ -404,7 +404,9 @@ const Map = ({navigation, route}) => {
                   dispatch(setLocation(loc));
                   setModalVisible(!isModalVisible);
                   setTimeout(() => {
-                    navigation.goBack();
+                    navigation.navigate('Profile',{
+                     data :'map'
+                    });
                   }, 2000);
                 }
               }}
