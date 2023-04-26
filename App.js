@@ -12,17 +12,29 @@ import BottomTabs from './src/Navigation/BottomTabs';
 import AuthStack from './src/Navigation/Stacks/AuthStack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from './src/Providers/axios';
+import PushNotification from 'react-native-push-notification';
 // import PushNotification from 'react-native-push-notification';
 import SplashScreen from 'react-native-splash-screen';
 const App = () => {
   const dispatch = useDispatch();
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
+  useEffect(() => {
+    // Initialize push notifications
+    PushNotification.configure({
+      onNotification: function(notification) {
+        console.log('NOTIFICATION:', notification);
+      },
+    });
+
+    // Request permission to send push notifications
+    PushNotification.requestPermissions();
+
+  }, []);
 
   useEffect(() => {
     const init = async () => {
       // …do multiple sync or async task
-
       getToken();
     };
 

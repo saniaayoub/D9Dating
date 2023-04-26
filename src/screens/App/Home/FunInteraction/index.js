@@ -26,6 +26,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Feather from 'react-native-vector-icons/Feather';
 import {useIsFocused} from '@react-navigation/native';
 import Antdesign from 'react-native-vector-icons/AntDesign';
+import PushNotification from 'react-native-push-notification';
 
 const FunInteraction = ({navigation}) => {
   const dispatch = useDispatch();
@@ -72,8 +73,34 @@ const FunInteraction = ({navigation}) => {
     });
     return color;
   };
-
-  const hitLike = async (id, index) => {
+  useEffect(() => {
+   createChannel()
+  }, [])
+  
+const createChannel = ()=>{
+  PushNotification.createChannel(
+    {
+      channelId: "d9", // This is the channel ID
+      channelName: "My channel", // This is the channel name
+      channelDescription: "A channel to categorize your notifications", // This is the channel description
+      soundName: "default", // This is the sound to play when a notification is displayed
+      importance: 4, // This is the importance level of the channel (ranging from 0 to 5)
+      vibrate: true, // This indicates whether the device should vibrate when a notification is displayed
+    },
+    (created) => console.log(`Channel ${created ? 'created' : 'existing'}.`)
+  );
+}
+  const hitLike = async (id, userid, index, LId) => {
+    console.log(userid,'id');
+    console.log(LId, 'LId');
+    if(id){
+      PushNotification.localNotification({
+        channelId: "d9",
+        color: "red",
+        title: 'My Notification Title',
+        message: 'post liked',
+      });
+    }
     setLoader(true);
     await axiosconfig
       .get(`like/${id}`, {
@@ -455,7 +482,8 @@ const FunInteraction = ({navigation}) => {
           </TouchableWithoutFeedback>
           <TouchableOpacity
             onPress={() => {
-              hitLike(elem?.item?.id, elem?.index);
+              console.log('like');
+              hitLike(elem?.item?.id,elem?.item?.user_id ,elem?.index, elem?.item?.post_likes[0].user_id);
               // console.log(data[elem.index].post.liked);
             }}
             style={s.likes}
