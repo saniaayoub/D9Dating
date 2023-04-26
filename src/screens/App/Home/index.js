@@ -16,16 +16,8 @@ import React, {useState, useRef, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
 import s from './style';
-import InstaStory from 'react-native-insta-story';
-import {
-  Input,
-  Button,
-  Stack,
-  Menu,
-  Pressable,
-  HStack,
-  Spinner,
-} from 'native-base';
+import {Input, Button, Stack, Menu, Pressable} from 'native-base';
+import socket from '../../../utils/socket';
 import Stories from '../../../Stories/App';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -35,7 +27,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import Antdesign from 'react-native-vector-icons/AntDesign';
-import SearchDropDown from '../../../Components/SearchDropDown';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RNFS from 'react-native-fs';
@@ -43,8 +34,7 @@ import Loader from '../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
 import {useIsFocused} from '@react-navigation/native';
-import {setGroup, setStories} from '../../../Redux/actions';
-const win = Dimensions.get('window');
+import {setGroup, setStories, addUsers} from '../../../Redux/actions';
 
 const Groups = [
   {id: 'Group 1', color: 'blue'},
@@ -57,68 +47,6 @@ const Groups = [
   {id: 'Group 8', color: 'purple'},
   {id: 'Group 9', color: 'blue'},
 ];
-
-// const data = [
-//   {
-//     username: 'Guilherme',
-//     title: 'Title story',
-//     profile:
-//       'https://avatars2.githubusercontent.com/u/26286830?s=460&u=5d586a3783a6edeb226c557240c0ba47294a4229&v=4',
-//     stories: [
-//       {
-//         id: 1,
-//         url:
-//           'https://images.unsplash.com/photo-1532579853048-ec5f8f15f88d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
-//         type: 'image',
-//         duration: 2,
-//         isReadMore: true,
-//         url_readmore: 'https://github.com/iguilhermeluis',
-//         created: '2021-01-07T03:24:00',
-//       },
-//     ],
-//   },
-
-//   {
-//     username: 'Steve Jobs',
-//     profile:
-//       'https://s3.amazonaws.com/media.eremedia.com/uploads/2012/05/15181015/stevejobs.jpg',
-//     title: 'Tech',
-//     stories: [
-//       {
-//         id: 1,
-//         url:
-//           'https://images.unsplash.com/photo-1515578706925-0dc1a7bfc8cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60',
-//         type: 'image',
-//         duration: 2,
-//         isReadMore: true,
-//         url_readmore: 'https://github.com/iguilhermeluis',
-//         created: '2021-01-07T03:24:00',
-//       },
-//       {
-//         id: 3,
-//         url:
-//           'https://images.unsplash.com/photo-1496287437689-3c24997cca99?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
-//         type: 'image',
-//         duration: 2,
-
-//         isReadMore: true,
-//         url_readmore: 'https://github.com/iguilhermeluis',
-//         created: '2021-01-07T03:24:00',
-//       },
-//       {
-//         id: 4,
-//         url:
-//           'https://images.unsplash.com/photo-1514870262631-55de0332faf6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60',
-//         type: 'image',
-//         duration: 2,
-
-//         isReadMore: true,
-//         url_readmore: 'https://github.com/iguilhermeluis',
-//         created: '2021-01-07T03:24:00',
-//       },
-//     ],
-//   },
-// ];
 
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
@@ -158,6 +86,16 @@ const Home = ({navigation}) => {
     console.log(storyID, 'setUD');
   }, [isFocused]);
 
+  useEffect(() => {
+    socket.on('users', users => {
+      users.forEach(user => {
+        user.self = user.userID === socket.id;
+      });
+      console.log(users, 'client');
+      dispatch(addUsers(users));
+    });
+  }, []);
+
   const getID = async () => {
     const id = await AsyncStorage.getItem('id');
     setUserID(id);
@@ -176,6 +114,9 @@ const Home = ({navigation}) => {
       .then(res => {
         console.log('data', res.data.user_details);
         setUserData(res?.data?.user_details);
+        socket.auth = {username: res?.data?.user_details?.user_name};
+        socket.connect();
+
         setLoader(false);
       })
       .catch(err => {
@@ -946,7 +887,7 @@ const Home = ({navigation}) => {
                 <View style={s.optionView}>
                   <MaterialIcons
                     name={'report'}
-                    color= 'red'
+                    color="red"
                     size={moderateScale(13, 0.1)}
                     style={{flex: 0.3}}
                   />
@@ -1010,7 +951,8 @@ const Home = ({navigation}) => {
             }}
           >
             <Text style={[s.name, {color: textColor}]}>
-              {elem?.item?.user?.name}{elem?.item?.user?.last_name}{' '}
+              {elem?.item?.user?.name}
+              {elem?.item?.user?.last_name}{' '}
               <Text style={[s.textRegular, {color: textColor}]}>
                 {elem?.item?.caption}
               </Text>
@@ -1091,7 +1033,7 @@ const Home = ({navigation}) => {
 
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
-        {loader ? <Loader /> : null}
+      {loader ? <Loader /> : null}
       <View style={[s.container, s.col, {backgroundColor: color}]}>
         <ScrollView
           scrollEnabled

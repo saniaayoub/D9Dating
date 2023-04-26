@@ -194,7 +194,7 @@ const Message = ({navigation}) => {
   //   console.log(temp, 'temp');
   //   dispatch(addUsers(temp));
   // };
-  
+
   const handleCreateRoom = user => {
     navigation.navigate('Chat', user);
     setModalVisible(!modalVisible);
