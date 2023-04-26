@@ -20,15 +20,15 @@ const App = () => {
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
   useEffect(() => {
-    // Initialize push notifications
-    PushNotification.configure({
-      onNotification: function(notification) {
-        console.log('NOTIFICATION:', notification);
-      },
-    });
+    // // Initialize push notifications
+    // PushNotification.configure({
+    //   onNotification: function(notification) {
+    //     console.log('NOTIFICATION:', notification);
+    //   },
+    // });
 
-    // Request permission to send push notifications
-    PushNotification.requestPermissions();
+    // // Request permission to send push notifications
+    // PushNotification.requestPermissions();
 
   }, []);
 

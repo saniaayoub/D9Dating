@@ -14,10 +14,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import s from './style';
 import {Input, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
-import e1 from '../../../assets/images/png/e1.png';
-import e2 from '../../../assets/images/png/e2.png';
-import e3 from '../../../assets/images/png/e3.png';
-import e4 from '../../../assets/images/png/e4.png';
+import e1 from '../../../assets/images/png/as1.jpg';
+import e2 from '../../../assets/images/png/as2.jpg';
+import e3 from '../../../assets/images/png/as3.jpg';
+import e4 from '../../../assets/images/png/as4.jpg';
 import e5 from '../../../assets/images/png/e5.png';
 import e6 from '../../../assets/images/png/e6.png';
 import e7 from '../../../assets/images/png/e7.png';
@@ -186,24 +186,31 @@ const StartScreen = ({navigation}) => {
               width={undefined}
               height={undefined}
               style={{
-                width: '100%',
-                height: '100%',
+                borderRadius: moderateScale(116 / 2, 0.1),
+                width: moderateScale(90, 0.1),
+                height: moderateScale(90, 0.1),
+                // borderRadius: moderateScale
               }}
               resizeMode={'cover'}
             />
           </View>
           <View style={s.circle2}>
-            <Image
+            {/* <Image
               source={e5}
               width={undefined}
               height={undefined}
               style={{top: moderateScale(40, 0.1)}}
               resizeMode={'cover'}
-            />
+            /> */}
+            <View style={s.round2}>
+            <Text 
+            style={{
+             fontSize: moderateScale(25,0.1)}}>🤙🏾</Text>
+            </View>
           </View>
           <View style={s.circle3}>
             <View style={s.round}>
-              <Image
+              {/* <Image
                 source={e6}
                 width={undefined}
                 height={undefined}
@@ -212,10 +219,15 @@ const StartScreen = ({navigation}) => {
                   zIndex: 1000,
                 }}
                 resizeMode={'cover'}
-              />
+              /> */}
+            <Text  style={{
+                  borderRadius: moderateScale(16, 0.1),
+                  zIndex: -5000,
+                fontSize: moderateScale(25,0.1)
+                }}>👌🏾</Text>
             </View>
 
-            <Image
+            {/* <Image
               source={e7}
               width={undefined}
               height={undefined}
@@ -225,7 +237,15 @@ const StartScreen = ({navigation}) => {
                 left: moderateScale(100, 0.1),
               }}
               resizeMode={'cover'}
-            />
+            /> */}
+            <View style={s.round1}>
+            <Text  style={{
+                zIndex: 5000,
+                // top: moderateScale(230, 0.1),
+                // left: moderateScale(100, 0.1),
+                fontSize: moderateScale(30,0.1)
+              }}>🤘🏽</Text>
+            </View>
           </View>
           <View style={s.circle4}>
             <Image
@@ -233,7 +253,12 @@ const StartScreen = ({navigation}) => {
               width={undefined}
               resizeMode={'cover'}
               style={{
+                top: moderateScale(7,0.1),
                 left: moderateScale(25, 0.1),
+                width: moderateScale(60, 0.1),
+                height: moderateScale(60, 0.1),
+                borderRadius: moderateScale(60/2,0.1)
+                
               }}
             />
             <Image
@@ -243,6 +268,9 @@ const StartScreen = ({navigation}) => {
               style={{
                 left: moderateScale(200, 0.1),
                 top: moderateScale(240, 0.1),
+                width: moderateScale(55, 0.1),
+                height: moderateScale(55, 0.1),
+                borderRadius: moderateScale(55/2,0.1)
               }}
             />
             <Image
@@ -252,6 +280,9 @@ const StartScreen = ({navigation}) => {
               style={{
                 left: moderateScale(300, 0.1),
                 top: moderateScale(-50, 0.1),
+                width: moderateScale(50, 0.1),
+                height: moderateScale(50, 0.1),
+                borderRadius: moderateScale(50/2,0.1)
               }}
             />
           </View>

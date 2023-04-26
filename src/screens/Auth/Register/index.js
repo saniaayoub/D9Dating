@@ -38,16 +38,16 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import style from '../../../Components/Header/style';
 import Loader from '../../../Components/Loader';
-const Groups = [
-  {id: 'Group 1', color: 'blue'},
-  {id: 'Group 2', color: 'green'},
-  {id: 'Group 3', color: 'red'},
-  {id: 'Group 4', color: 'yellow'},
-  {id: 'Group 5', color: 'orange'},
-  {id: 'Group 6', color: 'brown'},
-  {id: 'Group 7', color: 'pink'},
-  {id: 'Group 8', color: 'purple'},
-  {id: 'Group 9', color: 'blue'},
+const Organization = [
+  {id: 'Organization 1', color: 'blue'},
+  {id: 'Organization 2', color: 'green'},
+  {id: 'Organization 3', color: 'red'},
+  {id: 'Organization 4', color: 'yellow'},
+  {id: 'Organization 5', color: 'orange'},
+  {id: 'Organization 6', color: 'brown'},
+  {id: 'Organization 7', color: 'pink'},
+  {id: 'Organization 8', color: 'purple'},
+  {id: 'Organization 9', color: 'blue'},
 ];
 const Register = ({navigation}) => {
   const dispatch = useDispatch();
@@ -92,7 +92,7 @@ const Register = ({navigation}) => {
       selected: gender == 'Other' ? true : false,
     },
   ]);
-  const [group, setGroup] = useState(null);
+  const [organization, setOrganization] = useState(null);
   const [value, setValue] = useState([
     {
       label: 'Public',
@@ -190,7 +190,7 @@ const Register = ({navigation}) => {
       sub = false;
       return false;
     }
-    if (group == null) {
+    if (organization == null) {
       sub = false;
       return false;
     }
@@ -249,7 +249,7 @@ const Register = ({navigation}) => {
       phone_number: phonenum.current.getValue(),
       gender: gender,
       location: userLocation,
-      group: group,
+      group: organization,
       password: password,
       confirm_password: confirmPassword,
       date: date,
@@ -579,7 +579,7 @@ const Register = ({navigation}) => {
             </View>
             <View style={s.input}>
               <View style={{flex: 0.4}}>
-                <Text style={[s.inputTxt, {color: Textcolor}]}>Group</Text>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>Organization</Text>
               </View>
               <View style={{flex: 0.6}}>
                 <Menu
@@ -601,7 +601,7 @@ const Register = ({navigation}) => {
                           borderColor: 'white',
                           borderBottomWidth: 1,
                           borderBottomColor:
-                            onsubmit && group == null ? 'red' : Textcolor,
+                            onsubmit && organization == null ? 'red' : Textcolor,
                           marginBottom: moderateScale(-10, 0.1),
                           paddingLeft: moderateScale(10, 0.1),
                           width: moderateScale(170, 0.1),
@@ -619,7 +619,7 @@ const Register = ({navigation}) => {
                             },
                           ]}
                         >
-                          {group}
+                          {organization}
                         </Text>
 
                         <Entypo
@@ -635,11 +635,11 @@ const Register = ({navigation}) => {
                     );
                   }}
                 >
-                  {Groups.map((v, i) => {
+                  {Organization.map((v, i) => {
                     return (
                       <Menu.Item
                         onPress={() => {
-                          setGroup(v.id);
+                          setOrganization(v.id);
                         }}
                       >
                         <View style={s.optionView}>
