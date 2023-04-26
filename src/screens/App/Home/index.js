@@ -114,7 +114,7 @@ const Home = ({navigation}) => {
       .then(res => {
         console.log('data', res.data.user_details);
         setUserData(res?.data?.user_details);
-        socket.auth = {username: res?.data?.user_details?.user_name};
+        socket.auth = {username: res?.data?.user_details?.name};
         socket.connect();
 
         setLoader(false);

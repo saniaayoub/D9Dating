@@ -90,16 +90,19 @@ const createChannel = ()=>{
     (created) => console.log(`Channel ${created ? 'created' : 'existing'}.`)
   );
 }
-  const hitLike = async (id, userid, index, LId) => {
+  const hitLike = async (id, userid, index) => {
     console.log(userid,'id');
-    console.log(LId, 'LId');
-    if(id){
+    console.log(userID, 'id');
+    if(userid == userID){
       PushNotification.localNotification({
         channelId: "d9",
         color: "red",
         title: 'My Notification Title',
         message: 'post liked',
       });
+    }
+    else{
+      console.log('id not matched');
     }
     setLoader(true);
     await axiosconfig
@@ -483,7 +486,7 @@ const createChannel = ()=>{
           <TouchableOpacity
             onPress={() => {
               console.log('like');
-              hitLike(elem?.item?.id,elem?.item?.user_id ,elem?.index, elem?.item?.post_likes[0].user_id);
+              hitLike(elem?.item?.id, elem?.item?.user_id ,elem?.index);
               // console.log(data[elem.index].post.liked);
             }}
             style={s.likes}
