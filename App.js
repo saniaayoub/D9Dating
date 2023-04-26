@@ -73,7 +73,7 @@ const App = () => {
         if (Platform.OS == 'android') {
           SplashScreen.hide();
         }
-        setLoader(false);
+        // setLoader(false);
         console.log(err);
         // showToast(err.response);
       });
