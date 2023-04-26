@@ -19,8 +19,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Input, FormControl, Button} from 'native-base';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
 
 
 const messages = [
@@ -78,34 +76,7 @@ const Chat = ({navigation, route, chatId, id, user }) => {
 const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
 
-  useEffect(() => {
-    const db = firebase.firestore();
-    const unsubscribe = db.collection('messages')
-      .orderBy('createdAt')
-      .onSnapshot(querySnapshot => {
-        const messages = [];
-        querySnapshot.forEach(doc => {
-          messages.push({
-            ...doc.data(),
-            id: doc.id,
-          });
-        });
-        setMessages(messages);
-      });
-    return unsubscribe;
-  }, []);
-
-  const handleSend = () => {
-    const db = firebase.firestore();
-    db.collection('messages').add({
-      text,
-      createdAt: new Date(),
-    }).then(() => {
-      setText('');
-    }).catch(error => {
-      console.error('Error sending message:', error);
-    });
-  };
+ 
 
 
 // <Button
@@ -124,7 +95,7 @@ const [messages, setMessages] = useState([]);
           onChangeText={setText}
           placeholder="Type a message"
         />
-        <TouchableOpacity onPress={handleSend}>
+        <TouchableOpacity >
           <Text>Send</Text>
         </TouchableOpacity>
       </View>
