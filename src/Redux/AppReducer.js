@@ -65,7 +65,7 @@ const AppReducer = (state = initialState, action) => {
     case SET_ORGANIZATION:
       return {
         ...state,
-        group: action.payload,
+        organization: action.payload,
       };
     case POST_LOCATION:
       return {

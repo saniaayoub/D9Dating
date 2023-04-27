@@ -249,7 +249,7 @@ const Register = ({navigation}) => {
       phone_number: phonenum.current.getValue(),
       gender: gender,
       location: userLocation,
-      organization: organization,
+      group: organization,
       password: password,
       confirm_password: confirmPassword,
       date: date,
@@ -579,7 +579,9 @@ const Register = ({navigation}) => {
             </View>
             <View style={s.input}>
               <View style={{flex: 0.4}}>
-                <Text style={[s.inputTxt, {color: Textcolor}]}>Organization</Text>
+                <Text style={[s.inputTxt, {color: Textcolor}]}>
+                  Organization
+                </Text>
               </View>
               <View style={{flex: 0.6}}>
                 <Menu
@@ -601,7 +603,9 @@ const Register = ({navigation}) => {
                           borderColor: 'white',
                           borderBottomWidth: 1,
                           borderBottomColor:
-                            onsubmit && organization == null ? 'red' : Textcolor,
+                            onsubmit && organization == null
+                              ? 'red'
+                              : Textcolor,
                           marginBottom: moderateScale(-10, 0.1),
                           paddingLeft: moderateScale(10, 0.1),
                           width: moderateScale(170, 0.1),

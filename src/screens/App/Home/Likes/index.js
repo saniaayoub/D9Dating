@@ -171,7 +171,7 @@ const Likes = ({navigation, route}) => {
     // console.log(elem.item, 'a');
     return (
       <View style={s.card}>
-        <View style={[s.dp, {borderColor: getColor(elem?.item?.organization)}]}>
+        <View style={[s.dp, {borderColor: getColor(elem?.item?.group)}]}>
           <Image
             source={{
               uri: elem?.item?.users?.image

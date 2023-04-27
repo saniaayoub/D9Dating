@@ -114,7 +114,7 @@ const HiddenPosts = ({navigation, route}) => {
       <View style={s.col}>
         <View style={s.header}>
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.user?.organization)}]}
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
           >
             <Image
               source={{

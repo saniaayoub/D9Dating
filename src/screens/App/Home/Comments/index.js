@@ -311,7 +311,7 @@ const Comments = ({navigation, route}) => {
           }}
         >
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.users?.organization)}]}
+            style={[s.dp, {borderColor: getColor(elem?.item?.users?.group)}]}
           >
             <Image
               source={{
@@ -414,7 +414,7 @@ const Comments = ({navigation, route}) => {
         contentContainerStyle={[s.container, {backgroundColor: color}]}
       >
         <View style={s.caption}>
-          <View style={[s.dp, {borderColor: getColor(post?.user?.organization)}]}>
+          <View style={[s.dp, {borderColor: getColor(post?.user?.group)}]}>
             <Image
               source={{uri: post?.user?.image ? post?.user?.image : dummyImage}}
               style={s.dp1}
@@ -460,7 +460,7 @@ const Comments = ({navigation, route}) => {
                   style={[
                     s.smallDp,
                     {
-                      borderColor: getColor(userData?.organization),
+                      borderColor: getColor(userData?.group),
                     },
                   ]}
                 >
