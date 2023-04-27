@@ -27,18 +27,20 @@ import Feather from 'react-native-vector-icons/Feather';
 import {useIsFocused} from '@react-navigation/native';
 import Antdesign from 'react-native-vector-icons/AntDesign';
 import PushNotification from 'react-native-push-notification';
-
+import io from 'socket.io-client';
+import socket from '../../../../utils/socket';
+const SERVER_URL = 'http://your-server-address';
 const FunInteraction = ({navigation}) => {
   const dispatch = useDispatch();
   const refRBSheet1 = useRef();
   const isFocused = useIsFocused();
-  const groups = useSelector(state => state.reducer.group);
+  const organizations = useSelector(state => state.reducer.organization);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [searchText, setSearchText] = useState('');
   const [postId, setPostId] = useState(null);
-
+  const [userId, setUserId] = useState(null);
   const [refresh, setRefresh] = useState(true);
   const [loader, setLoader] = useState(true);
   const [publicPost, setPublicPost] = useState([]);
@@ -53,7 +55,30 @@ const FunInteraction = ({navigation}) => {
   const [filtered, setFiltered] = useState(dataSource);
   const [searching, setSearching] = useState(false);
   const userToken = useSelector(state => state.reducer.userToken);
+  const [soc, setSoc] = useState(null);
+  useEffect(() => {
+    const socket = io(socket);
+    setSoc(socket);
 
+    // TODO: Get user ID after authentication
+    // const userId = getUserId();
+    setUserId(userID);
+
+    // Clean up Socket.IO client on unmount
+    return () => {
+      socket.disconnect();
+      setSoc(null);
+      setUserId(null);
+    };
+  }, []);
+
+  // Emit 'likePost' event on post like
+  const handleLikePost = (postId) => {
+    if (soc) {
+      soc.emit('likePost', { postId, userId });
+    }
+  };
+  
   useEffect(() => {
     getID();
     getPosts();
@@ -66,7 +91,7 @@ const FunInteraction = ({navigation}) => {
   };
   const getColor = id => {
     let color;
-    groups?.forEach(elem => {
+    organizations?.forEach(elem => {
       if (elem.id == id) {
         color = elem.color;
       }
@@ -91,6 +116,9 @@ const createChannel = ()=>{
   );
 }
   const hitLike = async (id, userid, index) => {
+ 
+      socket.emit('likePost', { postId, userId });
+    
     console.log(userid,'id');
     console.log(userID, 'id');
     if(userid == userID){
@@ -328,7 +356,7 @@ const createChannel = ()=>{
       <View style={s.col}>
         <View style={s.header}>
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.organization)}]}
           >
             <Image
               source={{
@@ -555,7 +583,7 @@ const createChannel = ()=>{
                   style={[
                     s.smallDp,
                     {
-                      borderColor: getColor(elem?.item?.user?.group),
+                      borderColor: getColor(elem?.item?.user?.organization),
                     },
                   ]}
                 >
@@ -612,7 +640,7 @@ const createChannel = ()=>{
   const searchItem = (elem, i) => {
     return (
       <TouchableOpacity style={s.card}>
-        <View style={[s.dp, {borderColor: getColor(elem?.item?.group)}]}>
+        <View style={[s.dp, {borderColor: getColor(elem?.item?.organization)}]}>
           <Image
             source={{uri: elem?.item?.image ? elem?.item?.image : dummyImage}}
             style={s.dp1}

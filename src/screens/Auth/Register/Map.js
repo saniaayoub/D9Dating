@@ -66,8 +66,8 @@ const Map = ({navigation, route}) => {
   const dispatch = useDispatch();
   const mapRef = useRef();
   const [markerPosition, setMarkerPosition] = useState({
-    latitude: 24.946218,
-    longitude: 67.005615,
+    latitude: 51.5085300,
+    longitude:  -0.1257400,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
@@ -106,8 +106,8 @@ const Map = ({navigation, route}) => {
     setMarkerPosition(event.nativeEvent.coordinate);
   };
   const [position, setPosition] = useState({
-    latitude: 24.946218,
-    longitude: 67.005615,
+    latitude: 51.5085300,
+    longitude:  -0.1257400,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });

@@ -26,7 +26,6 @@ const data = [
       'Julie Watson Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diamnonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry',
     post: {
       image: require('../../../../assets/images/png/dp.png'),
-
       likes: 233,
     },
   },
@@ -226,11 +225,6 @@ const ViewUser = ({navigation, route}) => {
                 />
               </View>
             </View>
-
-            {/* <View>
-        <Text style={s.txt}>hdjdkdjksd </Text>
-      </View> */}
-
             <View style={s.row1}>
               <View>
                 <Ionicon
@@ -247,6 +241,12 @@ const ViewUser = ({navigation, route}) => {
               <Text style={[s.aboutTxt, {color: textColor}]}>About</Text>
               <View style={s.abTxt}>
                 <Text style={s.txt}>{userData?.about_me} </Text>
+              </View>
+            </View>
+            <View>
+              <Text style={[s.aboutTxt, {color: textColor}]}>Organization</Text>
+              <View style={s.abTxt}>
+                <Text style={s.txt}>{userData?.organization} </Text>
               </View>
             </View>
           </View>

@@ -35,7 +35,7 @@ import RNFS from 'react-native-fs';
 
 const CreatePost = ({navigation, route}) => {
   const privacy = route?.params?.elem?.privacy_option;
-  const groups = useSelector(state => state.reducer.group);
+  const organization = useSelector(state => state.reducer.organization);
 
   useEffect(() => {
     console.log('sefsst', route?.params?.elem);
@@ -202,7 +202,7 @@ const CreatePost = ({navigation, route}) => {
   const getColor = id => {
     let color;
 
-    groups?.forEach(elem => {
+    organization?.forEach(elem => {
       if (elem.id == id) {
         color = elem.color;
       }
@@ -356,7 +356,7 @@ const CreatePost = ({navigation, route}) => {
           <View
             style={{
               borderWidth: moderateScale(2, 0.1),
-              borderColor: getColor(userData?.group),
+              borderColor: getColor(userData?.organization),
               width: moderateScale(58, 0.1),
               height: moderateScale(58, 0.1),
               borderRadius: moderateScale(58 / 2, 0.1),

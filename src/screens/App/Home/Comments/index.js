@@ -91,7 +91,7 @@ const Comments = ({navigation, route}) => {
   const {post} = route.params;
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
-  const groups = useSelector(state => state.reducer.group);
+  const organizations = useSelector(state => state.reducer.organization);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [comment, setComment] = useState('');
@@ -163,7 +163,7 @@ const Comments = ({navigation, route}) => {
   const getColor = id => {
     let color;
 
-    groups?.forEach(elem => {
+    organizations?.forEach(elem => {
       if (elem.id == id) {
         color = elem.color;
       }
@@ -311,7 +311,7 @@ const Comments = ({navigation, route}) => {
           }}
         >
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.users?.group)}]}
+            style={[s.dp, {borderColor: getColor(elem?.item?.users?.organization)}]}
           >
             <Image
               source={{
@@ -414,7 +414,7 @@ const Comments = ({navigation, route}) => {
         contentContainerStyle={[s.container, {backgroundColor: color}]}
       >
         <View style={s.caption}>
-          <View style={[s.dp, {borderColor: getColor(post?.user?.group)}]}>
+          <View style={[s.dp, {borderColor: getColor(post?.user?.organization)}]}>
             <Image
               source={{uri: post?.user?.image ? post?.user?.image : dummyImage}}
               style={s.dp1}
@@ -460,7 +460,7 @@ const Comments = ({navigation, route}) => {
                   style={[
                     s.smallDp,
                     {
-                      borderColor: getColor(userData?.group),
+                      borderColor: getColor(userData?.organization),
                     },
                   ]}
                 >

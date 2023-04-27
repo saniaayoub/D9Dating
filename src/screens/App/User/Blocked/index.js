@@ -21,7 +21,7 @@ const Block = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-  const groups = useSelector(state => state.reducer.group);
+  const organizations = useSelector(state => state.reducer.organization);
   const userToken = useSelector(state => state.reducer.userToken);
   const [data, setData] = useState([]);
   const isFocused = useIsFocused();
@@ -35,7 +35,7 @@ const Block = ({navigation}) => {
 
   const getColor = id => {
     let color;
-    groups?.forEach(elem => {
+    organizations?.forEach(elem => {
       if (elem.id == id) {
         color = elem.color;
       }
@@ -90,7 +90,7 @@ const Block = ({navigation}) => {
     console.log(elem.item, 'a');
     return (
       <View style={s.card}>
-        <View style={[s.dp, {borderColor: getColor(elem?.item?.group)}]}>
+        <View style={[s.dp, {borderColor: getColor(elem?.item?.organization)}]}>
           <Image
             source={{
               uri: elem?.item?.image ? elem?.item?.image : dummyImage,

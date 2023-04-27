@@ -18,7 +18,7 @@ import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Likes = ({navigation, route}) => {
-  const groups = useSelector(state => state.reducer.group);
+  const organizations = useSelector(state => state.reducer.organization);
 
   const [loader, setLoader] = useState(false);
   const theme = useSelector(state => state.reducer.theme);
@@ -42,7 +42,7 @@ const Likes = ({navigation, route}) => {
 
   const getColor = id => {
     let color;
-    groups?.forEach(elem => {
+    organizations?.forEach(elem => {
       if (elem.id == id) {
         color = elem.color;
       }
@@ -171,7 +171,7 @@ const Likes = ({navigation, route}) => {
     // console.log(elem.item, 'a');
     return (
       <View style={s.card}>
-        <View style={[s.dp, {borderColor: getColor(elem?.item?.group)}]}>
+        <View style={[s.dp, {borderColor: getColor(elem?.item?.organization)}]}>
           <Image
             source={{
               uri: elem?.item?.users?.image

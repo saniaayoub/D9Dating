@@ -65,6 +65,7 @@ console.log('param1' , route?.params?.data)
   const [disable5, setDisable5] = useState(false);
   const [disable6, setDisable6] = useState(false);
   const [disable7, setDisable7] = useState(false);
+  const [disable8, setDisable8] = useState(false);
   const [userName, setUserName] = useState('');
   const[loc, setLoc] = useState('')
 
@@ -76,6 +77,7 @@ console.log('param1' , route?.params?.data)
     name: '',
     last_name: '',
     about_me: '',
+    organization: '',
     email: '',
     phone_number: '',
     location: '',
@@ -570,6 +572,49 @@ console.log('nothing');
               value={form?.about_me}
               onChangeText={text => {
                 setForm({...form, about_me: text});
+              }}
+            />
+          </View>
+          <View style={s.input}>
+            <Input
+              w="100%"
+              variant="underlined"
+              color={textColor}
+              fontSize={moderateScale(12, 0.1)}
+              InputLeftElement={
+                <View style={s.icon}>
+                  <Inicon
+                    name={'information-circle'}
+                    size={moderateScale(20, 0.1)}
+                    solid
+                    color={textColor}
+                  />
+                </View>
+              }
+              InputRightElement={
+                <TouchableOpacity
+                  onPress={() => {
+                    setDisable8(!disable8);
+                  }}
+                >
+                  <Entypo
+                    name={'edit'}
+                    size={moderateScale(15, 0.1)}
+                    color={textColor}
+                  />
+                </TouchableOpacity>
+              }
+              // value={fname}
+              onEndEditing={() => {
+                setDisable2(!disable8);
+              }}
+              isReadOnly={!disable8}
+              isFocused={disable8}
+              placeholder="Organization"
+              placeholderTextColor={textColor}
+              value={form?.organization}
+              onChangeText={text => {
+                setForm({...form, organization: text});
               }}
             />
           </View>
