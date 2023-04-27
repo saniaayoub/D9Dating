@@ -249,7 +249,7 @@ const Register = ({navigation}) => {
       phone_number: phonenum.current.getValue(),
       gender: gender,
       location: userLocation,
-      group: organization,
+      organization: organization,
       password: password,
       confirm_password: confirmPassword,
       date: date,

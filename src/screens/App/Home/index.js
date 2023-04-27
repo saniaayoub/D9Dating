@@ -34,18 +34,18 @@ import Loader from '../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
 import {useIsFocused} from '@react-navigation/native';
-import {setGroup, setStories, addUsers} from '../../../Redux/actions';
+import {setOrganization, setStories, addUsers} from '../../../Redux/actions';
 
-const Groups = [
-  {id: 'Group 1', color: 'blue'},
-  {id: 'Group 2', color: 'green'},
-  {id: 'Group 3', color: 'red'},
-  {id: 'Group 4', color: 'yellow'},
-  {id: 'Group 5', color: 'orange'},
-  {id: 'Group 6', color: 'brown'},
-  {id: 'Group 7', color: 'pink'},
-  {id: 'Group 8', color: 'purple'},
-  {id: 'Group 9', color: 'blue'},
+const Organizations = [
+  {id: 'Organization 1', color: 'blue'},
+  {id: 'Organization 2', color: 'green'},
+  {id: 'Organization 3', color: 'red'},
+  {id: 'Organization 4', color: 'yellow'},
+  {id: 'Organization 5', color: 'orange'},
+  {id: 'Organization 6', color: 'brown'},
+  {id: 'Organization 7', color: 'pink'},
+  {id: 'Organization 8', color: 'purple'},
+  {id: 'Organization 9', color: 'blue'},
 ];
 
 const Home = ({navigation}) => {
@@ -55,7 +55,7 @@ const Home = ({navigation}) => {
   const isFocused = useIsFocused();
   const theme = useSelector(state => state.reducer.theme);
   const userToken = useSelector(state => state.reducer.userToken);
-  const groups = useSelector(state => state.reducer.group);
+  const organizations = useSelector(state => state.reducer.organization);
   const storyID = useSelector(state => state.reducer.storyID);
   const storiesData = useSelector(state => state.reducer.stories);
   const color = theme === 'dark' ? '#222222' : '#fff';
@@ -77,7 +77,7 @@ const Home = ({navigation}) => {
   );
 
   useEffect(() => {
-    dispatch(setGroup(Groups));
+    dispatch(setOrganization(Organizations));
     getID();
     getPosts();
     getStories();
@@ -223,7 +223,7 @@ const Home = ({navigation}) => {
       let tempelem = {
         user_id: elem.id,
         profile: elem.image ? elem?.image : dummyImage,
-        group: elem.group,
+        organization: elem.organization,
         username: elem.name + ' ' + elem.last_name,
         title: elem.name + ' ' + elem.last_name,
         stories: elem.stories.map(item => {
@@ -418,7 +418,7 @@ const Home = ({navigation}) => {
 
   const getColor = id => {
     let color;
-    groups?.forEach(elem => {
+    organizations?.forEach(elem => {
       if (elem.id == id) {
         color = elem.color;
       }
@@ -639,7 +639,7 @@ const Home = ({navigation}) => {
     // let temp = {
     //   user_id: data.id,
     //   user_image: data.image ? data.image : dummyImage,
-    //   group: data.group,
+    //   organization: data.organization,
     //   user_name: data.name,
     //   stories: data.stories.map(elem => {
     //     return {...elem, onPress: () => console.log('story 1 swiped')};
@@ -653,7 +653,7 @@ const Home = ({navigation}) => {
     let temp = {
       user_id: data.id,
       profile: data.image ? data.image : dummyImage,
-      group: data.group,
+      organization: data.organization,
       username: data.name + ' ' + data.last_name,
       title: data.name + ' ' + data.last_name,
       stories: data.stories.map(elem => {
@@ -756,7 +756,7 @@ const Home = ({navigation}) => {
       <View style={s.col}>
         <View style={s.header}>
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.organization)}]}
           >
             <Image
               source={{
@@ -979,7 +979,7 @@ const Home = ({navigation}) => {
                   style={[
                     s.smallDp,
                     {
-                      borderColor: getColor(elem?.item?.user?.group),
+                      borderColor: getColor(elem?.item?.user?.organization),
                     },
                   ]}
                 >

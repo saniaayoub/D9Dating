@@ -5,7 +5,7 @@ import {
   LOCATION,
   DATE,
   SET_USER_DATA,
-  SET_GROUP,
+  SET_ORGANIZATION,
   POST_LOCATION,
   SET_STORIES,
   SET_EXIST,
@@ -53,9 +53,9 @@ export const setUserData = value => {
   };
 };
 
-export const setGroup = value => {
+export const setOrganization = value => {
   return {
-    type: SET_GROUP,
+    type: SET_ORGANIZATION,
     payload: value,
   };
 };

@@ -72,7 +72,8 @@ const styles = StyleSheet.create({
     color: '#9F9F9F',
   },
   about: {
-    marginVertical: moderateScale(30),
+    marginTop: moderateScale(30),
+    marginBottom: moderateScale(7,0.1)
   },
   aboutTxt: {
     //fontFamily: Poppins,

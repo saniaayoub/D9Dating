@@ -5,7 +5,7 @@ import {
   LOCATION,
   DATE,
   SET_USER_DATA,
-  SET_GROUP,
+  SET_ORGANIZATION,
   POST_LOCATION,
   SET_STORIES,
   SET_EXIST,
@@ -21,7 +21,7 @@ const initialState = {
   date: '',
   userData: {},
   userPassword: '',
-  group: [],
+  organization: [],
   postLocation: '',
   stories: [],
   exist: '',
@@ -62,7 +62,7 @@ const AppReducer = (state = initialState, action) => {
         ...state,
         userData: action.payload,
       };
-    case SET_GROUP:
+    case SET_ORGANIZATION:
       return {
         ...state,
         group: action.payload,

@@ -37,6 +37,23 @@ const socketIO = require('socket.io')(http, {
   },
 });
 
+socketIO.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // Listen for the 'likePost' event from the client
+  socket.on('likePost', ({ postId, userId }) => {
+    console.log(`Post ${postId} was liked by user ${userId}`);
+    const recipientIds = getRecipientIds(postId);
+    sendLocalPushNotification(recipientIds, `${userId} liked your post!`);
+  });
+
+  // Handle Socket.IO disconnections
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
+
+
 socketIO.on('connection', socket => {
   console.log(`⚡: ${socket.id} user just connected!`);
   // socket.emit('roomsList', chatRooms);
@@ -61,7 +78,7 @@ socketIO.on('connection', socket => {
       time: `${timestamp.hour}:${timestamp.mins}`,
     });
   });
-
+ 
   socket.on('disconnect', () => {
     socket.disconnect();
     console.log('🔥: A user disconnected');

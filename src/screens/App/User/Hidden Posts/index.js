@@ -23,7 +23,7 @@ import {useIsFocused} from '@react-navigation/native';
 import Header from '../../../../Components/Header';
 
 const HiddenPosts = ({navigation, route}) => {
-  const groups = useSelector(state => state.reducer.group);
+  const organizations = useSelector(state => state.reducer.organization);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
@@ -44,7 +44,7 @@ const HiddenPosts = ({navigation, route}) => {
 
   const getColor = id => {
     let color;
-    groups?.forEach(elem => {
+    organizations?.forEach(elem => {
       if (elem.id == id) {
         color = elem.color;
       }
@@ -114,7 +114,7 @@ const HiddenPosts = ({navigation, route}) => {
       <View style={s.col}>
         <View style={s.header}>
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.organization)}]}
           >
             <Image
               source={{
