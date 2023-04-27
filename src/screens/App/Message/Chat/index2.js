@@ -16,10 +16,13 @@ import s from './style';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {Input, FormControl, Button} from 'native-base';
+import {Input, FormControl, Button, Menu, Pressable} from 'native-base';
 import socket from '../../../../utils/socket';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Antdesign from 'react-native-vector-icons/AntDesign';
+
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 //  const socket = io('http://192.168.18.226');
 //     socket.connect();
@@ -85,9 +88,22 @@ const Chat = ({navigation, route}) => {
   const [user, setUser] = useState('');
   const [refresh, setRefresh] = useState(true);
   const users = useSelector(state => state.reducer.users);
+
+  const [msg, setMsg] = useState([]);
+  const [input, setInput] = useState('');
+  //   const [socket, setSocket] = useState(io('http://192.168.18.226:3000'));
+
+  const dispatch = useDispatch();
+
+  const theme = useSelector(state => state.reducer.theme);
+  const color = theme === 'dark' ? '#222222' : '#fff';
+  const textColor = theme === 'light' ? '#000' : '#fff';
   //👇🏻 Access the chatroom's name and id
   const {username, userID} = route.params;
   // console.log(route.params, ' route.params');
+  // useEffect(() => {
+  //   console.log(chatMessages, 'chat'), [];
+  // });
 
   //👇🏻 This function gets the username saved on AsyncStorage
   const getUsername = async () => {
@@ -135,12 +151,14 @@ const Chat = ({navigation, route}) => {
           message,
           fromSelf: true,
           time: `${hour}:${mins}`,
+          to: userID,
         },
         ...chatMessages,
       ]);
       console.log('sent', {
         message,
         fromSelf: true,
+        to: userID,
       });
       setMessage('');
 
@@ -165,21 +183,6 @@ const Chat = ({navigation, route}) => {
     // socket.on('foundRoom', roomChats => setChatMessages(roomChats));
   };
 
-  const [msg, setMsg] = useState([]);
-  const [input, setInput] = useState('');
-  //   const [socket, setSocket] = useState(io('http://192.168.18.226:3000'));
-
-  const dispatch = useDispatch();
-
-  const theme = useSelector(state => state.reducer.theme);
-  const color = theme === 'dark' ? '#222222' : '#fff';
-  const textColor = theme === 'light' ? '#000' : '#fff';
-
-  //   const name = data.from;
-  //   console.log(uid, 'id');
-  //   const senderId = Math.floor(Math.random() * 100);
-  //   console.log(senderId);
-
   useEffect(() => {
     // getValueFunction();
     socket.on('private message', ({content, from, time}) => {
@@ -192,6 +195,7 @@ const Chat = ({navigation, route}) => {
             message: content,
             fromSelf: false,
             time: time,
+            from: from,
           },
           ...chatMessages,
         ]);
@@ -261,10 +265,7 @@ const Chat = ({navigation, route}) => {
   };
   const renderItem = elem => {
     const status = elem?.item?.fromSelf;
-    // console.log(elem, 'elem', user, 'user');
-    // console.log(status);
 
-    // if (elem?.item.to === uid) {
     return (
       <View
         style={[
@@ -290,21 +291,110 @@ const Chat = ({navigation, route}) => {
             },
           ]}
         >
-          <View style={status ? s.textFrom : s.textTo}>
-            <Text style={s.textSmall1}>{elem.item.message}</Text>
-            <Text style={[s.textSmall1, {textAlign: 'right'}]}>
-              {/* time */}
-              {elem?.item?.time?.toLocaleString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </Text>
+          <View style={[s.options]}>
+            <Menu
+              w="150"
+              borderWidth={moderateScale(1, 0.1)}
+              borderColor={'grey'}
+              backgroundColor={color}
+              marginRight={moderateScale(15, 0.1)}
+              marginTop={moderateScale(25, 0.1)}
+              closeOnSelect={true}
+              trigger={triggerProps => {
+                return (
+                  <Pressable
+                    // onLongPress={}
+                    accessibilityLabel="More options menu"
+                    {...triggerProps}
+                    style={{
+                      flexDirection: 'row',
+                      right: moderateScale(8, 0.1),
+                    }}
+                  >
+                    <View style={status ? s.textFrom : s.textTo}>
+                      <Text style={s.textSmall1}>{elem?.item?.message}</Text>
+                      <Text style={[s.textSmall1, {textAlign: 'right'}]}>
+                        {/* time */}
+                        {elem?.item?.time?.toLocaleString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </Text>
+                    </View>
+                  </Pressable>
+                );
+              }}
+            >
+              <Menu.Item
+                onPress={() => {
+                  console.log('unsend');
+                }}
+              >
+                <View style={s.optionView}>
+                  <MaterialIcons
+                    name={'cancel-schedule-send'}
+                    color={textColor}
+                    size={moderateScale(13, 0.1)}
+                    // style={{marginRight: moderateScale(10, 0.1)}}
+                    style={{flex: 0.3}}
+                  />
+                  <Text style={[s.optionBtns, {color: textColor}]}>Unsend</Text>
+                </View>
+              </Menu.Item>
+              <Menu.Item
+                onPress={() => {
+                  console.log('reply');
+                }}
+              >
+                <View style={s.optionView}>
+                  <MaterialIcons
+                    name={'reply'}
+                    color={textColor}
+                    size={moderateScale(13, 0.1)}
+                    style={{flex: 0.3}}
+                  />
+                  <Text style={[s.optionBtns, {color: textColor}]}>Reply</Text>
+                </View>
+              </Menu.Item>
+
+              <Menu.Item
+                onPress={() => {
+                  console.log('delete');
+                }}
+              >
+                <View style={s.optionView}>
+                  <Antdesign
+                    name={'delete'}
+                    color={textColor}
+                    size={moderateScale(13, 0.1)}
+                    style={{flex: 0.3}}
+                  />
+                  <Text style={[s.optionBtns, {color: textColor}]}>Delete</Text>
+                </View>
+              </Menu.Item>
+
+              <Menu.Item
+                onPress={() => {
+                  console.log('Block');
+                }}
+              >
+                <View style={s.optionView}>
+                  <MaterialIcons
+                    name={'block'}
+                    color="red"
+                    size={moderateScale(13, 0.1)}
+                    style={{flex: 0.3}}
+                  />
+                  <Text style={[s.optionBtns]}>Block</Text>
+                </View>
+              </Menu.Item>
+            </Menu>
           </View>
         </View>
         {status ? (
           <View style={[s.dp]}>
             <Image
-              source={!status ? userData.userImage : userData.userImage}
+              source={!status ? userData?.userImage : userData?.userImage}
               style={s.dp1}
               resizeMode={'cover'}
             />
@@ -312,40 +402,6 @@ const Chat = ({navigation, route}) => {
         ) : null}
       </View>
     );
-    // } else {
-    //   return (
-    //     <View
-    //       style={[s.messege, {justifyContent: 'flex-start'}]}
-    //       key={elem.index}
-    //     >
-    //       <View style={[s.dp]}>
-    //         <Image
-    //           source={{uri: elem.item.avatar}}
-    //           style={s.dp1}
-    //           resizeMode={'cover'}
-    //         />
-    //       </View>
-    //       <View
-    //         style={[
-    //           {
-    //             maxWidth: '80%',
-    //             marginRight: moderateScale(10, 0.1),
-    //           },
-    //         ]}
-    //       >
-    //         <View style={s.textTo}>
-    //           <Text style={s.textSmall1}>{elem.item.text}</Text>
-    //           <Text style={[s.textSmall1, {textAlign: 'right'}]}>
-    //             {elem.item.time.toLocaleString([], {
-    //               hour: '2-digit',
-    //               minute: '2-digit',
-    //             })}
-    //           </Text>
-    //         </View>
-    //       </View>
-    //     </View>
-    //   );
-    // }
   };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
@@ -414,14 +470,18 @@ const Chat = ({navigation, route}) => {
           </TouchableOpacity>
           <View style={s.inputText}>
             <Input
-              w={'80%'}
+              w={'100%'}
               variant="unstyled"
               placeholderTextColor={'#fff'}
               color={'#fff'}
               placeholder="Type Message"
               value={message}
+              multiline
+              flexWrap={'wrap'}
+              maxHeight={60}
+              // numberOfLines={4}
               onChangeText={text => setMessage(text)}
-              size="md"
+              // size="md"
             />
           </View>
 

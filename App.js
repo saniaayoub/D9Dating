@@ -26,10 +26,8 @@ const App = () => {
     //     console.log('NOTIFICATION:', notification);
     //   },
     // });
-
     // // Request permission to send push notifications
     // PushNotification.requestPermissions();
-
   }, []);
 
   useEffect(() => {
@@ -86,7 +84,7 @@ const App = () => {
           SplashScreen.hide();
         }
         // setLoader(false);
-        console.log(err);
+        console.log('error', err);
         // showToast(err.response);
       });
   };

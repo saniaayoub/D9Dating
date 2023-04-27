@@ -10,7 +10,7 @@ import {
   Platform,
   Alert,
   Dimensions,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -28,7 +28,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Input, Stack, Button} from 'native-base';
+import {Input, Stack, Button, Pressable, Menu} from 'native-base';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RadioButton from '../../../Components/Radio';
 import {
@@ -45,13 +45,27 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 
-const Profile = ({navigation,route}) => {
+const organization = [
+  {id: 'Organization 1', color: 'blue'},
+  {id: 'Organization 2', color: 'green'},
+  {id: 'Organization 3', color: 'red'},
+  {id: 'Organization 4', color: 'yellow'},
+  {id: 'Organization 5', color: 'orange'},
+  {id: 'Organization 6', color: 'brown'},
+  {id: 'Organization 7', color: 'pink'},
+  {id: 'Organization 8', color: 'purple'},
+  {id: 'Organization 9', color: 'blue'},
+];
+
+const Profile = ({navigation, route}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const phonenum = useRef();
-console.log('param1' , route?.params?.data)
+  console.log('param1', route?.params?.data);
   const isFocused = useIsFocused();
   const userToken = useSelector(state => state.reducer.userToken);
+  // const organization = useSelector(state => state.reducer.organization);
+
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
@@ -67,7 +81,7 @@ console.log('param1' , route?.params?.data)
   const [disable7, setDisable7] = useState(false);
   const [disable8, setDisable8] = useState(false);
   const [userName, setUserName] = useState('');
-  const[loc, setLoc] = useState('')
+  const [loc, setLoc] = useState('');
 
   const [date, setDate] = useState(null);
   const [id, setId] = useState('');
@@ -77,7 +91,7 @@ console.log('param1' , route?.params?.data)
     name: '',
     last_name: '',
     about_me: '',
-    organization: '',
+    group: '',
     email: '',
     phone_number: '',
     location: '',
@@ -124,11 +138,11 @@ console.log('param1' , route?.params?.data)
 
   useEffect(() => {
     // console.log(phonenum?.current?.getValue(), form.phone_number);
-   if(route?.params?.data === undefined){
-    getData()
-   }else{
-console.log('nothing');
-   }
+    if (route?.params?.data === undefined) {
+      getData();
+    } else {
+      console.log('nothing');
+    }
   }, [isFocused]);
 
   const onRadioBtnClick = item => {
@@ -161,7 +175,7 @@ console.log('nothing');
         console.log('data1', res.data);
         if (res.data.user_details) {
           setData(res?.data?.user_details);
-          setLoc(res?.data?.user_details?.location)
+          setLoc(res?.data?.user_details?.location);
         }
         setLoader(false);
       })
@@ -576,15 +590,15 @@ console.log('nothing');
             />
           </View>
           <View style={s.input}>
-            <Input
+            {/* <Input
               w="100%"
               variant="underlined"
               color={textColor}
               fontSize={moderateScale(12, 0.1)}
               InputLeftElement={
                 <View style={s.icon}>
-                  <Inicon
-                    name={'information-circle'}
+                  <Icon1
+                    name={'group'}
                     size={moderateScale(20, 0.1)}
                     solid
                     color={textColor}
@@ -612,11 +626,103 @@ console.log('nothing');
               isFocused={disable8}
               placeholder="Organization"
               placeholderTextColor={textColor}
-              value={form?.organization}
-              onChangeText={text => {
-                setForm({...form, organization: text});
-              }}
-            />
+              value={form?.group}
+
+              // onChangeText={text => {
+              //   setForm({...form, group: text});
+              // }}
+            /> */}
+            <View style={{width: '100%', flexDirection: 'row'}}>
+              <Menu
+                borderWidth={moderateScale(1, 0.1)}
+                borderBottomColor={'grey'}
+                backgroundColor={color}
+                // marginRight={moderateScale(5, 0.1)}
+
+                // top={moderateScale(24, 0.1)}
+                borderColor={textColor}
+                trigger={triggerProps => {
+                  return (
+                    <Pressable
+                      disabled={!disable8}
+                      accessibilityLabel="More options menu"
+                      {...triggerProps}
+                      style={{
+                        flexDirection: 'row',
+                        borderColor: textColor,
+                        borderBottomWidth: 1,
+                        paddingBottom: moderateScale(10, 0.1),
+                        marginBottom: moderateScale(-10, 0.1),
+                        // paddingLeft: moderateScale(10, 0.1),
+                        width: '100%',
+                        alignItems: 'center',
+                        // marginTop: moderateScale(18, 0.1),
+                      }}
+                    >
+                      <View style={s.icon}>
+                        <Icon1
+                          name={'group'}
+                          size={moderateScale(20, 0.1)}
+                          solid
+                          color={textColor}
+                        />
+                      </View>
+                      <Text
+                        style={[
+                          s.option,
+                          {
+                            color: textColor,
+                            flex: 0.8,
+                            // paddingBottom: moderateScale(12, 0.1),
+                            fontSize: moderateScale(12, 0.1),
+                          },
+                        ]}
+                      >
+                        {form?.group}
+                      </Text>
+
+                      <Entypo
+                        style={{
+                          flex: 0.2,
+                          // paddingBottom: moderateScale(12, 0.1),
+                        }}
+                        name={'chevron-down'}
+                        size={moderateScale(25, 0.1)}
+                        color={textColor}
+                      />
+
+                      <TouchableOpacity
+                        onPress={() => {
+                          setDisable8(!disable8);
+                        }}
+                      >
+                        <Entypo
+                          name={'edit'}
+                          size={moderateScale(15, 0.1)}
+                          color={textColor}
+                        />
+                      </TouchableOpacity>
+                    </Pressable>
+                  );
+                }}
+              >
+                {organization.map((v, i) => {
+                  return (
+                    <Menu.Item
+                      onPress={() => {
+                        setForm({...form, group: v.id});
+                      }}
+                    >
+                      <View style={s.optionView}>
+                        <Text style={[s.optionBtns, {color: textColor}]}>
+                          {v.id}
+                        </Text>
+                      </View>
+                    </Menu.Item>
+                  );
+                })}
+              </Menu>
+            </View>
           </View>
           <View style={s.input}>
             <Input
@@ -927,51 +1033,51 @@ console.log('nothing');
               // }}
             />
           </View>
-          <TouchableWithoutFeedback onPress={()=>console.log('pressed')}>
-          <View style={s.input}>
-            <Input
-              w="100%"
-              variant="underlined"
-              color={textColor}
-              fontSize={moderateScale(12, 0.1)}
-              InputLeftElement={
-                <View style={s.icon}>
-                  <Inicon
-                    name={'location'}
-                    size={moderateScale(20, 0.1)}
-                    solid
-                    color={textColor}
-                  />
-                </View>
-              }
-              onEndEditing={() => {
-                setDisable6(!disable6);
-              }}
-              InputRightElement={
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('Map');
-                    setDisable6(!disable6);
-                  }}
-                >
-                  <Entypo
-                    name={'edit'}
-                    size={moderateScale(15, 0.1)}
-                    color={textColor}
-                  />
-                </TouchableOpacity>
-              }
-              // value={fname}
-              isReadOnly={true}
-              isFocused={disable6}
-              placeholder={'Location'}
-              placeholderTextColor={textColor}
-              value={userLocation}
-              // onChangeText={text => {
-              //   setForm({ ...form, location: text });
-              // }}
-            />
-          </View>
+          <TouchableWithoutFeedback onPress={() => console.log('pressed')}>
+            <View style={s.input}>
+              <Input
+                w="100%"
+                variant="underlined"
+                color={textColor}
+                fontSize={moderateScale(12, 0.1)}
+                InputLeftElement={
+                  <View style={s.icon}>
+                    <Inicon
+                      name={'location'}
+                      size={moderateScale(20, 0.1)}
+                      solid
+                      color={textColor}
+                    />
+                  </View>
+                }
+                onEndEditing={() => {
+                  setDisable6(!disable6);
+                }}
+                InputRightElement={
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate('Map');
+                      setDisable6(!disable6);
+                    }}
+                  >
+                    <Entypo
+                      name={'edit'}
+                      size={moderateScale(15, 0.1)}
+                      color={textColor}
+                    />
+                  </TouchableOpacity>
+                }
+                // value={fname}
+                isReadOnly={true}
+                isFocused={disable6}
+                placeholder={'Location'}
+                placeholderTextColor={textColor}
+                value={userLocation}
+                // onChangeText={text => {
+                //   setForm({ ...form, location: text });
+                // }}
+              />
+            </View>
           </TouchableWithoutFeedback>
           <DateTimePickerModal
             isVisible={isDatePickerVisible}

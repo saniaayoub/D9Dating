@@ -78,6 +78,7 @@ const Home = ({navigation}) => {
 
   useEffect(() => {
     dispatch(setOrganization(Organizations));
+    console.log('organisation', organizations);
     getID();
     getPosts();
     getStories();
@@ -223,7 +224,7 @@ const Home = ({navigation}) => {
       let tempelem = {
         user_id: elem.id,
         profile: elem.image ? elem?.image : dummyImage,
-        organization: elem.organization,
+        group: elem.organization,
         username: elem.name + ' ' + elem.last_name,
         title: elem.name + ' ' + elem.last_name,
         stories: elem.stories.map(item => {
@@ -418,8 +419,11 @@ const Home = ({navigation}) => {
 
   const getColor = id => {
     let color;
-    organizations?.forEach(elem => {
+
+    // console.log(id, 'idddg');
+    Organizations?.forEach(elem => {
       if (elem.id == id) {
+        // console.log(id, 'idddg');
         color = elem.color;
       }
     });
@@ -756,7 +760,7 @@ const Home = ({navigation}) => {
       <View style={s.col}>
         <View style={s.header}>
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.user?.organization)}]}
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
           >
             <Image
               source={{
@@ -979,7 +983,7 @@ const Home = ({navigation}) => {
                   style={[
                     s.smallDp,
                     {
-                      borderColor: getColor(elem?.item?.user?.organization),
+                      borderColor: getColor(elem?.item?.user?.group),
                     },
                   ]}
                 >

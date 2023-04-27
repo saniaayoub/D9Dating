@@ -73,12 +73,12 @@ const FunInteraction = ({navigation}) => {
   }, []);
 
   // Emit 'likePost' event on post like
-  const handleLikePost = (postId) => {
+  const handleLikePost = postId => {
     if (soc) {
-      soc.emit('likePost', { postId, userId });
+      soc.emit('likePost', {postId, userId});
     }
   };
-  
+
   useEffect(() => {
     getID();
     getPosts();
@@ -99,37 +99,35 @@ const FunInteraction = ({navigation}) => {
     return color;
   };
   useEffect(() => {
-   createChannel()
-  }, [])
-  
-const createChannel = ()=>{
-  PushNotification.createChannel(
-    {
-      channelId: "d9", // This is the channel ID
-      channelName: "My channel", // This is the channel name
-      channelDescription: "A channel to categorize your notifications", // This is the channel description
-      soundName: "default", // This is the sound to play when a notification is displayed
-      importance: 4, // This is the importance level of the channel (ranging from 0 to 5)
-      vibrate: true, // This indicates whether the device should vibrate when a notification is displayed
-    },
-    (created) => console.log(`Channel ${created ? 'created' : 'existing'}.`)
-  );
-}
+    createChannel();
+  }, []);
+
+  const createChannel = () => {
+    PushNotification.createChannel(
+      {
+        channelId: 'd9', // This is the channel ID
+        channelName: 'My channel', // This is the channel name
+        channelDescription: 'A channel to categorize your notifications', // This is the channel description
+        soundName: 'default', // This is the sound to play when a notification is displayed
+        importance: 4, // This is the importance level of the channel (ranging from 0 to 5)
+        vibrate: true, // This indicates whether the device should vibrate when a notification is displayed
+      },
+      created => console.log(`Channel ${created ? 'created' : 'existing'}.`),
+    );
+  };
   const hitLike = async (id, userid, index) => {
- 
-      socket.emit('likePost', { postId, userId });
-    
-    console.log(userid,'id');
+    socket.emit('likePost', {postId, userId});
+
+    console.log(userid, 'id');
     console.log(userID, 'id');
-    if(userid == userID){
+    if (userid == userID) {
       PushNotification.localNotification({
-        channelId: "d9",
-        color: "red",
+        channelId: 'd9',
+        color: 'red',
         title: 'My Notification Title',
         message: 'post liked',
       });
-    }
-    else{
+    } else {
       console.log('id not matched');
     }
     setLoader(true);
@@ -212,7 +210,7 @@ const createChannel = ()=>{
       });
   };
 
-  const report = async (reptext) => {
+  const report = async reptext => {
     console.log('report');
     setLoader(true);
     const data = {
@@ -230,7 +228,7 @@ const createChannel = ()=>{
       .then(res => {
         // console.log('stttr', res.data);
         console.log(res, 'response');
-        Alert.alert('post reported successfully')
+        Alert.alert('post reported successfully');
         getPosts();
         refRBSheet1.current.close();
         setLoader(false);
@@ -356,7 +354,7 @@ const createChannel = ()=>{
       <View style={s.col}>
         <View style={s.header}>
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.user?.organization)}]}
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
           >
             <Image
               source={{
@@ -473,29 +471,26 @@ const createChannel = ()=>{
                   </Menu.Item>
                 </>
               ) : null}
-              {
-                userID != elem?.item?.user?.id  ?(
-                  <>
+              {userID != elem?.item?.user?.id ? (
+                <>
                   <Menu.Item
-                onPress={() => {
-                  refRBSheet1.current.open();
-                  setPostId(elem?.item?.id);
-                }}
-              >
-                <View style={s.optionView}>
-                  <MaterialIcons
-                    name={'report'}
-                    color= 'red'
-                    size={moderateScale(13, 0.1)}
-                    style={{flex: 0.3}}
-                  />
-                  <Text style={[s.optionBtns,]}>Report</Text>
-                </View>
-              </Menu.Item>
-                  </>
-                ): null
-              }
-              
+                    onPress={() => {
+                      refRBSheet1.current.open();
+                      setPostId(elem?.item?.id);
+                    }}
+                  >
+                    <View style={s.optionView}>
+                      <MaterialIcons
+                        name={'report'}
+                        color="red"
+                        size={moderateScale(13, 0.1)}
+                        style={{flex: 0.3}}
+                      />
+                      <Text style={[s.optionBtns]}>Report</Text>
+                    </View>
+                  </Menu.Item>
+                </>
+              ) : null}
             </Menu>
           </View>
         </View>
@@ -514,7 +509,7 @@ const createChannel = ()=>{
           <TouchableOpacity
             onPress={() => {
               console.log('like');
-              hitLike(elem?.item?.id, elem?.item?.user_id ,elem?.index);
+              hitLike(elem?.item?.id, elem?.item?.user_id, elem?.index);
               // console.log(data[elem.index].post.liked);
             }}
             style={s.likes}
@@ -554,7 +549,8 @@ const createChannel = ()=>{
             }}
           >
             <Text style={[s.name, {color: textColor}]}>
-              {elem?.item?.user?.name}{elem?.item?.user?.last_name}{' '}
+              {elem?.item?.user?.name}
+              {elem?.item?.user?.last_name}{' '}
               <Text style={[s.textRegular, {color: textColor}]}>
                 {elem?.item?.caption}
               </Text>
@@ -583,7 +579,7 @@ const createChannel = ()=>{
                   style={[
                     s.smallDp,
                     {
-                      borderColor: getColor(elem?.item?.user?.organization),
+                      borderColor: getColor(elem?.item?.user?.group),
                     },
                   ]}
                 >
@@ -640,7 +636,7 @@ const createChannel = ()=>{
   const searchItem = (elem, i) => {
     return (
       <TouchableOpacity style={s.card}>
-        <View style={[s.dp, {borderColor: getColor(elem?.item?.organization)}]}>
+        <View style={[s.dp, {borderColor: getColor(elem?.item?.group)}]}>
           <Image
             source={{uri: elem?.item?.image ? elem?.item?.image : dummyImage}}
             style={s.dp1}
@@ -693,10 +689,9 @@ const createChannel = ()=>{
   };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
-        {loader ? <Loader /> : null}
+      {loader ? <Loader /> : null}
 
       <View style={[s.container, s.col, {backgroundColor: color}]}>
-
         <View style={s.searchContainer}>
           <Input
             placeholder="Search Here"
