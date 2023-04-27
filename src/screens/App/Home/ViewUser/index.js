@@ -246,7 +246,7 @@ const ViewUser = ({navigation, route}) => {
             <View>
               <Text style={[s.aboutTxt, {color: textColor}]}>Organization</Text>
               <View style={s.abTxt}>
-                <Text style={s.txt}>{userData?.organization} </Text>
+                <Text style={s.txt}>{userData?.group} </Text>
               </View>
             </View>
           </View>
