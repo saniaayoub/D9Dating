@@ -695,7 +695,9 @@ const Register = ({navigation}) => {
                 <Text style={[s.inputTxt, {color: Textcolor}]}>Location</Text>
               </View>
               <View style={{flex: 0.6}}>
-                <TouchableOpacity onPress={() => navigation.navigate('Maps')}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Map', {data: 'register'})}
+                >
                   <Input
                     w={{
                       base: '100%',
@@ -707,7 +709,7 @@ const Register = ({navigation}) => {
                         onsubmit && location == null ? 'red' : Textcolor,
                     }}
                     // onTouchStart={() => navigation.navigate('Maps')}
-                    onPressIn={() => navigation.navigate('Maps')}
+                    onPressIn={() => navigation.navigate('Map')}
                     variant="unstyled"
                     editable={false}
                     placeholder={userLocation ? userLocation : 'Enter Location'}
