@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import {
   SafeAreaView,
@@ -30,7 +31,8 @@ import {moderateScale} from 'react-native-size-matters';
 import Modal from 'react-native-modal';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
@@ -45,20 +47,6 @@ const Map = ({navigation, route}) => {
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
-    // if (screen1) {
-    //   console.log('ddd');
-    //   dispatch(setPostLocation(loc));
-    //   setTimeout(() => {
-    //     navigation.goBack();
-    //   }, 2000);
-    // } else {
-    //   console.log('rr');
-    //   dispatch(setLocation(loc));
-    //   setModalVisible(!isModalVisible);
-    //   setTimeout(() => {
-    //     navigation.goBack();
-    //   }, 2000);
-    // }
   };
   const screen1 = route.params;
 
@@ -66,16 +54,10 @@ const Map = ({navigation, route}) => {
   const dispatch = useDispatch();
   const mapRef = useRef();
   const [markerPosition, setMarkerPosition] = useState({
-    latitude: 51.5085300,
-    longitude:  -0.1257400,
+    latitude: 51.50853,
+    longitude: -0.12574,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
-  });
-  const [mapCenter, setMapCenter] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: LATITUDE_DELTA,
-    longitudeDelta: LONGITUDE_DELTA,
   });
 
   const onMapRegionChange = newRegion => {
@@ -102,20 +84,70 @@ const Map = ({navigation, route}) => {
     // dispatch(setLocation(newRegion))
   };
 
-  const onMarkerDragEnd = event => {
-    setMarkerPosition(event.nativeEvent.coordinate);
-  };
   const [position, setPosition] = useState({
-    latitude: 51.5085300,
-    longitude:  -0.1257400,
+    latitude: 51.50853,
+    longitude: -0.12574,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
   Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
 
+  const requestGeolocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Map',
+          message: 'D9dating needs access to your current location',
+        },
+      );
+      console.log(granted, 'granted');
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the geolocation');
+        Geolocation.getCurrentPosition(pos => {
+          // console.log(pos.coords.longitude, 'longitude' );
+          setPosition({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+          setMarkerPosition({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+          console.log(pos, 'possgg');
+        });
+      } else {
+        console.log('Geolocation permission denied');
+        setPosition({
+          latitude: 51.50853,
+          longitude: -0.12574,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+        setMarkerPosition({
+          latitude: 51.50853,
+          longitude: -0.12574,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
   useEffect(() => {
-   getLocation()
-  }, []);
+    requestGeolocationPermission();
+    // Geolocation.getCurrentPosition(pos => {
+    //   const crd = pos.coords;
+    //   LATITUDE = crd.latitude;
+    //   LONGITUDE = crd.longitude;
+    // });
+  }, [requestGeolocationPermission]);
   useEffect(() => {
     console.log('map');
   }, []);
@@ -158,60 +190,32 @@ const Map = ({navigation, route}) => {
       })
       .catch(error => console.warn(error));
   };
-  const getLocation = async()=> {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          'title': 'Map',
-          'message': 'D9dating wants to access your location'
-        });
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("You can use the geolocation")
-        Geolocation.getCurrentPosition(
-          //Will give you the current location
-          position => {
-            //getting the Longitude from the location json
-            const currentLongitude = JSON.stringify(position.coords.longitude);
-            console.log(currentLongitude);
-            //getting the Latitude from the location json
-            const currentLatitude = JSON.stringify(position.coords.latitude);
-            console.log(currentLatitude);
-            setMarkerPosition({
-              longitude: position.coords.longitude,
-              latitude: position.coords.latitude,
-              longitudeDelta: 0.0421,
-              latitudeDelta: 0.0922,
-            });
-    
-            console.log(markerPosition, 'current marker position');
-          },
-          error => alert(error.message),
-          {
-            enableHighAccuracy: true,
-            timeout: 20000,
-            maximumAge: 1000,
-          },
-        );
-      } else {
-        console.log("Geolocation permission denied")
-        setInitialPosition({
-          latitude: 51.5074,
-          longitude: -0.1278,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        });
+  function getLocation() {
+    Geolocation.getCurrentPosition(
+      //Will give you the current location
+      position => {
+        //getting the Longitude from the location json
+        const currentLongitude = JSON.stringify(position.coords.longitude);
+        console.log(currentLongitude);
+        //getting the Latitude from the location json
+        const currentLatitude = JSON.stringify(position.coords.latitude);
+        console.log(currentLatitude);
         setMarkerPosition({
-          latitude: 51.5074,
-          longitude: -0.1278,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          longitude: position.coords.longitude,
+          latitude: position.coords.latitude,
+          longitudeDelta: 0.0421,
+          latitudeDelta: 0.0922,
         });
-      }
-    } catch (err) {
-      console.warn(err)
-    }
-  
+
+        console.log(markerPosition, 'current marker position');
+      },
+      error => alert(error.message),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 1000,
+      },
+    );
   }
   return (
     <View style={styles.container}>
@@ -220,7 +224,6 @@ const Map = ({navigation, route}) => {
         style={styles.map}
         provider={PROVIDER_GOOGLE}
         initialRegion={position}
-        
         // showsUserLocation={true}
         customMapStyle={styles.map}
         followsUserLocation={true}
@@ -229,8 +232,7 @@ const Map = ({navigation, route}) => {
         zoomEnabled={true}
         pitchEnabled={true}
         onRegionChangeComplete={onMapRegionChange}
-        rotateEnabled={true}
-      >
+        rotateEnabled={true}>
         <Marker
           // draggable
           coordinate={markerPosition}
@@ -257,8 +259,7 @@ const Map = ({navigation, route}) => {
           // alignItems: 'center'
           width: '95%',
           flexDirection: 'row',
-        }}
-      >
+        }}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Inicon
             name="arrow-back-circle-outline"
@@ -285,11 +286,9 @@ const Map = ({navigation, route}) => {
                   flexDirection: 'row',
                   width: '100%',
                   height: moderateScale(30, 0.1),
-                }}
-              >
+                }}>
                 <Text
-                  style={{fontSize: moderateScale(15, 0.1), color: 'black'}}
-                >
+                  style={{fontSize: moderateScale(15, 0.1), color: 'black'}}>
                   {title} {address}
                 </Text>
               </View>
@@ -309,8 +308,7 @@ const Map = ({navigation, route}) => {
                   padding: moderateScale(5, 0.1),
                   borderTopRightRadius: moderateScale(10, 0.1),
                   borderBottomRightRadius: moderateScale(10, 0.1),
-                }}
-              >
+                }}>
                 <Entypo
                   name="cross"
                   size={moderateScale(25, 0.1)}
@@ -339,6 +337,26 @@ const Map = ({navigation, route}) => {
           // this in only required for use on the web. See https://git.io/JflFv more for details.
         />
       </View>
+      <TouchableOpacity
+        onPress={() => requestGeolocationPermission()}
+        style={{
+          flexDirection: 'row',
+          borderBottomWidth: moderateScale(1, 0.1),
+          borderBottomColor: 'grey',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          // padding: moderateScale(10, 0.1),
+          // width: moderateScale(150, 0.1),
+          paddingBottom: moderateScale(5, 0.1),
+        }}>
+        <MaterialIcons
+          name={'report'}
+          color="red"
+          size={moderateScale(13, 0.1)}
+          style={{flex: 0.3}}
+        />
+        <Text>use my current location</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
@@ -359,8 +377,7 @@ const Map = ({navigation, route}) => {
             Platform.OS == 'ios'
               ? moderateScale(100, 0.1)
               : moderateScale(70, 0.1),
-        }}
-      >
+        }}>
         <View>
           <Text
             style={{
@@ -368,8 +385,7 @@ const Map = ({navigation, route}) => {
               lineHeight: moderateScale(20, 0.1),
               fontSize: moderateScale(15, 0.1),
               color: '#222222',
-            }}
-          >
+            }}>
             {' '}
             Add location{' '}
           </Text>
@@ -380,12 +396,10 @@ const Map = ({navigation, route}) => {
               height: moderateScale(300, 0.1),
               backgroundColor: 'white',
               borderRadius: moderateScale(10, 0, 1),
-            }}
-          >
+            }}>
             <TouchableOpacity
               onPress={() => setModalVisible(!isModalVisible)}
-              style={{alignItems: 'flex-end', padding: moderateScale(10, 0.1)}}
-            >
+              style={{alignItems: 'flex-end', padding: moderateScale(10, 0.1)}}>
               <Entypo name="cross" size={moderateScale(30)} color={'grey'} />
             </TouchableOpacity>
             <View
@@ -396,15 +410,13 @@ const Map = ({navigation, route}) => {
                 justifyContent: 'center',
                 paddingLeft: moderateScale(20, 0.1),
                 width: '80%',
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontSize: moderateScale(18, 0.1),
                   marginRight: moderateScale(10, 0.1),
                   color: 'black',
-                }}
-              >
+                }}>
                 {loc}
               </Text>
               <View style={{marginRight: moderateScale(-50, 0.1)}}>
@@ -429,8 +441,8 @@ const Map = ({navigation, route}) => {
                   dispatch(setLocation(loc));
                   setModalVisible(!isModalVisible);
                   setTimeout(() => {
-                    navigation.navigate('Profile',{
-                     data :'map'
+                    navigation.navigate('Profile', {
+                      data: 'map',
                     });
                   }, 2000);
                 }
@@ -444,22 +456,21 @@ const Map = ({navigation, route}) => {
                 borderRadius: moderateScale(12, 0.1),
                 alignSelf: 'center',
                 top: moderateScale(15, 0.1),
-              }}
-            >
+              }}>
               <Text
                 style={{
                   alignSelf: 'center',
                   lineHeight: moderateScale(20, 0.1),
                   fontSize: moderateScale(15, 0.1),
                   color: '#222222',
-                }}
-              >
+                }}>
                 Save
               </Text>
             </TouchableOpacity>
           </View>
         </Modal>
       </TouchableOpacity>
+     
     </View>
   );
 };
