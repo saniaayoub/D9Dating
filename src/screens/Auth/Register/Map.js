@@ -30,7 +30,7 @@ import {moderateScale} from 'react-native-size-matters';
 import Modal from 'react-native-modal';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-
+import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
@@ -114,11 +114,7 @@ const Map = ({navigation, route}) => {
   Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
 
   useEffect(() => {
-    Geolocation.getCurrentPosition(pos => {
-      const crd = pos.coords;
-      LATITUDE = crd.latitude;
-      LONGITUDE = crd.longitude;
-    });
+   getLocation()
   }, []);
   useEffect(() => {
     console.log('map');
@@ -162,32 +158,60 @@ const Map = ({navigation, route}) => {
       })
       .catch(error => console.warn(error));
   };
-  function getLocation() {
-    Geolocation.getCurrentPosition(
-      //Will give you the current location
-      position => {
-        //getting the Longitude from the location json
-        const currentLongitude = JSON.stringify(position.coords.longitude);
-        console.log(currentLongitude);
-        //getting the Latitude from the location json
-        const currentLatitude = JSON.stringify(position.coords.latitude);
-        console.log(currentLatitude);
-        setMarkerPosition({
-          longitude: position.coords.longitude,
-          latitude: position.coords.latitude,
-          longitudeDelta: 0.0421,
-          latitudeDelta: 0.0922,
+  const getLocation = async()=> {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          'title': 'Map',
+          'message': 'D9dating wants to access your location'
         });
-
-        console.log(markerPosition, 'current marker position');
-      },
-      error => alert(error.message),
-      {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 1000,
-      },
-    );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("You can use the geolocation")
+        Geolocation.getCurrentPosition(
+          //Will give you the current location
+          position => {
+            //getting the Longitude from the location json
+            const currentLongitude = JSON.stringify(position.coords.longitude);
+            console.log(currentLongitude);
+            //getting the Latitude from the location json
+            const currentLatitude = JSON.stringify(position.coords.latitude);
+            console.log(currentLatitude);
+            setMarkerPosition({
+              longitude: position.coords.longitude,
+              latitude: position.coords.latitude,
+              longitudeDelta: 0.0421,
+              latitudeDelta: 0.0922,
+            });
+    
+            console.log(markerPosition, 'current marker position');
+          },
+          error => alert(error.message),
+          {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 1000,
+          },
+        );
+      } else {
+        console.log("Geolocation permission denied")
+        setInitialPosition({
+          latitude: 51.5074,
+          longitude: -0.1278,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        });
+        setMarkerPosition({
+          latitude: 51.5074,
+          longitude: -0.1278,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        });
+      }
+    } catch (err) {
+      console.warn(err)
+    }
+  
   }
   return (
     <View style={styles.container}>
@@ -196,6 +220,7 @@ const Map = ({navigation, route}) => {
         style={styles.map}
         provider={PROVIDER_GOOGLE}
         initialRegion={position}
+        
         // showsUserLocation={true}
         customMapStyle={styles.map}
         followsUserLocation={true}
