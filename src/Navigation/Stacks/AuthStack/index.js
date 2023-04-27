@@ -26,7 +26,7 @@ const AuthStack = () => {
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
       <Stack.Screen name="ChangePass" component={ChangePass} />
-      <Stack.Screen name="Maps" component={Map} />
+      <Stack.Screen name="Map" component={Map} />
       <Stack.Screen name="Map1" component={Map1} />
     </Stack.Navigator>
   );

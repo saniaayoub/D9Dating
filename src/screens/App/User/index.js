@@ -644,7 +644,7 @@ const Profile = ({navigation, route}) => {
                 trigger={triggerProps => {
                   return (
                     <Pressable
-                      disabled={!disable8}
+                      // disabled={!disable8}
                       accessibilityLabel="More options menu"
                       {...triggerProps}
                       style={{
@@ -672,7 +672,7 @@ const Profile = ({navigation, route}) => {
                           s.option,
                           {
                             color: textColor,
-                            flex: 0.8,
+                            flex: 1,
                             // paddingBottom: moderateScale(12, 0.1),
                             fontSize: moderateScale(12, 0.1),
                           },
@@ -681,7 +681,7 @@ const Profile = ({navigation, route}) => {
                         {form?.group}
                       </Text>
 
-                      <Entypo
+                      {/* <Entypo
                         style={{
                           flex: 0.2,
                           // paddingBottom: moderateScale(12, 0.1),
@@ -689,19 +689,19 @@ const Profile = ({navigation, route}) => {
                         name={'chevron-down'}
                         size={moderateScale(25, 0.1)}
                         color={textColor}
-                      />
+                      /> */}
 
-                      <TouchableOpacity
-                        onPress={() => {
-                          setDisable8(!disable8);
-                        }}
-                      >
+                      <View>
                         <Entypo
-                          name={'edit'}
-                          size={moderateScale(15, 0.1)}
+                          style={{
+                            flex: 0.2,
+                            // paddingBottom: moderateScale(12, 0.1),
+                          }}
+                          name={'chevron-down'}
+                          size={moderateScale(25, 0.1)}
                           color={textColor}
                         />
-                      </TouchableOpacity>
+                      </View>
                     </Pressable>
                   );
                 }}
