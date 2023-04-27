@@ -1056,7 +1056,9 @@ const Profile = ({navigation, route}) => {
                 InputRightElement={
                   <TouchableOpacity
                     onPress={() => {
-                      navigation.navigate('Map');
+                      navigation.navigate('Map', {
+                        from : 'user'
+                      });
                       setDisable6(!disable6);
                     }}
                   >
