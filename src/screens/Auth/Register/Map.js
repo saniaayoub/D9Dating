@@ -24,7 +24,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Marker} from 'react-native-maps';
 import MapView, {PROVIDER_GOOGLE, animateToRegion} from 'react-native-maps';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Geocoder from 'react-native-geocoding';
 import {moderateScale} from 'react-native-size-matters';
@@ -81,7 +81,6 @@ const Map = ({navigation, route}) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
 
   const requestGeolocationPermission = async () => {
     console.log('request');
@@ -89,94 +88,79 @@ const Map = ({navigation, route}) => {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Location Access Required',
-          message: 'This App needs to Access your location',
-        },
       );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        //To Check, If Permission is granted
-        getOneTimeLocation();
+      console.log(granted, 'granted');
+      if (granted === true) {
+        console.log('You can use the geolocation');
+        Geolocation.getCurrentPosition(pos => {
+          // console.log(pos.coords.longitude, 'longitude' );
+          setPosition({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+          setMarkerPosition({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+          mapRef.current.animateToRegion({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+          Geocoder.from(pos.coords.latitude, pos.coords.longitude).then(
+            json => {
+              var addressComponent = json.results[0].address_components;
+              console.log(json.results, 'current location address');
+              setLoc(
+                addressComponent[1].short_name +
+                  ' ' +
+                  addressComponent[2].short_name,
+              );
+            },
+          );
+          console.log(pos, 'possgg');
+        });
       } else {
-        console.log('hgsds');
+        console.log('Geolocation permission denied');
+        setPosition({
+          latitude: 51.50853,
+          longitude: -0.12574,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+        setMarkerPosition({
+          latitude: 51.50853,
+          longitude: -0.12574,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+        mapRef.current.animateToRegion({
+          latitude: 51.50853,
+          longitude: -0.12574,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
       }
     } catch (err) {
-      alert('err', err);
+      console.warn(err);
     }
-
-    // try {
-    //   const granted = await PermissionsAndroid.request(
-    //     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-    //   );
-    //   console.log(granted,'gran');
-    //     if (granted == true) {
-    //       Alert.alert('D9Dating is accessing your location');
-    //       Geolocation.getCurrentPosition(pos => {
-    //         console.log('inner');
-    //         getCity(pos.coords.latitude, pos.coords.longitude)
-    //         // console.log(pos.coords.longitude, 'longitude' );
-    //         setPosition({
-    //           latitude: pos.coords.latitude,
-    //           longitude: pos.coords.longitude,
-    //           latitudeDelta: 0.0922,
-    //           longitudeDelta: 0.0421,
-    //         });
-    //         setMarkerPosition({
-    //           latitude: pos.coords.latitude,
-    //           longitude: pos.coords.longitude,
-    //           latitudeDelta: 0.0922,
-    //           longitudeDelta: 0.0421,
-    //         });
-    //         mapRef.current.animateToRegion({
-    //           latitude: pos.coords.latitude,
-    //           longitude: pos.coords.longitude,
-    //           latitudeDelta: 0.0922,
-    //           longitudeDelta: 0.0421,
-    //         });
-
-    //         console.log(pos, 'possgg');
-    //       });
-    //     } else {
-    //       console.log('Geolocation permission denied');
-    //       setPosition({
-    //         latitude: 51.50853,
-    //         longitude: -0.12574,
-    //         latitudeDelta: 0.0922,
-    //         longitudeDelta: 0.0421,
-    //       });
-    //       setMarkerPosition({
-    //         latitude: 51.50853,
-    //         longitude: -0.12574,
-    //         latitudeDelta: 0.0922,
-    //         longitudeDelta: 0.0421,
-    //       });
-    //       mapRef.current.animateToRegion({
-    //         latitude: 51.50853,
-    //         longitude: -0.12574,
-    //         latitudeDelta: 0.0922,
-    //         longitudeDelta: 0.0421,
-    //       });
-    //     }
-
-    // } catch (err) {
-    //   console.warn(err);
-    // }
   };
   const getOneTimeLocation = () => {
     console.log('get one time');
     Geolocation.getCurrentPosition(
-      //Will give you the current location
       position => {
-        const currentLongitude = JSON.stringify(position.coords.longitude);
-        const currentLatitude = JSON.stringify(position.coords.latitude);
-        console.log(currentLongitude);
-        console.log(currentLatitude);
+        // const { latitude, longitude } = position.coords;
+        console.log(position.coords.latitude, 'latitude');
       },
-      {
-        enableHighAccuracy: false,
-        timeout: 30000,
-        maximumAge: 1000,
+      error => {
+        console.log(error.code, error.message);
       },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
   };
   const getCity = async (lat, long) => {
@@ -258,6 +242,8 @@ const Map = ({navigation, route}) => {
 
   useEffect(() => {
     console.log('he');
+    Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
+
     checkGeolocationPermission();
   }, []);
 

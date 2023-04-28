@@ -8,28 +8,6 @@ const http = require('http').Server(app);
 const cors = require('cors');
 app.use(cors());
 
-let chatRooms = [
-  // {
-  //   id: '1',
-  //   name: 'Julie Watson',
-  //   userImage: '../../../assets/images/png/mydp.png',
-  //   messages: [
-  //     {
-  //       id: '1a',
-  //       text: 'Hello guys, welcome!',
-  //       time: '07:50',
-  //       user: 'Julie Watson',
-  //     },
-  //     {
-  //       id: '1b',
-  //       text: 'Hi Tomer, thank you! 😇',
-  //       time: '08:50',
-  //       user: 'Emily',
-  //     },
-  //   ],
-  // },
-];
-
 const socketIO = require('socket.io')(http, {
   cors: {
     origin: '<http://localhost:4000>',
@@ -37,21 +15,21 @@ const socketIO = require('socket.io')(http, {
   },
 });
 
-socketIO.on('connection', (socket) => {
-  console.log('A user connected');
+// socketIO.on('connection', (socket) => {
+//   console.log('A user connected');
 
-  // Listen for the 'likePost' event from the client
-  socket.on('likePost', ({ postId, userId }) => {
-    console.log(`Post ${postId} was liked by user ${userId}`);
-    const recipientIds = getRecipientIds(postId);
-    sendLocalPushNotification(recipientIds, `${userId} liked your post!`);
-  });
+//   // Listen for the 'likePost' event from the client
+//   socket.on('likePost', ({ postId, userId }) => {
+//     console.log(`Post ${postId} was liked by user ${userId}`);
+//     const recipientIds = getRecipientIds(postId);
+//     sendLocalPushNotification(recipientIds, `${userId} liked your post!`);
+//   });
 
-  // Handle Socket.IO disconnections
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
-  });
-});
+//   // Handle Socket.IO disconnections
+//   socket.on('disconnect', () => {
+//     console.log('A user disconnected');
+//   });
+// });
 
 
 socketIO.on('connection', socket => {
@@ -85,64 +63,6 @@ socketIO.on('connection', socket => {
   });
 });
 
-// socketIO.on('connection', socket => {
-//   console.log(`⚡: ${socket.id} user just connected!`);
-//   // socket.emit('roomsList', chatRooms);
-//   const users = [];
-//   for (let [id, socket] of socketIO.of('/').sockets) {
-//     users.push({
-//       userID: id,
-//       username: socket.username,
-//     });
-//   }
-
-//   socketIO.emit('users', users);
-
-//   socket.on('createRoom', name => {
-//     socket.join(name);
-//     //👇🏻 Adds the new group name to the chat rooms array
-//     chatRooms.unshift({id: generateID(), name, messages: []});
-//     //👇🏻 Returns the updated chat rooms via another event
-//     socketIO.emit('roomsList', chatRooms);
-//   });
-
-//   socket.on('findRoom', id => {
-//     //👇🏻 Filters the array by the ID
-//     let result = chatRooms.filter(room => room.id == id);
-//     //👇🏻 Sends the messages to the app
-//     socket.emit('foundRoom', result[0]?.messages);
-//     socketIO.emit('foundRoom', result[0]?.messages);
-//   });
-
-//   socket.on('newMessage', data => {
-//     console.log(data, 'dataataaaaaa');
-//     //👇🏻 Destructures the property from the object
-//     const {room_id, message, user, timestamp} = data;
-
-//     //👇🏻 Finds the room where the message was sent
-//     let result = chatRooms.filter(room => room.id == room_id);
-
-//     //👇🏻 Create the data structure for the message
-//     const newMessage = {
-//       id: generateID(),
-//       text: message,
-//       user,
-//       time: `${timestamp.hour}:${timestamp.mins}`,
-//     };
-//     //👇🏻 Updates the chatroom messages
-//     socket.to(result[0]?.name).emit('roomMessage', newMessage);
-//     result[0]?.messages?.unshift(newMessage);
-
-//     //👇🏻 Trigger the events to reflect the new changes
-//     socket.emit('roomsList', chatRooms);
-//     socket.emit('foundRoom', result[0]?.messages);
-//   });
-
-//   socket.on('disconnect', () => {
-//     socket.disconnect();
-//     console.log('🔥: A user disconnected');
-//   });
-// });
 
 socketIO.use((socket, next) => {
   const username = socket.handshake.auth.username;
