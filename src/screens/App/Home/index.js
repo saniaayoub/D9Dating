@@ -36,16 +36,16 @@ import axiosconfig from '../../../provider/axios';
 import {useIsFocused} from '@react-navigation/native';
 import {setOrganization, setStories, addUsers} from '../../../Redux/actions';
 
-const Organizations = [
-  {id: 'Organization 1', color: 'blue'},
-  {id: 'Organization 2', color: 'green'},
-  {id: 'Organization 3', color: 'red'},
-  {id: 'Organization 4', color: 'yellow'},
-  {id: 'Organization 5', color: 'orange'},
-  {id: 'Organization 6', color: 'brown'},
-  {id: 'Organization 7', color: 'pink'},
-  {id: 'Organization 8', color: 'purple'},
-  {id: 'Organization 9', color: 'blue'},
+const Organization = [
+  {id: 'Alpha Phi Alpha Fraternity, Inc.', color: 'blue'},
+  {id: 'Alpha Kappa Alpha Sorority Inc.', color: 'green'},
+  {id: 'Omega Psi Phi Fraternity, Inc.', color: 'red'},
+  {id: 'Delta Sigma Theta Sorority Inc.', color: 'yellow'},
+  {id: 'Kappa Alpha Psi Fraternity, Inc.', color: 'orange'},
+  {id: 'Sigma Gamma Rho Sorority Inc.', color: 'brown'},
+  {id: 'Phi Beta Sigma Fraternity, Inc.', color: 'pink'},
+  {id: 'Zeta Phi Beta Sorority Inc.', color: 'purple'},
+  {id: 'Iota Phi Theta Fraternity, Inc.', color: 'blue'},
 ];
 
 const Home = ({navigation}) => {

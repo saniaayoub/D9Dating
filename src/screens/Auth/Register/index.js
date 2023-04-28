@@ -38,17 +38,19 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import style from '../../../Components/Header/style';
 import Loader from '../../../Components/Loader';
+
 const Organization = [
-  {id: 'Organization 1', color: 'blue'},
-  {id: 'Organization 2', color: 'green'},
-  {id: 'Organization 3', color: 'red'},
-  {id: 'Organization 4', color: 'yellow'},
-  {id: 'Organization 5', color: 'orange'},
-  {id: 'Organization 6', color: 'brown'},
-  {id: 'Organization 7', color: 'pink'},
-  {id: 'Organization 8', color: 'purple'},
-  {id: 'Organization 9', color: 'blue'},
+  {id: 'Alpha Phi Alpha Fraternity, Inc.', color: 'blue'},
+  {id: 'Alpha Kappa Alpha Sorority Inc.', color: 'green'},
+  {id: 'Omega Psi Phi Fraternity, Inc.', color: 'red'},
+  {id: 'Delta Sigma Theta Sorority Inc.', color: 'yellow'},
+  {id: 'Kappa Alpha Psi Fraternity, Inc.', color: 'orange'},
+  {id: 'Sigma Gamma Rho Sorority Inc.', color: 'brown'},
+  {id: 'Phi Beta Sigma Fraternity, Inc.', color: 'pink'},
+  {id: 'Zeta Phi Beta Sorority Inc.', color: 'purple'},
+  {id: 'Iota Phi Theta Fraternity, Inc.', color: 'blue'},
 ];
+
 const Register = ({navigation}) => {
   const dispatch = useDispatch();
   const phonenum = useRef();
@@ -583,9 +585,9 @@ const Register = ({navigation}) => {
                   Organization
                 </Text>
               </View>
-              <View style={{flex: 0.6}}>
+              <View style={{flex: 0.6 }}>
                 <Menu
-                  w="180"
+                  style={{width:'80%'}}
                   borderWidth={moderateScale(1, 0.1)}
                   borderBottomColor={'grey'}
                   backgroundColor={color}
@@ -600,7 +602,7 @@ const Register = ({navigation}) => {
                         {...triggerProps}
                         style={{
                           flexDirection: 'row',
-                          borderColor: 'white',
+                          borderColor: Textcolor,
                           borderBottomWidth: 1,
                           borderBottomColor:
                             onsubmit && organization == null
@@ -608,7 +610,7 @@ const Register = ({navigation}) => {
                               : Textcolor,
                           marginBottom: moderateScale(-10, 0.1),
                           paddingLeft: moderateScale(10, 0.1),
-                          width: moderateScale(170, 0.1),
+                          // width: moderateScale(170, 0.1),
                           alignItems: 'center',
                           marginTop: moderateScale(18, 0.1),
                         }}
@@ -642,6 +644,7 @@ const Register = ({navigation}) => {
                   {Organization.map((v, i) => {
                     return (
                       <Menu.Item
+                      style={{width:400}}
                         onPress={() => {
                           setOrganization(v.id);
                         }}
