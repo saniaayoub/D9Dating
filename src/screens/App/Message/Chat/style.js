@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   },
   inputText: {
     flex: 0.9,
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
   },
   attach: {
     flex: 0.1,
