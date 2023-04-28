@@ -82,70 +82,72 @@ const Map = ({navigation, route}) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
+  useEffect(() => {  
+    Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
+  }, [])
+  
 
   const requestGeolocationPermission = async () => {
     console.log('request');
     console.log(loc, 'loc');
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
-      console.log(granted, 'granted');
-      if (granted === true) {
-        console.log('You can use the geolocation');
-        Geolocation.getCurrentPosition(pos => {
-          // console.log(pos.coords.longitude, 'longitude' );
-          setPosition({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          });
-          setMarkerPosition({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          });
-          mapRef.current.animateToRegion({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          });
-          Geocoder.from(pos.coords.latitude, pos.coords.longitude).then(json => {
-            var addressComponent = json.results[0].address_components;
-            console.log(json.results, 'current location address');
-            setLoc(
-              addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
-            );
-          })
-          console.log(pos, 'possgg');
-        });
-      } else {
-        console.log('Geolocation permission denied');
-        setPosition({
-          latitude: 51.50853,
-          longitude: -0.12574,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
-        setMarkerPosition({
-          latitude: 51.50853,
-          longitude: -0.12574,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
-        mapRef.current.animateToRegion({
-          latitude: 51.50853,
-          longitude: -0.12574,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
+    if (Platform.OS === 'ios') {
+      Geolocation.requestAuthorization('whenInUse');
+    } else {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Permission',
+            message: 'App needs access to your location.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Location permission granted');
+          Geolocation.getCurrentPosition(
+            pos => {
+              // const { latitude, longitude } = position.coords;
+              // setCurrentLocation({ latitude, longitude });
+              console.log(pos.coords, 'position');
+              setPosition({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              });
+              setMarkerPosition({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              });
+              mapRef.current.animateToRegion({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              });
+              Geocoder.from(pos.coords.latitude, pos.coords.longitude).then(json => {
+                var addressComponent = json.results[0].address_components;
+                console.log(json.results, 'current location address');
+                setLoc(
+                  addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
+                );
+              })
+            },
+            error => {
+              console.log(error.code, error.message);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+          );
+        } else {
+          Alert.alert('Location Permission', 'App needs access to your location to work properly.');
+        }
+      } catch (err) {
+        console.warn(err);
       }
-    } catch (err) {
-      console.warn(err);
     }
   };
   const getOneTimeLocation = () => {
