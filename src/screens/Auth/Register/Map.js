@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import {
   SafeAreaView,
@@ -32,6 +33,7 @@ import Inicon from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import Entypo from 'react-native-vector-icons/Entypo';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -47,20 +49,6 @@ const Map = ({navigation, route}) => {
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
-    // if (screen1) {
-    //   console.log('ddd');
-    //   dispatch(setPostLocation(loc));
-    //   setTimeout(() => {
-    //     navigation.goBack();
-    //   }, 2000);
-    // } else {
-    //   console.log('rr');
-    //   dispatch(setLocation(loc));
-    //   setModalVisible(!isModalVisible);
-    //   setTimeout(() => {
-    //     navigation.goBack();
-    //   }, 2000);
-    // }
   };
   const screen1 = route.params;
 
@@ -68,16 +56,10 @@ const Map = ({navigation, route}) => {
   const dispatch = useDispatch();
   const mapRef = useRef();
   const [markerPosition, setMarkerPosition] = useState({
-    latitude: 24.946218,
-    longitude: 67.005615,
+    latitude: 51.50853,
+    longitude: -0.12574,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
-  });
-  const [mapCenter, setMapCenter] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: LATITUDE_DELTA,
-    longitudeDelta: LONGITUDE_DELTA,
   });
 
   const onMapRegionChange = newRegion => {
@@ -91,101 +73,134 @@ const Map = ({navigation, route}) => {
         addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
       );
     });
-    // if(screen1){
-    //   console.log('ddd');
-    //   dispatch(setPostLocation(newRegion))
-    // }
-    // else{
-    //   console.log('rr');
-    //   dispatch(setLocation(newRegion))
-    //   // navigation.goBack()
-    // }
 
-    // dispatch(setLocation(newRegion))
   };
 
-  const onMarkerDragEnd = event => {
-    setMarkerPosition(event.nativeEvent.coordinate);
-  };
   const [position, setPosition] = useState({
-    latitude: 24.946218,
-    longitude: 67.005615,
+    latitude: 51.50853,
+    longitude: -0.12574,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
   Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
 
   const requestGeolocationPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        // {
-        //   title: 'Map',
-        //   message: 'D9 Dating wants to access your current location',
-        //   // buttonNeutral: 'Ask Me Later',
-        //   // buttonNegative: 'Cancel',
-        //   // buttonPositive: 'OK',
-        // },
-      );
-      console.log(granted, 'granted');
-      setTimeout(() => {
+    console.log('request');
+    console.log(loc, 'loc');
+    if (Platform.OS === 'ios') {
+      console.log('ios');
+      // getOneTimeLocation();
+      // subscribeLocationLocation();
+    } else {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Access Required',
+            message: 'This App needs to Access your location',
+          },
+        );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          Alert.alert('D9Dating is accessing your location');
-          Geolocation.getCurrentPosition(pos => {
-            // console.log(pos.coords.longitude, 'longitude' );
-            setPosition({
-              latitude: pos.coords.latitude,
-              longitude: pos.coords.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            });
-            setMarkerPosition({
-              latitude: pos.coords.latitude,
-              longitude: pos.coords.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            });
-            mapRef.current.animateToRegion({
-              latitude: pos.coords.latitude,
-              longitude: pos.coords.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            });
-            console.log(pos, 'possgg');
-          });
+          //To Check, If Permission is granted
+          getOneTimeLocation()
+          
         } else {
-          console.log('Geolocation permission denied');
-          setPosition({
-            latitude: 51.50853,
-            longitude: -0.12574,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          });
-          setMarkerPosition({
-            latitude: 51.50853,
-            longitude: -0.12574,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          });
-          mapRef.current.animateToRegion({
-            latitude: 51.50853,
-            longitude: -0.12574,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          });
+          console.log('Permission Denied');
         }
-      }, 1000);
-    } catch (err) {
-      console.warn(err);
-    }
+      } catch (err) {
+        console.warn(err);
+      }
+    
   };
+    // try {
+    //   const granted = await PermissionsAndroid.request(
+    //     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //   );
+    //   console.log(granted,'gran');
+    //     if (granted == true) {   
+    //       Alert.alert('D9Dating is accessing your location');
+    //       Geolocation.getCurrentPosition(pos => {
+    //         console.log('inner');
+    //         getCity(pos.coords.latitude, pos.coords.longitude)
+    //         // console.log(pos.coords.longitude, 'longitude' );
+    //         setPosition({
+    //           latitude: pos.coords.latitude,
+    //           longitude: pos.coords.longitude,
+    //           latitudeDelta: 0.0922,
+    //           longitudeDelta: 0.0421,
+    //         });
+    //         setMarkerPosition({
+    //           latitude: pos.coords.latitude,
+    //           longitude: pos.coords.longitude,
+    //           latitudeDelta: 0.0922,
+    //           longitudeDelta: 0.0421,
+    //         });
+    //         mapRef.current.animateToRegion({
+    //           latitude: pos.coords.latitude,
+    //           longitude: pos.coords.longitude,
+    //           latitudeDelta: 0.0922,
+    //           longitudeDelta: 0.0421,
+    //         });
+           
+    //         console.log(pos, 'possgg');
+    //       });
+    //     } else {
+    //       console.log('Geolocation permission denied');
+    //       setPosition({
+    //         latitude: 51.50853,
+    //         longitude: -0.12574,
+    //         latitudeDelta: 0.0922,
+    //         longitudeDelta: 0.0421,
+    //       });
+    //       setMarkerPosition({
+    //         latitude: 51.50853,
+    //         longitude: -0.12574,
+    //         latitudeDelta: 0.0922,
+    //         longitudeDelta: 0.0421,
+    //       });
+    //       mapRef.current.animateToRegion({
+    //         latitude: 51.50853,
+    //         longitude: -0.12574,
+    //         latitudeDelta: 0.0922,
+    //         longitudeDelta: 0.0421,
+    //       });
+    //     }
+   
+    // } catch (err) {
+    //   console.warn(err);
+    // }
+  };
+  const getOneTimeLocation = () => {
+    console.log('get one time');
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        console.log("Latitude: " + latitude + ", Longitude: " + longitude);
+      });
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+    
+  };
+  const getCity = async (lat, long)=>{
+    console.log('getcity');
+    Geocoder.from(lat, long).then(json => {
+      var addressComponent = json.results[0].address_components;
+      console.log(json.results, 'acc');
+      setLoc(
+        addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
+      );
+    });
+    
+  }
   const checkGeolocationPermission = async () => {
     try {
       const granted = await PermissionsAndroid.check(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
       console.log(granted, 'granted');
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      if (granted === true) {
         console.log('You can use the geolocation');
         Geolocation.getCurrentPosition(pos => {
           // console.log(pos.coords.longitude, 'longitude' );
@@ -207,6 +222,13 @@ const Map = ({navigation, route}) => {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           });
+          Geocoder.from(pos.coords.latitude, pos.coords.longitude).then(json => {
+            var addressComponent = json.results[0].address_components;
+            console.log(json.results, 'current location address');
+            setLoc(
+              addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
+            );
+          })
           console.log(pos, 'possgg');
         });
       } else {
@@ -238,19 +260,10 @@ const Map = ({navigation, route}) => {
   useEffect(() => {
     console.log('he');
     checkGeolocationPermission();
-    // Geolocation.getCurrentPosition(pos => {
-    //   const crd = pos.coords;
-    //   LATITUDE = crd.latitude;
-    //   LONGITUDE = crd.longitude;
-    // });
-  }, []);
-  useEffect(() => {
-    console.log('map');
   }, []);
 
   const onPress = (data, details) => {
     console.log(data, 'aaa');
-    // console.log(JSON.stringify(details.geometry.location), 'details');
     setLoc(data.description);
     Geocoder.from(data.description)
       .then(json => {
@@ -342,7 +355,6 @@ const Map = ({navigation, route}) => {
           }}
           onDragEnd={e => {
             const coordinate = JSON.stringify(e.nativeEvent.coordinate);
-
             getCityName(coordinate);
           }}
         />
@@ -476,7 +488,9 @@ const Map = ({navigation, route}) => {
 
       <TouchableOpacity
         onPress={() => {
-          if (loc) {
+          // setModalVisible(!isModalVisible);
+          console.log(loc, 'log');
+          if (loc != null) {
             setModalVisible(!isModalVisible);
           } else {
             Alert.alert('Please select location');
@@ -553,26 +567,26 @@ const Map = ({navigation, route}) => {
             <TouchableOpacity
               onPress={() => {
                 setModalVisible(!isModalVisible);
-                if (screen1) {
-                  console.log('ddd');
+                if (screen1?.from == 'createPost') {
+                  console.log('create post');
                   dispatch(setPostLocation(loc));
                   setTimeout(() => {
                     navigation.goBack();
                   }, 2000);
-                } else if (screen1?.data == 'register') {
-                  console.log('rr');
+                } else if (screen1?.from == 'register') {
+                  console.log('register');
                   dispatch(setLocation(loc));
-                  setModalVisible(!isModlVisible);
+                  // setModalVisible(!isModlVisible);
                   setTimeout(() => {
                     navigation.goBack();
                   }, 2000);
-                } else {
-                  console.log('rr');
+                } else if(screen1?.from == 'user'){
+                  console.log('user');
                   dispatch(setLocation(loc));
-                  setModalVisible(!isModlVisible);
+                  // setModalVisible(!isModlVisible);
                   setTimeout(() => {
-                    navigation.navigate('Profile',{
-                     data :'map'
+                    navigation.navigate('Profile', {
+                      data: 'map',
                     });
                   }, 2000);
                 }
