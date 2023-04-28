@@ -203,9 +203,13 @@ const StartScreen = ({navigation}) => {
               resizeMode={'cover'}
             /> */}
             <View style={s.round2}>
-            <Text 
-            style={{
-             fontSize: moderateScale(25,0.1)}}>🤙🏾</Text>
+              <Text
+                style={{
+                  fontSize: moderateScale(25, 0.1),
+                }}
+              >
+                🤙🏾
+              </Text>
             </View>
           </View>
           <View style={s.circle3}>
@@ -220,11 +224,15 @@ const StartScreen = ({navigation}) => {
                 }}
                 resizeMode={'cover'}
               /> */}
-            <Text  style={{
-                  borderRadius: moderateScale(16, 0.1),
-                  zIndex: -5000,
-                fontSize: moderateScale(25,0.1)
-                }}>👌🏾</Text>
+              <Text
+                style={{
+                  // borderRadius: moderateScale(16, 0.1),
+                  // zIndex: -5000,
+                  fontSize: moderateScale(25, 0.1),
+                }}
+              >
+                👌🏾
+              </Text>
             </View>
 
             {/* <Image
@@ -239,12 +247,16 @@ const StartScreen = ({navigation}) => {
               resizeMode={'cover'}
             /> */}
             <View style={s.round1}>
-            <Text  style={{
-                zIndex: 5000,
-                // top: moderateScale(230, 0.1),
-                // left: moderateScale(100, 0.1),
-                fontSize: moderateScale(30,0.1)
-              }}>🤘🏽</Text>
+              <Text
+                style={{
+                  zIndex: 5000,
+                  // top: moderateScale(230, 0.1),
+                  // left: moderateScale(100, 0.1),
+                  fontSize: moderateScale(30, 0.1),
+                }}
+              >
+                🤘🏽
+              </Text>
             </View>
           </View>
           <View style={s.circle4}>
@@ -253,12 +265,11 @@ const StartScreen = ({navigation}) => {
               width={undefined}
               resizeMode={'cover'}
               style={{
-                top: moderateScale(7,0.1),
+                top: moderateScale(7, 0.1),
                 left: moderateScale(25, 0.1),
                 width: moderateScale(60, 0.1),
                 height: moderateScale(60, 0.1),
-                borderRadius: moderateScale(60/2,0.1)
-                
+                borderRadius: moderateScale(60 / 2, 0.1),
               }}
             />
             <Image
@@ -270,7 +281,7 @@ const StartScreen = ({navigation}) => {
                 top: moderateScale(240, 0.1),
                 width: moderateScale(55, 0.1),
                 height: moderateScale(55, 0.1),
-                borderRadius: moderateScale(55/2,0.1)
+                borderRadius: moderateScale(55 / 2, 0.1),
               }}
             />
             <Image
@@ -282,7 +293,7 @@ const StartScreen = ({navigation}) => {
                 top: moderateScale(-50, 0.1),
                 width: moderateScale(50, 0.1),
                 height: moderateScale(50, 0.1),
-                borderRadius: moderateScale(50/2,0.1)
+                borderRadius: moderateScale(50 / 2, 0.1),
               }}
             />
           </View>

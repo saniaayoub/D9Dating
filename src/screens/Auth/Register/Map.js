@@ -73,7 +73,6 @@ const Map = ({navigation, route}) => {
         addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
       );
     });
-
   };
 
   const [position, setPosition] = useState({
@@ -160,10 +159,10 @@ const Map = ({navigation, route}) => {
       error => {
         console.log(error.code, error.message);
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
   };
-  const getCity = async (lat, long)=>{
+  const getCity = async (lat, long) => {
     console.log('getcity');
     Geocoder.from(lat, long).then(json => {
       var addressComponent = json.results[0].address_components;
@@ -172,8 +171,7 @@ const Map = ({navigation, route}) => {
         addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
       );
     });
-    
-  }
+  };
   const checkGeolocationPermission = async () => {
     try {
       const granted = await PermissionsAndroid.check(
@@ -202,13 +200,17 @@ const Map = ({navigation, route}) => {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           });
-          Geocoder.from(pos.coords.latitude, pos.coords.longitude).then(json => {
-            var addressComponent = json.results[0].address_components;
-            console.log(json.results, 'current location address');
-            setLoc(
-              addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
-            );
-          })
+          Geocoder.from(pos.coords.latitude, pos.coords.longitude).then(
+            json => {
+              var addressComponent = json.results[0].address_components;
+              console.log(json.results, 'current location address');
+              setLoc(
+                addressComponent[1].short_name +
+                  ' ' +
+                  addressComponent[2].short_name,
+              );
+            },
+          );
           console.log(pos, 'possgg');
         });
       } else {
@@ -239,6 +241,8 @@ const Map = ({navigation, route}) => {
 
   useEffect(() => {
     console.log('he');
+    Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
+
     checkGeolocationPermission();
   }, []);
 
@@ -560,7 +564,7 @@ const Map = ({navigation, route}) => {
                   setTimeout(() => {
                     navigation.goBack();
                   }, 2000);
-                } else if(screen1?.from == 'user'){
+                } else if (screen1?.from == 'user') {
                   console.log('user');
                   dispatch(setLocation(loc));
                   // setModalVisible(!isModlVisible);
