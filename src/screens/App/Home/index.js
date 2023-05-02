@@ -77,7 +77,7 @@ const Home = ({navigation}) => {
   );
 
   useEffect(() => {
-    dispatch(setOrganization(Organizations));
+    dispatch(setOrganization(Organization));
     console.log('organisation', organizations);
     getID();
     getPosts();
@@ -421,7 +421,7 @@ const Home = ({navigation}) => {
     let color;
 
     // console.log(id, 'idddg');
-    Organizations?.forEach(elem => {
+    Organization?.forEach(elem => {
       if (elem.id == id) {
         // console.log(id, 'idddg');
         color = elem.color;
