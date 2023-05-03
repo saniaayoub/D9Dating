@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     color: '#9F9F9F',
   },
   about: {
-    marginTop: moderateScale(30),
+    marginTop: moderateScale(20,0.1),
     marginBottom: moderateScale(7,0.1)
   },
   aboutTxt: {

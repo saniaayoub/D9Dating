@@ -87,19 +87,59 @@ const Map = ({navigation, route}) => {
   
 
   const requestGeolocationPermission = async () => {
-    console.log('request');
-    console.log(loc, 'loc');
+
     if (Platform.OS === 'ios') {
       Geolocation.requestAuthorization('whenInUse');
     } else {
-      
+     
       try {
-        const granted = await PermissionsAndroid.check(
+        const grantCheck = await PermissionsAndroid.check(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         );
-        console.log(granted, 'granted');
-        if (granted === true) {
-          console.log('You can use the geolocation');
+        console.log('granteCheck', grantCheck)
+        if(grantCheck === false){
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          );
+          console.log('granted', granted)
+          if(granted == PermissionsAndroid.RESULTS.GRANTED){
+            console.log('You can use the geolocation');
+            Geolocation.getCurrentPosition(pos => {
+              // console.log(pos.coords.longitude, 'longitude' );
+              setPosition({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              });
+              setMarkerPosition({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              });
+              mapRef.current.animateToRegion({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              });
+              Geocoder.from(pos.coords.latitude, pos.coords.longitude).then(
+                json => {
+                  var addressComponent = json.results[0].address_components;
+                  console.log(json.results, 'current location address');
+                  setLoc(
+                    addressComponent[1].short_name +
+                      ' ' +
+                      addressComponent[2].short_name,
+                  );
+                },
+              );
+              console.log(pos, 'possgg');
+            });
+          }
+        }else{
+          Alert.alert('D9Dating is accessing your location')
           Geolocation.getCurrentPosition(pos => {
             // console.log(pos.coords.longitude, 'longitude' );
             setPosition({
@@ -133,13 +173,8 @@ const Map = ({navigation, route}) => {
             );
             console.log(pos, 'possgg');
           });
-        } 
-         if(granted === false){
-          const granted = await PermissionsAndroid.check(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          );
-          console.log('permission denied and check');
         }
+       
       } catch (err) {
         console.warn(err);
       }

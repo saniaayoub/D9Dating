@@ -175,7 +175,7 @@ const ViewUser = ({navigation, route}) => {
 
             setImgView(!imgView);
           }}
-          style={{width: '100%', height: moderateScale(240, 0.1)}}
+          style={{width: '100%', height: moderateScale(260, 0.1)}}
         >
           <Image
             style={s.view1Img}
@@ -243,7 +243,7 @@ const ViewUser = ({navigation, route}) => {
                 <Text style={s.txt}>{userData?.about_me} </Text>
               </View>
             </View>
-            <View>
+            <View style={{marginBottom: moderateScale(10,0.1)}}>
               <Text style={[s.aboutTxt, {color: textColor}]}>Organization</Text>
               <View style={s.abTxt}>
                 <Text style={s.txt}>{userData?.group} </Text>

@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const generateID = () => Math.random().toString(36).substring(2, 10);
+
 const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
@@ -14,23 +14,6 @@ const socketIO = require('socket.io')(http, {
     methods: ['GET', 'POST'],
   },
 });
-
-// socketIO.on('connection', (socket) => {
-//   console.log('A user connected');
-
-//   // Listen for the 'likePost' event from the client
-//   socket.on('likePost', ({ postId, userId }) => {
-//     console.log(`Post ${postId} was liked by user ${userId}`);
-//     const recipientIds = getRecipientIds(postId);
-//     sendLocalPushNotification(recipientIds, `${userId} liked your post!`);
-//   });
-
-//   // Handle Socket.IO disconnections
-//   socket.on('disconnect', () => {
-//     console.log('A user disconnected');
-//   });
-// });
-
 
 socketIO.on('connection', socket => {
   console.log(`⚡: ${socket.id} user just connected!`);
@@ -56,13 +39,12 @@ socketIO.on('connection', socket => {
       time: `${timestamp.hour}:${timestamp.mins}`,
     });
   });
- 
+
   socket.on('disconnect', () => {
     socket.disconnect();
     console.log('🔥: A user disconnected');
   });
 });
-
 
 socketIO.use((socket, next) => {
   const username = socket.handshake.auth.username;
@@ -75,9 +57,6 @@ socketIO.use((socket, next) => {
   next();
 });
 
-app.get('/api', (req, res) => {
-  res.json(chatRooms);
-});
 app.get('/', (req, res) => {
   res.json({
     message: 'Hello world',

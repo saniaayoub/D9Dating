@@ -760,8 +760,7 @@ const Home = ({navigation}) => {
       <View style={s.col}>
         <View style={s.header}>
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
-          >
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}>
             <Image
               source={{
                 uri: elem?.item?.user?.image
@@ -774,8 +773,9 @@ const Home = ({navigation}) => {
           </View>
           <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('ViewUser', {post: elem.item})}
-            >
+              onPress={() =>
+                navigation.navigate('ViewUser', {post: elem.item})
+              }>
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
                 {elem?.item?.user?.name} {elem?.item?.user?.last_name}
               </Text>
@@ -805,8 +805,7 @@ const Home = ({navigation}) => {
                     style={{
                       flexDirection: 'row',
                       right: moderateScale(8, 0.1),
-                    }}
-                  >
+                    }}>
                     <Entypo
                       name={'dots-three-vertical'}
                       color={textColor}
@@ -814,13 +813,11 @@ const Home = ({navigation}) => {
                     />
                   </Pressable>
                 );
-              }}
-            >
+              }}>
               <Menu.Item
                 onPress={() => {
                   hide(elem?.item?.id);
-                }}
-              >
+                }}>
                 <View style={s.optionView}>
                   <Icon
                     name={'eye-slash'}
@@ -841,8 +838,7 @@ const Home = ({navigation}) => {
                         elem: elem?.item,
                         from: 'Home',
                       })
-                    }
-                  >
+                    }>
                     <View style={s.optionView}>
                       <MaterialIcons
                         name={'edit'}
@@ -866,8 +862,7 @@ const Home = ({navigation}) => {
                         'Are you sure you want to delete this post?',
                         elem?.item?.id,
                       )
-                    }
-                  >
+                    }>
                     <View style={s.optionView}>
                       <Antdesign
                         name={'delete'}
@@ -886,8 +881,7 @@ const Home = ({navigation}) => {
                 onPress={() => {
                   refRBSheet1.current.open();
                   setPostId(elem?.item?.id);
-                }}
-              >
+                }}>
                 <View style={s.optionView}>
                   <MaterialIcons
                     name={'report'}
@@ -903,23 +897,21 @@ const Home = ({navigation}) => {
         </View>
         <View style={s.img}>
           <TouchableWithoutFeedback
-            onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}
-          >
+            onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}>
             <View style={s.img}>
               <Image
                 source={{uri: elem?.item?.image}}
                 resizeMode={'cover'}
-                style={s.galleryImage}
-              ></Image>
+                style={s.galleryImage}></Image>
             </View>
           </TouchableWithoutFeedback>
           <TouchableOpacity
             onPress={() => {
+              send();
               hitLike(elem?.item?.id, elem?.index);
               // console.log(data[elem.index].post.liked);
             }}
-            style={s.likes}
-          >
+            style={s.likes}>
             <Text style={s.likesCount}> {elem?.item?.post_likes?.length}</Text>
 
             <Icon
@@ -935,8 +927,7 @@ const Home = ({navigation}) => {
             onPress={() => {
               navigation.navigate('Likes', {data: elem?.item?.post_likes});
             }}
-            style={{marginBottom: moderateScale(5, 0.1)}}
-          >
+            style={{marginBottom: moderateScale(5, 0.1)}}>
             {elem?.item?.post_likes?.length ? (
               <Text style={[s.name, {color: textColor}]}>
                 {`Liked by ${elem?.item?.post_likes[0]?.users?.name} ${elem?.item?.post_likes[0]?.users?.last_name} `}
@@ -952,8 +943,7 @@ const Home = ({navigation}) => {
               justifyContent: 'flex-start',
               alignItems: 'center',
               marginBottom: moderateScale(5, 0.1),
-            }}
-          >
+            }}>
             <Text style={[s.name, {color: textColor}]}>
               {elem?.item?.user?.name}
               {elem?.item?.user?.last_name}{' '}
@@ -966,8 +956,7 @@ const Home = ({navigation}) => {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('Comments', {post: elem?.item});
-            }}
-          >
+            }}>
             <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
               View all {elem?.item?.post_comments?.length} Comments
             </Text>
@@ -985,8 +974,7 @@ const Home = ({navigation}) => {
                     {
                       borderColor: getColor(elem?.item?.user?.group),
                     },
-                  ]}
-                >
+                  ]}>
                   <Image
                     source={{
                       uri: elem?.item?.user?.image
@@ -1003,8 +991,7 @@ const Home = ({navigation}) => {
                   onPress={() => {
                     addComment(elem?.item?.id, elem?.index);
                   }}
-                  style={{marginRight: moderateScale(15, 0.1)}}
-                >
+                  style={{marginRight: moderateScale(15, 0.1)}}>
                   <Feather
                     name={'send'}
                     size={moderateScale(20, 0.1)}
@@ -1048,8 +1035,7 @@ const Home = ({navigation}) => {
             height: moderateScale(120, 0.1),
             marginVertical: moderateScale(20, 0.1),
             flexDirection: 'row',
-          }}
-        >
+          }}>
           {storiesData[0]?.stories?.length ? (
             <View>
               <TouchableOpacity
@@ -1059,8 +1045,7 @@ const Home = ({navigation}) => {
                 style={[
                   s.addBtn,
                   {borderColor: color, top: moderateScale(50, 0.1)},
-                ]}
-              >
+                ]}>
                 <Icon
                   name={'plus'}
                   size={moderateScale(14, 0.1)}
@@ -1157,8 +1142,7 @@ const Home = ({navigation}) => {
                   onPress={() => {
                     refRBSheet.current.open();
                   }}
-                  style={[s.addBtn, {borderColor: color}]}
-                >
+                  style={[s.addBtn, {borderColor: color}]}>
                   <Icon
                     name={'plus'}
                     size={moderateScale(14, 0.1)}
@@ -1210,8 +1194,7 @@ const Home = ({navigation}) => {
           onPress={() => {
             // console.log('aaa');
             navigation.navigate('FunInteraction');
-          }}
-        >
+          }}>
           <View style={[s.yellow, s.round]}>
             <Fun
               width={moderateScale(12, 0.1)}
@@ -1226,8 +1209,7 @@ const Home = ({navigation}) => {
                 elevation: 30,
                 shadowColor: 'black',
               },
-            ]}
-          >
+            ]}>
             {funPostsData ? (
               <Text style={s.count}>{funPostsData?.length}</Text>
             ) : null}
@@ -1241,16 +1223,14 @@ const Home = ({navigation}) => {
               flex: 1,
               alignItems: 'center',
               marginBottom: moderateScale(120, 0.1),
-            }}
-          >
+            }}>
             <Text style={[s.textCreate, {color: textColor}]}>
               {`What's on your mind`}{' '}
               {userData?.name ? `${userData?.name}?` : null}
             </Text>
             <TouchableOpacity
               style={s.btn}
-              onPress={() => navigation.navigate('createPost')}
-            >
+              onPress={() => navigation.navigate('createPost')}>
               <View style={s.connected}>
                 <Text style={[s.btnTxt]}>Create Post</Text>
                 <Icon
@@ -1284,27 +1264,23 @@ const Home = ({navigation}) => {
             height: moderateScale(220),
             borderRadius: moderateScale(20, 0.1),
           },
-        }}
-      >
+        }}>
         <View
           style={{
             marginVertical: moderateScale(30, 0.1),
             justifyContent: 'center',
             alignContent: 'center',
-          }}
-        >
+          }}>
           <Stack
             direction={{
               base: 'column',
               md: 'row',
             }}
-            space={4}
-          >
+            space={4}>
             <Button
               transparent
               style={s.capturebtn}
-              onPressIn={() => captureImage('photo')}
-            >
+              onPressIn={() => captureImage('photo')}>
               <View style={{flexDirection: 'row'}}>
                 <Ionicons name="camera" style={s.capturebtnicon} />
                 <Text style={s.capturebtntxt}>Open Camera</Text>
@@ -1313,8 +1289,7 @@ const Home = ({navigation}) => {
             <Button
               transparent
               style={s.capturebtn}
-              onPressIn={() => chooseFile('photo')}
-            >
+              onPressIn={() => chooseFile('photo')}>
               <View style={{flexDirection: 'row'}}>
                 <Ionicons name="md-image-outline" style={s.capturebtnicon} />
                 <Text style={s.capturebtntxt}>Open Gallery</Text>
@@ -1334,23 +1309,20 @@ const Home = ({navigation}) => {
             borderRadius: moderateScale(20, 0.1),
             backgroundColor: color,
           },
-        }}
-      >
+        }}>
         {loader ? <Loader /> : null}
         <View
           style={{
             alignSelf: 'center',
             marginBottom: moderateScale(10, 0.1),
-          }}
-        >
+          }}>
           {/* {loader ? <Loader /> : null} */}
           <Text style={[s.rb, {color: textColor}]}>Report</Text>
         </View>
         <View
           style={{
             paddingHorizontal: moderateScale(13, 0.1),
-          }}
-        >
+          }}>
           <View style={[s.hv]}>
             <Text style={[s.hv, {color: textColor}]}>
               Why are you reporting this post?
@@ -1375,8 +1347,7 @@ const Home = ({navigation}) => {
                 setText('i just dont like it');
                 report('i just dont like it');
               }}
-              style={s.list}
-            >
+              style={s.list}>
               <View>
                 <Text style={[s.listTxt, {color: textColor}]}>
                   i just don't like it
@@ -1388,8 +1359,7 @@ const Home = ({navigation}) => {
                 setText('its spam');
                 report('its spam');
               }}
-              style={s.list}
-            >
+              style={s.list}>
               <View>
                 <Text style={[s.listTxt, {color: textColor}]}>it's spam</Text>
               </View>
@@ -1399,8 +1369,7 @@ const Home = ({navigation}) => {
                 setText('Nudity or sexual activity');
                 report('Nudity or sexual activity');
               }}
-              style={s.list}
-            >
+              style={s.list}>
               <View>
                 <Text style={[s.listTxt, {color: textColor}]}>
                   Nudity or sexual activity
@@ -1412,8 +1381,7 @@ const Home = ({navigation}) => {
                 setText('Hate speech or symbols');
                 report('Hate speech or symbols');
               }}
-              style={s.list}
-            >
+              style={s.list}>
               <View>
                 <Text style={[s.listTxt, {color: textColor}]}>
                   Hate speech or symbols
@@ -1425,8 +1393,7 @@ const Home = ({navigation}) => {
                 setText('Violence or dangerous orgnisations');
                 report('Violence or dangerous orgnisations');
               }}
-              style={s.list}
-            >
+              style={s.list}>
               <View>
                 <Text style={[s.listTxt, {color: textColor}]}>
                   Violence or dangerous orgnisations
@@ -1438,8 +1405,7 @@ const Home = ({navigation}) => {
                 setText('Bullying or harrasment');
                 report('Bullying or harrasment');
               }}
-              style={s.list}
-            >
+              style={s.list}>
               <View>
                 <Text style={[s.listTxt, {color: textColor}]}>
                   Bullying or harrasment

@@ -45,18 +45,6 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 
-const organization = [
-  {id: 'Organization 1', color: 'blue'},
-  {id: 'Organization 2', color: 'green'},
-  {id: 'Organization 3', color: 'red'},
-  {id: 'Organization 4', color: 'yellow'},
-  {id: 'Organization 5', color: 'orange'},
-  {id: 'Organization 6', color: 'brown'},
-  {id: 'Organization 7', color: 'pink'},
-  {id: 'Organization 8', color: 'purple'},
-  {id: 'Organization 9', color: 'blue'},
-];
-
 const Profile = ({navigation, route}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
@@ -70,7 +58,10 @@ const Profile = ({navigation, route}) => {
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const color2 = theme === 'dark' ? '#2E2D2D' : '#fff';
+  const greyColor = '#D3D3D3';
   const userLocation = useSelector(state => state.reducer.location);
+  const organization = useSelector(state => state.reducer.organization);
+
   console.log(userLocation, 'user location');
   const [disable1, setDisable1] = useState(false);
   const [disable2, setDisable2] = useState(false);
@@ -85,7 +76,7 @@ const Profile = ({navigation, route}) => {
 
   const [date, setDate] = useState(null);
   const [id, setId] = useState('');
-  const [borderColor, setBorderColor] = useState(textColor);
+  const [borderColor, setBorderColor] = useState(greyColor);
   let formData = {
     id: '',
     name: '',
@@ -405,14 +396,12 @@ const Profile = ({navigation, route}) => {
           alignItems: 'center',
           justifyContent: 'center',
           marginVertical: moderateScale(20, 0.1),
-        }}
-      >
+        }}>
         <View
           style={{
             position: 'absolute',
             left: moderateScale(10, 0.1),
-          }}
-        >
+          }}>
           <Header navigation={navigation} />
         </View>
         <View>
@@ -424,8 +413,7 @@ const Profile = ({navigation, route}) => {
       </View>
 
       <ScrollView
-        contentContainerStyle={[s.container, {backgroundColor: color}]}
-      >
+        contentContainerStyle={[s.container, {backgroundColor: color}]}>
         <View style={s.dp}>
           <Image
             source={{uri: form?.image ? form?.image : dummyImage}}
@@ -435,8 +423,7 @@ const Profile = ({navigation, route}) => {
           <View style={s.circle}>
             <TouchableOpacity
               onPress={() => refRBSheet.current.open()}
-              style={s.edit}
-            >
+              style={s.edit}>
               <Entypo
                 name={'edit'}
                 size={moderateScale(10, 0.1)}
@@ -449,8 +436,7 @@ const Profile = ({navigation, route}) => {
         <View style={s.username}>
           <Text style={[s.textBold, {color: textColor}]}>{userName}</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Settings', {data: form})}
-          >
+            onPress={() => navigation.navigate('Settings', {data: form})}>
             <Inicon
               name={'settings-sharp'}
               size={moderateScale(20, 0.1)}
@@ -480,8 +466,7 @@ const Profile = ({navigation, route}) => {
                 <TouchableOpacity
                   onPress={() => {
                     setDisable1(!disable1);
-                  }}
-                >
+                  }}>
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -523,8 +508,7 @@ const Profile = ({navigation, route}) => {
                 <TouchableOpacity
                   onPress={() => {
                     setDisable7(!disable7);
-                  }}
-                >
+                  }}>
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -566,8 +550,7 @@ const Profile = ({navigation, route}) => {
                 <TouchableOpacity
                   onPress={() => {
                     setDisable2(!disable2);
-                  }}
-                >
+                  }}>
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -635,12 +618,12 @@ const Profile = ({navigation, route}) => {
             <View style={{width: '100%', flexDirection: 'row'}}>
               <Menu
                 borderWidth={moderateScale(1, 0.1)}
-                borderBottomColor={'grey'}
+                // borderBottomColor={greyColor}
                 backgroundColor={color}
                 // marginRight={moderateScale(5, 0.1)}
 
                 // top={moderateScale(24, 0.1)}
-                borderColor={textColor}
+                borderColor={greyColor}
                 trigger={triggerProps => {
                   return (
                     <Pressable
@@ -649,7 +632,7 @@ const Profile = ({navigation, route}) => {
                       {...triggerProps}
                       style={{
                         flexDirection: 'row',
-                        borderColor: textColor,
+                        borderColor: greyColor,
                         borderBottomWidth: 1,
                         paddingBottom: moderateScale(10, 0.1),
                         marginBottom: moderateScale(-10, 0.1),
@@ -657,8 +640,7 @@ const Profile = ({navigation, route}) => {
                         width: '100%',
                         alignItems: 'center',
                         // marginTop: moderateScale(18, 0.1),
-                      }}
-                    >
+                      }}>
                       <View style={s.icon}>
                         <Icon1
                           name={'group'}
@@ -676,8 +658,7 @@ const Profile = ({navigation, route}) => {
                             // paddingBottom: moderateScale(12, 0.1),
                             fontSize: moderateScale(12, 0.1),
                           },
-                        ]}
-                      >
+                        ]}>
                         {form?.group}
                       </Text>
 
@@ -704,15 +685,13 @@ const Profile = ({navigation, route}) => {
                       </View>
                     </Pressable>
                   );
-                }}
-              >
+                }}>
                 {organization.map((v, i) => {
                   return (
                     <Menu.Item
                       onPress={() => {
                         setForm({...form, group: v.id});
-                      }}
-                    >
+                      }}>
                       <View style={s.optionView}>
                         <Text style={[s.optionBtns, {color: textColor}]}>
                           {v.id}
@@ -744,8 +723,7 @@ const Profile = ({navigation, route}) => {
                 <TouchableOpacity
                   onPress={() => {
                     // setDisable3(!disable3);
-                  }}
-                >
+                  }}>
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -778,8 +756,7 @@ const Profile = ({navigation, route}) => {
                   borderBottomWidth: 1,
                   // flexDirection: 'row',
                 },
-              ]}
-            >
+              ]}>
               <PhoneInput
                 initialCountry={'us'}
                 initialValue={form?.phone_number}
@@ -789,6 +766,7 @@ const Profile = ({navigation, route}) => {
                 }}
                 disabled={!disable4}
                 autoFormat={true}
+                pickerBackgroundColor={greyColor}
                 textStyle={[s.inputStyle, {color: textColor}]}
                 isValidNumber={e => console.log(e, 'here')}
                 ref={phonenum}
@@ -798,7 +776,7 @@ const Profile = ({navigation, route}) => {
                       ...form,
                       phone_number: phonenum?.current?.getValue(),
                     });
-                    setBorderColor(textColor);
+                    setBorderColor(greyColor);
                   } else {
                     setBorderColor('red');
                   }
@@ -812,8 +790,12 @@ const Profile = ({navigation, route}) => {
                 }}
                 onPress={() => {
                   setDisable4(!disable4);
-                }}
-              >
+                  if (!disable4) {
+                    setBorderColor('#33A9C4');
+                  } else {
+                    setBorderColor(greyColor);
+                  }
+                }}>
                 <Entypo
                   name={'edit'}
                   size={moderateScale(15, 0.1)}
@@ -1012,8 +994,7 @@ const Profile = ({navigation, route}) => {
                   onPress={() => {
                     showDatePicker();
                     // setDisable5(!disable5);
-                  }}
-                >
+                  }}>
                   <Entypo
                     name={'edit'}
                     size={moderateScale(15, 0.1)}
@@ -1057,11 +1038,10 @@ const Profile = ({navigation, route}) => {
                   <TouchableOpacity
                     onPress={() => {
                       navigation.navigate('Map', {
-                        from : 'user'
+                        from: 'user',
                       });
                       setDisable6(!disable6);
-                    }}
-                  >
+                    }}>
                     <Entypo
                       name={'edit'}
                       size={moderateScale(15, 0.1)}
@@ -1095,8 +1075,7 @@ const Profile = ({navigation, route}) => {
                 <RadioButton
                   onPress={() => onRadioBtnClick(item)}
                   selected={item.selected}
-                  key={item.id}
-                >
+                  key={item.id}>
                   {item.name}
                 </RadioButton>
               </View>
@@ -1115,8 +1094,7 @@ const Profile = ({navigation, route}) => {
               w={moderateScale(140, 0.1)}
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
-              style={s.shadow}
-            >
+              style={s.shadow}>
               <Text style={s.btnText}>Save</Text>
             </Button>
           </View>
@@ -1132,27 +1110,23 @@ const Profile = ({navigation, route}) => {
               height: moderateScale(220),
               borderRadius: moderateScale(20, 0.1),
             },
-          }}
-        >
+          }}>
           <View
             style={{
               marginVertical: moderateScale(30, 0.1),
               justifyContent: 'center',
               alignContent: 'center',
-            }}
-          >
+            }}>
             <Stack
               direction={{
                 base: 'column',
                 md: 'row',
               }}
-              space={4}
-            >
+              space={4}>
               <Button
                 transparent
                 style={s.capturebtn}
-                onPressIn={() => captureImage('photo')}
-              >
+                onPressIn={() => captureImage('photo')}>
                 <View style={{flexDirection: 'row'}}>
                   <Ionicons name="camera" style={s.capturebtnicon} />
                   <Text style={s.capturebtntxt}>Open Camera</Text>
@@ -1161,8 +1135,7 @@ const Profile = ({navigation, route}) => {
               <Button
                 transparent
                 style={s.capturebtn}
-                onPressIn={() => chooseFile('photo')}
-              >
+                onPressIn={() => chooseFile('photo')}>
                 <View style={{flexDirection: 'row'}}>
                   <Ionicons name="md-image-outline" style={s.capturebtnicon} />
                   <Text style={s.capturebtntxt}>Open Gallery</Text>

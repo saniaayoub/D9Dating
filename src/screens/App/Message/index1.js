@@ -219,8 +219,7 @@ const Message = ({navigation}) => {
           onPress={() => {
             navigation.navigate('ViewUser');
           }}
-          style={s.dp}
-        >
+          style={s.dp}>
           <Image
             source={elem.item.userImage}
             style={s.dp1}
@@ -229,8 +228,7 @@ const Message = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate('Chat', elem.item)}
-          style={[s.col, {flex: 0.6, justifyContent: 'flex-end'}]}
-        >
+          style={[s.col, {flex: 0.6, justifyContent: 'flex-end'}]}>
           <View>
             <Text style={[s.name, s.nameBold, {color: textColor}]}>
               {elem?.item?.name}
@@ -261,8 +259,7 @@ const Message = ({navigation}) => {
       ) : (
         <>
           <ScrollView
-            contentContainerStyle={[s.container, {backgroundColor: color}]}
-          >
+            contentContainerStyle={[s.container, {backgroundColor: color}]}>
             <View>
               <Text style={[s.HeadingText, {color: textColor}]}>Messages</Text>
             </View>
@@ -274,8 +271,7 @@ const Message = ({navigation}) => {
                 style={s.btn}
                 onPress={() => {
                   setModalVisible(!modalVisible);
-                }}
-              >
+                }}>
                 <Entypo
                   name={'new-message'}
                   color={textColor}
