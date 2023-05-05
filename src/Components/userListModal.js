@@ -97,12 +97,14 @@ const UserListModal = ({
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [searchText, setSearchText] = useState('');
   const [searchedList, setSearchedList] = useState([]);
+  const organization = useSelector(state => state.reducer.organization);
   const users = useSelector(state => state.reducer.users);
 
   const [user, setUser] = useState('');
   // const [users, setUsers] = useState([]);
   const handleCancel = () => {
     clearData();
+    getColor();
   };
   useEffect(() => {
     // getUsername();
@@ -151,32 +153,50 @@ const UserListModal = ({
     }
   };
 
+  const getColor = id => {
+    console.log('orga', organization);
+    let color;
+
+    organization?.forEach(elem => {
+      if (elem.id == id) {
+        color = elem.color;
+      }
+    });
+    return color;
+  };
+
   const renderItem = (elem, i) => {
-    console.log(elem);
+    console.log(elem, 'here');
     return (
       <TouchableOpacity
         style={styles.card}
         onPress={() => {
           handleCreateRoom(elem.item);
           //   navigation.navigate('Chat', elem.item);
-        }}
-      >
-        {/* <View style={styles.dp}>
+        }}>
+        <View
+          style={[
+            styles.dp,
+            {
+              borderColor: getColor(elem?.item?.group),
+            },
+          ]}>
           <Image
-            source={elem.item.userImage}
+            source={{uri: elem?.item?.image}}
             style={styles.dp1}
             resizeMode={'cover'}
           />
-        </View> */}
+        </View>
+
         <View>
           <View>
             <Text style={[styles.name, {color: textColor}]}>
-              {elem?.item?.username}
+              {elem?.item?.name} {elem?.item?.last_name}
             </Text>
           </View>
-          <Text style={[styles.textSmall, {color: '#787878'}]}>
+          {/* <Text style={[styles.textSmall, {color: '#787878'}]}>
             {elem?.item?.userID}
-          </Text>
+          </Text> */}
         </View>
       </TouchableOpacity>
     );
@@ -188,13 +208,11 @@ const UserListModal = ({
       visible={modalVisible}
       onRequestClose={() => {
         setModalVisible(!modalVisible);
-      }}
-    >
+      }}>
       <View style={[styles.modalView, {backgroundColor: color}]}>
         <TouchableOpacity
           style={styles.backBtn}
-          onPress={() => setModalVisible(!modalVisible)}
-        >
+          onPress={() => setModalVisible(!modalVisible)}>
           <Inicon
             name="arrow-back-circle-outline"
             size={moderateScale(30)}
@@ -215,8 +233,7 @@ const UserListModal = ({
           InputRightElement={
             <TouchableOpacity
               onPress={() => handleCancel()}
-              style={{paddingRight: 10}}
-            >
+              style={{paddingRight: 10}}>
               {searchText ? (
                 <Feather
                   name={'x'}
@@ -256,7 +273,8 @@ export default UserListModal;
 const styles = StyleSheet.create({
   modalView: {
     flex: 1,
-    padding: moderateScale(35, 0.1),
+    paddingTop: moderateScale(35, 0.1),
+    paddingHorizontal: moderateScale(20, 0.1),
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
   },
@@ -282,8 +300,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   name: {
-    //fontFamily: PoppinsBold,
+    textAlign: 'center',
+    fontFamily: PoppinsBold,
     fontSize: moderateScale(15, 0.1),
+    fontWeight: 'bold',
     lineHeight: moderateScale(22, 0.1),
   },
   textRegular: {
@@ -308,9 +328,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   dp: {
-    width: moderateScale(61, 0.1),
-    height: moderateScale(61, 0.1),
-    borderRadius: moderateScale(61 / 2, 0.1),
+    width: moderateScale(55, 0.1),
+    height: moderateScale(55, 0.1),
+    borderRadius: moderateScale(55 / 2, 0.1),
     marginRight: moderateScale(20, 0.1),
+    borderWidth: 2,
+    // flex: 0.23,
   },
 });

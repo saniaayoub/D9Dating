@@ -9,15 +9,17 @@ import {
 import React, {useEffect, useState, useLayoutEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
-import {setTheme, addUsers} from '../../../Redux/actions';
+import {setTheme, addUsers, setUserData} from '../../../Redux/actions';
 import s from './style';
 import Header from '../../../Components/Header';
 import {FlatList} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {ScrollView} from 'react-native';
-
+import Loader from '../../../Components/Loader';
 import socket from '../../../utils/socket';
 import UserListModal from '../../../Components/userListModal';
+import axiosconfig from '../../../Providers/axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // const rooms = [
 //   {
@@ -128,44 +130,71 @@ import UserListModal from '../../../Components/userListModal';
 
 const Message = ({navigation}) => {
   const dispatch = useDispatch();
+  const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const users = useSelector(state => state.reducer.users);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [user, setUser] = useState('');
-  useEffect(() => {
-    // socket.on('roomsList', rooms => {
-    //   setRooms(rooms);
-    //   console.log(rooms);
-    // });
-    socket.on('users', users => {
-      users.forEach(user => {
-        user.self = user.userID === socket.id;
-        setUser(user);
-        console.log(user, 'yourself');
-      });
-      // put the current user first, and then sort by username
-      let temp = users.sort((a, b) => {
-        if (a.self) return -1;
-        if (b.self) return 1;
-        if (a.username < b.username) return -1;
-        return a.username > b.username ? 1 : 0;
-      });
-      dispatch(addUsers(temp));
-      console.log('userss', temp);
-    });
-    socket.on('user connected', user => {
-      dispatch(addUsers([...users, user]));
-    });
 
-    socket.on('connect_error', err => {
-      if (err.message === 'invalid username') {
-        // usernameAlreadySelected = false;
-      }
-    });
-  }, [socket]);
+  const userslist = async () => {
+    console.log('userList');
+    setLoader(true);
+    await axiosconfig
+      .get(`connected_users`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data12', res.data.friends);
+        dispatch(addUsers(res.data.friends));
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+      });
+  };
+  useEffect(() => {
+    console.log('useEffect console');
+    userslist();
+  }, []);
+
+  // useEffect(() => {
+  //   // socket.on('roomsList', rooms => {
+  //   //   setRooms(rooms);
+  //   //   console.log(rooms);
+  //   // });
+  //   socket.on('users', users => {
+  //     users.forEach(user => {
+  //       user.self = user.userID === socket.id;
+  //       setUser(user);
+  //       console.log(user, 'yourself');
+  //     });
+  //     // put the current user first, and then sort by username
+  //     let temp = users.sort((a, b) => {
+  //       if (a.self) return -1;
+  //       if (b.self) return 1;
+  //       if (a.username < b.username) return -1;
+  //       return a.username > b.username ? 1 : 0;
+  //     });
+  //     dispatch(addUsers(temp));
+  //     console.log('userss', temp);
+  //   });
+  //   socket.on('user connected', user => {
+  //     dispatch(addUsers([...users, user]));
+  //   });
+
+  //   socket.on('connect_error', err => {
+  //     if (err.message === 'invalid username') {
+  //       // usernameAlreadySelected = false;
+  //     }
+  //   });
+  // }, [socket]);
 
   // useLayoutEffect(() => {
   //   function fetchGroups() {

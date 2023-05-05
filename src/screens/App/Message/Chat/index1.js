@@ -29,8 +29,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/u2.png'),
   },
   {
@@ -38,8 +37,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/mydp.png'),
   },
   {
@@ -47,8 +45,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/u2.png'),
   },
   {
@@ -56,8 +53,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/mydp.png'),
   },
   {
@@ -65,8 +61,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/u2.png'),
   },
 ];
@@ -84,7 +79,6 @@ const Chat = ({navigation, route}) => {
   //   const [socket, setSocket] = useState(io('http://192.168.18.226:3000'));
 
   const dispatch = useDispatch();
-  console.log(route.params);
   const data = route?.params;
   const [text, setText] = useState([]);
   const theme = useSelector(state => state.reducer.theme);
@@ -92,7 +86,7 @@ const Chat = ({navigation, route}) => {
   const textColor = theme === 'light' ? '#000' : '#fff';
   const uid = route.params.id;
   //   const name = data.from;
-  //   console.log(uid, 'id');
+  console.log('route data', route?.params);
   //   const senderId = Math.floor(Math.random() * 100);
   //   console.log(senderId);
 
@@ -155,16 +149,14 @@ const Chat = ({navigation, route}) => {
       return (
         <View
           style={[s.messege, {justifyContent: 'flex-end'}]}
-          key={elem.index}
-        >
+          key={elem.index}>
           <View
             style={[
               {
                 maxWidth: '80%',
                 marginRight: moderateScale(10, 0.1),
               },
-            ]}
-          >
+            ]}>
             <View style={s.textFrom}>
               <Text style={s.textSmall1}>{elem.item.text}</Text>
               <Text style={[s.textSmall1, {textAlign: 'right'}]}>
@@ -188,8 +180,7 @@ const Chat = ({navigation, route}) => {
       return (
         <View
           style={[s.messege, {justifyContent: 'flex-start'}]}
-          key={elem.index}
-        >
+          key={elem.index}>
           <View style={[s.dp]}>
             <Image
               source={{uri: elem.item.avatar}}
@@ -203,8 +194,7 @@ const Chat = ({navigation, route}) => {
                 maxWidth: '80%',
                 marginRight: moderateScale(10, 0.1),
               },
-            ]}
-          >
+            ]}>
             <View style={s.textTo}>
               <Text style={s.textSmall1}>{elem.item.text}</Text>
               <Text style={[s.textSmall1, {textAlign: 'right'}]}>
@@ -225,8 +215,7 @@ const Chat = ({navigation, route}) => {
         <View style={s.header}>
           <TouchableOpacity
             style={{flex: 0.1}}
-            onPress={() => navigation.goBack()}
-          >
+            onPress={() => navigation.goBack()}>
             <Inicon
               name="arrow-back-circle-outline"
               size={moderateScale(30)}
@@ -238,8 +227,7 @@ const Chat = ({navigation, route}) => {
               onPress={() => {
                 navigation.navigate('ViewUser');
               }}
-              style={s.dp}
-            >
+              style={s.dp}>
               <Image
                 source={messages[0].userImage}
                 style={s.dp1}

@@ -68,9 +68,9 @@ const styles = StyleSheet.create({
     //fontFamily: Poppins,
   },
   dp: {
-    width: moderateScale(61, 0.1),
-    height: moderateScale(61, 0.1),
-    borderRadius: moderateScale(61 / 2, 0.1),
+    width: moderateScale(55, 0.1),
+    height: moderateScale(55, 0.1),
+    borderRadius: moderateScale(55 / 2, 0.1),
     marginRight: moderateScale(10, 0.1),
   },
   userName: {

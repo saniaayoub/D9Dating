@@ -21,7 +21,8 @@ import socket from '../../../../utils/socket';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Antdesign from 'react-native-vector-icons/AntDesign';
-
+import axiosconfig from '../../../../Providers/axios';
+import Loader from '../../../../Components/Loader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 //  const socket = io('http://192.168.18.226');
@@ -33,8 +34,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/u2.png'),
   },
   {
@@ -42,8 +42,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/mydp.png'),
   },
   {
@@ -51,8 +50,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/u2.png'),
   },
   {
@@ -60,8 +58,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/mydp.png'),
   },
   {
@@ -69,8 +66,7 @@ const messages = [
     from: 'Julie Watson',
     to: '',
     date: '',
-    text:
-      ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
+    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
     userImage: require('../../../../assets/images/png/u2.png'),
   },
 ];
@@ -88,9 +84,13 @@ const Chat = ({navigation, route}) => {
   const [user, setUser] = useState('');
   const [refresh, setRefresh] = useState(true);
   const users = useSelector(state => state.reducer.users);
-
+  const [loader, setLoader] = useState(false);
   const [msg, setMsg] = useState([]);
   const [input, setInput] = useState('');
+  const userToken = useSelector(state => state.reducer.userToken);
+
+  console.log('route data', route?.params);
+
   //   const [socket, setSocket] = useState(io('http://192.168.18.226:3000'));
 
   const dispatch = useDispatch();
@@ -128,7 +128,7 @@ const Chat = ({navigation, route}) => {
         This function gets the time the user sends a message, then 
         logs the username, message, and the timestamp to the console.
      */
-  const handleNewMessage = () => {
+  const handleNewMessage = async () => {
     Keyboard.dismiss();
     const hour =
       new Date().getHours() < 10
@@ -160,6 +160,20 @@ const Chat = ({navigation, route}) => {
         fromSelf: true,
         to: userID,
       });
+      await axiosconfig
+        .get(`message_store`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        })
+        .then(res => {
+          console.log('data', res.data);
+          setLoader(false);
+        })
+        .catch(err => {
+          setLoader(false);
+          console.log(err);
+        });
       setMessage('');
 
       // this.selectedUser.messages.push({
@@ -272,8 +286,7 @@ const Chat = ({navigation, route}) => {
           s.messege,
           {justifyContent: status ? 'flex-end' : 'flex-start'},
         ]}
-        key={elem.index}
-      >
+        key={elem.index}>
         {!status ? (
           <View style={[s.dp]}>
             <Image
@@ -289,8 +302,7 @@ const Chat = ({navigation, route}) => {
               maxWidth: '80%',
               marginRight: moderateScale(10, 0.1),
             },
-          ]}
-        >
+          ]}>
           <View style={[s.options]}>
             <Menu
               w="150"
@@ -309,8 +321,7 @@ const Chat = ({navigation, route}) => {
                     style={{
                       flexDirection: 'row',
                       right: moderateScale(8, 0.1),
-                    }}
-                  >
+                    }}>
                     <View style={status ? s.textFrom : s.textTo}>
                       <Text style={s.textSmall1}>{elem?.item?.message}</Text>
                       <Text style={[s.textSmall1, {textAlign: 'right'}]}>
@@ -323,13 +334,11 @@ const Chat = ({navigation, route}) => {
                     </View>
                   </Pressable>
                 );
-              }}
-            >
+              }}>
               <Menu.Item
                 onPress={() => {
                   console.log('unsend');
-                }}
-              >
+                }}>
                 <View style={s.optionView}>
                   <MaterialIcons
                     name={'cancel-schedule-send'}
@@ -344,8 +353,7 @@ const Chat = ({navigation, route}) => {
               <Menu.Item
                 onPress={() => {
                   console.log('reply');
-                }}
-              >
+                }}>
                 <View style={s.optionView}>
                   <MaterialIcons
                     name={'reply'}
@@ -360,8 +368,7 @@ const Chat = ({navigation, route}) => {
               <Menu.Item
                 onPress={() => {
                   console.log('delete');
-                }}
-              >
+                }}>
                 <View style={s.optionView}>
                   <Antdesign
                     name={'delete'}
@@ -376,8 +383,7 @@ const Chat = ({navigation, route}) => {
               <Menu.Item
                 onPress={() => {
                   console.log('Block');
-                }}
-              >
+                }}>
                 <View style={s.optionView}>
                   <MaterialIcons
                     name={'block'}
@@ -409,8 +415,7 @@ const Chat = ({navigation, route}) => {
         <View style={s.header}>
           <TouchableOpacity
             style={{flex: 0.1}}
-            onPress={() => navigation.goBack()}
-          >
+            onPress={() => navigation.goBack()}>
             <Inicon
               name="arrow-back-circle-outline"
               size={moderateScale(30)}
@@ -422,16 +427,22 @@ const Chat = ({navigation, route}) => {
               onPress={() => {
                 navigation.navigate('ViewUser');
               }}
-              style={s.dp}
-            >
+              style={s.dp}>
               <Image
-                source={userData?.userImage}
+                source={{
+                  uri: route?.params?.image
+                    ? route?.params?.image
+                    : userData?.userImage,
+                }}
                 style={s.dp1}
                 resizeMode={'cover'}
               />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
-              <Text style={[s.name, {color: textColor}]}>{username}</Text>
+              <Text style={[s.name, {color: textColor}]}>
+                {route?.params?.name}
+                {route?.params?.last_name}
+              </Text>
 
               <Text style={s.textSmall}>Last Seen 5:52 PM</Text>
             </TouchableOpacity>

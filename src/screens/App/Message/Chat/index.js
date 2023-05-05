@@ -7,7 +7,7 @@ import {
   Image,
   ScrollView,
   FlatList,
-  TextInput
+  TextInput,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -19,7 +19,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Input, FormControl, Button} from 'native-base';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 const messages = [
   {
@@ -64,25 +63,22 @@ const messages = [
   },
 ];
 
-const Chat = ({navigation, route, chatId, id, user }) => {
+const Chat = ({navigation, route, chatId, id, user}) => {
   const theme = useSelector(state => state.reducer.theme);
   const loginId = useSelector(state => state.reducer.userToken);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const userToken = useSelector(state => state.reducer.userToken);
   // const id = route.params.id
-//  console.log(route.params.id,'id')
-//  console.log(route.params.name, 'name');
-const [messages, setMessages] = useState([]);
+  console.log(route.params, 'id');
+  //  console.log(route.params.name, 'name');
+  const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
 
- 
-
-
-// <Button
-//   title="Send"
-//   onPress={sendMessage}
-// />
+  // <Button
+  //   title="Send"
+  //   onPress={sendMessage}
+  // />
 
   return (
     <View>
@@ -95,7 +91,7 @@ const [messages, setMessages] = useState([]);
           onChangeText={setText}
           placeholder="Type a message"
         />
-        <TouchableOpacity >
+        <TouchableOpacity>
           <Text>Send</Text>
         </TouchableOpacity>
       </View>

@@ -343,8 +343,7 @@ const CreatePost = ({navigation, route}) => {
   };
   return (
     <ScrollView
-      style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}
-    >
+      style={{flex: 1, backgroundColor: theme == 'dark' ? '#222222' : '#fff'}}>
       <View>
         <View style={[s.container]}>
           {loader ? <Loader /> : null}
@@ -361,8 +360,7 @@ const CreatePost = ({navigation, route}) => {
                 height: moderateScale(58, 0.1),
                 borderRadius: moderateScale(58 / 2, 0.1),
                 marginHorizontal: moderateScale(10, 0.1),
-              }}
-            >
+              }}>
               <Image
                 style={s.headerImage}
                 source={{uri: userData?.image ? userData?.image : dummyImage}}
@@ -400,8 +398,7 @@ const CreatePost = ({navigation, route}) => {
                           height: moderateScale(33, 0.1),
                           // justifyContent:'center',
                           alignItems: 'center',
-                        }}
-                      >
+                        }}>
                         <Entypo
                           name={icon}
                           color={Textcolor}
@@ -420,14 +417,12 @@ const CreatePost = ({navigation, route}) => {
                         />
                       </Pressable>
                     );
-                  }}
-                >
+                  }}>
                   <Menu.Item
                     onPress={() => {
                       setStory('Public');
                       setIcon('globe');
-                    }}
-                  >
+                    }}>
                     <View style={s.optionView}>
                       <Entypo
                         name={'globe'}
@@ -444,8 +439,7 @@ const CreatePost = ({navigation, route}) => {
                     onPress={() => {
                       setStory('Friends');
                       setIcon('users');
-                    }}
-                  >
+                    }}>
                     <View style={s.optionView}>
                       <Entypo
                         name={'users'}
@@ -462,8 +456,7 @@ const CreatePost = ({navigation, route}) => {
                     onPress={() => {
                       setStory('Only Me');
                       setIcon('lock');
-                    }}
-                  >
+                    }}>
                     <View style={s.optionView}>
                       <Entypo
                         name={'lock'}
@@ -504,8 +497,7 @@ const CreatePost = ({navigation, route}) => {
                 : navigation.navigate('Map', {
                     from: 'createPost',
                   });
-            }}
-          >
+            }}>
             <View style={[s.mText]}>
               <Text
                 style={{
@@ -513,8 +505,7 @@ const CreatePost = ({navigation, route}) => {
                   marginLeft: moderateScale(10, 0.1),
                   color: Textcolor,
                   fontSize: moderateScale(14, 0.1),
-                }}
-              >
+                }}>
                 {postLocation ? postLocation : 'Enter location...'}
               </Text>
               {/* <Input
@@ -541,14 +532,12 @@ const CreatePost = ({navigation, route}) => {
                       console.log('here');
                       refRBSheet.current.open();
                     }
-                  }}
-                >
+                  }}>
                   <View style={s.img}>
                     <Image
                       source={{uri: filePath}}
                       resizeMode={'cover'}
-                      style={s.galleryImage}
-                    ></Image>
+                      style={s.galleryImage}></Image>
                   </View>
                 </TouchableOpacity>
               </>
@@ -568,8 +557,7 @@ const CreatePost = ({navigation, route}) => {
                       style={{
                         position: 'absolute',
                         top: moderateScale(120, 0.1),
-                      }}
-                    >
+                      }}>
                       <Ionicons
                         name="add-circle-sharp"
                         size={45}
@@ -592,27 +580,23 @@ const CreatePost = ({navigation, route}) => {
                   height: moderateScale(220),
                   borderRadius: moderateScale(20, 0.1),
                 },
-              }}
-            >
+              }}>
               <View
                 style={{
                   marginVertical: moderateScale(30, 0.1),
                   justifyContent: 'center',
                   alignContent: 'center',
-                }}
-              >
+                }}>
                 <Stack
                   direction={{
                     base: 'column',
                     md: 'row',
                   }}
-                  space={4}
-                >
+                  space={4}>
                   <Button
                     transparent
                     style={s.capturebtn}
-                    onPress={() => captureImage('photo')}
-                  >
+                    onPress={() => captureImage('photo')}>
                     <View style={{flexDirection: 'row'}}>
                       <Ionicons name="camera" style={s.capturebtnicon} />
                       <Text style={s.capturebtntxt}>Open Camera</Text>
@@ -621,8 +605,7 @@ const CreatePost = ({navigation, route}) => {
                   <Button
                     transparent
                     style={s.capturebtn}
-                    onPress={() => chooseFile('photo')}
-                  >
+                    onPress={() => chooseFile('photo')}>
                     <View style={{flexDirection: 'row'}}>
                       <Ionicons
                         name="md-image-outline"
@@ -647,8 +630,7 @@ const CreatePost = ({navigation, route}) => {
                 style={{
                   height: moderateScale(50, 0.1),
                   width: moderateScale(60, 0.1),
-                }}
-              ></View>
+                }}></View>
             </>
           ) : (
             <></>
