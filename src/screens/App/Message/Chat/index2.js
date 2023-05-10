@@ -129,6 +129,8 @@ const Chat = ({navigation, route}) => {
         logs the username, message, and the timestamp to the console.
      */
   const handleNewMessage = async () => {
+    console.log('abc');
+    storeMsg();
     Keyboard.dismiss();
     const hour =
       new Date().getHours() < 10
@@ -160,20 +162,8 @@ const Chat = ({navigation, route}) => {
         fromSelf: true,
         to: userID,
       });
-      await axiosconfig
-        .get(`message_store`, {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        })
-        .then(res => {
-          console.log('data', res.data);
-          setLoader(false);
-        })
-        .catch(err => {
-          setLoader(false);
-          console.log(err);
-        });
+      // storeMsg();
+
       setMessage('');
 
       // this.selectedUser.messages.push({
@@ -213,6 +203,7 @@ const Chat = ({navigation, route}) => {
           },
           ...chatMessages,
         ]);
+        storeMsg();
       }
       // for (let i = 0; i < users.length; i++) {
       //   const user = users[i];
@@ -233,6 +224,59 @@ const Chat = ({navigation, route}) => {
       // }
     });
   }, []);
+  const storeMsg = async () => {
+    var data = {
+      text: message,
+      id: route.params.id,
+    };
+    console.log('data', data);
+    await axiosconfig
+      .post(`message_store`, data, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+      });
+  };
+  const msgDlt = async () => {
+    await axiosconfig
+      .get(`message_show/${route.params.id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+      });
+  };
+  const chatDlt = async () => {
+    await axiosconfig
+      .get(`clear_chat/${route.params.id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+      });
+  };
 
   //   const idd = route.params.id;
   //   console.log(idd, 'idd');

@@ -163,6 +163,22 @@ const Message = ({navigation}) => {
     console.log('useEffect console');
     userslist();
   }, []);
+  const latestMsg = async () => {
+    await axiosconfig
+      .get(`message_latest`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data', res.data);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+      });
+  };
 
   // useEffect(() => {
   //   // socket.on('roomsList', rooms => {
