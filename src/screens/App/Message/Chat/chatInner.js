@@ -114,25 +114,16 @@ const Chat = ({ navigation, route }) => {
           ...prevChatMessages,
         ]);
       }
-      
       console.log('from', 'useriDsss', userId, chatMessages);
     };
+  
     socket.on('message', handleReceiveMessage);
-    
+  
     return () => {
       socket.off('message', handleReceiveMessage);
     };
   }, [chatMessages]);
-  function removeDuplicatesById(array) {
-    const uniqueIds = new Set();
-    return array.filter(item => {
-      if (uniqueIds.has(item.id)) {
-        return false;
-      }
-      uniqueIds.add(item.id);
-      return true;
-    });
-  }
+  
   const storeMsg = async () => {
     var data = {
       text: message,
