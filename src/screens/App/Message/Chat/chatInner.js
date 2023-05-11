@@ -9,14 +9,15 @@ import {
   FlatList,
   Keyboard,
 } from 'react-native';
-import React, {useEffect, useState, useLayoutEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {moderateScale} from 'react-native-size-matters';
+const { v4: uuidv4 } = require('uuid');
+import React, { useEffect, useState, useLayoutEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { moderateScale } from 'react-native-size-matters';
 import s from './style';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {Input, FormControl, Button, Menu, Pressable} from 'native-base';
+import { Input, FormControl, Button, Menu, Pressable } from 'native-base';
 import socket from '../../../../utils/socket';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,10 +26,11 @@ import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const Chat = ({navigation, route}) => {
+const Chat = ({ navigation, route }) => {
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState('');
   const [user, setUser] = useState('');
+  const [userId, setUserId] = useState('');
   const [refresh, setRefresh] = useState(true);
   const users = useSelector(state => state.reducer.users);
   const [loader, setLoader] = useState(false);
@@ -41,20 +43,27 @@ const Chat = ({navigation, route}) => {
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-  const {username, userID} = route.params;
+  const { username, userID } = route.params;
   const getUsername = async () => {
     try {
       const value = await AsyncStorage.getItem('username');
-      if (value !== null) {
+      const id = await AsyncStorage.getItem('id');
+      if (value) {
         setUser(value);
+      }
+      if (id) {
+        setUserId(id)
       }
     } catch (e) {
       console.error('Error while loading username!');
     }
   };
+  useEffect(() => {
+    getUsername()
+  }, [userId])
   const handleNewMessage = async () => {
     console.log('abc');
-    storeMsg();
+    // storeMsg();
     Keyboard.dismiss();
     const hour =
       new Date().getHours() < 10
@@ -66,78 +75,64 @@ const Chat = ({navigation, route}) => {
         ? `0${new Date().getMinutes()}`
         : `${new Date().getMinutes()}`;
     let content = message;
-    console.log('====================================');
-    console.log(route.params,'hellorutetdata');
-    console.log('====================================');
-    if (route.params.user_id) {
-      // socket.emit('private_message', {
-      //   content,
-      //   to: route.params.user_id,
-      //   timestamp: {hour, mins},
-      // });
-      const receiverId = 19;
-    const data = {
-      senderId: 18,
-      receiverId,
-      message,
-    };
-    socket.emit('message', data);
-      // setChatMessages([
-      //   {
-      //     message,
-      //     fromSelf: true,
-      //     time: `${hour}:${mins}`,
-      //     to: userID,
-      //   },
-      //   ...chatMessages,
-      // ]);
-      console.log('sent', {
-        message,
-        fromSelf: true,
-        to: userID,
-      });
-      setMessage('');
-    }
+    socket.emit('message', {
+      id: uuidv4(),
+      content,
+      to: route?.params?.sender_user?.id ? route?.params?.sender_user?.id : route?.params?.id,
+      timestamp: { hour, mins },
+      from: userId
+    });
+    setMessage('');
   };
-  
-  useEffect(() => {
-    // Join the chat room with a user ID
-    const userId = 18;
-    socket.emit('join', userId);
-
-    // Listen for incoming messages
-    socket.on('message', (data) => {
-      const { senderId, message } = data;
-      const newMessage = `${senderId}: ${message}`;
-      setReceivedMessages((prevMessages) => [...prevMessages, newMessage]);
-    });
-
-    // Clean up the socket connection on component unmount
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   useEffect(() => {
-    // getValueFunction();
-    socket.on('private_message', ({content, from, time}) => {
-      console.log(content, 'receiver_idhello');
-      console.log('');
-      console.log('from', from, 'useriD', userID, chatMessages);
-      if (from === userID) {
-        setChatMessages(chatMessages => [
+    const recieverId = route.params.sender_user?.id ? route.params.sender_user?.id : route.params?.id;
+    const handleReceiveMessage = (data) => {
+      const time = data.timestamp.hour + ":" + data.timestamp.mins;
+      if (data.to === userId && data.from === recieverId) {
+        setChatMessages(prevChatMessages => [
           {
-            message: content,
-            fromSelf: false,
+            id:data.id,
+            message: data.content,
             time: time,
-            from: from,
+            from: recieverId,
+            to: userId,
+            fromSelf: false,
           },
-          ...chatMessages,
+          ...prevChatMessages,
         ]);
-        // storeMsg();
+      } else if (data.to === recieverId && data.from === userId) {
+        setChatMessages(prevChatMessages => [
+          {
+            id:data.id,
+            message: data.content,
+            time: time,
+            from: userId,
+            to: recieverId,
+            fromSelf: true,
+          },
+          ...prevChatMessages,
+        ]);
       }
+      
+      console.log('from', 'useriDsss', userId, chatMessages);
+    };
+    socket.on('message', handleReceiveMessage);
+    
+    return () => {
+      socket.off('message', handleReceiveMessage);
+    };
+  }, [chatMessages]);
+  function removeDuplicatesById(array) {
+    const uniqueIds = new Set();
+    return array.filter(item => {
+      if (uniqueIds.has(item.id)) {
+        return false;
+      }
+      uniqueIds.add(item.id);
+      return true;
     });
-  }, []);
+  }
   const storeMsg = async () => {
     var data = {
       text: message,
@@ -190,47 +185,6 @@ const Chat = ({navigation, route}) => {
         console.log(err);
       });
   };
-
-  //   const idd = route.params.id;
-  //   console.log(idd, 'idd');
-  // useEffect(() => {
-  //   socket.emit('findRoom', id);
-  //   socket.on('foundRoom', roomChats => setChatMessages(roomChats));
-  // }, [socket]);
-
-  //   const sendMessage = () => {
-  //     if (input.trim() === '') return;
-  //     socket.emit(
-  //       'send message',
-  //       JSON.stringify({
-  //         text: input,
-  //         to: uid,
-  //         from: senderId,
-  //         avatar: 'https://placeimg.com/140/140/people',
-  //         time: new Date(),
-  //       }),
-  //     );
-  //     setMsg(prevMessages => [
-  //       ...prevMessages,
-  //       {
-  //         text: input,
-  //         to: uid,
-  //         from: {
-  //           id: 182,
-  //           name: name,
-  //         },
-  //         avatar: 'https://placeimg.com/140/140/people',
-  //         time: new Date(),
-  //       },
-  //     ]);
-  //     setInput('');
-  //   };
-  //   const getValueFunction = async () => {
-  //     // Function to get the value from AsyncStorage
-  //     let user = await AsyncStorage.getItem('users');
-  //     console.log(user, 'iddd');
-  //   };
-
   const sendMessage = () => {
     socket.emit('chat message');
   };
@@ -241,14 +195,15 @@ const Chat = ({navigation, route}) => {
       <View
         style={[
           s.messege,
-          {justifyContent: status ? 'flex-end' : 'flex-start'},
+          { justifyContent: status ? 'flex-end' : 'flex-start' },
         ]}
         key={elem.index}>
         {!status ? (
           <View style={[s.dp]}>
             <Image
-            source={{
-              uri:!status ? route?.params?.users_invers.userImage : route?.params?.users_invers.userImage}}
+              source={{
+                uri: !status ? route?.params?.sender_user?.image : (route?.params?.sender_user?.image ? route?.params?.sender_user?.image : route?.params?.image)
+              }}
               style={s.dp1}
               resizeMode={'cover'}
             />
@@ -282,7 +237,7 @@ const Chat = ({navigation, route}) => {
                     }}>
                     <View style={status ? s.textFrom : s.textTo}>
                       <Text style={s.textSmall1}>{elem?.item?.message}</Text>
-                      <Text style={[s.textSmall1, {textAlign: 'right'}]}>
+                      <Text style={[s.textSmall1, { textAlign: 'right' }]}>
                         {/* time */}
                         {elem?.item?.time?.toLocaleString([], {
                           hour: '2-digit',
@@ -303,9 +258,9 @@ const Chat = ({navigation, route}) => {
                     color={textColor}
                     size={moderateScale(13, 0.1)}
                     // style={{marginRight: moderateScale(10, 0.1)}}
-                    style={{flex: 0.3}}
+                    style={{ flex: 0.3 }}
                   />
-                  <Text style={[s.optionBtns, {color: textColor}]}>Unsend</Text>
+                  <Text style={[s.optionBtns, { color: textColor }]}>Unsend</Text>
                 </View>
               </Menu.Item>
               <Menu.Item
@@ -317,9 +272,9 @@ const Chat = ({navigation, route}) => {
                     name={'reply'}
                     color={textColor}
                     size={moderateScale(13, 0.1)}
-                    style={{flex: 0.3}}
+                    style={{ flex: 0.3 }}
                   />
-                  <Text style={[s.optionBtns, {color: textColor}]}>Reply</Text>
+                  <Text style={[s.optionBtns, { color: textColor }]}>Reply</Text>
                 </View>
               </Menu.Item>
 
@@ -332,9 +287,9 @@ const Chat = ({navigation, route}) => {
                     name={'delete'}
                     color={textColor}
                     size={moderateScale(13, 0.1)}
-                    style={{flex: 0.3}}
+                    style={{ flex: 0.3 }}
                   />
-                  <Text style={[s.optionBtns, {color: textColor}]}>Delete</Text>
+                  <Text style={[s.optionBtns, { color: textColor }]}>Delete</Text>
                 </View>
               </Menu.Item>
 
@@ -347,7 +302,7 @@ const Chat = ({navigation, route}) => {
                     name={'block'}
                     color="red"
                     size={moderateScale(13, 0.1)}
-                    style={{flex: 0.3}}
+                    style={{ flex: 0.3 }}
                   />
                   <Text style={[s.optionBtns]}>Block</Text>
                 </View>
@@ -359,7 +314,8 @@ const Chat = ({navigation, route}) => {
           <View style={[s.dp]}>
             <Image
               source={{
-                uri:!status ? route?.params?.users_invers.userImage : route?.params?.users_invers.userImage}}
+                uri: !status ? route?.params?.sender_user?.image : (route?.params?.sender_user?.image ? route?.params?.sender_user?.image : route?.params?.image)
+              }}
               style={s.dp1}
               resizeMode={'cover'}
             />
@@ -369,11 +325,11 @@ const Chat = ({navigation, route}) => {
     );
   };
   return (
-    <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
-      <View style={[s.container, {backgroundColor: color}]}>
+    <SafeAreaView style={{ display: 'flex', flex: 1, backgroundColor: color }}>
+      <View style={[s.container, { backgroundColor: color }]}>
         <View style={s.header}>
           <TouchableOpacity
-            style={{flex: 0.1}}
+            style={{ flex: 0.1 }}
             onPress={() => navigation.goBack()}>
             <Inicon
               name="arrow-back-circle-outline"
@@ -389,15 +345,16 @@ const Chat = ({navigation, route}) => {
               style={s.dp}>
               <Image
                 source={{
-                  uri:route?.params?.users_invers.image }}
+                  uri: route?.params?.sender_user?.image ? route?.params?.sender_user?.image : route.params?.image
+                }}
                 style={s.dp1}
                 resizeMode={'cover'}
               />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
-              <Text style={[s.name, {color: textColor}]}>
-                {route?.params?.users_invers?.name + ' '}
-                {route?.params?.users_invers?.last_name}
+              <Text style={[s.name, { color: textColor }]}>
+                {(route?.params?.sender_user?.name ? route?.params?.sender_user?.name : route.params?.name) + ' '}
+                {route?.params?.sender_user?.last_name ? route?.params?.sender_user?.last_name : route?.params?.last_name}
               </Text>
             </TouchableOpacity>
           </View>
@@ -414,7 +371,7 @@ const Chat = ({navigation, route}) => {
             inverted
             data={chatMessages}
             renderItem={renderItem}
-            keyExtractor={item => item.to}
+            keyExtractor={(item, index) => index}
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps={false}
             showsVerticalScrollIndicator={true}

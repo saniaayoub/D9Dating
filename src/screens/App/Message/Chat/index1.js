@@ -20,58 +20,6 @@ import socket from '../../../../utils/socket';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-//  const socket = io('http://192.168.18.226');
-//     socket.connect();
-
-const messages = [
-  {
-    uid: 2,
-    from: 'Julie Watson',
-    to: '',
-    date: '',
-    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
-    userImage: require('../../../../assets/images/png/u2.png'),
-  },
-  {
-    uid: 1,
-    from: 'Julie Watson',
-    to: '',
-    date: '',
-    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
-    userImage: require('../../../../assets/images/png/mydp.png'),
-  },
-  {
-    uid: 2,
-    from: 'Julie Watson',
-    to: '',
-    date: '',
-    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
-    userImage: require('../../../../assets/images/png/u2.png'),
-  },
-  {
-    uid: 1,
-    from: 'Julie Watson',
-    to: '',
-    date: '',
-    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
-    userImage: require('../../../../assets/images/png/mydp.png'),
-  },
-  {
-    uid: 2,
-    from: 'Julie Watson',
-    to: '',
-    date: '',
-    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
-    userImage: require('../../../../assets/images/png/u2.png'),
-  },
-];
-
-const elem = {
-  from: 'Julie Watson',
-  text: 'Welcome',
-  time: 'Now',
-  userImage: require('../../../../assets/images/png/u6.png'),
-};
 
 const Chat = ({navigation, route}) => {
   const [msg, setMsg] = useState([]);
@@ -87,62 +35,6 @@ const Chat = ({navigation, route}) => {
   const uid = route.params.id;
   //   const name = data.from;
   console.log('route data', route?.params);
-  //   const senderId = Math.floor(Math.random() * 100);
-  //   console.log(senderId);
-
-  //   useEffect(() => {
-  //     getValueFunction();
-  //   }, []);
-
-  //   const idd = route.params.id;
-  //   console.log(idd, 'idd');
-  useEffect(() => {
-    // console.log('msg?');
-    // socket.on('receive message', message => {
-    //   console.log(message, 'recieve');
-    //   setText(prevMessages => [...prevMessages, message]);
-    // });
-    // socket.on('show_notification', function (data) {
-    //   console.log('show_notification', data);
-    // });
-  }, []);
-
-  //   const sendMessage = () => {
-  //     if (input.trim() === '') return;
-  //     socket.emit(
-  //       'send message',
-  //       JSON.stringify({
-  //         text: input,
-  //         to: uid,
-  //         from: senderId,
-  //         avatar: 'https://placeimg.com/140/140/people',
-  //         time: new Date(),
-  //       }),
-  //     );
-  //     setMsg(prevMessages => [
-  //       ...prevMessages,
-  //       {
-  //         text: input,
-  //         to: uid,
-  //         from: {
-  //           id: 182,
-  //           name: name,
-  //         },
-  //         avatar: 'https://placeimg.com/140/140/people',
-  //         time: new Date(),
-  //       },
-  //     ]);
-  //     setInput('');
-  //   };
-  //   const getValueFunction = async () => {
-  //     // Function to get the value from AsyncStorage
-  //     let user = await AsyncStorage.getItem('users');
-  //     console.log(user, 'iddd');
-  //   };
-
-  const sendMessage = () => {
-    socket.emit('chat message');
-  };
   const renderItem = elem => {
     console.log(elem);
     if (elem?.item.to === uid) {
