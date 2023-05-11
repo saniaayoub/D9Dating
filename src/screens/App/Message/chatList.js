@@ -170,7 +170,7 @@ const Message = ({navigation}) => {
   
   const latestMsg = async () => {
     await axiosconfig
-      .get(`message_latest`, {
+      .get(`message_index`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -223,10 +223,10 @@ const Message = ({navigation}) => {
             navigation.navigate('ViewUser');
           }}
           style={s.dp}>
-            {console.log('data-message',elem.item?.users_invers?.image)}
+            {console.log('data-message',elem.item?.sender_user?.image)}
           <Image
           source={{
-            uri: elem.item?.users_invers?.image,
+            uri: elem.item?.sender_user?.image,
           }}
             style={s.dp1}
             resizeMode={'cover'}
@@ -237,7 +237,7 @@ const Message = ({navigation}) => {
           style={[s.col, {flex: 0.6, justifyContent: 'flex-end'}]}>
           <View>
             <Text style={[s.name, s.nameBold, {color: textColor}]}>
-              {elem?.item?.users_invers?.name}
+              {elem?.item?.sender_user?.name}
             </Text>
           </View>
           <Text style={[s.textSmall, {color: '#787878'}]}>
