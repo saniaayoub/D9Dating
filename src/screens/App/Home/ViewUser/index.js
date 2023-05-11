@@ -32,7 +32,7 @@ const data = [
 ];
 
 const ViewUser = ({navigation, route}) => {
-  const {post, screen} = route.params;
+  const {post, screen} = route?.params;
   const [Userid, setUserid] = useState(
     screen == 'search' ? post?.id : post.user.id,
   );
@@ -175,8 +175,7 @@ const ViewUser = ({navigation, route}) => {
 
             setImgView(!imgView);
           }}
-          style={{width: '100%', height: moderateScale(260, 0.1)}}
-        >
+          style={{width: '100%', height: moderateScale(260, 0.1)}}>
           <Image
             style={s.view1Img}
             resizeMode={'cover'}
@@ -188,8 +187,7 @@ const ViewUser = ({navigation, route}) => {
             position: 'absolute',
             justifyContent: 'flex-start',
             // paddingHorizontal: moderateScale(15),
-          }}
-        >
+          }}>
           <Header navigation={navigation} />
         </View>
       </View>
@@ -205,8 +203,7 @@ const ViewUser = ({navigation, route}) => {
             bottom: scroll ? moderateScale(50) : moderateScale(5),
           },
         ]}
-        scrollEnabled={true}
-      >
+        scrollEnabled={true}>
         <View>
           <View style={s.line}></View>
           <View style={s.container}>
@@ -243,7 +240,7 @@ const ViewUser = ({navigation, route}) => {
                 <Text style={s.txt}>{userData?.about_me} </Text>
               </View>
             </View>
-            <View style={{marginBottom: moderateScale(10,0.1)}}>
+            <View style={{marginBottom: moderateScale(10, 0.1)}}>
               <Text style={[s.aboutTxt, {color: textColor}]}>Organization</Text>
               <View style={s.abTxt}>
                 <Text style={s.txt}>{userData?.group} </Text>
@@ -258,8 +255,7 @@ const ViewUser = ({navigation, route}) => {
                     <TouchableOpacity
                       onPress={() =>
                         userData?.connected == 2 ? null : Disconnect()
-                      }
-                    >
+                      }>
                       <View style={s.btn}>
                         <Text style={[s.btnTxt]}>
                           {userData?.connected == 2 ? 'Pending' : 'Disconnect'}
@@ -284,8 +280,7 @@ const ViewUser = ({navigation, route}) => {
                       userData?.connected == 0 && userData?.block_status == 0
                         ? connect()
                         : unblock()
-                    }
-                  >
+                    }>
                     <View style={s.btn}>
                       <Text style={[s.btnTxt]}>
                         {userData?.connected == 0 && userData?.block_status == 0

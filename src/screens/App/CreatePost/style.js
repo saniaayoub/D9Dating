@@ -8,12 +8,10 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     paddingHorizontal: moderateScale(12, 0.1),
-    // alignItems: 'center',
   },
   row: {
     flexDirection: 'row',
     paddingHorizontal: moderateScale(22, 0.1),
-    // height: moderateScale(70, 0.1),
     justifyContent: 'flex-start',
     marginVertical: moderateScale(12, 0.1),
   },
@@ -25,21 +23,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomWidth: moderateScale(1, 0.1),
     borderBottomColor: 'grey',
-    // justifyContent: 'flex-start',
-    // padding: moderateScale(10, 0.1),
     right: moderateScale(7, 0.1),
     width: moderateScale(150, 0.1),
     paddingBottom: moderateScale(5, 0.1),
   },
   optionBtns: {
     fontSize: moderateScale(14, 0.1),
-    //fontFamily: Poppins,
-    // marginLeft: moderateScale(15, 0.1),
-    // flex: 0.6,
   },
   smallText: {
     fontSize: moderateScale(12, 0.1),
-    //fontFamily: PoppinsBold,
     position: 'absolute',
     left: moderateScale(43, 0.1),
     width: moderateScale(150, 0.1),
@@ -47,12 +39,10 @@ const styles = StyleSheet.create({
     color: '#898989',
   },
   btn: {
-    // alignItems: 'center',
     justifyContent: 'center',
   },
   HeadingTxt: {
     fontSize: moderateScale(15, 0.1),
-    //fontFamily: Poppins,
     lineHeight: moderateScale(20, 0.1),
   },
 
@@ -73,13 +63,11 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: moderateScale(13, 0.1),
     alignSelf: 'center',
-    //fontFamily: Poppins,
     textAlign: 'center',
     color: '#fff',
     backgroundColor: 'transparent',
   },
   mainText: {
-    //fontFamily: Poppins,
     fontSize: moderateScale(15, 0.1),
     lineHeight: moderateScale(19, 0.1),
   },
@@ -116,10 +104,8 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(12, 0.1),
   },
   capturebtntxt: {
-    // alignSelf:'center',
     fontSize: moderateScale(13, 0.1),
     alignSelf: 'center',
-    //fontFamily: Poppins,
     color: '#fff',
     paddingHorizontal: moderateScale(7, 0.1),
   },
@@ -141,14 +127,12 @@ const styles = StyleSheet.create({
     borderWidth: moderateScale(1.5, 0.1),
     borderColor: '#fff',
     borderRadius: moderateScale(20, 0.1),
-    // paddingHorizontal: moderateScale(50,0.1),
     marginHorizontal: moderateScale(25, 0.1),
     alignItems: 'center',
     justifyContent: 'center',
   },
   postTxt: {
     fontSize: moderateScale(13, 0.1),
-    //fontFamily: Poppins,
     lineHeight: moderateScale(19.5, 0.1),
     color: '#fff',
   },

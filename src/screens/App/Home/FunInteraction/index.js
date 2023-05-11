@@ -59,9 +59,6 @@ const FunInteraction = ({navigation}) => {
   useEffect(() => {
     const socket = io(socket);
     setSoc(socket);
-
-    // TODO: Get user ID after authentication
-    // const userId = getUserId();
     setUserId(userID);
 
     // Clean up Socket.IO client on unmount
@@ -98,22 +95,42 @@ const FunInteraction = ({navigation}) => {
     });
     return color;
   };
-  useEffect(() => {
-    createChannel();
-  }, []);
+  // useEffect(() => {
+  //   createChannel();
+  // }, []);
 
-  const createChannel = () => {
-    PushNotification.createChannel(
-      {
-        channelId: 'd9', // This is the channel ID
-        channelName: 'My channel', // This is the channel name
-        channelDescription: 'A channel to categorize your notifications', // This is the channel description
-        soundName: 'default', // This is the sound to play when a notification is displayed
-        importance: 4, // This is the importance level of the channel (ranging from 0 to 5)
-        vibrate: true, // This indicates whether the device should vibrate when a notification is displayed
+  // const createChannel = () => {
+  //   PushNotification.createChannel(
+  //     {
+  //       channelId: 'd9', // This is the channel ID
+  //       channelName: 'My channel', // This is the channel name
+  //       channelDescription: 'A channel to categorize your notifications', // This is the channel description
+  //       soundName: 'default', // This is the sound to play when a notification is displayed
+  //       importance: 4, // This is the importance level of the channel (ranging from 0 to 5)
+  //       vibrate: true, // This indicates whether the device should vibrate when a notification is displayed
+  //     },
+  //     created => console.log(`Channel ${created ? 'created' : 'existing'}.`),
+  //   );
+  // };
+  const sendPushNotification = async token => {
+    const response = await fetch('YOUR_PUSH_NOTIFICATION_API_URL', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer YOUR_API_KEY',
       },
-      created => console.log(`Channel ${created ? 'created' : 'existing'}.`),
-    );
+      body: JSON.stringify({
+        to: token,
+        notification: {
+          title: 'New Message',
+          body: 'You have a new message!',
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to send push notification');
+    }
   };
   const hitLike = async (id, userid, index) => {
     socket.emit('likePost', {postId, userId});
@@ -139,14 +156,12 @@ const FunInteraction = ({navigation}) => {
         },
       })
       .then(res => {
-        // console.log('data', JSON.stringify(res.data));
         toggleLike(index);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
         console.log(err);
-        // showToast(err.response);
       });
   };
 
@@ -162,7 +177,6 @@ const FunInteraction = ({navigation}) => {
   };
 
   const toggleLike = index => {
-    // console.log('hello');
     getPosts();
     setRefresh(!refresh);
   };
@@ -217,7 +231,6 @@ const FunInteraction = ({navigation}) => {
       post_id: postId,
       text: reptext,
     };
-    // console.log(data);
     await axiosconfig
       .post('post-report', data, {
         headers: {
@@ -226,7 +239,6 @@ const FunInteraction = ({navigation}) => {
         },
       })
       .then(res => {
-        // console.log('stttr', res.data);
         console.log(res, 'response');
         Alert.alert('post reported successfully');
         getPosts();
@@ -236,7 +248,6 @@ const FunInteraction = ({navigation}) => {
       .catch(err => {
         setLoader(false);
         console.log(err);
-        // showToast(err.response);
       });
   };
   const hide = async id => {
@@ -256,7 +267,6 @@ const FunInteraction = ({navigation}) => {
       .catch(err => {
         setLoader(false);
         console.log(err);
-        // showToast(err.response);
       });
   };
 
@@ -304,7 +314,6 @@ const FunInteraction = ({navigation}) => {
         },
       })
       .then(res => {
-        // console.log('afterDelete', res?.data?.message);
         Alert.alert(res?.data?.message);
         getPosts(userToken);
         // console.log(myData1);
@@ -313,16 +322,12 @@ const FunInteraction = ({navigation}) => {
       .catch(err => {
         setLoader(false);
         console.log(err, 'hhe');
-        // showToast(err.response);
       });
   };
 
   const deleteAlert = (title, text, id) => {
-    //function to make two option alert
     Alert.alert(
-      //This is title
       title,
-      //This is body text
       text,
       [
         {
@@ -333,7 +338,6 @@ const FunInteraction = ({navigation}) => {
         {text: 'No', onPress: () => console.log('No Pressed'), style: 'cancel'},
       ],
       {cancelable: false},
-      //on clicking out side, Alert will not dismiss
     );
   };
 
@@ -341,7 +345,6 @@ const FunInteraction = ({navigation}) => {
     if (elem?.item?.privacy_option == '3') {
       return; //hide friends' only me posts
     }
-
     //check if the user already liked the post
     let liked = false;
     elem?.item?.post_likes?.forEach(t => {
@@ -354,8 +357,7 @@ const FunInteraction = ({navigation}) => {
       <View style={s.col}>
         <View style={s.header}>
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}
-          >
+            style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}>
             <Image
               source={{
                 uri: elem?.item?.user?.image
@@ -368,8 +370,9 @@ const FunInteraction = ({navigation}) => {
           </View>
           <View style={[s.col, {flex: 0.9, marginTop: moderateScale(5, 0.1)}]}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('ViewUser', {post: elem.item})}
-            >
+              onPress={() =>
+                navigation.navigate('ViewUser', {post: elem.item})
+              }>
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
                 {elem?.item?.user?.name} {elem?.item?.user?.last_name}
               </Text>
@@ -395,8 +398,7 @@ const FunInteraction = ({navigation}) => {
                     style={{
                       flexDirection: 'row',
                       right: moderateScale(8, 0.1),
-                    }}
-                  >
+                    }}>
                     <Entypo
                       name={'dots-three-vertical'}
                       color={textColor}
@@ -404,13 +406,11 @@ const FunInteraction = ({navigation}) => {
                     />
                   </Pressable>
                 );
-              }}
-            >
+              }}>
               <Menu.Item
                 onPress={() => {
                   hide(elem?.item?.id);
-                }}
-              >
+                }}>
                 <View style={s.optionView}>
                   <Icon
                     name={'eye-slash'}
@@ -430,8 +430,7 @@ const FunInteraction = ({navigation}) => {
                         elem: elem?.item,
                         from: 'Home',
                       })
-                    }
-                  >
+                    }>
                     <View style={s.optionView}>
                       <MaterialIcons
                         name={'edit'}
@@ -455,8 +454,7 @@ const FunInteraction = ({navigation}) => {
                         'Are you sure you want to delete this post?',
                         elem?.item?.id,
                       )
-                    }
-                  >
+                    }>
                     <View style={s.optionView}>
                       <Antdesign
                         name={'delete'}
@@ -477,8 +475,7 @@ const FunInteraction = ({navigation}) => {
                     onPress={() => {
                       refRBSheet1.current.open();
                       setPostId(elem?.item?.id);
-                    }}
-                  >
+                    }}>
                     <View style={s.optionView}>
                       <MaterialIcons
                         name={'report'}
@@ -496,14 +493,12 @@ const FunInteraction = ({navigation}) => {
         </View>
         <View style={s.img}>
           <TouchableWithoutFeedback
-            onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}
-          >
+            onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}>
             <View style={s.img}>
               <Image
                 source={{uri: elem?.item?.image}}
                 resizeMode={'cover'}
-                style={s.galleryImage}
-              ></Image>
+                style={s.galleryImage}></Image>
             </View>
           </TouchableWithoutFeedback>
           <TouchableOpacity
@@ -512,8 +507,7 @@ const FunInteraction = ({navigation}) => {
               hitLike(elem?.item?.id, elem?.item?.user_id, elem?.index);
               // console.log(data[elem.index].post.liked);
             }}
-            style={s.likes}
-          >
+            style={s.likes}>
             <Text style={s.likesCount}> {elem?.item?.post_likes?.length}</Text>
 
             <Icon
@@ -529,8 +523,7 @@ const FunInteraction = ({navigation}) => {
             onPress={() => {
               navigation.navigate('Likes', {data: elem?.item?.post_likes});
             }}
-            style={{marginBottom: moderateScale(5, 0.1)}}
-          >
+            style={{marginBottom: moderateScale(5, 0.1)}}>
             {elem?.item?.post_likes?.length ? (
               <Text style={[s.name, {color: textColor}]}>
                 {`Liked by ${elem?.item?.post_likes[0]?.users?.name} ${elem?.item?.post_likes[0]?.users?.last_name} `}
@@ -546,8 +539,7 @@ const FunInteraction = ({navigation}) => {
               justifyContent: 'flex-start',
               alignItems: 'center',
               marginBottom: moderateScale(5, 0.1),
-            }}
-          >
+            }}>
             <Text style={[s.name, {color: textColor}]}>
               {elem?.item?.user?.name}
               {elem?.item?.user?.last_name}{' '}
@@ -562,8 +554,7 @@ const FunInteraction = ({navigation}) => {
                 post: elem?.item,
                 from: 'funInteraction',
               });
-            }}
-          >
+            }}>
             <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
               View all {elem?.item?.post_comments?.length} Comments
             </Text>
@@ -581,8 +572,7 @@ const FunInteraction = ({navigation}) => {
                     {
                       borderColor: getColor(elem?.item?.user?.group),
                     },
-                  ]}
-                >
+                  ]}>
                   <Image
                     source={{
                       uri: elem?.item?.user?.image
@@ -599,8 +589,7 @@ const FunInteraction = ({navigation}) => {
                   onPress={() => {
                     addComment(elem?.item?.id, elem?.index);
                   }}
-                  style={{marginRight: moderateScale(15, 0.1)}}
-                >
+                  style={{marginRight: moderateScale(15, 0.1)}}>
                   <Feather
                     name={'send'}
                     size={moderateScale(20, 0.1)}
@@ -651,8 +640,7 @@ const FunInteraction = ({navigation}) => {
                 screen: 'search',
               });
               clear();
-            }}
-          >
+            }}>
             <Text style={[s.name, s.nameBold, {color: textColor}]}>
               {elem?.item?.name}
             </Text>
@@ -714,8 +702,7 @@ const FunInteraction = ({navigation}) => {
             InputRightElement={
               <TouchableOpacity
                 onPress={() => clear()}
-                style={{paddingRight: 10}}
-              >
+                style={{paddingRight: 10}}>
                 {searchText ? (
                   <Entypo
                     name={'cross'}
@@ -734,8 +721,7 @@ const FunInteraction = ({navigation}) => {
             style={{
               marginHorizontal: moderateScale(10, 0.1),
               marginBottom: moderateScale(60, 0.1),
-            }}
-          >
+            }}>
             <FlatList
               data={filtered}
               renderItem={searchItem}
@@ -753,8 +739,7 @@ const FunInteraction = ({navigation}) => {
             top: moderateScale(60, 0.1),
             zIndex: 10000,
             marginHorizontal: moderateScale(10, 0.1),
-          }}
-        >
+          }}>
           {searching && filtered?.length == 0 && (
             <Text
               style={[
@@ -765,8 +750,7 @@ const FunInteraction = ({navigation}) => {
                   textAlign: 'center',
                   marginVertical: moderateScale(40, 0.1),
                 },
-              ]}
-            >
+              ]}>
               No Users Found
             </Text>
           )}
@@ -793,23 +777,20 @@ const FunInteraction = ({navigation}) => {
               borderRadius: moderateScale(20, 0.1),
               backgroundColor: color,
             },
-          }}
-        >
+          }}>
           {loader ? <Loader /> : null}
           <View
             style={{
               alignSelf: 'center',
               marginBottom: moderateScale(10, 0.1),
-            }}
-          >
+            }}>
             {/* {loader ? <Loader /> : null} */}
             <Text style={[s.rb, {color: textColor}]}>Report</Text>
           </View>
           <View
             style={{
               paddingHorizontal: moderateScale(15, 0.1),
-            }}
-          >
+            }}>
             <View style={[s.hv]}>
               <Text style={[s.hv, {color: textColor}]}>
                 Why are you reporting this post?
@@ -834,8 +815,7 @@ const FunInteraction = ({navigation}) => {
                   setText('i just dont like it');
                   report('i just dont like it');
                 }}
-                style={s.list}
-              >
+                style={s.list}>
                 <View>
                   <Text style={[s.listTxt, {color: textColor}]}>
                     i just don't like it
@@ -847,8 +827,7 @@ const FunInteraction = ({navigation}) => {
                   setText('its spam');
                   report('its spam');
                 }}
-                style={s.list}
-              >
+                style={s.list}>
                 <View>
                   <Text style={[s.listTxt, {color: textColor}]}>it's spam</Text>
                 </View>
@@ -858,8 +837,7 @@ const FunInteraction = ({navigation}) => {
                   setText('Nudity or sexual activity');
                   report('its spam');
                 }}
-                style={s.list}
-              >
+                style={s.list}>
                 <View>
                   <Text style={[s.listTxt, {color: textColor}]}>
                     Nudity or sexual activity
@@ -871,8 +849,7 @@ const FunInteraction = ({navigation}) => {
                   setText('Hate speech or symbols');
                   report('Hate speech or symbols');
                 }}
-                style={s.list}
-              >
+                style={s.list}>
                 <View>
                   <Text style={[s.listTxt, {color: textColor}]}>
                     Hate speech or symbols
@@ -884,8 +861,7 @@ const FunInteraction = ({navigation}) => {
                   setText('Violence or dangerous orgnisations');
                   report('Violence or dangerous orgnisations');
                 }}
-                style={s.list}
-              >
+                style={s.list}>
                 <View>
                   <Text style={[s.listTxt, {color: textColor}]}>
                     Violence or dangerous orgnisations
@@ -897,8 +873,7 @@ const FunInteraction = ({navigation}) => {
                   setText('Bullying or harrasment');
                   report('Bullying or harrasment');
                 }}
-                style={s.list}
-              >
+                style={s.list}>
                 <View>
                   <Text style={[s.listTxt, {color: textColor}]}>
                     Bullying or harrasment

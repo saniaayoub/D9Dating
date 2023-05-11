@@ -53,6 +53,7 @@ const Organization = [
 
 const Register = ({navigation}) => {
   const dispatch = useDispatch();
+  const FCMtoken = useSelector(state => state.reducer.fToken);
   const phonenum = useRef();
   const [fname, setFname] = useState(null);
   const [lastname, setLastname] = useState(null);
@@ -139,7 +140,7 @@ const Register = ({navigation}) => {
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const userLocation = useSelector(state => state.reducer.location);
   const [location, setLocation] = useState(userLocation);
-  console.log(userLocation, 'bbb');
+  console.log(FCMtoken, 'fcmToken');
 
   useEffect(() => {}, []);
   const onRadioBtnClick = item => {
@@ -244,6 +245,7 @@ const Register = ({navigation}) => {
     setLoader(true);
     setOnsubmit(false);
     var data = {
+      fcmToken: FCMtoken,
       name: fname,
       last_name: lastname,
       email: email,
@@ -308,16 +310,14 @@ const Register = ({navigation}) => {
 
   return (
     <SafeAreaView
-      style={{flex: 1, backgroundColor: theme === 'dark' ? '#222222' : '#fff'}}
-    >
+      style={{flex: 1, backgroundColor: theme === 'dark' ? '#222222' : '#fff'}}>
       {loader ? <Loader /> : null}
       <ScrollView>
         <View
           style={[
             s.container,
             {backgroundColor: theme === 'dark' ? '#222222' : '#fff'},
-          ]}
-        >
+          ]}>
           <View style={s.header}>
             <Header navigation={navigation} />
           </View>
@@ -342,8 +342,7 @@ const Register = ({navigation}) => {
               justifyContent: 'center',
               paddingBottom: moderateScale(20, 0.1),
               paddingHorizontal: moderateScale(9, 0.1),
-            }}
-          >
+            }}>
             <View style={s.input}>
               <View style={{flex: 0.4}}>
                 <Text style={[s.inputTxt, {color: Textcolor}]}>Name</Text>
@@ -397,15 +396,13 @@ const Register = ({navigation}) => {
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                }}
-              >
+                }}>
                 {isSelected.map((item, i) => (
                   <View style={s.radio}>
                     <RadioButton
                       onPress={() => onRadioBtnClick(item)}
                       selected={item.selected}
-                      key={item.id}
-                    >
+                      key={item.id}>
                       {item.name}
                     </RadioButton>
                   </View>
@@ -425,8 +422,7 @@ const Register = ({navigation}) => {
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                       marginTop: moderateScale(5, 0.1),
-                    }}
-                  >
+                    }}>
                     <View
                       style={[
                         s.dateView,
@@ -435,8 +431,7 @@ const Register = ({navigation}) => {
                           borderBottomColor:
                             onsubmit && date == null ? 'red' : Textcolor,
                         },
-                      ]}
-                    >
+                      ]}>
                       <Text style={[s.date, {color: Textcolor}]}>
                         {date ? m : 'MM'}
                       </Text>
@@ -450,8 +445,7 @@ const Register = ({navigation}) => {
                           borderBottomColor:
                             onsubmit && date == null ? 'red' : Textcolor,
                         },
-                      ]}
-                    >
+                      ]}>
                       <Text style={[s.date, {color: Textcolor}]}>
                         {date ? d : 'DD'}
                       </Text>
@@ -465,8 +459,7 @@ const Register = ({navigation}) => {
                           borderBottomColor:
                             onsubmit && date == null ? 'red' : Textcolor,
                         },
-                      ]}
-                    >
+                      ]}>
                       <Text style={[s.date, {color: Textcolor}]}>
                         {date ? y : 'YYY'}
                       </Text>
@@ -569,8 +562,7 @@ const Register = ({navigation}) => {
                         justifyContent: 'center',
                         width: '90%',
                         marginBottom: 20,
-                      }}
-                    >
+                      }}>
                       <Text style={{fontSize: 12, color: 'red'}}>
                         please enter valid email
                       </Text>
@@ -585,9 +577,9 @@ const Register = ({navigation}) => {
                   Organization
                 </Text>
               </View>
-              <View style={{flex: 0.6 }}>
+              <View style={{flex: 0.6}}>
                 <Menu
-                  style={{width:'80%'}}
+                  style={{width: '80%'}}
                   borderWidth={moderateScale(1, 0.1)}
                   borderBottomColor={'grey'}
                   backgroundColor={color}
@@ -613,8 +605,7 @@ const Register = ({navigation}) => {
                           // width: moderateScale(170, 0.1),
                           alignItems: 'center',
                           marginTop: moderateScale(18, 0.1),
-                        }}
-                      >
+                        }}>
                         <Text
                           style={[
                             s.option,
@@ -623,8 +614,7 @@ const Register = ({navigation}) => {
                               flex: 0.8,
                               paddingBottom: moderateScale(12, 0.1),
                             },
-                          ]}
-                        >
+                          ]}>
                           {organization}
                         </Text>
 
@@ -639,16 +629,14 @@ const Register = ({navigation}) => {
                         />
                       </Pressable>
                     );
-                  }}
-                >
+                  }}>
                   {Organization.map((v, i) => {
                     return (
                       <Menu.Item
-                      style={{width:400}}
+                        style={{width: 400}}
                         onPress={() => {
                           setOrganization(v.id);
-                        }}
-                      >
+                        }}>
                         <View style={s.optionView}>
                           <Text style={[s.optionBtns, {color: Textcolor}]}>
                             {v.id}
@@ -699,8 +687,9 @@ const Register = ({navigation}) => {
               </View>
               <View style={{flex: 0.6}}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('Map', {from: 'register'})}
-                >
+                  onPress={() =>
+                    navigation.navigate('Map', {from: 'register'})
+                  }>
                   <Input
                     w={{
                       base: '100%',
@@ -752,8 +741,7 @@ const Register = ({navigation}) => {
                     password ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowPass(!showPass)}
-                        >
+                          onPress={() => setshowPass(!showPass)}>
                           <Feather
                             name={showPass ? 'eye' : 'eye-off'}
                             color={Textcolor}
@@ -798,8 +786,7 @@ const Register = ({navigation}) => {
                     confirmPassword ? (
                       <View style={s.eye}>
                         <TouchableOpacity
-                          onPress={() => setshowConPass(!showConPass)}
-                        >
+                          onPress={() => setshowConPass(!showConPass)}>
                           <Feather
                             name={showConPass ? 'eye' : 'eye-off'}
                             color={Textcolor}
@@ -830,8 +817,7 @@ const Register = ({navigation}) => {
                 h={moderateScale(35, 0.1)}
                 alignItems={'center'}
                 style={s.shadow}
-                onPressIn={() => submit()}
-              >
+                onPressIn={() => submit()}>
                 <Text style={s.btnText}>Register</Text>
               </Button>
             </View>
@@ -842,15 +828,13 @@ const Register = ({navigation}) => {
                 flexDirection: 'row',
                 justifyContent: 'center',
                 marginBottom: moderateScale(20, 0.1),
-              }}
-            >
+              }}>
               <TouchableOpacity>
                 <Text
                   style={[
                     s.forgetPass,
                     {color: Textcolor, textDecorationLine: 'underline'},
-                  ]}
-                >
+                  ]}>
                   Privacy Policy
                 </Text>
               </TouchableOpacity>
@@ -858,8 +842,7 @@ const Register = ({navigation}) => {
                 style={[
                   s.forgetPass,
                   {color: Textcolor, textDecorationLine: 'none'},
-                ]}
-              >
+                ]}>
                 {'  '}&{'  '}
               </Text>
               <TouchableOpacity>
@@ -867,8 +850,7 @@ const Register = ({navigation}) => {
                   style={[
                     s.forgetPass,
                     {color: Textcolor, textDecorationLine: 'underline'},
-                  ]}
-                >
+                  ]}>
                   Terms & conditions
                 </Text>
               </TouchableOpacity>

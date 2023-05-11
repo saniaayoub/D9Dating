@@ -128,64 +128,64 @@ const Chat = ({navigation, route}) => {
         This function gets the time the user sends a message, then 
         logs the username, message, and the timestamp to the console.
      */
-  const handleNewMessage = async () => {
-    console.log('abc');
-    storeMsg();
-    Keyboard.dismiss();
-    const hour =
-      new Date().getHours() < 10
-        ? `0${new Date().getHours()}`
-        : `${new Date().getHours()}`;
+  // const handleNewMessage = async () => {
+  //   console.log('abc');
+  //   // storeMsg();
+  //   Keyboard.dismiss();
+  //   const hour =
+  //     new Date().getHours() < 10
+  //       ? `0${new Date().getHours()}`
+  //       : `${new Date().getHours()}`;
 
-    const mins =
-      new Date().getMinutes() < 10
-        ? `0${new Date().getMinutes()}`
-        : `${new Date().getMinutes()}`;
-    let content = message;
-    if (userID) {
-      socket.emit('private message', {
-        content,
-        to: userID,
-        timestamp: {hour, mins},
-      });
-      setChatMessages([
-        {
-          message,
-          fromSelf: true,
-          time: `${hour}:${mins}`,
-          to: userID,
-        },
-        ...chatMessages,
-      ]);
-      console.log('sent', {
-        message,
-        fromSelf: true,
-        to: userID,
-      });
-      // storeMsg();
+  //   const mins =
+  //     new Date().getMinutes() < 10
+  //       ? `0${new Date().getMinutes()}`
+  //       : `${new Date().getMinutes()}`;
+  //   let content = message;
+  //   if (userID) {
+  //     socket.emit('private message', {
+  //       content,
+  //       to: userID,
+  //       timestamp: {hour, mins},
+  //     });
+  //     setChatMessages([
+  //       {
+  //         message,
+  //         fromSelf: true,
+  //         time: `${hour}:${mins}`,
+  //         to: userID,
+  //       },
+  //       ...chatMessages,
+  //     ]);
+  //     console.log('sent', {
+  //       message,
+  //       fromSelf: true,
+  //       to: userID,
+  //     });
+  //     // storeMsg();
 
-      setMessage('');
+  //     setMessage('');
 
-      // this.selectedUser.messages.push({
-      //   content,
-      //   fromSelf: true,
-      // });
-    }
+  //     // this.selectedUser.messages.push({
+  //     //   content,
+  //     //   fromSelf: true,
+  //     // });
+  //   }
 
-    // console.log({
-    //   message,
-    //   user,
-    //   timestamp: {hour, mins},
-    // });
-    // socket.emit('newMessage', {
-    //   message,
-    //   room_id: id,
-    //   user,
-    //   timestamp: {hour, mins},
-    // });
-    // setMessage('');
-    // socket.on('foundRoom', roomChats => setChatMessages(roomChats));
-  };
+  //   // console.log({
+  //   //   message,
+  //   //   user,
+  //   //   timestamp: {hour, mins},
+  //   // });
+  //   // socket.emit('newMessage', {
+  //   //   message,
+  //   //   room_id: id,
+  //   //   user,
+  //   //   timestamp: {hour, mins},
+  //   // });
+  //   // setMessage('');
+  //   // socket.on('foundRoom', roomChats => setChatMessages(roomChats));
+  // };
 
   useEffect(() => {
     // getValueFunction();
@@ -247,7 +247,7 @@ const Chat = ({navigation, route}) => {
   };
   const msgDlt = async () => {
     await axiosconfig
-      .get(`message_show/${route.params.id}`, {
+      .delete(`message_delete/${route.params.id}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -262,8 +262,9 @@ const Chat = ({navigation, route}) => {
       });
   };
   const chatDlt = async () => {
+    console.log('chat dlt');
     await axiosconfig
-      .get(`clear_chat/${route.params.id}`, {
+      .delete(`clear_chat/${route.params.id}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -491,13 +492,61 @@ const Chat = ({navigation, route}) => {
               <Text style={s.textSmall}>Last Seen 5:52 PM</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={s.options}>
+          <View style={[s.options]}>
+            <Menu
+              w="130"
+              borderWidth={moderateScale(1, 0.1)}
+              borderColor={'grey'}
+              backgroundColor={color}
+              marginLeft={moderateScale(9, 0.1)}
+              marginTop={moderateScale(25, 0.1)}
+              closeOnSelect={true}
+              trigger={triggerProps => {
+                return (
+                  <Pressable
+                    accessibilityLabel="More options menu"
+                    {...triggerProps}
+                    style={
+                      {
+                        // flexDirection: 'row',
+                        // right: moderateScale(8, 0.1),
+                      }
+                    }>
+                    <Entypo
+                      name={'dots-three-vertical'}
+                      color={textColor}
+                      size={moderateScale(15, 0.1)}
+                    />
+                  </Pressable>
+                );
+              }}>
+              <Menu.Item
+                onPress={() => {
+                  chatDlt();
+                }}>
+                <View style={s.optionView}>
+                  <Text style={[s.optionBtns, {color: textColor}]}>
+                    clear chat
+                  </Text>
+                </View>
+              </Menu.Item>
+              <Menu.Item
+                onPress={() => {
+                  // hide(elem?.item?.id);
+                }}>
+                <View style={s.optionView}>
+                  <Text style={[s.optionBtns, {color: textColor}]}>Hide</Text>
+                </View>
+              </Menu.Item>
+            </Menu>
+          </View>
+          {/* <TouchableOpacity style={s.options}>
             <Entypo
               name={'dots-three-vertical'}
               color={textColor}
               size={moderateScale(15, 0.1)}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <View style={s.chat}>
           <FlatList
@@ -507,8 +556,6 @@ const Chat = ({navigation, route}) => {
             keyExtractor={item => item.to}
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps={false}
-            // contentContainerStyle={{flexDirection: 'column-reverse'}}
-            // initialScrollIndex={messages.length - 1}
             showsVerticalScrollIndicator={true}
           />
         </View>

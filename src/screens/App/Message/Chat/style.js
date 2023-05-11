@@ -32,22 +32,21 @@ const styles = StyleSheet.create({
     paddingVertical: moderateScale(10, 0.1),
     borderBottomWidth: moderateScale(2, 0.1),
   },
+  options: {
+    width: moderateScale(30, 0.1),
+  },
   optionView: {
-    flexDirection: 'row',
+    width: moderateScale(80, 0.1),
     borderBottomWidth: moderateScale(1, 0.1),
     borderBottomColor: 'grey',
-    justifyContent: 'flex-start',
     alignItems: 'center',
-    // padding: moderateScale(10, 0.1),
-    // width: moderateScale(150, 0.1),
     paddingBottom: moderateScale(5, 0.1),
   },
   optionBtns: {
     fontSize: moderateScale(12, 0.1),
-    color: 'red',
-    //fontFamily: Poppins,
+    fontFamily: Poppins,
     // marginLeft: moderateScale(15, 0.1),
-    flex: 0.7,
+    // flex: 0.7,
   },
   option: {
     fontSize: moderateScale(14, 0.1),

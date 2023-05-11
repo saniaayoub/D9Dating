@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1024606507049",
+    "project_id": "d9dating-aef40",
+    "storage_bucket": "d9dating-aef40.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1024606507049:android:93a9d8c628e17e1fb34c38",
+        "android_client_info": {
+          "package_name": "com.d9dating"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1024606507049-u529agtjqdl3q6ekisuso22r88b2q303.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDril0Mkj2RXT0VDDraRAT_zlU5V9RRmog"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1024606507049-u529agtjqdl3q6ekisuso22r88b2q303.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

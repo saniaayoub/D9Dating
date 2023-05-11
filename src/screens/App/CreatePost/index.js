@@ -1,5 +1,4 @@
 import {
-  StyleSheet,
   Text,
   View,
   Image,
@@ -22,7 +21,6 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Loader from '../../../Components/Loader';
 import {useIsFocused} from '@react-navigation/native';
-
 import {
   launchCamera,
   launchImageLibrary,
@@ -30,8 +28,6 @@ import {
 } from 'react-native-image-picker';
 import axiosconfig from '../../../provider/axios';
 import RNFS from 'react-native-fs';
-
-// import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreatePost = ({navigation, route}) => {
   const privacy = route?.params?.elem?.privacy_option;
@@ -255,7 +251,6 @@ const CreatePost = ({navigation, route}) => {
     });
   };
   const onsubmit = () => {
-    // console.log(filePath, 'fkekre');
     if (caption == '' || caption == null) {
       alert('please write caption');
       return;
@@ -330,10 +325,6 @@ const CreatePost = ({navigation, route}) => {
       .then(res => {
         console.log('data user', res?.data?.user_details);
         setUserData(res?.data?.user_details);
-        // if (res.data.user_details) {
-        //   setData(res.data.user_details);
-        // }
-        // setLoader(false);
       })
       .catch(err => {
         // setLoader(false);
@@ -508,17 +499,6 @@ const CreatePost = ({navigation, route}) => {
                 }}>
                 {postLocation ? postLocation : 'Enter location...'}
               </Text>
-              {/* <Input
-              variant="unstyled"
-              placeholder={postLocation ? postLocation : 'Enter location...'}
-              placeholderTextColor={Textcolor}
-              isReadOnly
-              value={location}
-              onChangeText={() => setLocation(location)}
-              backgroundColor={color}
-              color={Textcolor}
-              fontSize={moderateScale(14, 0.1)}
-            /> */}
             </View>
           </TouchableOpacity>
           <View style={[s.imgView]}>
@@ -642,5 +622,3 @@ const CreatePost = ({navigation, route}) => {
 };
 
 export default CreatePost;
-
-// const styles = StyleSheet.create({});

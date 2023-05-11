@@ -1,5 +1,5 @@
 import {StyleSheet, Platform, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {moderateScale} from 'react-native-size-matters';
 import HomeStack from '../Stacks/HomeStack';
@@ -40,8 +40,7 @@ const BottomTabs = () => {
         ],
 
         tabBarShowLabel: false,
-      }}
-    >
+      }}>
       <Tab.Screen
         name={'HomeStack'}
         component={HomeStack}

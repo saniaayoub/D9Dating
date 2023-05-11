@@ -7,9 +7,40 @@ import Comments from '../../../screens/App/Home/Comments';
 import CreatePost from '../../../screens/App/CreatePost';
 import Map from '../../../screens/Auth/Register/Map';
 import Likes from '../../../screens/App/Home/Likes';
+import * as RootNavigation from '../../../../RootNavigation';
+import {navigationRef} from '../../../../RootNavigation';
+import messaging from '@react-native-firebase/messaging';
+import {useEffect} from 'react';
+
 const Stack = createStackNavigator();
 
 const HomeStack = () => {
+  useEffect(() => {
+    // Assume a message-notification contains a "type" property in the data payload of the screen to open
+
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log(
+        'Notification caused app to open from background state00:',
+        remoteMessage.notification,
+      );
+      RootNavigation.navigate(remoteMessage.data.screen);
+    });
+
+    // Check whether an initial notification is available
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage) {
+          console.log(
+            'Notification caused app to open from quit state0o:',
+            remoteMessage.notification,
+          );
+          RootNavigation.navigate(remoteMessage.data.screen);
+          // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+        }
+      });
+  }, []);
+
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Home" component={Home} />

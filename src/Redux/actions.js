@@ -11,11 +11,18 @@ import {
   SET_EXIST,
   SET_STORYID,
   SET_STORY_COLOR,
+  SET_FTOKEN,
 } from './Constants';
 
 export const setUserToken = value => {
   return {
     type: SET_USER_TOKEN,
+    payload: value,
+  };
+};
+export const setFToken = value => {
+  return {
+    type: SET_FTOKEN,
     payload: value,
   };
 };

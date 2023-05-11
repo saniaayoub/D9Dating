@@ -33,9 +33,11 @@ import RNFS from 'react-native-fs';
 import Loader from '../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {setOrganization, setStories, addUsers} from '../../../Redux/actions';
-
+import messaging from '@react-native-firebase/messaging';
+import * as RootNavigation from '../../../../RootNavigation';
+import {navigationRef} from '../../../../RootNavigation';
 const Organization = [
   {id: 'Alpha Phi Alpha Fraternity, Inc.', color: 'blue'},
   {id: 'Alpha Kappa Alpha Sorority Inc.', color: 'green'},
@@ -86,6 +88,32 @@ const Home = ({navigation}) => {
     funPosts();
     console.log(storyID, 'setUD');
   }, [isFocused]);
+  // useEffect(() => {
+  //   // Assume a message-notification contains a "type" property in the data payload of the screen to open
+
+  //   messaging().onNotificationOpenedApp(remoteMessage => {
+  //     console.log(
+  //       'Notification caused app to open from background state2:',
+  //       remoteMessage.notification,
+  //     );
+  //     RootNavigation.navigate(remoteMessage.data.screen);
+  //   });
+
+  //   // Check whether an initial notification is available
+  //   messaging()
+  //     .getInitialNotification()
+  //     .then(remoteMessage => {
+  //       if (remoteMessage) {
+  //         console.log(
+  //           'Notification caused app to open from quit state:',
+  //           remoteMessage.notification,
+  //         );
+  //         RootNavigation.navigate(remoteMessage.data.screen);
+  //         // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+  //       }
+  //       // setLoading(false);
+  //     });
+  // }, []);
 
   useEffect(() => {
     socket.on('users', users => {

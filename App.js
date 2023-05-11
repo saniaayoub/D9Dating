@@ -1,25 +1,51 @@
 import 'react-native-gesture-handler';
-import {KeyboardAvoidingView, Platform} from 'react-native';
+import {KeyboardAvoidingView, Platform, Alert} from 'react-native';
 import React, {useEffect} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {NativeBaseProvider, Box} from 'native-base';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MyStatusBar from './src/Components/StatusBar';
 import {useSelector, useDispatch} from 'react-redux';
-import {setTheme, setUserToken, setExist} from './src/Redux/actions';
+import {setTheme, setUserToken, setExist, setFToken} from './src/Redux/actions';
 import RNBootSplash from 'react-native-bootsplash';
 import BottomTabs from './src/Navigation/BottomTabs';
 import AuthStack from './src/Navigation/Stacks/AuthStack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from './src/Providers/axios';
+import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 // import PushNotification from 'react-native-push-notification';
 import SplashScreen from 'react-native-splash-screen';
-const App = () => {
+import * as RootNavigation from './RootNavigation';
+import {navigationRef} from './RootNavigation';
+
+const App = ({navigation}) => {
   const dispatch = useDispatch();
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
+
+  const checkToken = async () => {
+    const fcmToken = await messaging().getToken();
+    if (fcmToken) {
+      console.log(fcmToken, 'fcmToken');
+      dispatch(setFToken(fcmToken));
+    }
+  };
+
   useEffect(() => {
+    requestUserPermission();
+    checkToken();
     // // Initialize push notifications
     // PushNotification.configure({
     //   onNotification: function(notification) {
@@ -95,9 +121,8 @@ const App = () => {
         <MyStatusBar backgroundColor="#000" barStyle="light-content" />
         <KeyboardAvoidingView
           style={{flex: 1}}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-          <NavigationContainer>
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <NavigationContainer ref={navigationRef}>
             {userToken === null ? <AuthStack /> : <BottomTabs />}
           </NavigationContainer>
         </KeyboardAvoidingView>

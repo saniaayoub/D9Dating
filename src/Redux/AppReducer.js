@@ -11,10 +11,12 @@ import {
   SET_EXIST,
   SET_STORYID,
   SET_STORY_COLOR,
+  SET_FTOKEN,
 } from './Constants';
 
 const initialState = {
   userToken: null,
+  fToken: null,
   theme: 'dark',
   users: [],
   location: '',
@@ -35,6 +37,11 @@ const AppReducer = (state = initialState, action) => {
       return {
         ...state,
         userToken: action.payload,
+      };
+    case SET_FTOKEN:
+      return {
+        ...state,
+        fToken: action.payload,
       };
     case SET_THEME:
       return {
