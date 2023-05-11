@@ -20,6 +20,7 @@ import socket from '../../../utils/socket';
 import UserListModal from '../../../Components/userListModal';
 import axiosconfig from '../../../Providers/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
 
 // const rooms = [
 //   {
@@ -163,6 +164,10 @@ const Message = ({navigation}) => {
     console.log('useEffect console');
     userslist();
   }, []);
+  useEffect(() => {
+    latestMsg()
+  }, [])
+  
   const latestMsg = async () => {
     await axiosconfig
       .get(`message_latest`, {
@@ -171,7 +176,14 @@ const Message = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data', res.data);
+        console.log('data-message', res.data);
+        checkSameUser(res.data)
+        const data = checkSameUser(res.data)
+        console.log('====================================');
+        console.log(data,"hellodatamesga");
+        console.log('====================================');
+        setRooms(data)
+        console.log(rooms,"hellodatamesga");
         setLoader(false);
       })
       .catch(err => {
@@ -179,83 +191,29 @@ const Message = ({navigation}) => {
         console.log(err);
       });
   };
-
-  // useEffect(() => {
-  //   // socket.on('roomsList', rooms => {
-  //   //   setRooms(rooms);
-  //   //   console.log(rooms);
-  //   // });
-  //   socket.on('users', users => {
-  //     users.forEach(user => {
-  //       user.self = user.userID === socket.id;
-  //       setUser(user);
-  //       console.log(user, 'yourself');
-  //     });
-  //     // put the current user first, and then sort by username
-  //     let temp = users.sort((a, b) => {
-  //       if (a.self) return -1;
-  //       if (b.self) return 1;
-  //       if (a.username < b.username) return -1;
-  //       return a.username > b.username ? 1 : 0;
-  //     });
-  //     dispatch(addUsers(temp));
-  //     console.log('userss', temp);
-  //   });
-  //   socket.on('user connected', user => {
-  //     dispatch(addUsers([...users, user]));
-  //   });
-
-  //   socket.on('connect_error', err => {
-  //     if (err.message === 'invalid username') {
-  //       // usernameAlreadySelected = false;
-  //     }
-  //   });
-  // }, [socket]);
-
-  // useLayoutEffect(() => {
-  //   function fetchGroups() {
-  //     fetch('http://localhost:3000/api')
-  //       .then(res => console.error(res, 'here1'))
-  //       .then(data => setRooms(data))
-  //       .catch(err => console.error(err, 'here'));
-  //   }
-  //   fetchGroups();
-  // }, []);
-  // const filterUser = () => {
-  //   let temp;
-  //   temp = users.filter(user => user.self === false);
-  //   console.log(temp, 'temp1');
-  //   temp = temp.map(user => {
-  //     if (user.self === false) {
-  //       console.log(11);
-  //       return {
-  //         ...user,
-  //         text: 'Welcome',
-  //         time: 'Now',
-  //         userImage: require('../../../assets/images/png/u6.png'),
-  //       };
-  //     }
-  //   });
-  //   console.log(temp, 'temp');
-  //   dispatch(addUsers(temp));
-  // };
-
+  function checkSameUser(arr) {
+    const result = [];
+  const uniqueIds = new Set();
+  for (const obj of arr) {
+    if (!uniqueIds.has(obj.user_id)) {
+      result.push(obj);
+      uniqueIds.add(obj.user_id);
+    }
+  }
+  return result;
+  }
+  function formatTimestamp(timestamp) {
+    const now = moment();
+    const date = moment(timestamp);
+    if (now.isSame(date, 'day')) {
+      return date.format('h:mm A');
+    } else {
+      return date.format('DD/mm/yyyy');
+    }
+  }
   const handleCreateRoom = user => {
     navigation.navigate('Chat', user);
     setModalVisible(!modalVisible);
-    // console.log(user.from);
-    // let checkExist = false;
-    // rooms.map(elem => {
-    //   if (elem.name === user.from) {
-    //     checkExist = elem.name === user.from;
-    //     navigation.navigate('Chat', elem);
-    //     setModalVisible(!modalVisible);
-    //   }
-    // });
-    // console.log(checkExist, 'exist');
-    // if (!checkExist) {
-    //   socket.emit('createRoom', user.from);
-    // }
   };
   const renderItem = (elem, i) => {
     return (
@@ -265,8 +223,11 @@ const Message = ({navigation}) => {
             navigation.navigate('ViewUser');
           }}
           style={s.dp}>
+            {console.log('data-message',elem.item?.users_invers?.image)}
           <Image
-            source={elem.item.userImage}
+          source={{
+            uri: elem.item?.users_invers?.image,
+          }}
             style={s.dp1}
             resizeMode={'cover'}
           />
@@ -276,16 +237,16 @@ const Message = ({navigation}) => {
           style={[s.col, {flex: 0.6, justifyContent: 'flex-end'}]}>
           <View>
             <Text style={[s.name, s.nameBold, {color: textColor}]}>
-              {elem?.item?.name}
+              {elem?.item?.users_invers?.name}
             </Text>
           </View>
           <Text style={[s.textSmall, {color: '#787878'}]}>
-            {elem?.item?.messages[0]?.text}
+            {elem?.item?.text}
           </Text>
         </TouchableOpacity>
         <View style={s.time}>
           <Text style={[s.textRegular, {color: textColor}]}>
-            {elem?.item?.messages[0]?.time}
+            {formatTimestamp(elem?.item?.created_at)}
           </Text>
         </View>
       </View>

@@ -32,6 +32,10 @@ const data = [
 ];
 
 const ViewUser = ({navigation, route}) => {
+  console.log('====================================');
+  console.log(route.params, 'routes');
+  console.log('====================================');
+
   const {post, screen} = route?.params;
   const [Userid, setUserid] = useState(
     screen == 'search' ? post?.id : post.user.id,

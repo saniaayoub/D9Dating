@@ -160,6 +160,9 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(5, 0.1),
     marginRight: moderateScale(-12, 0.1),
   },
+  check:{
+  backgroundColor:'red'
+  },
   likes: {
     backgroundColor: 'rgba(195, 195, 195, 0.6)',
     flexDirection: 'row',
