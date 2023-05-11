@@ -25,59 +25,6 @@ import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-//  const socket = io('http://192.168.18.226');
-//     socket.connect();
-
-const messages = [
-  {
-    uid: 2,
-    from: 'Julie Watson',
-    to: '',
-    date: '',
-    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
-    userImage: require('../../../../assets/images/png/u2.png'),
-  },
-  {
-    uid: 1,
-    from: 'Julie Watson',
-    to: '',
-    date: '',
-    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
-    userImage: require('../../../../assets/images/png/mydp.png'),
-  },
-  {
-    uid: 2,
-    from: 'Julie Watson',
-    to: '',
-    date: '',
-    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
-    userImage: require('../../../../assets/images/png/u2.png'),
-  },
-  {
-    uid: 1,
-    from: 'Julie Watson',
-    to: '',
-    date: '',
-    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
-    userImage: require('../../../../assets/images/png/mydp.png'),
-  },
-  {
-    uid: 2,
-    from: 'Julie Watson',
-    to: '',
-    date: '',
-    text: ' Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.',
-    userImage: require('../../../../assets/images/png/u2.png'),
-  },
-];
-
-const userData = {
-  from: 'Julie Watson',
-  text: 'Welcome',
-  time: 'Now',
-  userImage: require('../../../../assets/images/png/u6.png'),
-};
-
 const Chat = ({navigation, route}) => {
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState('');
@@ -90,22 +37,11 @@ const Chat = ({navigation, route}) => {
   const userToken = useSelector(state => state.reducer.userToken);
 
   console.log('route data', route?.params);
-
-  //   const [socket, setSocket] = useState(io('http://192.168.18.226:3000'));
-
   const dispatch = useDispatch();
-
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-  //👇🏻 Access the chatroom's name and id
   const {username, userID} = route.params;
-  // console.log(route.params, ' route.params');
-  // useEffect(() => {
-  //   console.log(chatMessages, 'chat'), [];
-  // });
-
-  //👇🏻 This function gets the username saved on AsyncStorage
   const getUsername = async () => {
     try {
       const value = await AsyncStorage.getItem('username');
@@ -116,18 +52,6 @@ const Chat = ({navigation, route}) => {
       console.error('Error while loading username!');
     }
   };
-
-  //👇🏻 Sets the header title to the name chatroom's name
-  // useLayoutEffect(() => {
-  //   // getUsername();
-  //   // socket.emit('findRoom', id);
-  //   // socket.on('foundRoom', roomChats => setChatMessages(roomChats));
-  // }, []);
-
-  /*👇🏻 
-        This function gets the time the user sends a message, then 
-        logs the username, message, and the timestamp to the console.
-     */
   const handleNewMessage = async () => {
     console.log('abc');
     storeMsg();
@@ -142,10 +66,10 @@ const Chat = ({navigation, route}) => {
         ? `0${new Date().getMinutes()}`
         : `${new Date().getMinutes()}`;
     let content = message;
-    if (userID) {
+    if (route.params.user_id) {
       socket.emit('private message', {
         content,
-        to: userID,
+        to: route.params.user_id,
         timestamp: {hour, mins},
       });
       setChatMessages([
@@ -162,29 +86,8 @@ const Chat = ({navigation, route}) => {
         fromSelf: true,
         to: userID,
       });
-      // storeMsg();
-
       setMessage('');
-
-      // this.selectedUser.messages.push({
-      //   content,
-      //   fromSelf: true,
-      // });
     }
-
-    // console.log({
-    //   message,
-    //   user,
-    //   timestamp: {hour, mins},
-    // });
-    // socket.emit('newMessage', {
-    //   message,
-    //   room_id: id,
-    //   user,
-    //   timestamp: {hour, mins},
-    // });
-    // setMessage('');
-    // socket.on('foundRoom', roomChats => setChatMessages(roomChats));
   };
 
   useEffect(() => {
@@ -205,23 +108,6 @@ const Chat = ({navigation, route}) => {
         ]);
         storeMsg();
       }
-      // for (let i = 0; i < users.length; i++) {
-      //   const user = users[i];
-      //   if (user.userID === from) {
-      //     setChatMessages([
-      //       ...chatMessages,
-      //       {
-      //         content,
-      //         fromSelf: false,
-      //       },
-      //     ]);
-
-      //     if (user.username !== username) {
-      //       user.hasNewMessages = true;
-      //     }
-      //     break;
-      //   }
-      // }
     });
   }, []);
   const storeMsg = async () => {
@@ -229,7 +115,6 @@ const Chat = ({navigation, route}) => {
       text: message,
       id: route.params.id,
     };
-    console.log('data', data);
     await axiosconfig
       .post(`message_store`, data, {
         headers: {
@@ -334,7 +219,8 @@ const Chat = ({navigation, route}) => {
         {!status ? (
           <View style={[s.dp]}>
             <Image
-              source={!status ? userData.userImage : userData.userImage}
+            source={{
+              uri:!status ? route?.params?.users_invers.userImage : route?.params?.users_invers.userImage}}
               style={s.dp1}
               resizeMode={'cover'}
             />
@@ -444,7 +330,8 @@ const Chat = ({navigation, route}) => {
         {status ? (
           <View style={[s.dp]}>
             <Image
-              source={!status ? userData?.userImage : userData?.userImage}
+              source={{
+                uri:!status ? route?.params?.users_invers.userImage : route?.params?.users_invers.userImage}}
               style={s.dp1}
               resizeMode={'cover'}
             />
@@ -474,21 +361,16 @@ const Chat = ({navigation, route}) => {
               style={s.dp}>
               <Image
                 source={{
-                  uri: route?.params?.image
-                    ? route?.params?.image
-                    : userData?.userImage,
-                }}
+                  uri:route?.params?.users_invers.image }}
                 style={s.dp1}
                 resizeMode={'cover'}
               />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
               <Text style={[s.name, {color: textColor}]}>
-                {route?.params?.name}
-                {route?.params?.last_name}
+                {route?.params?.users_invers?.name + ' '}
+                {route?.params?.users_invers?.last_name}
               </Text>
-
-              <Text style={s.textSmall}>Last Seen 5:52 PM</Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity style={s.options}>
@@ -507,8 +389,6 @@ const Chat = ({navigation, route}) => {
             keyExtractor={item => item.to}
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps={false}
-            // contentContainerStyle={{flexDirection: 'column-reverse'}}
-            // initialScrollIndex={messages.length - 1}
             showsVerticalScrollIndicator={true}
           />
         </View>
@@ -534,9 +414,7 @@ const Chat = ({navigation, route}) => {
               multiline
               flexWrap={'wrap'}
               maxHeight={60}
-              // numberOfLines={4}
               onChangeText={text => setMessage(text)}
-              // size="md"
             />
           </View>
 

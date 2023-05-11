@@ -29,6 +29,7 @@ import Antdesign from 'react-native-vector-icons/AntDesign';
 import PushNotification from 'react-native-push-notification';
 import io from 'socket.io-client';
 import socket from '../../../../utils/socket';
+import styles from './style';
 const SERVER_URL = 'http://your-server-address';
 const FunInteraction = ({navigation}) => {
   const dispatch = useDispatch();
@@ -378,12 +379,12 @@ const FunInteraction = ({navigation}) => {
               {elem?.item?.user?.location}
             </Text>
           </View>
-          <View style={[s.options]}>
+          <View style={[s.options ]}>
             <Menu
               w="150"
               borderWidth={moderateScale(1, 0.1)}
               borderColor={'grey'}
-              backgroundColor={color}
+              backgroundColor={'red'}
               marginRight={moderateScale(15, 0.1)}
               marginTop={moderateScale(25, 0.1)}
               closeOnSelect={true}
