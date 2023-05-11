@@ -90,40 +90,37 @@ const Chat = ({ navigation, route }) => {
     const handleReceiveMessage = (data) => {
       const time = data.timestamp.hour + ":" + data.timestamp.mins;
       if (data.to === userId && data.from === recieverId) {
-        setChatMessages(prevChatMessages => [
+        setChatMessages(chatMessages => [
           {
-            id:data.id,
             message: data.content,
             time: time,
             from: recieverId,
             to: userId,
             fromSelf: false,
           },
-          ...prevChatMessages,
+          ...chatMessages,
         ]);
       } else if (data.to === recieverId && data.from === userId) {
-        setChatMessages(prevChatMessages => [
+        setChatMessages(chatMessages => [
           {
-            id:data.id,
             message: data.content,
             time: time,
             from: userId,
             to: recieverId,
             fromSelf: true,
           },
-          ...prevChatMessages,
+          ...chatMessages,
         ]);
       }
       console.log('from', 'useriDsss', userId, chatMessages);
     };
-  
+
     socket.on('message', handleReceiveMessage);
-  
+
     return () => {
       socket.off('message', handleReceiveMessage);
     };
   }, [chatMessages]);
-  
   const storeMsg = async () => {
     var data = {
       text: message,
