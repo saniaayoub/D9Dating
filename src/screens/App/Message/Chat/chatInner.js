@@ -66,21 +66,24 @@ const Chat = ({navigation, route}) => {
         ? `0${new Date().getMinutes()}`
         : `${new Date().getMinutes()}`;
     let content = message;
+    console.log('====================================');
+    console.log(route.params,'hellorutetdata');
+    console.log('====================================');
     if (route.params.user_id) {
-      socket.emit('private message', {
+      socket.emit('private_message', {
         content,
-        to: route.params.user_id,
+        to: 19,
         timestamp: {hour, mins},
       });
-      setChatMessages([
-        {
-          message,
-          fromSelf: true,
-          time: `${hour}:${mins}`,
-          to: userID,
-        },
-        ...chatMessages,
-      ]);
+      // setChatMessages([
+      //   {
+      //     message,
+      //     fromSelf: true,
+      //     time: `${hour}:${mins}`,
+      //     to: userID,
+      //   },
+      //   ...chatMessages,
+      // ]);
       console.log('sent', {
         message,
         fromSelf: true,
@@ -92,11 +95,11 @@ const Chat = ({navigation, route}) => {
 
   useEffect(() => {
     // getValueFunction();
-    socket.on('private message', ({content, from, time}) => {
-      console.log(content, 'recieve');
+    socket.on('private_message', ({content, from, time}) => {
+      console.log(content, 'receiver_id');
       console.log('');
+      console.log('from', from, 'useriD', userID, chatMessages);
       if (from === userID) {
-        console.log('from', from, 'useriD', userID, chatMessages);
         setChatMessages(chatMessages => [
           {
             message: content,
@@ -106,7 +109,7 @@ const Chat = ({navigation, route}) => {
           },
           ...chatMessages,
         ]);
-        storeMsg();
+        // storeMsg();
       }
     });
   }, []);
