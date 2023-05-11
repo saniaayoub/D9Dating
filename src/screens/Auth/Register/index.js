@@ -235,6 +235,26 @@ const Register = ({navigation}) => {
         Alert.alert(err?.response?.data?.message);
       });
   };
+  const fcmToken = token => {
+    setLoader(true);
+    var data = {
+      device_token: FCMtoken,
+    };
+    axiosconfig
+      .post('device-token', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log(res, 'token');
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err, 'errors');
+      });
+  };
   const storeData = async value => {
     try {
       await AsyncStorage.setItem('@auth_token', value);
@@ -245,7 +265,6 @@ const Register = ({navigation}) => {
     setLoader(true);
     setOnsubmit(false);
     var data = {
-      fcmToken: FCMtoken,
       name: fname,
       last_name: lastname,
       email: email,
@@ -271,6 +290,7 @@ const Register = ({navigation}) => {
         AsyncStorage.setItem('id', id);
         console.log(res, 'Login data ');
         dispatch(setUserToken(res?.data?.access_token));
+        fcmToken(res?.data?.access_token);
         setLoader(false);
       })
       .catch(err => {

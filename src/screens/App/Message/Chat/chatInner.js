@@ -70,11 +70,18 @@ const Chat = ({navigation, route}) => {
     console.log(route.params, 'hellorutetdata');
     console.log('====================================');
     if (route.params.user_id) {
-      socket.emit('private_message', {
-        content,
-        to: 19,
-        timestamp: {hour, mins},
-      });
+      // socket.emit('private_message', {
+      //   content,
+      //   to: route.params.user_id,
+      //   timestamp: {hour, mins},
+      // });
+      const receiverId = 18;
+      const data = {
+        senderId: 19,
+        receiverId,
+        message,
+      };
+      socket.emit('message', data);
       // setChatMessages([
       //   {
       //     message,
@@ -94,9 +101,28 @@ const Chat = ({navigation, route}) => {
   };
 
   useEffect(() => {
+    // Join the chat room with a user ID
+    const userId = 19;
+    socket.emit('join', userId);
+
+    // Listen for incoming messages
+    socket.on('message', data => {
+      console.log('dhasg', data);
+      const {senderId, message} = data;
+      const newMessage = `${senderId}: ${message}`;
+      setReceivedMessages(prevMessages => [...prevMessages, newMessage]);
+    });
+
+    // Clean up the socket connection on component unmount
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     // getValueFunction();
     socket.on('private_message', ({content, from, time}) => {
-      console.log(content, '1231231231231231');
+      console.log(content, 'receiver_idhello');
       console.log('');
       console.log('from', from, 'useriD', userID, chatMessages);
       if (from === userID) {
