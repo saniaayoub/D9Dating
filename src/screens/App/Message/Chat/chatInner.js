@@ -96,7 +96,7 @@ const Chat = ({navigation, route}) => {
   useEffect(() => {
     // getValueFunction();
     socket.on('private_message', ({content, from, time}) => {
-      console.log(content, 'receiver_id');
+      console.log(content, '1231231231231231');
       console.log('');
       console.log('from', from, 'useriD', userID, chatMessages);
       if (from === userID) {
