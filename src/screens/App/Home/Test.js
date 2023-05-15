@@ -74,10 +74,10 @@ export default class Test extends Component {
               {nativeEvent: {contentOffset: {y: this.scrollYAnimatedValue}}},
             ])}
           >
-            {this.data.map((item, key) => (
+            {this.data.map((item, index) => (
               // <View style={s.container}>
               <>
-                <View
+                <View key={index}
                   style={{
                     backgroundColor: '#222222',
                     borderTopLeftRadius: moderateScale(25, 0.1),

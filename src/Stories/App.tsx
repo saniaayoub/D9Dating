@@ -84,7 +84,7 @@ const Stories = (props) => {
       <FlatList
         data={props.data}
         horizontal
-        keyExtractor={(item) => item.title}
+        keyExtractor={(item, index) => index}
         renderItem={({ item, index }) => (
           <View style={styles.boxStory}>
             <TouchableOpacity onPress={() => {

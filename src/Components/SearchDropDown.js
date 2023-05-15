@@ -10,9 +10,9 @@ export default function SearchDropDown(props) {
           //if search results matched it'll have some length.
           dataSource.length ? (
             //then show results
-            dataSource.map(item => {
+            dataSource.map((item,index) => {
               return (
-                <View style={styles.itemView}>
+                <View key={index} style={styles.itemView}>
                   <Text style={styles.itemText}>{item}</Text>
                 </View>
               );

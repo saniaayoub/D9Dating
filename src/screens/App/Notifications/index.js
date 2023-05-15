@@ -267,7 +267,7 @@ const Notifications = ({navigation}) => {
         <FlatList
           data={data}
           renderItem={renderItem}
-          // keyExtractor={(e, i) => i.toString()}
+          keyExtractor={(e, i) => i.toString()}
           scrollEnabled={true}
         />
       </ScrollView>
