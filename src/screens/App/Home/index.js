@@ -50,10 +50,11 @@ const Organization = [
   {id: 'Iota Phi Theta Fraternity, Inc.', color: 'blue'},
 ];
 
-const Home = ({navigation}) => {
+const Home = ({navigation, route}) => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const refRBSheet1 = useRef();
+  const flatListRef = useRef(null);
   const isFocused = useIsFocused();
   const theme = useSelector(state => state.reducer.theme);
   const userToken = useSelector(state => state.reducer.userToken);
@@ -77,7 +78,8 @@ const Home = ({navigation}) => {
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
-
+  const postID = route?.params?.data?.postid;
+  console.log(route?.params?.data?.postid, 'postidf');
   useEffect(() => {
     dispatch(setOrganization(Organization));
     console.log('organisation', organizations);
@@ -153,6 +155,27 @@ const Home = ({navigation}) => {
         console.log(err);
       });
   };
+  const matchId = postId => {
+    console.log('avg', postId);
+    postId.map((post, index) => {
+      console.log('post id', post.id, postID);
+      if (post.id == postID) {
+        console.log('abc');
+        const matchedId = post.id;
+        console.log(matchedId, index, 'mat');
+        if (index !== -1 && flatListRef.current) {
+          flatListRef.current.scrollToIndex({index, animated: true});
+        }
+      } else {
+        console.log('false');
+      }
+    });
+  };
+  const getItemLayout = (data, index) => ({
+    length: 500,
+    offset: 500 * index,
+    index,
+  });
 
   const getPosts = async () => {
     setLoader(true);
@@ -164,10 +187,8 @@ const Home = ({navigation}) => {
         },
       })
       .then(res => {
-        // console.log('Posts', JSON.stringify(res.data.post_friends));
-        // console.log('Other Stories', JSON.stringify(res?.data?.stories));
-
         setPosts(res?.data?.post_friends);
+        matchId(res?.data?.post_friends);
         setOtherStoriesData(res?.data?.stories);
       })
       .catch(err => {
@@ -1272,12 +1293,14 @@ const Home = ({navigation}) => {
           </View>
         ) : (
           <FlatList
+            ref={flatListRef}
             data={posts}
             renderItem={(elem, index) => renderItem(elem)}
             keyExtractor={(elem, index) => {
               index.toString();
             }}
             extraData={refresh}
+            getItemLayout={getItemLayout}
           />
         )}
       </View>

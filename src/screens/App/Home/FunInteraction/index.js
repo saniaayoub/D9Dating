@@ -30,10 +30,12 @@ import PushNotification from 'react-native-push-notification';
 import io from 'socket.io-client';
 import socket from '../../../../utils/socket';
 import styles from './style';
+import {useNavigation, useRoute} from '@react-navigation/native';
 const SERVER_URL = 'http://your-server-address';
-const FunInteraction = ({navigation}) => {
+const FunInteraction = ({}) => {
   const dispatch = useDispatch();
   const refRBSheet1 = useRef();
+  const scrollViewRef = useRef();
   const isFocused = useIsFocused();
   const organizations = useSelector(state => state.reducer.organization);
   const theme = useSelector(state => state.reducer.theme);
@@ -49,6 +51,7 @@ const FunInteraction = ({navigation}) => {
   const [userID, setUserID] = useState('');
   const [current, setCurrent] = useState('');
   const [comment, setComment] = useState('');
+  const [itemHeights, setItemHeights] = useState([]);
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
@@ -57,6 +60,13 @@ const FunInteraction = ({navigation}) => {
   const [searching, setSearching] = useState(false);
   const userToken = useSelector(state => state.reducer.userToken);
   const [soc, setSoc] = useState(null);
+  const [dataSourceCords, setDataSourceCords] = useState([]);
+  const navigation = useNavigation();
+  const route = useRoute();
+  const flatListRef = useRef(null);
+  // Access the notification data from the route parameters
+  const postID = route?.params?.data?.postid;
+  console.log(route?.params?.data?.postid, 'postidf');
   useEffect(() => {
     const socket = io(socket);
     setSoc(socket);
@@ -95,43 +105,6 @@ const FunInteraction = ({navigation}) => {
       }
     });
     return color;
-  };
-  // useEffect(() => {
-  //   createChannel();
-  // }, []);
-
-  // const createChannel = () => {
-  //   PushNotification.createChannel(
-  //     {
-  //       channelId: 'd9', // This is the channel ID
-  //       channelName: 'My channel', // This is the channel name
-  //       channelDescription: 'A channel to categorize your notifications', // This is the channel description
-  //       soundName: 'default', // This is the sound to play when a notification is displayed
-  //       importance: 4, // This is the importance level of the channel (ranging from 0 to 5)
-  //       vibrate: true, // This indicates whether the device should vibrate when a notification is displayed
-  //     },
-  //     created => console.log(`Channel ${created ? 'created' : 'existing'}.`),
-  //   );
-  // };
-  const sendPushNotification = async token => {
-    const response = await fetch('YOUR_PUSH_NOTIFICATION_API_URL', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer YOUR_API_KEY',
-      },
-      body: JSON.stringify({
-        to: token,
-        notification: {
-          title: 'New Message',
-          body: 'You have a new message!',
-        },
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to send push notification');
-    }
   };
   const hitLike = async (id, userid, index) => {
     socket.emit('likePost', {postId, userId});
@@ -203,6 +176,27 @@ const FunInteraction = ({navigation}) => {
       });
   };
 
+  const matchId = postId => {
+    console.log('avg', postId);
+    postId.map((post, index) => {
+      console.log('post id', post.id, postID);
+      if (post.id == postID) {
+        console.log('abc');
+        const matchedId = post.id;
+        console.log(matchedId, index, 'mat');
+        if (index !== -1 && flatListRef.current) {
+          flatListRef.current.scrollToIndex({index, animated: true});
+        }
+      } else {
+        console.log('false');
+      }
+    });
+  };
+  const getItemLayout = (data, index) => ({
+    length: 500,
+    offset: 500 * index,
+    index,
+  });
   const getPosts = async () => {
     setLoader(true);
     await axiosconfig
@@ -215,8 +209,8 @@ const FunInteraction = ({navigation}) => {
       .then(res => {
         console.log('public post', res?.data?.post_public);
         const data = res?.data?.post_public;
-
         setPublicPost(res?.data?.post_public);
+        matchId(res?.data?.post_public);
         setLoader(false);
       })
       .catch(err => {
@@ -355,7 +349,9 @@ const FunInteraction = ({navigation}) => {
     });
 
     return (
-      <View style={s.col}>
+      <View
+        style={s.col}
+        onLayout={e => setItemHeights(e.nativeEvent.layout.height, 'heightyu')}>
         <View style={s.header}>
           <View
             style={[s.dp, {borderColor: getColor(elem?.item?.user?.group)}]}>
@@ -382,7 +378,7 @@ const FunInteraction = ({navigation}) => {
               {elem?.item?.user?.location}
             </Text>
           </View>
-          <View style={[s.options ]}>
+          <View style={[s.options]}>
             <Menu
               w="150"
               borderWidth={moderateScale(1, 0.1)}
@@ -760,11 +756,13 @@ const FunInteraction = ({navigation}) => {
         <View style={s.funView}></View>
 
         <FlatList
+          ref={flatListRef}
           data={publicPost}
           renderItem={elem => renderItem(elem)}
           keyExtractor={(elem, index) => {
             index.toString();
           }}
+          getItemLayout={getItemLayout}
           extraData={refresh}
         />
         <RBSheet
@@ -884,20 +882,6 @@ const FunInteraction = ({navigation}) => {
             </View>
           </View>
         </RBSheet>
-
-        {/* <ScrollView
-          scrollEnabled
-          vertical
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            alignItems: 'center',
-            flexDirection: 'column',
-          }}
-        >
-          {data.map((elem, index)=> {
-            return()
-          })}
-        </ScrollView> */}
       </View>
     </SafeAreaView>
   );

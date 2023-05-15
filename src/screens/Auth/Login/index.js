@@ -42,17 +42,17 @@ const Login = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
 
-  const fcmToken = () => {
+  const fcmToken = token => {
     console.log('fcmtoken api');
-    setLoader(true);
-    console.log(userToken);
+    // setLoader(true);
+    console.log(userToken, 'userToken');
     var data = {
       device_token: FCMtoken,
     };
     axiosconfig
       .post('device-token', data, {
         headers: {
-          Authorization: `Bearer ${userToken}`,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then(res => {
@@ -96,8 +96,9 @@ const Login = ({navigation}) => {
           let id = res?.data?.userInfo.toString();
           AsyncStorage.setItem('id', id);
           AsyncStorage.setItem('userToken', res?.data?.access_token);
+          console.log(res?.data, 'res');
+          fcmToken(res?.data?.access_token);
           dispatch(setUserToken(res?.data?.access_token));
-          fcmToken();
           setLoader(false);
         })
         .catch(err => {

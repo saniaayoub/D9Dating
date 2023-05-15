@@ -1,5 +1,5 @@
 import {TouchableOpacity, Text, SafeAreaView, View, Image} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
 import {setTheme} from '../../../../Redux/actions';
@@ -88,6 +88,7 @@ const messages = [
 
 const Comments = ({navigation, route}) => {
   const dispatch = useDispatch();
+  const flatListRef = useRef(null);
   const {post} = route.params;
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
@@ -110,7 +111,8 @@ const Comments = ({navigation, route}) => {
 
     // extractDate();
   }, []);
-
+  const Cid = route?.params?.data?.id;
+  console.log(route?.params?.data?.id, 'commentId');
   const getUserData = async id => {
     setLoader(true);
     axiosconfig
@@ -171,6 +173,27 @@ const Comments = ({navigation, route}) => {
     return color;
   };
 
+  const getItemLayout = (data, index) => ({
+    length: 200,
+    offset: 200 * index,
+    index,
+  });
+  const matchId = cId => {
+    console.log('avg', cId);
+    cId.map((c, index) => {
+      if (c == Cid) {
+        console.log('abc');
+        const matchedId = c;
+        console.log(matchedId, index, 'mat');
+        if (index !== -1 && flatListRef.current) {
+          flatListRef.current.scrollToIndex({index, animated: true});
+        }
+      } else {
+        console.log('false');
+      }
+    });
+  };
+
   const addComment = async postid => {
     setLoader(false);
     if (!comment) {
@@ -208,7 +231,7 @@ const Comments = ({navigation, route}) => {
         } else {
           getPosts(postid);
         }
-
+        matchId(commentID);
         // setRefresh(!refresh);
       })
       .catch(err => {
@@ -308,11 +331,9 @@ const Comments = ({navigation, route}) => {
         <View
           style={{
             flexDirection: 'row',
-          }}
-        >
+          }}>
           <View
-            style={[s.dp, {borderColor: getColor(elem?.item?.users?.group)}]}
-          >
+            style={[s.dp, {borderColor: getColor(elem?.item?.users?.group)}]}>
             <Image
               source={{
                 uri: elem?.item?.users?.image
@@ -330,8 +351,7 @@ const Comments = ({navigation, route}) => {
                   screen: 'search',
                   post: {id: elem?.item?.users?.id},
                 });
-              }}
-            >
+              }}>
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
                 {elem?.item?.users?.name} {elem?.item?.users?.last_name}
               </Text>
@@ -353,8 +373,7 @@ const Comments = ({navigation, route}) => {
               <TouchableOpacity
                 onPress={() => {
                   deleteComment(elem?.item?.id);
-                }}
-              >
+                }}>
                 <Antdesign
                   name={'delete'}
                   size={moderateScale(15, 0.1)}
@@ -369,8 +388,7 @@ const Comments = ({navigation, route}) => {
               <TouchableOpacity
                 onPress={() => {
                   onEdit(elem?.item?.id, elem?.item?.text);
-                }}
-              >
+                }}>
                 <Entypo
                   name={'edit'}
                   size={moderateScale(15, 0.1)}
@@ -392,14 +410,12 @@ const Comments = ({navigation, route}) => {
           alignItems: 'center',
           justifyContent: 'center',
           marginTop: moderateScale(20, 0.1),
-        }}
-      >
+        }}>
         <View
           style={{
             position: 'absolute',
             left: moderateScale(10, 0.1),
-          }}
-        >
+          }}>
           <Header navigation={navigation} />
         </View>
         <View>
@@ -411,8 +427,7 @@ const Comments = ({navigation, route}) => {
       </View>
 
       <ScrollView
-        contentContainerStyle={[s.container, {backgroundColor: color}]}
-      >
+        contentContainerStyle={[s.container, {backgroundColor: color}]}>
         <View style={s.caption}>
           <View style={[s.dp, {borderColor: getColor(post?.user?.group)}]}>
             <Image
@@ -425,7 +440,7 @@ const Comments = ({navigation, route}) => {
             <View>
               <View style={{flexDirection: 'row'}}>
                 <Text style={[s.name, s.nameBold, {color: textColor}]}>
-                  {post.user?.name} {post.user?.last_name}
+                  {post?.user?.name} {post?.user?.last_name}
                   <Text style={[s.name1]}> {post?.caption}</Text>
                 </Text>
               </View>
@@ -433,11 +448,13 @@ const Comments = ({navigation, route}) => {
           </TouchableOpacity>
         </View>
         <FlatList
+          ref={flatListRef}
           data={comments}
           renderItem={renderItem}
           keyExtractor={(e, i) => i.toString()}
           scrollEnabled={true}
           extraData={refresh}
+          getItemLayout={getItemLayout}
         />
         {userData ? (
           <View style={{marginBottom: 20}}>
@@ -462,8 +479,7 @@ const Comments = ({navigation, route}) => {
                     {
                       borderColor: getColor(userData?.group),
                     },
-                  ]}
-                >
+                  ]}>
                   {userData?.image ? (
                     <Image
                       source={{uri: userData?.image}}
@@ -478,8 +494,7 @@ const Comments = ({navigation, route}) => {
                   onPress={() => {
                     addComment(post.id);
                   }}
-                  style={{marginRight: moderateScale(20, 0.1)}}
-                >
+                  style={{marginRight: moderateScale(20, 0.1)}}>
                   <Feather
                     name={'send'}
                     size={moderateScale(20, 0.1)}
