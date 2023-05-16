@@ -9,7 +9,7 @@ import {
   FlatList,
   Keyboard,
 } from 'react-native';
-const {v4: uuidv4} = require('uuid');
+// const {v4: uuidv4} = require('uuid');
 import React, {useEffect, useState, useLayoutEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
@@ -76,7 +76,7 @@ const Chat = ({navigation, route}) => {
         : `${new Date().getMinutes()}`;
     let content = message;
     socket.emit('message', {
-      id: uuidv4(),
+      // id: uuidv4(),
       content,
       to: route?.params?.sender_user?.id
         ? route?.params?.sender_user?.id

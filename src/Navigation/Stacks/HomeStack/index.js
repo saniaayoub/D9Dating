@@ -23,7 +23,9 @@ const HomeStack = () => {
         'Notification caused app to open from background state00:',
         remoteMessage.notification,
       );
-      RootNavigation.navigate(remoteMessage.data.screen);
+      RootNavigation.navigate(remoteMessage.data.screen, {
+        data: remoteMessage.data,
+      });
     });
 
     // Check whether an initial notification is available
@@ -35,7 +37,9 @@ const HomeStack = () => {
             'Notification caused app to open from quit state0o:',
             remoteMessage.notification,
           );
-          RootNavigation.navigate(remoteMessage.data.screen);
+          RootNavigation.navigate(remoteMessage.data.screen, {
+            data: remoteMessage.data,
+          });
           // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
         }
       });
