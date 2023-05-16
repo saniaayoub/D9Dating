@@ -7,7 +7,7 @@ import Header from '../../../../Components/Header';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import openMap from 'react-native-open-maps';
+// import openMap from 'react-native-open-maps';
 import {Input, Button, Menu, Pressable} from 'native-base';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';

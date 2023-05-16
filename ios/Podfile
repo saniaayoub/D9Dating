@@ -23,6 +23,8 @@ end
 
 
 target 'D9Dating' do
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -39,7 +41,7 @@ target 'D9Dating' do
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
     # you should disable the next line.
-    :flipper_configuration => flipper_config,
+    # :flipper_configuration => flipper_config,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
@@ -50,6 +52,8 @@ target 'D9Dating' do
   
   pod 'iOSPhotoEditor', :git => 'https://github.com/prscX/photo-editor', :branch => 'master'
 
+  rn_maps_path = '../node_modules/react-native-maps'
+  pod 'react-native-google-maps', :path => rn_maps_path
   # Enables Flipper.
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
@@ -61,11 +65,6 @@ target 'D9Dating' do
   # 'CocoaAsyncSocket', 'ComponentKit', 'Flipper-DoubleConversion',
   # 'Flipper-Glog', 'Flipper-PeerTalk', 'Flipper-RSocket', 'Yoga', 'YogaKit',
   # 'CocoaLibEvent', 'OpenSSL-Universal', 'boost-for-react-native']
-
-  rn_maps_path = '../node_modules/react-native-maps'
-  pod 'react-native-google-maps', :path => rn_maps_path
-  pod 'GoogleMaps'
-  pod 'Google-Maps-iOS-Utils'
   
 
   target 'D9DatingTests' do
