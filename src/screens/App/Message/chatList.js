@@ -165,9 +165,9 @@ const Message = ({navigation}) => {
     userslist();
   }, []);
   useEffect(() => {
-    latestMsg()
-  }, [])
-  
+    latestMsg();
+  }, []);
+
   const latestMsg = async () => {
     await axiosconfig
       .get(`message_index`, {
@@ -177,13 +177,13 @@ const Message = ({navigation}) => {
       })
       .then(res => {
         console.log('data-message', res.data);
-        checkSameUser(res.data)
-        const data = checkSameUser(res.data)
+        checkSameUser(res.data);
+        const data = checkSameUser(res.data);
         console.log('====================================');
-        console.log(data,"hellodatamesga");
+        console.log(data, 'hellodatamesga');
         console.log('====================================');
-        setRooms(data)
-        console.log(rooms,"hellodatamesga");
+        setRooms(data);
+        console.log(rooms, 'hellodatamesga');
         setLoader(false);
       })
       .catch(err => {
@@ -193,14 +193,14 @@ const Message = ({navigation}) => {
   };
   function checkSameUser(arr) {
     const result = [];
-  const uniqueIds = new Set();
-  for (const obj of arr) {
-    if (!uniqueIds.has(obj.user_id)) {
-      result.push(obj);
-      uniqueIds.add(obj.user_id);
+    const uniqueIds = new Set();
+    for (const obj of arr) {
+      if (!uniqueIds.has(obj.user_id)) {
+        result.push(obj);
+        uniqueIds.add(obj.user_id);
+      }
     }
-  }
-  return result;
+    return result;
   }
   function formatTimestamp(timestamp) {
     const now = moment();
@@ -223,11 +223,11 @@ const Message = ({navigation}) => {
             navigation.navigate('ViewUser');
           }}
           style={s.dp}>
-            {console.log('data-message',elem.item?.sender_user?.image)}
+          {console.log('data-message', elem.item?.sender_user?.image)}
           <Image
-          source={{
-            uri: elem.item?.sender_user?.image,
-          }}
+            source={{
+              uri: elem.item?.sender_user?.image,
+            }}
             style={s.dp1}
             resizeMode={'cover'}
           />

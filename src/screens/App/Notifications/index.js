@@ -1,5 +1,5 @@
 import {TouchableOpacity, Text, SafeAreaView, View, Image} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
 import {setTheme} from '../../../Redux/actions';
@@ -81,8 +81,9 @@ const messages = [
     active: '4 Hours ago',
   },
 ];
-const Notifications = ({navigation}) => {
+const Notifications = ({navigation, route}) => {
   const dispatch = useDispatch();
+  const flatListRef = useRef(null);
   const isFocused = useIsFocused();
   const theme = useSelector(state => state.reducer.theme);
   const userToken = useSelector(state => state.reducer.userToken);
@@ -101,6 +102,30 @@ const Notifications = ({navigation}) => {
     setResponse('');
     getList();
   }, [isFocused]);
+  const id = route?.params?.data?.id;
+  console.log(route?.params?.data?.id, 'postidf');
+
+  const matchId = () => {
+    console.log('avg');
+    data.map((v, index) => {
+      console.log('ids', v.user_id);
+      if (v.user_id == id) {
+        console.log('abc');
+        const matchedId = v.user_id;
+        console.log(matchedId, index, 'mat');
+        if (index !== -1 && flatListRef.current) {
+          flatListRef.current.scrollToIndex({index, animated: true});
+        }
+      } else {
+        console.log('false');
+      }
+    });
+  };
+  const getItemLayout = (data, index) => ({
+    length: 200,
+    offset: 200 * index,
+    index,
+  });
 
   const getList = async () => {
     setLoader(true);
@@ -111,8 +136,9 @@ const Notifications = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('elenenen', res.data?.request_user);
+        console.log('elenenen', res.data);
         setData(res?.data);
+        matchId();
         setLoader(false);
       })
       .catch(err => {
@@ -191,16 +217,13 @@ const Notifications = ({navigation}) => {
               post: {id: elem?.item?.request_user?.id},
             });
           }}
-          style={{flex: 0.7, alignSelf: 'center'}}
-        >
+          style={{flex: 0.7, alignSelf: 'center'}}>
           <View>
             <View
-              style={{flexDirection: 'column', width: moderateScale(200, 0.1)}}
-            >
+              style={{flexDirection: 'column', width: moderateScale(200, 0.1)}}>
               <Text style={[s.name, s.nameBold, {color: textColor}]}>
                 {elem?.item?.request_user?.name}{' '}
                 {elem?.item?.request_user?.last_name}
-               
               </Text>
               <Text style={[s.name1]}> requested to follow you</Text>
             </View>
@@ -219,26 +242,22 @@ const Notifications = ({navigation}) => {
         ) : (
           <View style={[s.icon]}>
             <TouchableOpacity
-              onPress={() => connectAccept(elem?.item?.request_user?.id)}
-            >
+              onPress={() => connectAccept(elem?.item?.request_user?.id)}>
               <View
                 style={{
                   paddingHorizontal: moderateScale(6, 0.1),
                   right: moderateScale(15),
-                }}
-              >
+                }}>
                 <Antdesign name="checkcircle" size={20} color="green" />
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => connectDecline(elem?.item?.request_user?.id)}
-            >
+              onPress={() => connectDecline(elem?.item?.request_user?.id)}>
               <View
                 style={{
                   right: moderateScale(5),
-                }}
-              >
+                }}>
                 <Antdesign name="closecircle" size={20} color="red" />
               </View>
             </TouchableOpacity>
@@ -252,8 +271,7 @@ const Notifications = ({navigation}) => {
       {loader ? <Loader /> : null}
       <Header navigation={navigation} />
       <ScrollView
-        contentContainerStyle={[s.container, {backgroundColor: color}]}
-      >
+        contentContainerStyle={[s.container, {backgroundColor: color}]}>
         <View>
           <Text style={[s.HeadingText, {color: textColor}]}>Notifications</Text>
         </View>
@@ -265,8 +283,10 @@ const Notifications = ({navigation}) => {
         </View>
 
         <FlatList
+          ref={flatListRef}
           data={data}
           renderItem={renderItem}
+          getItemLayout={getItemLayout}
           // keyExtractor={(e, i) => i.toString()}
           scrollEnabled={true}
         />
