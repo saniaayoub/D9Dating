@@ -108,19 +108,6 @@ const FunInteraction = ({}) => {
   };
   const hitLike = async (id, userid, index) => {
     socket.emit('likePost', {postId, userId});
-
-    console.log(userid, 'id');
-    console.log(userID, 'id');
-    if (userid == userID) {
-      PushNotification.localNotification({
-        channelId: 'd9',
-        color: 'red',
-        title: 'My Notification Title',
-        message: 'post liked',
-      });
-    } else {
-      console.log('id not matched');
-    }
     setLoader(true);
     await axiosconfig
       .get(`like/${id}`, {
