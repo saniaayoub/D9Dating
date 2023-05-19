@@ -45,10 +45,11 @@ const Login = ({navigation}) => {
   const fcmToken = token => {
     console.log('fcmtoken api');
     // setLoader(true);
-    console.log(userToken, 'userToken');
+    console.log(token, 'userToken');
     var data = {
       device_token: FCMtoken,
     };
+    console.log(data, 'device token');
     axiosconfig
       .post('device-token', data, {
         headers: {

@@ -65,8 +65,8 @@ const FunInteraction = ({}) => {
   const route = useRoute();
   const flatListRef = useRef(null);
   // Access the notification data from the route parameters
-  const postID = route?.params?.data?.postid;
-  console.log(route?.params?.data?.postid, 'postidf');
+  const postID = route?.params?.data?.id;
+  console.log(route?.params?.data?.id, 'postidf');
   useEffect(() => {
     const socket = io(socket);
     setSoc(socket);
@@ -535,7 +535,7 @@ const FunInteraction = ({}) => {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('Comments', {
-                post: elem?.item,
+                data: elem?.item,
                 from: 'funInteraction',
               });
             }}>

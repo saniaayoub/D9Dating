@@ -32,13 +32,9 @@ const data = [
 ];
 
 const ViewUser = ({navigation, route}) => {
-  console.log('====================================');
-  console.log(route.params, 'routes');
-  console.log('====================================');
-
   const {post, screen} = route?.params;
   const [Userid, setUserid] = useState(
-    screen == 'search' ? post?.id : post.user.id,
+    screen == 'search' ? post?.id : post?.user.id,
   );
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
@@ -56,11 +52,41 @@ const ViewUser = ({navigation, route}) => {
   const [loader, setLoader] = useState(false);
   const [userData, setUserData] = useState([]);
 
+  const ID = route?.params?.data?.id;
+
   useEffect(() => {
-    getData();
+    if (ID) {
+      console.log('route console');
+      notificationAcceptReq();
+    } else {
+      getData();
+    }
     getId();
   }, []);
 
+  // useEffect(() => {
+  //   notificationAcceptReq();
+  // }, []);
+
+  const notificationAcceptReq = async () => {
+    console.log('id', ID);
+    setLoader(true);
+    axiosconfig
+      .get(`user_view/${ID}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('data11', res.data.user_details);
+        setUserData(res?.data?.user_details);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err);
+      });
+  };
   const getId = async () => {
     const logInId = await AsyncStorage.getItem('id');
     setLoginId(logInId);
@@ -213,7 +239,7 @@ const ViewUser = ({navigation, route}) => {
           <View style={s.container}>
             <View style={s.row}>
               <Text style={[s.headerTxt, {color: textColor}]}>
-                {userData?.name} {userData.last_name}
+                {userData?.name} {userData?.last_name}
               </Text>
 
               <View style={s.icon}>

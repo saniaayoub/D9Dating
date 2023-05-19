@@ -236,10 +236,13 @@ const Register = ({navigation}) => {
       });
   };
   const fcmToken = token => {
+    console.log('fcm token');
     setLoader(true);
     var data = {
       device_token: FCMtoken,
     };
+    console.log(token, 'access token');
+    console.log(data, 'devive token data');
     axiosconfig
       .post('device-token', data, {
         headers: {

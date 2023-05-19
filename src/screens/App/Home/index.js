@@ -78,8 +78,8 @@ const Home = ({navigation, route}) => {
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
-  const postID = route?.params?.data?.postid;
-  console.log(route?.params?.data?.postid, 'postidf');
+  const postID = route?.params?.data?.id;
+  console.log(route?.params?.data?.id, 'postidf');
   useEffect(() => {
     dispatch(setOrganization(Organization));
     console.log('organisation', organizations);
@@ -90,32 +90,6 @@ const Home = ({navigation, route}) => {
     funPosts();
     console.log(storyID, 'setUD');
   }, [isFocused]);
-  // useEffect(() => {
-  //   // Assume a message-notification contains a "type" property in the data payload of the screen to open
-
-  //   messaging().onNotificationOpenedApp(remoteMessage => {
-  //     console.log(
-  //       'Notification caused app to open from background state2:',
-  //       remoteMessage.notification,
-  //     );
-  //     RootNavigation.navigate(remoteMessage.data.screen);
-  //   });
-
-  //   // Check whether an initial notification is available
-  //   messaging()
-  //     .getInitialNotification()
-  //     .then(remoteMessage => {
-  //       if (remoteMessage) {
-  //         console.log(
-  //           'Notification caused app to open from quit state:',
-  //           remoteMessage.notification,
-  //         );
-  //         RootNavigation.navigate(remoteMessage.data.screen);
-  //         // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
-  //       }
-  //       // setLoading(false);
-  //     });
-  // }, []);
 
   useEffect(() => {
     socket.on('users', users => {
@@ -956,7 +930,7 @@ const Home = ({navigation, route}) => {
           </TouchableWithoutFeedback>
           <TouchableOpacity
             onPress={() => {
-              send();
+              // send();
               hitLike(elem?.item?.id, elem?.index);
               // console.log(data[elem.index].post.liked);
             }}
@@ -1004,7 +978,7 @@ const Home = ({navigation, route}) => {
 
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Comments', {post: elem?.item});
+              navigation.navigate('Comments', {data: elem?.item});
             }}>
             <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
               View all {elem?.item?.post_comments?.length} Comments
