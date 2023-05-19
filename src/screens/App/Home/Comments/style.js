@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     width: '100%',
+    height: moderateScale(57, 0.1),
     marginVertical: moderateScale(10, 0.1),
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -100,6 +101,8 @@ const styles = StyleSheet.create({
   },
   details: {
     width: moderateScale(200, 0.1),
+    // height: moderateScale(58, 0.1),
+    // backgroundColor:'gray',
     flexDirection: 'column',
     marginTop: moderateScale(5, 0.1),
   },

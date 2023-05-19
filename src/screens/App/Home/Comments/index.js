@@ -112,7 +112,6 @@ const Comments = ({navigation, route}) => {
   useEffect(() => {
     getID();
     getPosts(Pid);
-
     // extractDate();
   }, []);
 
@@ -178,19 +177,19 @@ const Comments = ({navigation, route}) => {
   };
 
   const getItemLayout = (data, index) => ({
-    length: 100,
-    offset: 100 * index,
+    length: 57,
+    offset: 57 * index,
     index,
   });
   const matchId = comments => {
     console.log('to check matched id');
-    comments.map((id, index) => {
+    comments.map((id, i) => {
       console.log(id?.id, 'all comments ids');
       if (id?.id == Cid) {
         const matchedId = id;
         console.log(matchedId, index, 'mat');
-        if (index !== -1 && flatListRef.current) {
-          flatListRef.current.scrollToIndex({index, animated: true});
+        if (i !== -1 && flatListRef.current) {
+          flatListRef.current.scrollToIndex({i, animated: true});
         }
       } else {
         console.log('false');

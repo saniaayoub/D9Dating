@@ -80,6 +80,7 @@ const Home = ({navigation, route}) => {
   );
   const postID = route?.params?.data?.id;
   console.log(route?.params?.data?.id, 'postidf');
+
   useEffect(() => {
     dispatch(setOrganization(Organization));
     console.log('organisation', organizations);
@@ -978,7 +979,7 @@ const Home = ({navigation, route}) => {
 
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Comments', {data: elem?.item});
+              navigation.navigate('Comments', {data: elem?.item, from: 'home'});
             }}>
             <Text style={[s.textRegular, {color: 'grey', marginVertical: 0}]}>
               View all {elem?.item?.post_comments?.length} Comments
