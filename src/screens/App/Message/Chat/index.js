@@ -68,6 +68,7 @@ const Chat = ({navigation, route, chatId, id, user}) => {
   const loginId = useSelector(state => state.reducer.userToken);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
+  const [userData, setUserData] = useState('');
   const userToken = useSelector(state => state.reducer.userToken);
   // const id = route.params.id
   console.log(route.params, 'id');
@@ -75,10 +76,16 @@ const Chat = ({navigation, route, chatId, id, user}) => {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
 
-  // <Button
-  //   title="Send"
-  //   onPress={sendMessage}
-  // />
+  useEffect(() => {
+    getData();
+    // getUsername();
+  }, []);
+
+  const getData = async () => {
+    const data = await AsyncStorage.getItem('userData');
+    setUserData(JSON.parse(data));
+    console.log(userData, 'dtaatsa');
+  };
 
   return (
     <View>

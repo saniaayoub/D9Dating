@@ -16,7 +16,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {addUsers} from '../Redux/actions';
+import {addSocketUsers, addUsers} from '../Redux/actions';
 const Poppins = '';
 const PoppinsBold = '';
 const Users = [
@@ -97,22 +97,29 @@ const UserListModal = ({
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [searchText, setSearchText] = useState('');
   const [searchedList, setSearchedList] = useState([]);
+  const [socketUser, setSocketUser] = useState({});
+  const [backendUser, setBackendUser] = useState({});
+
+  const [user, setUser] = useState({});
+
   const organization = useSelector(state => state.reducer.organization);
   const users = useSelector(state => state.reducer.users);
+  const socketUsers = useSelector(state => state.reducer.socketUsers);
+  const [disable, setDisable] = useState(false);
 
-  const [user, setUser] = useState('');
-  // const [users, setUsers] = useState([]);
-  const handleCancel = () => {
-    clearData();
-    getColor();
-  };
   useEffect(() => {
-    // getUsername();
     filterUser();
   }, []);
+
   const clearData = () => {
     setSearchedList([]);
     setSearchText('');
+  };
+
+  const handleCancel = () => {
+    clearData();
+    getColor();
+    setDisable(false);
   };
 
   const filterUser = () => {
@@ -120,15 +127,16 @@ const UserListModal = ({
     //   elem => elem.from.toLowerCase() != value.toLowerCase(),
     // );
     // console.log(temp);
-    let temp = users.filter(elem => {
+    let temp = socketUsers.filter(elem => {
       if (!elem.self) {
         return elem;
       }
     });
     console.log(temp, 'temp');
     // setUsers(temp);
-    dispatch(addUsers(temp));
+    dispatch(addSocketUsers(temp));
   };
+
   const getUsername = async () => {
     try {
       const value = await AsyncStorage.getItem('username');
@@ -141,12 +149,13 @@ const UserListModal = ({
       console.error('Error while loading username!');
     }
   };
+
   const handleChange = text => {
     setSearchText(text);
     if (!text) {
       clearData();
     } else {
-      let searched = Users.filter(item => {
+      let searched = users.filter(item => {
         return item.from?.toLowerCase().includes(text.toLowerCase());
       });
       setSearchedList(searched);
@@ -154,7 +163,6 @@ const UserListModal = ({
   };
 
   const getColor = id => {
-    console.log('orga', organization);
     let color;
 
     organization?.forEach(elem => {
@@ -165,14 +173,22 @@ const UserListModal = ({
     return color;
   };
 
+  const searchUserOnSocket = userData => {
+    socketUsers.forEach(elem => {
+      if (elem?.username == userData?.email) {
+        console.log('found');
+        setUser({backendUser: userData, socketUser: elem});
+      }
+    });
+  };
   const renderItem = (elem, i) => {
-    console.log(elem, 'here');
     return (
       <TouchableOpacity
         style={styles.card}
         onPress={() => {
-          handleCreateRoom(elem.item);
-          //   navigation.navigate('Chat', elem.item);
+          setSearchText(`${elem?.item?.name} ${elem?.item?.last_name}`);
+          setDisable(true);
+          searchUserOnSocket(elem?.item);
         }}>
         <View
           style={[
@@ -221,6 +237,7 @@ const UserListModal = ({
         </TouchableOpacity>
         <Text style={[styles.modalText, {color: textColor}]}>To</Text>
         <Input
+          isReadOnly={disable}
           value={searchText}
           onChangeText={text => {
             handleChange(text);
@@ -263,6 +280,19 @@ const UserListModal = ({
             />
           )}
         </View>
+        <TouchableOpacity
+          onPress={() => {
+            if (searchText) {
+              console.log('start chat');
+              console.log(user);
+              handleCreateRoom(user);
+            } else {
+              Alert.alert('select a user to chat');
+            }
+          }}
+          style={styles.btn}>
+          <Text style={[styles.btnTxt]}>Start Chat</Text>
+        </TouchableOpacity>
       </View>
     </Modal>
   );
@@ -278,7 +308,25 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
   },
-
+  btn: {
+    position: 'absolute',
+    bottom: moderateScale(50, 0.1),
+    marginBottom: moderateScale(10, 0.1),
+    alignSelf: 'center',
+    width: moderateScale(155, 0.1),
+    height: moderateScale(40, 0.1),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFD700',
+    borderRadius: moderateScale(25, 0.1),
+  },
+  btnTxt: {
+    //fontFamily: Poppins,
+    fontWeight: '700',
+    fontSize: moderateScale(14, 0.1),
+    lineHeight: moderateScale(19.5, 0.1),
+    color: '#222222',
+  },
   modalText: {
     marginBottom: moderateScale(15, 0.1),
     textAlign: 'center',

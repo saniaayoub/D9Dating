@@ -9,7 +9,12 @@ import {
 import React, {useEffect, useState, useLayoutEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
-import {setTheme, addUsers, setUserData} from '../../../Redux/actions';
+import {
+  setTheme,
+  addUsers,
+  addSocketUsers,
+  setUserData,
+} from '../../../Redux/actions';
 import s from './style';
 import Header from '../../../Components/Header';
 import {FlatList} from 'react-native';
@@ -151,7 +156,7 @@ const Message = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data12', res.data.friends);
+        console.log('messenger list', res.data.friends);
         dispatch(addUsers(res.data.friends));
         setLoader(false);
       })
@@ -164,6 +169,17 @@ const Message = ({navigation}) => {
     console.log('useEffect console');
     userslist();
   }, []);
+
+  useEffect(() => {
+    socket.on('users', users => {
+      users.forEach(user => {
+        user.self = user.userID === socket.id;
+      });
+      console.log(users, 'client');
+      dispatch(addSocketUsers(users));
+    });
+  }, []);
+
   useEffect(() => {
     latestMsg();
   }, []);
@@ -179,9 +195,7 @@ const Message = ({navigation}) => {
         console.log('data-message', res.data);
         checkSameUser(res.data);
         const data = checkSameUser(res.data);
-        console.log('====================================');
-        console.log(data, 'hellodatamesga');
-        console.log('====================================');
+
         setRooms(data);
         console.log(rooms, 'hellodatamesga');
         setLoader(false);
@@ -212,6 +226,7 @@ const Message = ({navigation}) => {
     }
   }
   const handleCreateRoom = user => {
+    console.log(user, 'handle');
     navigation.navigate('Chat', user);
     setModalVisible(!modalVisible);
   };

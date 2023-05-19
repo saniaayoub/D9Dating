@@ -12,6 +12,7 @@ import {
   SET_STORYID,
   SET_STORY_COLOR,
   SET_FTOKEN,
+  ADD_SOCKET_USERS,
 } from './Constants';
 
 const initialState = {
@@ -19,6 +20,7 @@ const initialState = {
   fToken: null,
   theme: 'dark',
   users: [],
+  socketUsers: [],
   location: '',
   date: '',
   userData: {},
@@ -53,6 +55,11 @@ const AppReducer = (state = initialState, action) => {
       return {
         ...state,
         users: action.payload,
+      };
+    case ADD_SOCKET_USERS:
+      return {
+        ...state,
+        socketUsers: action.payload,
       };
     case LOCATION:
       return {

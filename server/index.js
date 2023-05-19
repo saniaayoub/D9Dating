@@ -31,9 +31,9 @@ socketIO.on('connection', socket => {
     userID: socket.id,
     username: socket.username,
   });
-  socket.on('private message', ({content, to, timestamp}) => {
+  socket.on('private_message', ({content, to, timestamp}) => {
     console.log('sent,recieve', content, to);
-    socket.to(to).emit('private message', {
+    socket.to(to).emit('private_message', {
       content,
       from: socket.id,
       time: `${timestamp.hour}:${timestamp.mins}`,
@@ -42,7 +42,15 @@ socketIO.on('connection', socket => {
 
   socket.on('disconnect', () => {
     socket.disconnect();
-    console.log('🔥: A user disconnected');
+    const users = [];
+    for (let [id, socket] of socketIO.of('/').sockets) {
+      users.push({
+        userID: id,
+        username: socket.username,
+      });
+    }
+    socketIO.emit('on_disconnect', users);
+    console.log('🔥: A user disconnected', users);
   });
 });
 

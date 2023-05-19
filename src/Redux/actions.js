@@ -2,6 +2,7 @@ import {
   SET_USER_TOKEN,
   SET_THEME,
   ADD_USERS,
+  ADD_SOCKET_USERS,
   LOCATION,
   DATE,
   SET_USER_DATA,
@@ -37,6 +38,13 @@ export const setTheme = value => {
 export const addUsers = value => {
   return {
     type: ADD_USERS,
+    payload: value,
+  };
+};
+
+export const addSocketUsers = value => {
+  return {
+    type: ADD_SOCKET_USERS,
     payload: value,
   };
 };

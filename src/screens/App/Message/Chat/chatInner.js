@@ -25,45 +25,84 @@ import Antdesign from 'react-native-vector-icons/AntDesign';
 import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {addSocketUsers} from '../../../../Redux/actions';
 
 const Chat = ({navigation, route}) => {
+  const dispatch = useDispatch();
+  const userToken = useSelector(state => state.reducer.userToken);
+  const organizations = useSelector(state => state.reducer.organization);
+
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState('');
-  const [user, setUser] = useState('');
+  const [userData, setUserData] = useState('');
   const [userId, setUserId] = useState('');
   const [refresh, setRefresh] = useState(true);
+  const [online, setOnline] = useState(true);
+  const [lastSeen, setLastSeen] = useState('');
   const users = useSelector(state => state.reducer.users);
+  const socketUsers = useSelector(state => state.reducer.socketUsers);
   const [loader, setLoader] = useState(false);
   const [msg, setMsg] = useState([]);
   const [input, setInput] = useState('');
-  const userToken = useSelector(state => state.reducer.userToken);
-
-  console.log('route data', route?.params);
-  const dispatch = useDispatch();
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-  const {username, userID} = route.params;
-  const getUsername = async () => {
-    try {
-      const value = await AsyncStorage.getItem('username');
-      const id = await AsyncStorage.getItem('id');
-      if (value) {
-        setUser(value);
-      }
-      if (id) {
-        setUserId(id);
-      }
-    } catch (e) {
-      console.error('Error while loading username!');
-    }
-  };
+  const {backendUser, socketUser} = route.params;
+
   useEffect(() => {
-    getUsername();
-  }, [userId]);
-  const handleNewMessage = async () => {
-    console.log('abc');
-    // storeMsg();
+    getData();
+  }, []);
+
+  useEffect(() => {
+    socket.on('on_disconnect', users => {
+      alert('here');
+      socketUsers.forEach(user => {
+        user.self = user.userID === socket.id;
+      });
+      console.log(users, 'client');
+      dispatch(addSocketUsers(users));
+      setOnlineStatus(users);
+    });
+  }, [socket]);
+
+  const setOnlineStatus = susers => {
+    susers.forEach(elem => {
+      if (elem.userID == socketUser.userID) {
+        setOnline(true);
+        console.log('foundsdsd');
+      } else {
+        setOnline(false);
+        const hour =
+          new Date().getHours() < 10
+            ? `0${new Date().getHours()}`
+            : `${new Date().getHours()}`;
+
+        const mins =
+          new Date().getMinutes() < 10
+            ? `0${new Date().getMinutes()}`
+            : `${new Date().getMinutes()}`;
+        setLastSeen(`${hour}:${mins}`);
+      }
+    });
+  };
+
+  const getColor = id => {
+    let color;
+    organizations?.forEach(elem => {
+      if (elem.id == id) {
+        color = elem.color;
+      }
+    });
+    return color;
+  };
+
+  const getData = async () => {
+    const data = await AsyncStorage.getItem('userData');
+    setUserData(JSON.parse(data));
+    console.log(userData);
+  };
+
+  const handleNewMessage = () => {
     Keyboard.dismiss();
     const hour =
       new Date().getHours() < 10
@@ -75,69 +114,79 @@ const Chat = ({navigation, route}) => {
         ? `0${new Date().getMinutes()}`
         : `${new Date().getMinutes()}`;
     let content = message;
-    socket.emit('message', {
-      // id: uuidv4(),
-      content,
-      to: route?.params?.sender_user?.id
-        ? route?.params?.sender_user?.id
-        : route?.params?.id,
-      timestamp: {hour, mins},
-      from: userId,
-    });
-    setMessage('');
+
+    if (socketUser) {
+      socket.emit('private_message', {
+        content,
+        to: socketUser.userID,
+        timestamp: {hour, mins},
+      });
+      setChatMessages([
+        {
+          message,
+          fromSelf: true,
+          time: `${hour}:${mins}`,
+        },
+        ...chatMessages,
+      ]);
+      storeMsg({
+        id: backendUser.id,
+        message: message,
+        fromSelf: true,
+        time: `${hour}:${mins}`,
+      });
+      console.log('sent', {
+        id: backendUser.id,
+        message: message,
+        fromSelf: true,
+        time: `${hour}:${mins}`,
+      });
+      setMessage('');
+    }
+
+    // console.log({
+    //   message,
+    //   user,
+    //   timestamp: {hour, mins},
+    // });
+    // socket.emit('newMessage', {
+    //   message,
+    //   room_id: id,
+    //   user,
+    //   timestamp: {hour, mins},
+    // });
+    // setMessage('');
+    // socket.on('foundRoom', roomChats => setChatMessages(roomChats));
   };
-
   useEffect(() => {
-    const recieverId = route.params.sender_user?.id
-      ? route.params.sender_user?.id
-      : route.params?.id;
-    const handleReceiveMessage = data => {
-      const time = data.timestamp.hour + ':' + data.timestamp.mins;
-      if (data.to === userId && data.from === recieverId) {
-        setChatMessages(chatMessages => [
-          {
-            message: data.content,
-            time: time,
-            from: recieverId,
-            to: userId,
-            fromSelf: false,
-          },
-          ...chatMessages,
-        ]);
-      } else if (data.to === recieverId && data.from === userId) {
-        setChatMessages(chatMessages => [
-          {
-            message: data.content,
-            time: time,
-            from: userId,
-            to: recieverId,
-            fromSelf: true,
-          },
-          ...chatMessages,
-        ]);
-      }
-      console.log('from', 'useriDsss', userId, chatMessages);
-    };
+    // getValueFunction();
+    socket.on('private_message', ({content, from, time}) => {
+      console.log(content, 'recieve');
+      console.log('');
+      // if (from === socketUser.userID) {
+      // console.log('from', from, 'useriD', socketUser.userID, chatMessages);
+      setChatMessages(chatMessages => [
+        {
+          message: content,
+          fromSelf: false,
+          time: time,
+        },
+        ...chatMessages,
+      ]);
 
-    socket.on('message', handleReceiveMessage);
+      // }
+    });
+  }, [socket]);
 
-    return () => {
-      socket.off('message', handleReceiveMessage);
-    };
-  }, [chatMessages]);
-  const storeMsg = async () => {
-    var data = {
-      text: message,
-      id: route.params.id,
-    };
+  const storeMsg = async msg => {
     await axiosconfig
-      .post(`message_store`, data, {
+      .post(`message_store`, msg, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
       })
       .then(res => {
-        console.log('data', res.data);
+        console.log('message API', res.data);
         setLoader(false);
       })
       .catch(err => {
@@ -145,6 +194,7 @@ const Chat = ({navigation, route}) => {
         console.log(err);
       });
   };
+
   const msgDlt = async () => {
     await axiosconfig
       .delete(`message_delete/${route.params.id}`, {
@@ -187,19 +237,23 @@ const Chat = ({navigation, route}) => {
     return (
       <View
         style={[
-          s.messege,
+          s.message,
           {justifyContent: status ? 'flex-end' : 'flex-start'},
         ]}
         key={elem.index}>
         {!status ? (
-          <View style={[s.dp]}>
+          <View
+            style={[
+              s.dp,
+              {
+                borderColor: getColor(
+                  !status ? backendUser?.group : userData?.group,
+                ),
+              },
+            ]}>
             <Image
               source={{
-                uri: !status
-                  ? route?.params?.sender_user?.image
-                  : route?.params?.sender_user?.image
-                  ? route?.params?.sender_user?.image
-                  : route?.params?.image,
+                uri: !status ? backendUser?.image : userData?.image,
               }}
               style={s.dp1}
               resizeMode={'cover'}
@@ -210,7 +264,8 @@ const Chat = ({navigation, route}) => {
           style={[
             {
               maxWidth: '80%',
-              marginRight: moderateScale(10, 0.1),
+              marginLeft: !status ? moderateScale(20, 0.1) : 0,
+              marginRight: !status ? 0 : moderateScale(5, 0.1),
             },
           ]}>
           <View style={[s.options]}>
@@ -308,14 +363,18 @@ const Chat = ({navigation, route}) => {
           </View>
         </View>
         {status ? (
-          <View style={[s.dp]}>
+          <View
+            style={[
+              s.dp,
+              {
+                borderColor: getColor(
+                  !status ? backendUser?.group : userData?.group,
+                ),
+              },
+            ]}>
             <Image
               source={{
-                uri: !status
-                  ? route?.params?.sender_user?.image
-                  : route?.params?.sender_user?.image
-                  ? route?.params?.sender_user?.image
-                  : route?.params?.image,
+                uri: !status ? backendUser?.image : userData?.image,
               }}
               style={s.dp1}
               resizeMode={'cover'}
@@ -343,12 +402,16 @@ const Chat = ({navigation, route}) => {
               onPress={() => {
                 navigation.navigate('ViewUser');
               }}
-              style={s.dp}>
+              style={[
+                s.dp,
+                {
+                  marginHorizontal: moderateScale(10, 0.1),
+                  borderColor: getColor(backendUser?.group),
+                },
+              ]}>
               <Image
                 source={{
-                  uri: route?.params?.sender_user?.image
-                    ? route?.params?.sender_user?.image
-                    : route.params?.image,
+                  uri: backendUser?.image,
                 }}
                 style={s.dp1}
                 resizeMode={'cover'}
@@ -356,12 +419,10 @@ const Chat = ({navigation, route}) => {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
               <Text style={[s.name, {color: textColor}]}>
-                {(route?.params?.sender_user?.name
-                  ? route?.params?.sender_user?.name
-                  : route.params?.name) + ' '}
-                {route?.params?.sender_user?.last_name
-                  ? route?.params?.sender_user?.last_name
-                  : route?.params?.last_name}
+                {backendUser?.name + ' ' + backendUser?.last_name}
+              </Text>
+              <Text style={[s.name, {color: textColor}]}>
+                {online == true ? 'online' : `Last seen ${lastSeen}`}
               </Text>
             </TouchableOpacity>
           </View>

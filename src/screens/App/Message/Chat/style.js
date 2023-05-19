@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     // margin: moderateScale(20, 0.1),
   },
   header: {
-    paddingHorizontal: moderateScale(20, 0.1),
+    paddingHorizontal: moderateScale(10, 0.1),
 
     flexDirection: 'row',
     alignItems: 'center',
@@ -69,8 +69,8 @@ const styles = StyleSheet.create({
   dp: {
     width: moderateScale(55, 0.1),
     height: moderateScale(55, 0.1),
+    borderWidth: moderateScale(2, 0.1),
     borderRadius: moderateScale(55 / 2, 0.1),
-    marginRight: moderateScale(10, 0.1),
   },
   userName: {
     marginBottom: moderateScale(25, 0.1),
@@ -148,12 +148,16 @@ const styles = StyleSheet.create({
     // marginLeft: moderateScale(140, 0.1),
     paddingBottom: moderateScale(15, 0.1),
   },
-  messege: {
+  message: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginHorizontal: moderateScale(10, 0.1),
     marginBottom: moderateScale(15, 0.1),
   },
-  chat: {height: '80%', paddingBottom: moderateScale(15, 0.1)},
+  chat: {
+    height: '80%',
+    paddingBottom: moderateScale(15, 0.1),
+  },
   textSmall1: {
     //fontFamily: Poppins,
     fontSize: moderateScale(10, 0.1),
@@ -163,6 +167,7 @@ const styles = StyleSheet.create({
   },
   textTo: {
     flexDirection: 'column',
+
     padding: moderateScale(15, 0.1),
     backgroundColor: '#4D4D4D',
     borderRadius: moderateScale(5, 0.1),
@@ -174,7 +179,7 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(5, 0.1),
   },
   messageInput: {
-    // position: 'absolute',
+    position: 'absolute',
     bottom: moderateScale(80, 0.1),
     flexDirection: 'row',
     alignItems: 'center',
@@ -193,7 +198,7 @@ const styles = StyleSheet.create({
     flex: 0.1,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: moderateScale(15, 0.1),
+    marginHorizontal: moderateScale(15, 0.1),
   },
   circle: {
     // flex: 0.2,
