@@ -16,6 +16,7 @@ import Loader from '../../../../Components/Loader';
 // import Toast from 'react-native-simple-toast';
 import Feather from 'react-native-vector-icons/Feather';
 import {Input} from 'native-base';
+
 const messages = [
   {
     from: 'Julie Watson',
@@ -106,12 +107,15 @@ const Comments = ({navigation, route}) => {
   const [edit, setEdit] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [userData, setUserData] = useState('');
+  const Cid = route?.params?.data?.id;
+  const Pid = route?.params?.data?.Pid;
   useEffect(() => {
     getID();
+    getPosts(Pid);
 
     // extractDate();
   }, []);
-  const Cid = route?.params?.data?.id;
+
   console.log(route?.params?.data?.id, 'commentId');
   const getUserData = async id => {
     setLoader(true);
@@ -174,16 +178,16 @@ const Comments = ({navigation, route}) => {
   };
 
   const getItemLayout = (data, index) => ({
-    length: 200,
-    offset: 200 * index,
+    length: 100,
+    offset: 100 * index,
     index,
   });
-  const matchId = cId => {
-    console.log('avg', cId);
-    cId.map((c, index) => {
-      if (c == Cid) {
-        console.log('abc');
-        const matchedId = c;
+  const matchId = comments => {
+    console.log('to check matched id');
+    comments.map((id, index) => {
+      console.log(id?.id, 'all comments ids');
+      if (id?.id == Cid) {
+        const matchedId = id;
         console.log(matchedId, index, 'mat');
         if (index !== -1 && flatListRef.current) {
           flatListRef.current.scrollToIndex({index, animated: true});
@@ -319,6 +323,7 @@ const Comments = ({navigation, route}) => {
   const getUpdatedComments = (array, postid) => {
     let temp = array.filter(elem => elem.id == postid);
     setComments(temp[0]?.post_comments);
+    matchId(temp[0]?.post_comments);
     setLoader(false);
     setRefresh(!refresh);
     // console.log(temp[0]?.post_comments, comments, 'whhwyw');
@@ -492,7 +497,7 @@ const Comments = ({navigation, route}) => {
               InputRightElement={
                 <TouchableOpacity
                   onPress={() => {
-                    addComment(post.id);
+                    addComment(post?.id);
                   }}
                   style={{marginRight: moderateScale(20, 0.1)}}>
                   <Feather
