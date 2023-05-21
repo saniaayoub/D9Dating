@@ -94,6 +94,8 @@ const Settings = ({navigation, route}) => {
           console.log(res?.data?.message);
           alert(res?.data?.message);
           AsyncStorage.removeItem('userToken');
+          AsyncStorage.removeItem('userData');
+
           dispatch(setUserToken(null));
         })
         .catch(err => {

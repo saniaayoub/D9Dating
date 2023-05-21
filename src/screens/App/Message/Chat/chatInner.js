@@ -50,12 +50,33 @@ const Chat = ({navigation, route}) => {
   const {backendUser, socketUser} = route.params;
 
   useEffect(() => {
+    getMessages();
     getData();
   }, []);
 
   useEffect(() => {
+    // getValueFunction();
+    socket.on('private_message', ({content, from, time}) => {
+      console.log(content, 'recieve');
+      console.log('');
+      if (from === socketUser?.userID) {
+        console.log('from', from, 'useriD', socketUser.userID, chatMessages);
+        setChatMessages(chatMessages => [
+          {
+            user_id: backendUser?.id,
+            reciever_id: userData?.id,
+            message: content,
+            fromSelf: false,
+            time: time,
+          },
+          ...chatMessages,
+        ]);
+      }
+    });
+  }, [socket]);
+
+  useEffect(() => {
     socket.on('on_disconnect', users => {
-      alert('here');
       socketUsers.forEach(user => {
         user.self = user.userID === socket.id;
       });
@@ -84,6 +105,24 @@ const Chat = ({navigation, route}) => {
         setLastSeen(`${hour}:${mins}`);
       }
     });
+  };
+
+  const getMessages = async () => {
+    await axiosconfig
+      .get(`message_show/${backendUser?.id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('message show API', res.data);
+        setChatMessages(res?.data);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        console.log(err, 'message show API err');
+      });
   };
 
   const getColor = id => {
@@ -123,6 +162,8 @@ const Chat = ({navigation, route}) => {
       });
       setChatMessages([
         {
+          user_id: userData?.id,
+          reciever_id: backendUser?.id,
           message,
           fromSelf: true,
           time: `${hour}:${mins}`,
@@ -158,25 +199,6 @@ const Chat = ({navigation, route}) => {
     // setMessage('');
     // socket.on('foundRoom', roomChats => setChatMessages(roomChats));
   };
-  useEffect(() => {
-    // getValueFunction();
-    socket.on('private_message', ({content, from, time}) => {
-      console.log(content, 'recieve');
-      console.log('');
-      // if (from === socketUser.userID) {
-      // console.log('from', from, 'useriD', socketUser.userID, chatMessages);
-      setChatMessages(chatMessages => [
-        {
-          message: content,
-          fromSelf: false,
-          time: time,
-        },
-        ...chatMessages,
-      ]);
-
-      // }
-    });
-  }, [socket]);
 
   const storeMsg = async msg => {
     await axiosconfig
@@ -186,7 +208,7 @@ const Chat = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('message API', res.data);
+        console.log('message send', res.data);
         setLoader(false);
       })
       .catch(err => {
@@ -232,7 +254,7 @@ const Chat = ({navigation, route}) => {
     socket.emit('chat message');
   };
   const renderItem = elem => {
-    const status = elem?.item?.fromSelf;
+    const status = elem?.item?.user_id === userData.id;
 
     return (
       <View

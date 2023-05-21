@@ -77,11 +77,12 @@ const App = ({navigation}) => {
     let exist = await AsyncStorage.getItem('already');
     let userData = await AsyncStorage.getItem('userData');
     userData = JSON.parse(userData);
-
     console.log('app', token);
+
+    console.log('app', userData);
     dispatch(setExist(exist));
     setThemeMode(token);
-    if (token != '' || token != null) {
+    if (token) {
       socket.auth = {username: userData?.email};
       socket.connect();
     }

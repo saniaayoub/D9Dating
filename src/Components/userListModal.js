@@ -174,6 +174,7 @@ const UserListModal = ({
   };
 
   const searchUserOnSocket = userData => {
+    setUser({backendUser: userData, socketUser: {}});
     socketUsers.forEach(elem => {
       if (elem?.username == userData?.email) {
         console.log('found');

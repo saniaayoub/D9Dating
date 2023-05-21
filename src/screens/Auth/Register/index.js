@@ -38,6 +38,7 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import style from '../../../Components/Header/style';
 import Loader from '../../../Components/Loader';
+import socket from '../../../utils/socket';
 
 const Organization = [
   {id: 'Alpha Phi Alpha Fraternity, Inc.', color: 'blue'},
@@ -285,15 +286,15 @@ const Register = ({navigation}) => {
     axiosconfig
       .post('register', data)
       .then(res => {
-        console.log(res?.data, 'user register data');
         Alert.alert(res?.data?.message);
         AsyncStorage.setItem('password', password);
         AsyncStorage.setItem('userToken', res?.data?.access_token);
         let id = res?.data?.userInfo.toString();
         AsyncStorage.setItem('id', id);
-        console.log(res, 'Login data ');
         dispatch(setUserToken(res?.data?.access_token));
         fcmToken(res?.data?.access_token);
+        socket.auth = {username: email};
+        socket.connect();
         setLoader(false);
       })
       .catch(err => {
