@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from './src/Providers/axios';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
+import socket from './src/utils/socket';
 // import PushNotification from 'react-native-push-notification';
 import SplashScreen from 'react-native-splash-screen';
 import * as RootNavigation from './RootNavigation';
@@ -74,9 +75,17 @@ const App = ({navigation}) => {
   const getToken = async () => {
     let token = await AsyncStorage.getItem('userToken');
     let exist = await AsyncStorage.getItem('already');
-    console.log('app');
+    let userData = await AsyncStorage.getItem('userData');
+    userData = JSON.parse(userData);
+    console.log('app', token);
+
+    console.log('app', userData);
     dispatch(setExist(exist));
     setThemeMode(token);
+    if (token) {
+      socket.auth = {username: userData?.email};
+      socket.connect();
+    }
     dispatch(setUserToken(token));
   };
 

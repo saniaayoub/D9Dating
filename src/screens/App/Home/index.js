@@ -34,7 +34,11 @@ import Loader from '../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {setOrganization, setStories, addUsers} from '../../../Redux/actions';
+import {
+  setOrganization,
+  setStories,
+  addSocketUsers,
+} from '../../../Redux/actions';
 import messaging from '@react-native-firebase/messaging';
 import * as RootNavigation from '../../../../RootNavigation';
 import {navigationRef} from '../../../../RootNavigation';
@@ -83,8 +87,7 @@ const Home = ({navigation, route}) => {
 
   useEffect(() => {
     dispatch(setOrganization(Organization));
-    console.log('organisation', organizations);
-    getID();
+    // console.log('organisation', organizations);
     getPosts();
     if (postID) {
       console.log(postID, 'data id ');
@@ -94,9 +97,9 @@ const Home = ({navigation, route}) => {
       getPosts();
     }
     getStories();
-    getData();
+    getID();
     funPosts();
-    console.log(storyID, 'setUD');
+    // console.log(storyID, 'setUD');
   }, [isFocused]);
 
   useEffect(() => {
@@ -105,8 +108,12 @@ const Home = ({navigation, route}) => {
         user.self = user.userID === socket.id;
       });
       console.log(users, 'client');
-      dispatch(addUsers(users));
+      dispatch(addSocketUsers(users));
     });
+  }, [socket]);
+
+  useEffect(() => {
+    getID();
   }, []);
 
   const getID = async () => {
@@ -116,7 +123,7 @@ const Home = ({navigation, route}) => {
   };
 
   const getData = async id => {
-    // console.log('get data');
+    // // console.log('get data');
     setLoader(true);
     axiosconfig
       .get(`user_view/${id}`, {
@@ -125,16 +132,15 @@ const Home = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('data', res.data.user_details);
+        // console.log('data', res.data.user_details);
         setUserData(res?.data?.user_details);
-        socket.auth = {username: res?.data?.user_details?.name};
-        socket.connect();
-
+        const data = JSON.stringify(res?.data?.user_details);
+        AsyncStorage.setItem('userData', data);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
       });
   };
   const matchId = (postId, id) => {
@@ -143,7 +149,7 @@ const Home = ({navigation, route}) => {
     postId.map((post, index) => {
       console.log('post id', post.id, id);
       if (post.id == postID) {
-        console.log('abc');
+        // console.log('abc');
         const matchedId = post.id;
         // setIndex(index);
         console.log(matchedId, index, 'mat');
@@ -181,7 +187,7 @@ const Home = ({navigation, route}) => {
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
         // showToast(err.response);
       });
   };
@@ -196,7 +202,7 @@ const Home = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('public post', JSON.stringify(res?.data?.post_public));
+        // // console.log('public post', JSON.stringify(res?.data?.post_public));
         const data = res?.data?.post_public;
 
         setFunPostsData(res?.data?.post_public);
@@ -205,7 +211,7 @@ const Home = ({navigation, route}) => {
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
       });
   };
   const report = async repText => {
@@ -222,14 +228,14 @@ const Home = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('Posts', res.data);
+        // // console.log('Posts', res.data);
         getPosts();
         refRBSheet1.current.close();
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
         // showToast(err.response);
       });
   };
@@ -243,13 +249,13 @@ const Home = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('Posts', res.data);
+        // // console.log('Posts', res.data);
         getPosts();
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
         // showToast(err.response);
       });
   };
@@ -292,13 +298,13 @@ const Home = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('data', JSON.stringify(res.data));
+        // // console.log('data', JSON.stringify(res.data));
         toggleLike(index);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
         // showToast(err.response);
       });
   };
@@ -315,7 +321,7 @@ const Home = ({navigation, route}) => {
   };
 
   const toggleLike = index => {
-    // console.log('hello');
+    // // console.log('hello');
     getPosts();
     setRefresh(!refresh);
   };
@@ -395,7 +401,7 @@ const Home = ({navigation, route}) => {
 
     if (isCameraPermitted && isStoragePermitted && isReadStoragePermitted) {
       launchCamera(options, response => {
-        console.log('Response = ', response);
+        // console.log('Response = ', response);
 
         if (response.didCancel) {
           alert('User cancelled camera picker');
@@ -411,7 +417,7 @@ const Home = ({navigation, route}) => {
           return;
         }
         let source = response;
-        console.log(source.assets[0].uri, 'uri');
+        // console.log(source.assets[0].uri, 'uri');
         // setStoryImage(true);
         refRBSheet.current.close();
         convert(source);
@@ -434,20 +440,20 @@ const Home = ({navigation, route}) => {
       },
     };
     launchImageLibrary(options, res => {
-      console.log('Response = ', res);
+      // console.log('Response = ', res);
       if (res.didCancel) {
-        console.log('User cancelled image picker');
+        // console.log('User cancelled image picker');
       } else if (res.error) {
-        console.log('ImagePicker Error: ', res.error);
+        // console.log('ImagePicker Error: ', res.error);
       } else if (res.customButton) {
-        console.log('User tapped custom button: ', res.customButton);
+        // console.log('User tapped custom button: ', res.customButton);
         alert(res.customButton);
       } else {
         let source = res;
-        // console.log(source.assets[0].uri, 'uri');
+        // // console.log(source.assets[0].uri, 'uri');
         // setStoryImage(source.assets[0].uri);
         refRBSheet.current.close();
-        // console.log(source)
+        // // console.log(source)
         convert(source);
         // setStoryImage(true);
       }
@@ -457,10 +463,10 @@ const Home = ({navigation, route}) => {
   const getColor = id => {
     let color;
 
-    // console.log(id, 'idddg');
+    // // console.log(id, 'idddg');
     Organization?.forEach(elem => {
       if (elem.id == id) {
-        // console.log(id, 'idddg');
+        // // console.log(id, 'idddg');
         color = elem.color;
       }
     });
@@ -469,7 +475,7 @@ const Home = ({navigation, route}) => {
 
   const _onPress = async imageToeEdit => {
     setTimeout(() => {
-      // console.log(imageToeEdit, 'eitors');
+      // // console.log(imageToeEdit, 'eitors');
 
       try {
         PhotoEditor.Edit({
@@ -493,7 +499,7 @@ const Home = ({navigation, route}) => {
           hiddenControls: ['save'],
           colors: undefined,
           onDone: res => {
-            console.log('on done', res);
+            // console.log('on done', res);
             // setPath(`file://${res}`);
             convertToBase64(`file://${res}`);
             let temp = storiesData[0].stories;
@@ -501,7 +507,7 @@ const Home = ({navigation, route}) => {
             //   story_id: Stories[0]?.stories?.length + 1,
             //   story_image: `file://${res}`,
             //   swipeText: 'Custom swipe text for this story',
-            //   onPress: () => console.log('story 1 swiped'),
+            //   onPress: () => // console.log('story 1 swiped'),
             // });
             temp.push({
               id: storiesData[0]?.stories?.length + 1,
@@ -520,7 +526,7 @@ const Home = ({navigation, route}) => {
             // addStory(myStories);
           },
           onCancel: () => {
-            console.log('on cancel');
+            // console.log('on cancel');
           },
         });
       } catch (err) {
@@ -551,11 +557,11 @@ const Home = ({navigation, route}) => {
       let photoPath = RNFS.DocumentDirectoryPath + '/photo.jpg';
       RNFS.moveFile(source.assets[0].uri, photoPath)
         .then(() => {
-          console.log('FILE WRITTEN!');
+          // console.log('FILE WRITTEN!');
           _onPress();
         })
         .catch(err => {
-          console.log(err.message);
+          // console.log(err.message);
         });
     }
   };
@@ -568,7 +574,7 @@ const Home = ({navigation, route}) => {
         createStory(base64);
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
         // showToast('Profile picture not updated');
         // setLoader(false);
       });
@@ -605,7 +611,7 @@ const Home = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('data', JSON.stringify(res.data));
+        // // console.log('data', JSON.stringify(res.data));
         // setComment('');
         setStoryCircle('green');
         getStories();
@@ -615,7 +621,7 @@ const Home = ({navigation, route}) => {
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
         getStories();
         // Alert.alert(err);
       });
@@ -623,7 +629,7 @@ const Home = ({navigation, route}) => {
 
   const addComment = async (id, index) => {
     setLoader(true);
-    // console.log('hisss', id);
+    // // console.log('hisss', id);
     if (!comment) {
       setLoader(false);
       return;
@@ -640,7 +646,7 @@ const Home = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('data', JSON.stringify(res.data));
+        // // console.log('data', JSON.stringify(res.data));
         setComment('');
         getPosts();
         setRefresh(!refresh);
@@ -649,7 +655,7 @@ const Home = ({navigation, route}) => {
       .catch(err => {
         setLoader(false);
         setComment('');
-        console.log(err);
+        // console.log(err);
         // Alert.alert(err);
       });
   };
@@ -664,33 +670,33 @@ const Home = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('storylo', JSON.stringify(res.data?.user));
+        // // console.log('storylo', JSON.stringify(res.data?.user));
         createStoryData(res.data?.user, token);
-        // console.log(myData1);
+        // // console.log(myData1);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err, 'jhjj');
+        // console.log(err, 'jhjj');
         // showToast(err.response);
       });
   };
 
   const createStoryData = (data, token) => {
-    // console.log('sent data', data);
+    // // console.log('sent data', data);
     // let temp = {
     //   user_id: data.id,
     //   user_image: data.image ? data.image : dummyImage,
     //   organization: data.organization,
     //   user_name: data.name,
     //   stories: data.stories.map(elem => {
-    //     return {...elem, onPress: () => console.log('story 1 swiped')};
+    //     return {...elem, onPress: () => // console.log('story 1 swiped')};
     //   }),
     // };
 
     // dispatch(setStories([temp]));
     // setLoader(false);
 
-    console.log('sent data', data);
+    // console.log('sent data', data);
     let temp = {
       user_id: data.id,
       profile: data.image ? data.image : dummyImage,
@@ -715,7 +721,7 @@ const Home = ({navigation, route}) => {
 
   const deleteStory = async id => {
     setLoader(true);
-    // console.log(id);
+    // // console.log(id);
     await axiosconfig
       .get(`story_delete/${storyID}`, {
         headers: {
@@ -724,23 +730,23 @@ const Home = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('afterDelete', res?.data?.message);
+        // // console.log('afterDelete', res?.data?.message);
         Alert.alert(res?.data?.message);
         getStories(userToken);
         id(false);
-        // console.log(myData1);
+        // // console.log(myData1);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err, 'hhe');
+        // console.log(err, 'hhe');
         // showToast(err.response);
       });
   };
 
   const deletePost = async id => {
     setLoader(true);
-    console.log(id);
+    // console.log(id);
     await axiosconfig
       .get(`post_delete/${id}`, {
         headers: {
@@ -749,15 +755,15 @@ const Home = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('afterDelete', res?.data?.message);
+        // // console.log('afterDelete', res?.data?.message);
         Alert.alert(res?.data?.message);
         getPosts(userToken);
-        // console.log(myData1);
+        // // console.log(myData1);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err, 'hhe');
+        // console.log(err, 'hhe');
         // showToast(err.response);
       });
   };
@@ -946,7 +952,7 @@ const Home = ({navigation, route}) => {
             onPress={() => {
               // send();
               hitLike(elem?.item?.id, elem?.index);
-              // console.log(data[elem.index].post.liked);
+              // // console.log(data[elem.index].post.liked);
             }}
             style={s.likes}>
             <Text style={s.likesCount}> {elem?.item?.post_likes?.length}</Text>
@@ -1110,12 +1116,12 @@ const Home = ({navigation, route}) => {
                 onStart={item => {
                   setStoryCircle('grey');
                   // setStoryID(13);
-                  // console.log(item, 'storyryy');
+                  // // console.log(item, 'storyryy');
                 }}
                 customStoryCircleListItem={item => {
-                  console.log('hi');
+                  // console.log('hi');
                 }}
-                onClose={item => console.log('close: ', item)}
+                onClose={item => // console.log('close: ', item)}
                 showAvatarText={true}
                 avatarTextStyle={{
                   color: textColor,
@@ -1205,8 +1211,8 @@ const Home = ({navigation, route}) => {
           ) : // <InstaStory
           //   data={otherStories}
           //   duration={10}
-          //   onStart={item => console.log(item)}
-          //   onClose={item => console.log('close: ', item)}
+          //   onStart={item => // console.log(item)}
+          //   onClose={item => // console.log('close: ', item)}
           //   showAvatarText={true}
           //   avatarTextStyle={{
           //     color: textColor,
@@ -1229,7 +1235,7 @@ const Home = ({navigation, route}) => {
         <TouchableOpacity
           style={s.funView}
           onPress={() => {
-            // console.log('aaa');
+            // // console.log('aaa');
             navigation.navigate('FunInteraction');
           }}>
           <View style={[s.yellow, s.round]}>

@@ -76,10 +76,22 @@ const Message = ({navigation}) => {
       });
   };
   useEffect(() => {
+    alert('hi');
     console.log('abc');
     getId();
     getAllUsers();
   }, []);
+
+  useEffect(() => {
+    socket.on('users', users => {
+      users.forEach(user => {
+        user.self = user.userID === socket.id;
+      });
+      console.log(users, 'client');
+      dispatch(addUsers(users));
+    });
+  }, []);
+
   const getId = async () => {
     let SP = await AsyncStorage.getItem('id');
     console.log(SP, 'SP');

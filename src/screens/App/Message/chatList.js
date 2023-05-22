@@ -9,7 +9,12 @@ import {
 import React, {useEffect, useState, useLayoutEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
-import {setTheme, addUsers, setUserData} from '../../../Redux/actions';
+import {
+  setTheme,
+  addUsers,
+  addSocketUsers,
+  setUserData,
+} from '../../../Redux/actions';
 import s from './style';
 import Header from '../../../Components/Header';
 import {FlatList} from 'react-native';
@@ -21,128 +26,39 @@ import UserListModal from '../../../Components/userListModal';
 import axiosconfig from '../../../Providers/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
-
-// const rooms = [
-//   {
-//     id: '1',
-//     name: 'Julie Watson',
-//     userImage: require('../../../assets/images/png/mydp.png'),
-//     messages: [
-//       {
-//         id: '1a',
-//         text: 'Hello guys, welcome!',
-//         time: '07:50',
-//         user: 'Julie Watson',
-//       },
-//       {
-//         id: '1b',
-//         text: 'Hi Tomer, thank you! 😇',
-//         time: '08:50',
-//         user: 'Emily',
-//       },
-//     ],
-//   },
-//   {
-//     id: '2',
-//     name: 'John Smith',
-//     userImage: require('../../../assets/images/png/u7.png'),
-//     messages: [
-//       {
-//         id: '2a',
-//         text: "Guys, who's awake? 🙏🏽",
-//         time: '12:50',
-//         user: 'John Smith',
-//       },
-//       {
-//         id: '2b',
-//         text: "What's up? 🧑🏻‍💻",
-//         time: '03:50',
-//         user: 'Emily',
-//       },
-//     ],
-//   },
-// ];
-
-// const messages = [
-//   {
-//     id: 1,
-//     from: 'Julie Watson',
-//     text: 'Awesome',
-//     time: 'Now',
-//     userImage: require('../../../assets/images/png/mydp.png'),
-//   },
-//   {
-//     id: 2,
-//     from: 'John Smith',
-//     text: 'Sent a Voice Message',
-//     time: '10:00pm',
-//     userImage: require('../../../assets/images/png/u7.png'),
-//   },
-//   {
-//     id: 3,
-//     from: 'Julie Watson',
-//     text: 'Thanks a lot',
-//     time: 'Friday',
-//     userImage: require('../../../assets/images/png/u1.png'),
-//   },
-//   {
-//     id: 4,
-//     from: 'Julie Watson',
-//     text: 'Are You Busy',
-//     time: 'Monday',
-//     userImage: require('../../../assets/images/png/u2.png'),
-//   },
-//   {
-//     id: 5,
-//     from: 'John Smith',
-//     text: 'Nice',
-//     time: 'Last Week',
-//     userImage: require('../../../assets/images/png/u4.png'),
-//   },
-//   {
-//     id: 6,
-//     from: 'John Smith',
-//     text: 'Lunch Today',
-//     time: 'Last Week',
-//     userImage: require('../../../assets/images/png/u5.png'),
-//   },
-//   {
-//     id: 7,
-//     from: 'Julie Watson',
-//     text: 'Welcome',
-//     time: 'Now',
-//     userImage: require('../../../assets/images/png/u6.png'),
-//   },
-//   {
-//     id: 8,
-//     from: 'John Smith',
-//     text: 'Lunch Today',
-//     time: 'Last Week',
-//     userImage: require('../../../assets/images/png/u5.png'),
-//   },
-//   {
-//     id: 9,
-//     from: 'Julie Watson',
-//     text: 'Welcome',
-//     time: 'Now',
-//     userImage: require('../../../assets/images/png/u6.png'),
-//   },
-// ];
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 const Message = ({navigation}) => {
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const users = useSelector(state => state.reducer.users);
+  const socketUsers = useSelector(state => state.reducer.socketUsers);
   const [modalVisible, setModalVisible] = useState(false);
   const [loader, setLoader] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [user, setUser] = useState('');
 
+  useEffect(() => {
+    userslist();
+    latestMsg();
+  }, [isFocused]);
+
+  useEffect(() => {
+    socket.on('users', users => {
+      users.forEach(user => {
+        user.self = user.userID === socket.id;
+      });
+      // console.log(users, 'client');
+      dispatch(addSocketUsers(users));
+    });
+  }, []);
+
   const userslist = async () => {
-    console.log('userList');
+    // console.log('userList');
     setLoader(true);
     await axiosconfig
       .get(`connected_users`, {
@@ -151,22 +67,15 @@ const Message = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data12', res.data.friends);
+        // console.log('messenger list', res.data.friends);
         dispatch(addUsers(res.data.friends));
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
       });
   };
-  useEffect(() => {
-    console.log('useEffect console');
-    userslist();
-  }, []);
-  useEffect(() => {
-    latestMsg();
-  }, []);
 
   const latestMsg = async () => {
     await axiosconfig
@@ -176,19 +85,15 @@ const Message = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data-message', res.data);
-        checkSameUser(res.data);
-        const data = checkSameUser(res.data);
-        console.log('====================================');
-        console.log(data, 'hellodatamesga');
-        console.log('====================================');
-        setRooms(data);
-        console.log(rooms, 'hellodatamesga');
+        // console.log('getrooms', res.data);
+        // checkSameUser(res.data);
+        // const data = checkSameUser(res.data);
+        setRooms(res.data);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
       });
   };
   function checkSameUser(arr) {
@@ -211,42 +116,67 @@ const Message = ({navigation}) => {
       return date.format('DD/mm/yyyy');
     }
   }
-  const handleCreateRoom = user => {
-    navigation.navigate('Chat', user);
-    setModalVisible(!modalVisible);
+
+  const searchUserOnSocket = userData => {
+    // console.log(userData, 'aoxjw');
+    let temp = {backendUser: userData, socketUser: {}};
+    setUser({backendUser: userData, socketUser: {}});
+    socketUsers.forEach(elem => {
+      if (elem?.username == userData?.email) {
+        // console.log('found');
+        temp = {backendUser: userData, socketUser: elem};
+        setUser({backendUser: userData, socketUser: elem});
+      }
+    });
+    handleCreateRoom(temp);
   };
+
+  const handleCreateRoom = user => {
+    // console.log(user, 'handle');
+    navigation.navigate('Chat', user);
+    setModalVisible(false);
+  };
+
   const renderItem = (elem, i) => {
     return (
       <View style={s.card}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('ViewUser');
+            // navigation.navigate('ViewUser');
           }}
           style={s.dp}>
-          {console.log('data-message', elem.item?.sender_user?.image)}
           <Image
             source={{
-              uri: elem.item?.sender_user?.image,
+              uri: elem.item?.image,
             }}
             style={s.dp1}
             resizeMode={'cover'}
           />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Chat', elem.item)}
+          onPress={() => {
+            // console.log(elem.item, 'sceee');
+            searchUserOnSocket(elem?.item);
+          }}
           style={[s.col, {flex: 0.6, justifyContent: 'flex-end'}]}>
           <View>
             <Text style={[s.name, s.nameBold, {color: textColor}]}>
-              {elem?.item?.sender_user?.name}
+              {elem?.item?.name}
             </Text>
           </View>
           <Text style={[s.textSmall, {color: '#787878'}]}>
-            {elem?.item?.text}
+            {
+              elem?.item?.user_messages[elem?.item?.user_messages.length - 1]
+                ?.message
+            }
           </Text>
         </TouchableOpacity>
         <View style={s.time}>
           <Text style={[s.textRegular, {color: textColor}]}>
-            {formatTimestamp(elem?.item?.created_at)}
+            {formatTimestamp(
+              elem?.item?.user_messages[elem?.item?.user_messages.length - 1]
+                ?.created_at,
+            )}
           </Text>
         </View>
       </View>
@@ -290,6 +220,7 @@ const Message = ({navigation}) => {
               renderItem={renderItem}
               keyExtractor={(e, i) => i.toString()}
               scrollEnabled={true}
+              inverted
             />
           </ScrollView>
         </>

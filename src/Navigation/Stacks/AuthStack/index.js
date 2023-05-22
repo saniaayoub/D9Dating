@@ -6,7 +6,7 @@ import StartScreen from '../../../screens/Auth/Start';
 import ChangePass from '../..//../screens/Auth/ChangePass';
 import Map from '../../../screens/Auth/Register/Map';
 import GooglePlacesInput from '../../../screens/Auth/Register/Map';
-import Map1 from '../../../screens/Auth/Register/Map1';
+import Map1 from '../../../screens/Auth/Register/Map';
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector} from 'react-redux';

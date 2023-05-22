@@ -274,12 +274,12 @@ const Map = ({navigation, route}) => {
   }, []);
 
   const onPress = (data, details) => {
-    console.log(data, 'aaa');
+    // console.log(data, 'aaa');
     setLoc(data.description);
     Geocoder.from(data.description)
       .then(json => {
         const location = json.results[0].geometry.location;
-        console.log(location.lat, location.lng, 'position');
+        // console.log(location.lat, location.lng, 'position');
 
         setMarkerPosition({
           latitude: location.lat,
