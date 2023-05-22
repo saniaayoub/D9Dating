@@ -6,6 +6,7 @@ import Test from '../../../screens/App/Home/Test';
 import Comments from '../../../screens/App/Home/Comments';
 import CreatePost from '../../../screens/App/CreatePost';
 import Map from '../../../screens/Auth/Register/Map';
+import Message from '../../../screens/App/Message/chatList';
 import Likes from '../../../screens/App/Home/Likes';
 import * as RootNavigation from '../../../../RootNavigation';
 import {navigationRef} from '../../../../RootNavigation';

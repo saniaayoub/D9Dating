@@ -78,14 +78,21 @@ const Home = ({navigation, route}) => {
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
+  const [index, setIndex] = useState(null);
   const postID = route?.params?.data?.id;
-  console.log(route?.params?.data?.id, 'postidf');
 
   useEffect(() => {
     dispatch(setOrganization(Organization));
     console.log('organisation', organizations);
     getID();
     getPosts();
+    if (postID) {
+      console.log(postID, 'data id ');
+      getPosts(postID);
+    } else {
+      console.log('ssssssssss');
+      getPosts();
+    }
     getStories();
     getData();
     funPosts();
@@ -130,19 +137,21 @@ const Home = ({navigation, route}) => {
         console.log(err);
       });
   };
-  const matchId = postId => {
+  const matchId = (postId, id) => {
+    console.log(id, 'postID');
     console.log('avg', postId);
     postId.map((post, index) => {
-      console.log('post id', post.id, postID);
+      console.log('post id', post.id, id);
       if (post.id == postID) {
         console.log('abc');
         const matchedId = post.id;
+        // setIndex(index);
         console.log(matchedId, index, 'mat');
         if (index !== -1 && flatListRef.current) {
           flatListRef.current.scrollToIndex({index, animated: true});
         }
       } else {
-        console.log('false');
+        console.log('false a');
       }
     });
   };
@@ -152,7 +161,7 @@ const Home = ({navigation, route}) => {
     index,
   });
 
-  const getPosts = async () => {
+  const getPosts = async pid => {
     setLoader(true);
     await axiosconfig
       .get('user_details', {
@@ -163,7 +172,11 @@ const Home = ({navigation, route}) => {
       })
       .then(res => {
         setPosts(res?.data?.post_friends);
-        matchId(res?.data?.post_friends);
+        if (pid) {
+          matchId(res?.data?.post_friends, pid);
+        } else {
+          console.log('no data from params');
+        }
         setOtherStoriesData(res?.data?.stories);
       })
       .catch(err => {

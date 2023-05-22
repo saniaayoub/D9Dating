@@ -90,7 +90,7 @@ const messages = [
 const Comments = ({navigation, route}) => {
   const dispatch = useDispatch();
   const flatListRef = useRef(null);
-  const {post} = route.params;
+  const {data} = route.params;
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
   const organizations = useSelector(state => state.reducer.organization);
@@ -101,17 +101,30 @@ const Comments = ({navigation, route}) => {
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
-  const [comments, setComments] = useState(post?.post_comments);
+  const [comments, setComments] = useState(data?.post_comments);
   const [loader, setLoader] = useState(false);
   const [userID, setUserID] = useState('');
   const [edit, setEdit] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [userData, setUserData] = useState('');
+  const [post, setPost] = useState(null);
   const Cid = route?.params?.data?.id;
   const Pid = route?.params?.data?.Pid;
   useEffect(() => {
     getID();
-    getPosts(Pid);
+    if (route?.params?.from) {
+      if (route?.params?.from == 'home') {
+        getPosts(data?.id);
+      } else {
+        getPublicPosts(data?.id);
+      }
+      console.log('from', data?.id);
+    } else {
+      console.log('comments notification ', Pid);
+      getPosts(Pid);
+      getPublicPosts(Pid);
+    }
+
     // extractDate();
   }, []);
 
@@ -125,38 +138,25 @@ const Comments = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log(res?.data?.user_details, 'user data');
         setUserData(res?.data?.user_details);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-
         console.log(err);
-        // showToast(err.response);
       });
   };
   const getDate = old => {
-    // console.log(old, 'old');
-
     let code = new Date(old);
     let min = new Date(code).getMinutes();
     let sec = new Date(code).getSeconds();
     let hours = new Date(code).getHours();
-    // console.log(temp, 'datea');
     return `${hours}:${min}:${sec}s`;
   };
-
-  // const showToast = msg => {
-  //   Toast.show(msg, Toast.SHORT);
-  // };
-
   const extractDate = () => {
-    // console.log('Example to Subtract two dates');
     var d1 = new Date('March 16, 2022');
     var d2 = new Date('April 6, 2022');
     var sub = d2.getTime() - d1.getTime();
-    // console.log(sub);
   };
 
   const getID = async () => {
@@ -183,13 +183,13 @@ const Comments = ({navigation, route}) => {
   });
   const matchId = comments => {
     console.log('to check matched id');
-    comments.map((id, i) => {
-      console.log(id?.id, 'all comments ids');
-      if (id?.id == Cid) {
-        const matchedId = id;
+    comments.map((p, index) => {
+      console.log(p?.id, 'all comments ids');
+      if (p?.id == Cid) {
+        const matchedId = p?.id;
         console.log(matchedId, index, 'mat');
-        if (i !== -1 && flatListRef.current) {
-          flatListRef.current.scrollToIndex({i, animated: true});
+        if (index !== -1 && flatListRef.current) {
+          flatListRef.current.scrollToIndex({index, animated: true});
         }
       } else {
         console.log('false');
@@ -229,12 +229,13 @@ const Comments = ({navigation, route}) => {
         setComment('');
         setEdit(false);
         setCommentID('');
-        if (route?.params?.screen == 'funInteraction') {
+
+        if (route?.params?.from == 'funInteraction') {
           getPublicPosts(postid);
         } else {
           getPosts(postid);
         }
-        matchId(commentID);
+        // matchId(commentID);
         // setRefresh(!refresh);
       })
       .catch(err => {
@@ -264,12 +265,12 @@ const Comments = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('data', JSON.stringify(res.data));
-        // showToast(res?.data?.success);
-        if (route?.params?.screen == 'funInteraction') {
-          getPublicPosts(post?.id);
+        if (route?.params?.from == 'funInteraction') {
+          getPublicPosts(data?.id);
+        } else if (route?.params?.from == 'home') {
+          getPosts(data?.id);
         } else {
-          getPosts(post?.id);
+          getPosts(Pid);
         }
       })
       .catch(err => {
@@ -321,6 +322,8 @@ const Comments = ({navigation, route}) => {
 
   const getUpdatedComments = (array, postid) => {
     let temp = array.filter(elem => elem.id == postid);
+    setPost(temp[0]);
+    console.log(temp[0], 'post datatas');
     setComments(temp[0]?.post_comments);
     matchId(temp[0]?.post_comments);
     setLoader(false);
@@ -372,7 +375,7 @@ const Comments = ({navigation, route}) => {
         </View>
 
         <View style={{flexDirection: 'row'}}>
-          {post?.user?.id == userID || elem?.item?.user_id == userID ? (
+          {data?.user?.id == userID || elem?.item?.user_id == userID ? (
             <View style={s.icon}>
               <TouchableOpacity
                 onPress={() => {
@@ -496,7 +499,11 @@ const Comments = ({navigation, route}) => {
               InputRightElement={
                 <TouchableOpacity
                   onPress={() => {
-                    addComment(post?.id);
+                    if (route?.params?.from) {
+                      addComment(data?.id);
+                    } else {
+                      addComment(Pid);
+                    }
                   }}
                   style={{marginRight: moderateScale(20, 0.1)}}>
                   <Feather

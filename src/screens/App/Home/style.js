@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     paddingBottom: '15%',
-    
   },
   stories: {
     alignItems: 'flex-start',
@@ -138,7 +137,7 @@ const styles = StyleSheet.create({
   },
   optionBtns: {
     fontSize: moderateScale(12, 0.1),
-    color:'red',
+    color: 'red',
     //fontFamily: Poppins,
     // marginLeft: moderateScale(15, 0.1),
     flex: 0.7,
