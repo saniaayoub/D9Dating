@@ -33,6 +33,7 @@ const data = [
 
 const ViewUser = ({navigation, route}) => {
   const {post, screen} = route?.params;
+  // console.log('post', route.params);
   const [Userid, setUserid] = useState(
     screen == 'search' ? post?.id : post?.user.id,
   );
@@ -56,7 +57,7 @@ const ViewUser = ({navigation, route}) => {
 
   useEffect(() => {
     if (ID) {
-      console.log('route console');
+      // console.log('route console');
       notificationAcceptReq();
     } else {
       getData();
@@ -69,7 +70,7 @@ const ViewUser = ({navigation, route}) => {
   // }, []);
 
   const notificationAcceptReq = async () => {
-    console.log('id', ID);
+    // console.log('id', ID);
     setLoader(true);
     axiosconfig
       .get(`user_view/${ID}`, {
@@ -78,13 +79,13 @@ const ViewUser = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('data11', res.data.user_details);
+        // console.log('data11', res.data.user_details);
         setUserData(res?.data?.user_details);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
       });
   };
   const getId = async () => {
@@ -101,13 +102,13 @@ const ViewUser = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('data11', res.data.user_details);
+        // console.log('data11', res.data.user_details);
         setUserData(res?.data?.user_details);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
       });
   };
   const connect = async () => {
@@ -121,13 +122,13 @@ const ViewUser = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('connect', res);
+        // console.log('connect', res);
         getData();
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err, 'her');
+        // console.log(err, 'her');
       });
   };
   const Disconnect = async () => {
@@ -140,19 +141,19 @@ const ViewUser = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('Disconnect', res);
+        // console.log('Disconnect', res);
         getData();
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err, 'her');
+        // console.log(err, 'her');
       });
   };
   const block = async () => {
-    console.log('aaaa');
+    // console.log('aaaa');
     setLoader(true);
-    console.log(userToken, 'hgh');
+    // console.log(userToken, 'hgh');
     await axiosconfig
       .get(`block/${Userid}`, {
         headers: {
@@ -161,20 +162,20 @@ const ViewUser = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('block', res);
+        // console.log('block', res);
         getData();
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err, 'her');
+        // console.log(err, 'her');
         // showToast(err.response);
       });
   };
   const unblock = async () => {
-    console.log('aaaa');
+    // console.log('aaaa');
     setLoader(true);
-    console.log(userToken, 'hgh');
+    // console.log(userToken, 'hgh');
     await axiosconfig
       .get(`block/${Userid}`, {
         headers: {
@@ -183,14 +184,14 @@ const ViewUser = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('block', res);
+        // console.log('block', res);
         getData();
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
 
-        console.log(err, 'her');
+        // console.log(err, 'her');
         // showToast(err.response);
       });
   };
@@ -224,7 +225,7 @@ const ViewUser = ({navigation, route}) => {
       <ScrollView
         showsVerticalScrollIndicator={true}
         onScroll={() => {
-          setScroll(!scroll), console.log(scroll);
+          setScroll(!scroll); // console.log(scroll)
         }}
         style={[
           s.View2,
@@ -385,7 +386,7 @@ export default ViewUser;
 //               </View>
 //             </TouchableOpacity>
 //  {userData.map((v, i) => {
-//           console.log('aa');
+//           // console.log('aa');
 //           return (
 //             <View style={s.container}>
 //               <View style={s.row}>

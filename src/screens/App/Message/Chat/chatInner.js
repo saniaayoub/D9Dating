@@ -25,7 +25,9 @@ import Antdesign from 'react-native-vector-icons/AntDesign';
 import axiosconfig from '../../../../Providers/axios';
 import Loader from '../../../../Components/Loader';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {addSocketUsers} from '../../../../Redux/actions';
+import moment from 'moment';
 
 const Chat = ({navigation, route}) => {
   const dispatch = useDispatch();
@@ -39,29 +41,31 @@ const Chat = ({navigation, route}) => {
   const [refresh, setRefresh] = useState(true);
   const [online, setOnline] = useState(true);
   const [lastSeen, setLastSeen] = useState('');
-  const users = useSelector(state => state.reducer.users);
   const socketUsers = useSelector(state => state.reducer.socketUsers);
   const [loader, setLoader] = useState(false);
-  const [msg, setMsg] = useState([]);
-  const [input, setInput] = useState('');
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-  const {backendUser, socketUser} = route.params;
+  const {socketUser} = route.params;
+  const [backendUser, setBackendUser] = useState(route?.params?.backendUser);
+  // console.log(route?.params, 'params');
 
   useEffect(() => {
+    console.log(socketUser);
     getMessages();
     getData();
+    setOnlineStatus(socketUsers);
   }, []);
 
   useEffect(() => {
-    // getValueFunction();
     socket.on('private_message', ({content, from, time}) => {
-      console.log(content, 'recieve');
-      console.log('');
+      // console.log(content, 'recieve');
+
+      // console.log('');
       if (from === socketUser?.userID) {
-        console.log('from', from, 'useriD', socketUser.userID, chatMessages);
+        // console.log('from', from, 'useriD', socketUser.userID, chatMessages);
         setChatMessages(chatMessages => [
+          ...chatMessages,
           {
             user_id: backendUser?.id,
             reciever_id: userData?.id,
@@ -69,9 +73,20 @@ const Chat = ({navigation, route}) => {
             fromSelf: false,
             time: time,
           },
-          ...chatMessages,
         ]);
       }
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    socket.on('users', users => {
+      users.forEach(user => {
+        user.self = user.userID === socket.id;
+      });
+      console.log(users, 'client');
+      dispatch(addSocketUsers(users));
+
+      setOnlineStatus(users);
     });
   }, [socket]);
 
@@ -80,7 +95,7 @@ const Chat = ({navigation, route}) => {
       socketUsers.forEach(user => {
         user.self = user.userID === socket.id;
       });
-      console.log(users, 'client');
+      // console.log(users, 'client');
       dispatch(addSocketUsers(users));
       setOnlineStatus(users);
     });
@@ -88,26 +103,21 @@ const Chat = ({navigation, route}) => {
 
   const setOnlineStatus = susers => {
     susers.forEach(elem => {
-      if (elem.userID == socketUser.userID) {
+      if (elem.email == socketUser.email) {
         setOnline(true);
-        console.log('foundsdsd');
       } else {
         setOnline(false);
-        const hour =
-          new Date().getHours() < 10
-            ? `0${new Date().getHours()}`
-            : `${new Date().getHours()}`;
 
-        const mins =
-          new Date().getMinutes() < 10
-            ? `0${new Date().getMinutes()}`
-            : `${new Date().getMinutes()}`;
-        setLastSeen(`${hour}:${mins}`);
+        let date = new Date();
+        let fdate = formatTimestamp(date);
+
+        setLastSeen(fdate);
       }
     });
   };
 
   const getMessages = async () => {
+    setLoader(true);
     await axiosconfig
       .get(`message_show/${backendUser?.id}`, {
         headers: {
@@ -115,13 +125,13 @@ const Chat = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('message show API', res.data);
+        // console.log('message show API', res.data);
         setChatMessages(res?.data);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err, 'message show API err');
+        // console.log(err, 'message show API err');
       });
   };
 
@@ -138,7 +148,7 @@ const Chat = ({navigation, route}) => {
   const getData = async () => {
     const data = await AsyncStorage.getItem('userData');
     setUserData(JSON.parse(data));
-    console.log(userData);
+    // console.log(userData);
   };
 
   const handleNewMessage = () => {
@@ -161,6 +171,7 @@ const Chat = ({navigation, route}) => {
         timestamp: {hour, mins},
       });
       setChatMessages([
+        ...chatMessages,
         {
           user_id: userData?.id,
           reciever_id: backendUser?.id,
@@ -168,7 +179,6 @@ const Chat = ({navigation, route}) => {
           fromSelf: true,
           time: `${hour}:${mins}`,
         },
-        ...chatMessages,
       ]);
       storeMsg({
         id: backendUser.id,
@@ -176,31 +186,18 @@ const Chat = ({navigation, route}) => {
         fromSelf: true,
         time: `${hour}:${mins}`,
       });
-      console.log('sent', {
-        id: backendUser.id,
-        message: message,
-        fromSelf: true,
-        time: `${hour}:${mins}`,
-      });
+      // console.log('sent', {
+      //   id: backendUser.id,
+      //   message: message,
+      //   fromSelf: true,
+      //   time: `${hour}:${mins}`,
+      // });
       setMessage('');
     }
-
-    // console.log({
-    //   message,
-    //   user,
-    //   timestamp: {hour, mins},
-    // });
-    // socket.emit('newMessage', {
-    //   message,
-    //   room_id: id,
-    //   user,
-    //   timestamp: {hour, mins},
-    // });
-    // setMessage('');
-    // socket.on('foundRoom', roomChats => setChatMessages(roomChats));
   };
 
   const storeMsg = async msg => {
+    setLoader(true);
     await axiosconfig
       .post(`message_store`, msg, {
         headers: {
@@ -208,51 +205,80 @@ const Chat = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log('message send', res.data);
+        // console.log('message send', res.data);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
       });
   };
 
-  const msgDlt = async () => {
+  const msgDlt = async id => {
+    setLoader(true);
     await axiosconfig
-      .delete(`message_delete/${route.params.id}`, {
+      .delete(`message_delete/${id}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
       })
       .then(res => {
-        console.log('data', res.data);
+        getMessages();
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
       });
   };
   const chatDlt = async () => {
-    console.log('chat dlt');
+    setLoader(true);
     await axiosconfig
-      .delete(`clear_chat/${route.params.id}`, {
+      .delete(`clear_chat/${backendUser?.id}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
       })
       .then(res => {
-        console.log('data', res.data);
+        console.log(res, 'clear chat');
+        getMessages();
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
       });
   };
-  const sendMessage = () => {
-    socket.emit('chat message');
+
+  const getUserData = async () => {
+    setLoader(true);
+    axiosconfig
+      .get(`user_view/${backendUser?.id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        // console.log('data11', res.data.user_details);
+        setBackendUser(res.data.user_details);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        // console.log(err);
+      });
   };
+
+  function formatTimestamp(timestamp) {
+    const now = moment();
+    const date = moment(timestamp);
+    if (now.isSame(date, 'day')) {
+      return date.format('h:mm A');
+    } else {
+      return date.format('DD/mm/yyyy');
+    }
+  }
+
   const renderItem = elem => {
     const status = elem?.item?.user_id === userData.id;
 
@@ -292,7 +318,7 @@ const Chat = ({navigation, route}) => {
           ]}>
           <View style={[s.options]}>
             <Menu
-              w="150"
+              // width={'110%'}
               borderWidth={moderateScale(1, 0.1)}
               borderColor={'grey'}
               backgroundColor={color}
@@ -302,8 +328,9 @@ const Chat = ({navigation, route}) => {
               trigger={triggerProps => {
                 return (
                   <Pressable
-                    // onLongPress={}
-                    accessibilityLabel="More options menu"
+                    onLongPress={() => {
+                      setMenuOpen(true);
+                    }}
                     {...triggerProps}
                     style={{
                       flexDirection: 'row',
@@ -313,10 +340,7 @@ const Chat = ({navigation, route}) => {
                       <Text style={s.textSmall1}>{elem?.item?.message}</Text>
                       <Text style={[s.textSmall1, {textAlign: 'right'}]}>
                         {/* time */}
-                        {elem?.item?.time?.toLocaleString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                        {formatTimestamp(elem?.item?.created_at)}
                       </Text>
                     </View>
                   </Pressable>
@@ -324,7 +348,7 @@ const Chat = ({navigation, route}) => {
               }}>
               <Menu.Item
                 onPress={() => {
-                  console.log('unsend');
+                  // console.log('unsend');
                 }}>
                 <View style={s.optionView}>
                   <MaterialIcons
@@ -337,9 +361,9 @@ const Chat = ({navigation, route}) => {
                   <Text style={[s.optionBtns, {color: textColor}]}>Unsend</Text>
                 </View>
               </Menu.Item>
-              <Menu.Item
+              {/* <Menu.Item
                 onPress={() => {
-                  console.log('reply');
+                  // console.log('reply');
                 }}>
                 <View style={s.optionView}>
                   <MaterialIcons
@@ -350,11 +374,11 @@ const Chat = ({navigation, route}) => {
                   />
                   <Text style={[s.optionBtns, {color: textColor}]}>Reply</Text>
                 </View>
-              </Menu.Item>
+              </Menu.Item> */}
 
               <Menu.Item
                 onPress={() => {
-                  console.log('delete');
+                  msgDlt(elem?.item?.id);
                 }}>
                 <View style={s.optionView}>
                   <Antdesign
@@ -364,21 +388,6 @@ const Chat = ({navigation, route}) => {
                     style={{flex: 0.3}}
                   />
                   <Text style={[s.optionBtns, {color: textColor}]}>Delete</Text>
-                </View>
-              </Menu.Item>
-
-              <Menu.Item
-                onPress={() => {
-                  console.log('Block');
-                }}>
-                <View style={s.optionView}>
-                  <MaterialIcons
-                    name={'block'}
-                    color="red"
-                    size={moderateScale(13, 0.1)}
-                    style={{flex: 0.3}}
-                  />
-                  <Text style={[s.optionBtns]}>Block</Text>
                 </View>
               </Menu.Item>
             </Menu>
@@ -408,6 +417,7 @@ const Chat = ({navigation, route}) => {
   };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
+      {loader ? <Loader /> : null}
       <View style={[s.container, {backgroundColor: color}]}>
         <View style={s.header}>
           <TouchableOpacity
@@ -422,7 +432,10 @@ const Chat = ({navigation, route}) => {
           <View style={s.card}>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('ViewUser');
+                navigation.navigate('ViewUser', {
+                  screen: 'search',
+                  post: {id: backendUser?.id},
+                });
               }}
               style={[
                 s.dp,
@@ -439,7 +452,13 @@ const Chat = ({navigation, route}) => {
                 resizeMode={'cover'}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewUser')}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('ViewUser', {
+                  screen: 'search',
+                  post: {id: backendUser?.id},
+                })
+              }>
               <Text style={[s.name, {color: textColor}]}>
                 {backendUser?.name + ' ' + backendUser?.last_name}
               </Text>
@@ -450,11 +469,11 @@ const Chat = ({navigation, route}) => {
           </View>
           <View style={[s.options]}>
             <Menu
-              w="130"
               borderWidth={moderateScale(1, 0.1)}
               borderColor={'grey'}
               backgroundColor={color}
               marginLeft={moderateScale(9, 0.1)}
+              marginRight={moderateScale(9, 0.1)}
               marginTop={moderateScale(25, 0.1)}
               closeOnSelect={true}
               trigger={triggerProps => {
@@ -480,20 +499,43 @@ const Chat = ({navigation, route}) => {
                 onPress={() => {
                   chatDlt();
                 }}>
-                <View style={s.optionView}>
+                <TouchableOpacity
+                  onPress={() => {
+                    chatDlt();
+                  }}
+                  style={s.optionView}>
+                  <MaterialCIcons
+                    name={'delete-forever'}
+                    color={textColor}
+                    size={moderateScale(13, 0.1)}
+                    style={{flex: 0.4}}
+                  />
                   <Text style={[s.optionBtns, {color: textColor}]}>
-                    clear chat
+                    Clear chat
                   </Text>
-                </View>
+                </TouchableOpacity>
               </Menu.Item>
-              <Menu.Item
+
+              {/* <Menu.Item
                 onPress={() => {
-                  // hide(elem?.item?.id);
+                  block();
+                  // console.log('Block');
                 }}>
                 <View style={s.optionView}>
-                  <Text style={[s.optionBtns, {color: textColor}]}>Hide</Text>
+                  <MaterialIcons
+                    name={'block'}
+                    color="red"
+                    size={moderateScale(13, 0.1)}
+                    style={{flex: 0.3}}
+                  />
+                  <Text style={[s.optionBtns, {color: 'red'}]}>
+                    {backendUser?.block_status == null ||
+                    backendUser?.block_status == 0
+                      ? 'Block'
+                      : 'Unblock'}
+                  </Text>
                 </View>
-              </Menu.Item>
+              </Menu.Item> */}
             </Menu>
           </View>
           {/* <TouchableOpacity style={s.options}>
@@ -507,6 +549,7 @@ const Chat = ({navigation, route}) => {
         <View style={s.chat}>
           <FlatList
             inverted
+            contentContainerStyle={{flexDirection: 'column-reverse'}}
             data={chatMessages}
             renderItem={renderItem}
             keyExtractor={(item, index) => index}
@@ -516,49 +559,53 @@ const Chat = ({navigation, route}) => {
           />
         </View>
       </View>
-      <View style={s.messageInput}>
-        <View style={s.input}>
-          <TouchableOpacity style={s.circle}>
-            <Icon
-              name={'smile'}
-              color={'#8F8A8A'}
-              solid
-              size={moderateScale(20, 0.1)}
-            />
-          </TouchableOpacity>
-          <View style={s.inputText}>
-            <Input
-              w={'100%'}
-              variant="unstyled"
-              placeholderTextColor={'#fff'}
-              color={'#fff'}
-              placeholder="Type Message"
-              value={message}
-              multiline
-              flexWrap={'wrap'}
-              maxHeight={60}
-              onChangeText={text => setMessage(text)}
-            />
-          </View>
+      {backendUser?.block_status == null || backendUser?.block_status == 0 ? (
+        <View style={[s.messageInput, {backgroundColor: color}]}>
+          <View style={s.input}>
+            <TouchableOpacity style={s.circle}>
+              <Icon
+                name={'smile'}
+                color={'#8F8A8A'}
+                solid
+                size={moderateScale(20, 0.1)}
+              />
+            </TouchableOpacity>
+            <View style={s.inputText}>
+              <Input
+                w={'100%'}
+                variant="unstyled"
+                placeholderTextColor={'#fff'}
+                color={'#fff'}
+                placeholder="Type Message"
+                value={message}
+                multiline
+                flexWrap={'wrap'}
+                maxHeight={60}
+                onChangeText={text => setMessage(text)}
+              />
+            </View>
 
-          <TouchableOpacity style={s.attach}>
-            <Entypo
-              name={'attachment'}
-              color={'#8F8A8A'}
-              size={moderateScale(20, 0.1)}
-            />
-          </TouchableOpacity>
+            <TouchableOpacity style={s.attach}>
+              <Entypo
+                name={'attachment'}
+                color={'#8F8A8A'}
+                size={moderateScale(20, 0.1)}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={s.sendBtn}>
+            <TouchableOpacity
+              onPress={() => handleNewMessage()}
+              style={s.circle}>
+              <Inicon
+                name={'md-send'}
+                color={'#8F8A8A'}
+                size={moderateScale(20, 0.1)}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={s.sendBtn}>
-          <TouchableOpacity onPress={() => handleNewMessage()} style={s.circle}>
-            <Inicon
-              name={'md-send'}
-              color={'#8F8A8A'}
-              size={moderateScale(20, 0.1)}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
+      ) : null}
     </SafeAreaView>
   );
 };

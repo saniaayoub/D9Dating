@@ -156,8 +156,13 @@ const UserListModal = ({
       clearData();
     } else {
       let searched = users.filter(item => {
-        return item.from?.toLowerCase().includes(text.toLowerCase());
+        let itm = `${item?.name} ${item?.last_name}`;
+        console.log('item', itm, text);
+        if (itm?.toLowerCase().trim().includes(text.toLowerCase().trim())) {
+          return item;
+        }
       });
+
       setSearchedList(searched);
     }
   };
@@ -283,7 +288,7 @@ const UserListModal = ({
         </View>
         <TouchableOpacity
           onPress={() => {
-            if (searchText) {
+            if (searchText && disable == true) {
               console.log('start chat');
               console.log(user);
               handleCreateRoom(user);

@@ -26,10 +26,11 @@ import UserListModal from '../../../Components/userListModal';
 import axiosconfig from '../../../Providers/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
-
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 const Message = ({navigation}) => {
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
@@ -44,20 +45,20 @@ const Message = ({navigation}) => {
   useEffect(() => {
     userslist();
     latestMsg();
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     socket.on('users', users => {
       users.forEach(user => {
         user.self = user.userID === socket.id;
       });
-      console.log(users, 'client');
+      // console.log(users, 'client');
       dispatch(addSocketUsers(users));
     });
   }, []);
 
   const userslist = async () => {
-    console.log('userList');
+    // console.log('userList');
     setLoader(true);
     await axiosconfig
       .get(`connected_users`, {
@@ -66,13 +67,13 @@ const Message = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('messenger list', res.data.friends);
+        // console.log('messenger list', res.data.friends);
         dispatch(addUsers(res.data.friends));
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
       });
   };
 
@@ -84,15 +85,15 @@ const Message = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('getrooms', res.data);
-        checkSameUser(res.data);
-        const data = checkSameUser(res.data);
+        // console.log('getrooms', res.data);
+        // checkSameUser(res.data);
+        // const data = checkSameUser(res.data);
         setRooms(res.data);
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        console.log(err);
+        // console.log(err);
       });
   };
   function checkSameUser(arr) {
@@ -117,21 +118,25 @@ const Message = ({navigation}) => {
   }
 
   const searchUserOnSocket = userData => {
+    // console.log(userData, 'aoxjw');
+    let temp = {backendUser: userData, socketUser: {}};
     setUser({backendUser: userData, socketUser: {}});
     socketUsers.forEach(elem => {
       if (elem?.username == userData?.email) {
-        console.log('found');
-
-        // setUser();
-        handleCreateRoom({backendUser: userData, socketUser: elem});
+        // console.log('found');
+        temp = {backendUser: userData, socketUser: elem};
+        setUser({backendUser: userData, socketUser: elem});
       }
     });
+    handleCreateRoom(temp);
   };
+
   const handleCreateRoom = user => {
-    console.log(user, 'handle');
+    // console.log(user, 'handle');
     navigation.navigate('Chat', user);
     setModalVisible(false);
   };
+
   const renderItem = (elem, i) => {
     return (
       <View style={s.card}>
@@ -140,10 +145,9 @@ const Message = ({navigation}) => {
             // navigation.navigate('ViewUser');
           }}
           style={s.dp}>
-          {console.log('data-message', elem.item?.sender_user?.image)}
           <Image
             source={{
-              uri: elem.item?.sender_user?.image,
+              uri: elem.item?.image,
             }}
             style={s.dp1}
             resizeMode={'cover'}
@@ -151,22 +155,28 @@ const Message = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            console.log(elem.item, 'sceee');
+            // console.log(elem.item, 'sceee');
             searchUserOnSocket(elem?.item);
           }}
           style={[s.col, {flex: 0.6, justifyContent: 'flex-end'}]}>
           <View>
             <Text style={[s.name, s.nameBold, {color: textColor}]}>
-              {elem?.item?.sender_user?.name}
+              {elem?.item?.name}
             </Text>
           </View>
           <Text style={[s.textSmall, {color: '#787878'}]}>
-            {elem?.item?.text}
+            {
+              elem?.item?.user_messages[elem?.item?.user_messages.length - 1]
+                ?.message
+            }
           </Text>
         </TouchableOpacity>
         <View style={s.time}>
           <Text style={[s.textRegular, {color: textColor}]}>
-            {formatTimestamp(elem?.item?.created_at)}
+            {formatTimestamp(
+              elem?.item?.user_messages[elem?.item?.user_messages.length - 1]
+                ?.created_at,
+            )}
           </Text>
         </View>
       </View>
@@ -210,6 +220,7 @@ const Message = ({navigation}) => {
               renderItem={renderItem}
               keyExtractor={(e, i) => i.toString()}
               scrollEnabled={true}
+              inverted
             />
           </ScrollView>
         </>

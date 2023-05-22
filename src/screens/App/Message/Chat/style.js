@@ -36,7 +36,8 @@ const styles = StyleSheet.create({
     width: moderateScale(30, 0.1),
   },
   optionView: {
-    width: moderateScale(80, 0.1),
+    flexDirection: 'row',
+    width: moderateScale(100, 0.1),
     borderBottomWidth: moderateScale(1, 0.1),
     borderBottomColor: 'grey',
     alignItems: 'center',
@@ -179,7 +180,8 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(5, 0.1),
   },
   messageInput: {
-    position: 'absolute',
+    // position: 'absolute',
+
     bottom: moderateScale(80, 0.1),
     flexDirection: 'row',
     alignItems: 'center',
