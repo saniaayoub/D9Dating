@@ -50,11 +50,11 @@ const App = ({navigation}) => {
       console.log('Socket connected');
     });
 
-    socket.on('disconnect', reason => {
-      console.log('Socket disconnected');
-      console.log('Reason:', reason);
-      updateLastSeen();
-    });
+    // socket.on('disconnect', reason => {
+    //   console.log('Socket disconnected');
+    //   console.log('Reason:', reason);
+    //   updateLastSeen();
+    // });
 
     socket.on('error', error => {
       console.error('Socket error:', error);
@@ -106,9 +106,9 @@ const App = ({navigation}) => {
     AppState.addEventListener('change', handleAppStateChange);
 
     // Clean up the event listener on component unmount
-    return () => {
-      AppState.removeEventListener('change', handleAppStateChange);
-    };
+    // return () => {
+    //   AppState.removeEventListener('change', handleAppStateChange);
+    // };
   }, []);
   const updateLastSeen = async () => {
     let token = await AsyncStorage.getItem('userToken');
@@ -135,6 +135,7 @@ const App = ({navigation}) => {
     let exist = await AsyncStorage.getItem('already');
     let userData = await AsyncStorage.getItem('userData');
     userData = JSON.parse(userData);
+    console.log(token);
     dispatch(setExist(exist));
     setThemeMode(token);
     if (token) {

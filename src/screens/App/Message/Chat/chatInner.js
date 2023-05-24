@@ -86,6 +86,16 @@ const Chat = ({navigation, route}) => {
     });
   }, [socket]);
 
+  useEffect(() => {
+    socket.on('user-disconnected', users => {
+      users.forEach(user => {
+        user.self = user.userID === socket.id;
+      });
+      dispatch(addSocketUsers(users));
+      setOnlineStatus(users);
+    });
+  }, [socket]);
+
   const setOnlineStatus = async susers => {
     setOnline(false);
     console.log(susers, 'susers');

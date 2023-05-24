@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   },
   messageInput: {
     // position: 'absolute',
-
+    paddingLeft: moderateScale(10, 0.1),
     bottom: moderateScale(80, 0.1),
     flexDirection: 'row',
     alignItems: 'center',

@@ -90,7 +90,7 @@ const Message = ({navigation}) => {
       })
       .catch(err => {
         setLoader(false);
-        // console.log(err);
+        console.log(err);
       });
   };
 
@@ -110,7 +110,7 @@ const Message = ({navigation}) => {
       })
       .catch(err => {
         setLoader(false);
-        // console.log(err);
+        console.log(err);
       });
   };
 
@@ -198,18 +198,12 @@ const Message = ({navigation}) => {
             onPress={() => {
               // navigation.navigate('ViewUser');
             }}
-            style={[
-              s.dp,
-              {
-                borderWidth: moderateScale(2, 0.1),
-                borderColor: getColor(elem?.item?.group),
-              },
-            ]}>
+            style={[s.dp]}>
             <Image
               source={{
                 uri: elem.item?.image ? elem.item?.image : dummyImage,
               }}
-              style={s.dp1}
+              style={s.dp}
               resizeMode={'cover'}
             />
           </TouchableOpacity>
@@ -248,7 +242,7 @@ const Message = ({navigation}) => {
   };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
-      {/* <Header /> */}
+      {loader ? <Loader /> : null}
       {modalVisible ? (
         <UserListModal
           modalVisible={modalVisible}
@@ -284,6 +278,7 @@ const Message = ({navigation}) => {
               renderItem={renderItem}
               keyExtractor={(e, i) => i.toString()}
               scrollEnabled={true}
+              inverted
             />
           </ScrollView>
         </>
