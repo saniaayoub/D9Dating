@@ -35,7 +35,11 @@ const ViewUser = ({navigation, route}) => {
   const {post, screen} = route?.params;
   // console.log('post', route.params);
   const [Userid, setUserid] = useState(
-    screen == 'search' ? post?.id : post?.user.id,
+    screen == 'search'
+      ? post?.id
+      : route?.params?.data?.screen
+      ? route?.params?.data?.id
+      : post?.user.id,
   );
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
@@ -55,11 +59,13 @@ const ViewUser = ({navigation, route}) => {
 
   // const ID = route?.params?.data?.id;
   const notification = route?.params?.data?.screen;
-  const id = route?.params?.data?.id;
+  const [id, setId] = useState(route?.params?.data?.id);
+  // const id = ;
   console.log(notification, id, 'notification screen');
 
   useEffect(() => {
-    getData(notification ? id : Userid);
+    getData();
+    getId();
   }, []);
 
   // const notificationAcceptReq = async () => {
@@ -88,11 +94,11 @@ const ViewUser = ({navigation, route}) => {
     setLoginId(logInId);
   };
 
-  const getData = async id => {
+  const getData = async => {
     console.log('get data console');
     setLoader(true);
     axiosconfig
-      .get(`user_view/${id}`, {
+      .get(`user_view/${Userid}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -111,7 +117,7 @@ const ViewUser = ({navigation, route}) => {
     setLoader(true);
 
     await axiosconfig
-      .get(`connect/${notification ? id : Userid}`, {
+      .get(`connect/${Userid}`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${userToken}`,
@@ -130,7 +136,7 @@ const ViewUser = ({navigation, route}) => {
   const Disconnect = async () => {
     setLoader(true);
     await axiosconfig
-      .get(`connect-remove/${notification ? id : Userid}`, {
+      .get(`connect-remove/${Userid}`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${userToken}`,
@@ -151,7 +157,7 @@ const ViewUser = ({navigation, route}) => {
     setLoader(true);
     // console.log(userToken, 'hgh');
     await axiosconfig
-      .get(`block/${notification ? id : Userid}`, {
+      .get(`block/${Userid}`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${userToken}`,
@@ -173,7 +179,7 @@ const ViewUser = ({navigation, route}) => {
     setLoader(true);
     // console.log(userToken, 'hgh');
     await axiosconfig
-      .get(`block/${notification ? id : Userid}`, {
+      .get(`block/${Userid}`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${userToken}`,
