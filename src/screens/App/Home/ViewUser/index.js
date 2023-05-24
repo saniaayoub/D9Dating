@@ -53,56 +53,52 @@ const ViewUser = ({navigation, route}) => {
   const [loader, setLoader] = useState(false);
   const [userData, setUserData] = useState([]);
 
-  const ID = route?.params?.data?.id;
+  // const ID = route?.params?.data?.id;
+  const notification = route?.params?.data?.screen;
+  const id = route?.params?.data?.id;
+  console.log(notification, id, 'notification screen');
 
   useEffect(() => {
-    if (ID) {
-      // console.log('route console');
-      notificationAcceptReq();
-    } else {
-      getData();
-    }
-    getId();
+    getData(notification ? id : Userid);
   }, []);
 
-  // useEffect(() => {
-  //   notificationAcceptReq();
-  // }, []);
+  // const notificationAcceptReq = async () => {
+  //   console.log('id', ID);
+  //   setLoader(true);
+  //   axiosconfig
+  //     .get(`user_view/${ID}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${userToken}`,
+  //       },
+  //     })
+  //     .then(res => {
+  //       // console.log('data11', res.data.user_details);
+  //       setUserData(res?.data?.user_details);
+  //       setLoader(false);
+  //     })
+  //     .catch(err => {
+  //       setLoader(false);
+  //       // console.log(err);
+  //     });
+  // };
 
-  const notificationAcceptReq = async () => {
-    // console.log('id', ID);
-    setLoader(true);
-    axiosconfig
-      .get(`user_view/${ID}`, {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      })
-      .then(res => {
-        // console.log('data11', res.data.user_details);
-        setUserData(res?.data?.user_details);
-        setLoader(false);
-      })
-      .catch(err => {
-        setLoader(false);
-        // console.log(err);
-      });
-  };
   const getId = async () => {
+    console.log('id console');
     const logInId = await AsyncStorage.getItem('id');
     setLoginId(logInId);
   };
 
-  const getData = async () => {
+  const getData = async id => {
+    console.log('get data console');
     setLoader(true);
     axiosconfig
-      .get(`user_view/${Userid}`, {
+      .get(`user_view/${id}`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
       })
       .then(res => {
-        // console.log('data11', res.data.user_details);
+        console.log('data11', res.data.user_details);
         setUserData(res?.data?.user_details);
         setLoader(false);
       })
@@ -115,7 +111,7 @@ const ViewUser = ({navigation, route}) => {
     setLoader(true);
 
     await axiosconfig
-      .get(`connect/${Userid}`, {
+      .get(`connect/${notification ? id : Userid}`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${userToken}`,
@@ -134,7 +130,7 @@ const ViewUser = ({navigation, route}) => {
   const Disconnect = async () => {
     setLoader(true);
     await axiosconfig
-      .get(`connect-remove/${Userid}`, {
+      .get(`connect-remove/${notification ? id : Userid}`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${userToken}`,
@@ -155,7 +151,7 @@ const ViewUser = ({navigation, route}) => {
     setLoader(true);
     // console.log(userToken, 'hgh');
     await axiosconfig
-      .get(`block/${Userid}`, {
+      .get(`block/${notification ? id : Userid}`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${userToken}`,
@@ -177,7 +173,7 @@ const ViewUser = ({navigation, route}) => {
     setLoader(true);
     // console.log(userToken, 'hgh');
     await axiosconfig
-      .get(`block/${Userid}`, {
+      .get(`block/${notification ? id : Userid}`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${userToken}`,
