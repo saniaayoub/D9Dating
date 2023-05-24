@@ -33,6 +33,8 @@ const Chat = ({navigation, route}) => {
   const dispatch = useDispatch();
   const userToken = useSelector(state => state.reducer.userToken);
   const organizations = useSelector(state => state.reducer.organization);
+  const data = route?.params?.data;
+  console.log(data, 'param data');
 
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState('');
