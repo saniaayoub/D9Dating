@@ -54,16 +54,13 @@ const Chat = ({navigation, route}) => {
     console.log(socketUser);
     getMessages();
     getData();
+    sendReadStatus();
     setOnlineStatus(socketUsers);
   }, []);
 
   useEffect(() => {
     socket.on('private_message', ({content, from, time}) => {
-      // console.log(content, 'recieve');
-
-      // console.log('');
       if (from === socketUser?.userID) {
-        // console.log('from', from, 'useriD', socketUser.userID, chatMessages);
         setChatMessages(chatMessages => [
           ...chatMessages,
           {
@@ -83,35 +80,36 @@ const Chat = ({navigation, route}) => {
       users.forEach(user => {
         user.self = user.userID === socket.id;
       });
-      console.log(users, 'client');
-      dispatch(addSocketUsers(users));
-
-      setOnlineStatus(users);
-    });
-  }, [socket]);
-
-  useEffect(() => {
-    socket.on('on_disconnect', users => {
-      socketUsers.forEach(user => {
-        user.self = user.userID === socket.id;
-      });
-      // console.log(users, 'client');
       dispatch(addSocketUsers(users));
       setOnlineStatus(users);
     });
   }, [socket]);
 
-  const setOnlineStatus = susers => {
+  const storeLastSeen = async () => {
+    let date = new Date();
+    let fdate = formatTimestamp(date);
+    setLastSeen(fdate);
+    await AsyncStorage.setItem('lastseen', fdate);
+  };
+
+  const removeLastSeen = async () => {
+    await AsyncStorage.removeItem('lastseen');
+  };
+
+  const setOnlineStatus = async susers => {
+    setOnline(false);
+    let ls = await AsyncStorage.getItem('lastseen');
+    if (ls) {
+      setLastSeen(ls);
+    } else {
+      storeLastSeen();
+    }
+    console.log(susers, 'susers');
     susers.forEach(elem => {
-      if (elem.email == socketUser.email) {
-        setOnline(true);
-      } else {
+      console.log('alert', elem?.username, backendUser?.email);
+      if (elem?.username === backendUser?.email) {
         setOnline(false);
-
-        let date = new Date();
-        let fdate = formatTimestamp(date);
-
-        setLastSeen(fdate);
+        removeLastSeen();
       }
     });
   };
@@ -196,6 +194,28 @@ const Chat = ({navigation, route}) => {
     }
   };
 
+  const sendReadStatus = async () => {
+    setLoader(true);
+    await axiosconfig
+      .post(
+        `read_status`,
+        {id: backendUser?.id},
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        },
+      )
+      .then(res => {
+        console.log('read status', res.data);
+        setLoader(false);
+      })
+      .catch(err => {
+        setLoader(false);
+        // console.log(err);
+      });
+  };
+
   const storeMsg = async msg => {
     setLoader(true);
     await axiosconfig
@@ -240,7 +260,7 @@ const Chat = ({navigation, route}) => {
         },
       })
       .then(res => {
-        console.log(res, 'clear chat');
+        console.log(res?.data?.message, 'clear chat');
         getMessages();
         setLoader(false);
       })
@@ -463,7 +483,13 @@ const Chat = ({navigation, route}) => {
                 {backendUser?.name + ' ' + backendUser?.last_name}
               </Text>
               <Text style={[s.name, {color: textColor}]}>
-                {online == true ? 'online' : `Last seen ${lastSeen}`}
+                {online
+                  ? 'online'
+                  : `Last seen ${
+                      formatTimestamp(backendUser?.date_login)
+                        ? formatTimestamp(backendUser?.date_login)
+                        : formatTimestamp(new Date())
+                    }`}
               </Text>
             </TouchableOpacity>
           </View>

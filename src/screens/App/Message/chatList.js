@@ -37,12 +37,14 @@ const Message = ({navigation}) => {
   const textColor = theme === 'light' ? '#000' : '#fff';
   const users = useSelector(state => state.reducer.users);
   const socketUsers = useSelector(state => state.reducer.socketUsers);
+  const [userData, setUserData] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [loader, setLoader] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [user, setUser] = useState('');
 
   useEffect(() => {
+    getData();
     userslist();
     latestMsg();
   }, [isFocused]);
@@ -56,6 +58,12 @@ const Message = ({navigation}) => {
       dispatch(addSocketUsers(users));
     });
   }, []);
+
+  const getData = async () => {
+    const data = await AsyncStorage.getItem('userData');
+    setUserData(JSON.parse(data));
+    // console.log(userData);
+  };
 
   const userslist = async () => {
     // console.log('userList');
@@ -85,7 +93,7 @@ const Message = ({navigation}) => {
         },
       })
       .then(res => {
-        // console.log('getrooms', res.data);
+        console.log('getrooms', res?.data);
         // checkSameUser(res.data);
         // const data = checkSameUser(res.data);
         setRooms(res.data);
@@ -96,6 +104,7 @@ const Message = ({navigation}) => {
         // console.log(err);
       });
   };
+
   function checkSameUser(arr) {
     const result = [];
     const uniqueIds = new Set();
@@ -107,6 +116,7 @@ const Message = ({navigation}) => {
     }
     return result;
   }
+
   function formatTimestamp(timestamp) {
     const now = moment();
     const date = moment(timestamp);
@@ -121,9 +131,9 @@ const Message = ({navigation}) => {
     // console.log(userData, 'aoxjw');
     let temp = {backendUser: userData, socketUser: {}};
     setUser({backendUser: userData, socketUser: {}});
-    socketUsers.forEach(elem => {
+    socketUsers.findLast((elem, index) => {
       if (elem?.username == userData?.email) {
-        // console.log('found');
+        console.log('found', index);
         temp = {backendUser: userData, socketUser: elem};
         setUser({backendUser: userData, socketUser: elem});
       }
@@ -138,49 +148,60 @@ const Message = ({navigation}) => {
   };
 
   const renderItem = (elem, i) => {
-    return (
-      <View style={s.card}>
-        <TouchableOpacity
-          onPress={() => {
-            // navigation.navigate('ViewUser');
-          }}
-          style={s.dp}>
-          <Image
-            source={{
-              uri: elem.item?.image,
+    let latest =
+      Number(elem?.item?.user_receive[0]?.id) >
+      Number(elem?.item?.user_sender[0]?.id)
+        ? elem?.item?.user_receive[0]
+        : elem?.item?.user_sender[0];
+    console.log(latest?.read_status, latest?.user_id, userData?.id);
+    if (elem?.item?.user_receive.length) {
+      return (
+        <View style={s.card}>
+          <TouchableOpacity
+            onPress={() => {
+              // navigation.navigate('ViewUser');
             }}
-            style={s.dp1}
-            resizeMode={'cover'}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            // console.log(elem.item, 'sceee');
-            searchUserOnSocket(elem?.item);
-          }}
-          style={[s.col, {flex: 0.6, justifyContent: 'flex-end'}]}>
-          <View>
-            <Text style={[s.name, s.nameBold, {color: textColor}]}>
-              {elem?.item?.name}
+            style={s.dp}>
+            <Image
+              source={{
+                uri: elem.item?.image,
+              }}
+              style={s.dp1}
+              resizeMode={'cover'}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              // console.log(elem.item, 'sceee');
+              searchUserOnSocket(elem?.item);
+            }}
+            style={[s.col, {flex: 0.6, justifyContent: 'flex-end'}]}>
+            <View>
+              <Text style={[s.name, s.nameBold, {color: textColor}]}>
+                {elem?.item?.name}
+              </Text>
+            </View>
+
+            {latest?.user_id === userData?.id || latest?.read_status == 1 ? (
+              <Text style={[s.textSmall, s.nameBold, {color: textColor}]}>
+                {latest?.message}
+              </Text>
+            ) : (
+              <Text style={[s.textSmall, s.nameBold, {color: '#FFD700'}]}>
+                {'New message'}
+              </Text>
+            )}
+          </TouchableOpacity>
+          <View style={s.time}>
+            <Text style={[s.textRegular, {color: textColor}]}>
+              {formatTimestamp(latest?.created_at)}
             </Text>
           </View>
-          <Text style={[s.textSmall, {color: '#787878'}]}>
-            {
-              elem?.item?.user_messages[elem?.item?.user_messages.length - 1]
-                ?.message
-            }
-          </Text>
-        </TouchableOpacity>
-        <View style={s.time}>
-          <Text style={[s.textRegular, {color: textColor}]}>
-            {formatTimestamp(
-              elem?.item?.user_messages[elem?.item?.user_messages.length - 1]
-                ?.created_at,
-            )}
-          </Text>
         </View>
-      </View>
-    );
+      );
+    } else {
+      return;
+    }
   };
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>

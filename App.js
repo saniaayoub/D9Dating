@@ -30,7 +30,6 @@ const App = ({navigation}) => {
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
     if (enabled) {
       console.log('Authorization status:', authStatus);
     }
@@ -44,6 +43,28 @@ const App = ({navigation}) => {
     }
   };
 
+  useEffect(() => {
+    // Replace with your server URL
+
+    socket.on('connect', () => {
+      console.log('Socket connected');
+    });
+
+    socket.on('disconnect', reason => {
+      // updateLastSeen();
+      console.log('Socket disconnected');
+      console.log('Reason:', reason);
+    });
+
+    socket.on('error', error => {
+      console.error('Socket error:', error);
+    });
+
+    // Clean up the socket on component unmount
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
   useEffect(() => {
     requestUserPermission();
     checkToken();
@@ -72,13 +93,27 @@ const App = ({navigation}) => {
     });
   }, []);
 
+  const updateLastSeen = async () => {
+    await axiosconfig
+      .post(`last-seen`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then(res => {
+        console.log('last seen', res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   const getToken = async () => {
     let token = await AsyncStorage.getItem('userToken');
     let exist = await AsyncStorage.getItem('already');
     let userData = await AsyncStorage.getItem('userData');
     userData = JSON.parse(userData);
     console.log('app', token);
-
     console.log('app', userData);
     dispatch(setExist(exist));
     setThemeMode(token);

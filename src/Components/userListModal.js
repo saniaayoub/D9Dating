@@ -180,9 +180,9 @@ const UserListModal = ({
 
   const searchUserOnSocket = userData => {
     setUser({backendUser: userData, socketUser: {}});
-    socketUsers.forEach(elem => {
+    socketUsers.findLast((elem, index) => {
       if (elem?.username == userData?.email) {
-        console.log('found');
+        console.log('found', index);
         setUser({backendUser: userData, socketUser: elem});
       }
     });

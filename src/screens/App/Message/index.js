@@ -87,7 +87,7 @@ const Message = ({navigation}) => {
       users.forEach(user => {
         user.self = user.userID === socket.id;
       });
-      console.log(users, 'client');
+
       dispatch(addUsers(users));
     });
   }, []);
