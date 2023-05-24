@@ -42,13 +42,22 @@ const Message = ({navigation}) => {
   const [loader, setLoader] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [user, setUser] = useState('');
+  const organizations = useSelector(state => state.reducer.organization);
 
+  const [dummyImage, setDummyImage] = useState(
+    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  );
   useEffect(() => {
     getData();
     userslist();
     latestMsg();
   }, [isFocused]);
 
+  useEffect(() => {
+    socket.on('private_message', ({content, from, time}) => {
+      latestMsg();
+    });
+  }, [socket]);
   useEffect(() => {
     socket.on('users', users => {
       users.forEach(user => {
@@ -147,24 +156,58 @@ const Message = ({navigation}) => {
     setModalVisible(false);
   };
 
+  const getColor = id => {
+    let color;
+
+    organizations?.forEach(elem => {
+      if (elem.id == id) {
+        color = elem.color;
+      }
+    });
+    return color;
+  };
+
   const renderItem = (elem, i) => {
-    let latest =
-      Number(elem?.item?.user_receive[0]?.id) >
-      Number(elem?.item?.user_sender[0]?.id)
-        ? elem?.item?.user_receive[0]
-        : elem?.item?.user_sender[0];
-    console.log(latest?.read_status, latest?.user_id, userData?.id);
-    if (elem?.item?.user_receive.length) {
+    let latest;
+
+    if (
+      elem?.item?.user_sender[0]?.id !== undefined &&
+      elem?.item?.user_receive[0]?.id == undefined
+    ) {
+      latest = elem?.item?.user_sender[0];
+    } else if (
+      elem?.item?.user_receive[0]?.id !== undefined &&
+      elem?.item?.user_sender[0]?.id == undefined
+    ) {
+      latest = elem?.item?.user_receive[0];
+    } else {
+      latest =
+        Number(elem?.item?.user_receive[0]?.id) >
+        Number(elem?.item?.user_sender[0]?.id)
+          ? elem?.item?.user_receive[0]
+          : elem?.item?.user_sender[0];
+    }
+
+    if (
+      Number(elem?.item?.user_receive.length) > 0 ||
+      Number(elem?.item?.user_sender.length) > 0
+    ) {
       return (
         <View style={s.card}>
           <TouchableOpacity
             onPress={() => {
               // navigation.navigate('ViewUser');
             }}
-            style={s.dp}>
+            style={[
+              s.dp,
+              {
+                borderWidth: moderateScale(2, 0.1),
+                borderColor: getColor(elem?.item?.group),
+              },
+            ]}>
             <Image
               source={{
-                uri: elem.item?.image,
+                uri: elem.item?.image ? elem.item?.image : dummyImage,
               }}
               style={s.dp1}
               resizeMode={'cover'}
@@ -241,7 +284,6 @@ const Message = ({navigation}) => {
               renderItem={renderItem}
               keyExtractor={(e, i) => i.toString()}
               scrollEnabled={true}
-              inverted
             />
           </ScrollView>
         </>

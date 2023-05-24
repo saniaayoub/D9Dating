@@ -38,9 +38,9 @@ const styles = StyleSheet.create({
     //fontFamily: Poppins,
   },
   dp: {
-    width: moderateScale(61, 0.1),
-    height: moderateScale(61, 0.1),
-    borderRadius: moderateScale(61 / 2, 0.1),
+    width: moderateScale(68, 0.1),
+    height: moderateScale(68, 0.1),
+    borderRadius: moderateScale(68 / 2, 0.1),
 
     marginRight: moderateScale(10, 0.1),
   },
@@ -68,9 +68,9 @@ const styles = StyleSheet.create({
     marginLeft: moderateScale(12, 0.1),
   },
   dp1: {
-    width: '90%',
-    height: '90%',
-    borderRadius: moderateScale(55 / 2, 0.1),
+    width: moderateScale(63, 0.1),
+    height: moderateScale(63, 0.1),
+    borderRadius: moderateScale(63 / 2, 0.1),
   },
   col: {
     flexDirection: 'column',

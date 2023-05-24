@@ -34,8 +34,9 @@ const Chat = ({navigation, route}) => {
   const userToken = useSelector(state => state.reducer.userToken);
   const organizations = useSelector(state => state.reducer.organization);
   const data = route?.params?.data;
-  console.log(data, 'param data');
-
+  const [dummyImage, setDummyImage] = useState(
+    'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
+  );
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState('');
   const [userData, setUserData] = useState('');
@@ -48,12 +49,10 @@ const Chat = ({navigation, route}) => {
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
-  const {socketUser} = route.params;
   const [backendUser, setBackendUser] = useState(route?.params?.backendUser);
-  // console.log(route?.params, 'params');
+  const [socketUser, setSocketUser] = useState(route?.params?.socketUser);
 
   useEffect(() => {
-    console.log(socketUser);
     getMessages();
     getData();
     sendReadStatus();
@@ -87,31 +86,14 @@ const Chat = ({navigation, route}) => {
     });
   }, [socket]);
 
-  const storeLastSeen = async () => {
-    let date = new Date();
-    let fdate = formatTimestamp(date);
-    setLastSeen(fdate);
-    await AsyncStorage.setItem('lastseen', fdate);
-  };
-
-  const removeLastSeen = async () => {
-    await AsyncStorage.removeItem('lastseen');
-  };
-
   const setOnlineStatus = async susers => {
     setOnline(false);
-    let ls = await AsyncStorage.getItem('lastseen');
-    if (ls) {
-      setLastSeen(ls);
-    } else {
-      storeLastSeen();
-    }
     console.log(susers, 'susers');
-    susers.forEach(elem => {
-      console.log('alert', elem?.username, backendUser?.email);
+    susers.findLast((elem, index) => {
+      console.log('coming');
       if (elem?.username === backendUser?.email) {
-        setOnline(false);
-        removeLastSeen();
+        setOnline(true);
+        setSocketUser(elem);
       }
     });
   };
@@ -131,7 +113,7 @@ const Chat = ({navigation, route}) => {
       })
       .catch(err => {
         setLoader(false);
-        // console.log(err, 'message show API err');
+        console.log(err, 'message show API err');
       });
   };
 
@@ -186,12 +168,7 @@ const Chat = ({navigation, route}) => {
         fromSelf: true,
         time: `${hour}:${mins}`,
       });
-      // console.log('sent', {
-      //   id: backendUser.id,
-      //   message: message,
-      //   fromSelf: true,
-      //   time: `${hour}:${mins}`,
-      // });
+
       setMessage('');
     }
   };
@@ -214,7 +191,7 @@ const Chat = ({navigation, route}) => {
       })
       .catch(err => {
         setLoader(false);
-        // console.log(err);
+        console.log(err);
       });
   };
 
@@ -323,7 +300,13 @@ const Chat = ({navigation, route}) => {
             ]}>
             <Image
               source={{
-                uri: !status ? backendUser?.image : userData?.image,
+                uri: !status
+                  ? backendUser?.image
+                    ? backendUser?.image
+                    : dummyImage
+                  : userData?.image
+                  ? userData?.image
+                  : dummyImage,
               }}
               style={s.dp1}
               resizeMode={'cover'}
@@ -427,7 +410,13 @@ const Chat = ({navigation, route}) => {
             ]}>
             <Image
               source={{
-                uri: !status ? backendUser?.image : userData?.image,
+                uri: !status
+                  ? backendUser?.image
+                    ? backendUser?.image
+                    : dummyImage
+                  : userData?.image
+                  ? userData?.image
+                  : dummyImage,
               }}
               style={s.dp1}
               resizeMode={'cover'}
@@ -468,7 +457,7 @@ const Chat = ({navigation, route}) => {
               ]}>
               <Image
                 source={{
-                  uri: backendUser?.image,
+                  uri: backendUser?.image ? backendUser?.image : dummyImage,
                 }}
                 style={s.dp1}
                 resizeMode={'cover'}

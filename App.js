@@ -19,7 +19,7 @@ import socket from './src/utils/socket';
 import SplashScreen from 'react-native-splash-screen';
 import * as RootNavigation from './RootNavigation';
 import {navigationRef} from './RootNavigation';
-
+import {AppState} from 'react-native';
 const App = ({navigation}) => {
   const dispatch = useDispatch();
   const userToken = useSelector(state => state.reducer.userToken);
@@ -38,7 +38,7 @@ const App = ({navigation}) => {
   const checkToken = async () => {
     const fcmToken = await messaging().getToken();
     if (fcmToken) {
-      console.log(fcmToken, 'fcmToken');
+      // console.log(fcmToken, 'fcmToken');
       dispatch(setFToken(fcmToken));
     }
   };
@@ -51,9 +51,9 @@ const App = ({navigation}) => {
     });
 
     socket.on('disconnect', reason => {
-      // updateLastSeen();
       console.log('Socket disconnected');
       console.log('Reason:', reason);
+      updateLastSeen();
     });
 
     socket.on('error', error => {
@@ -64,7 +64,7 @@ const App = ({navigation}) => {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [socket]);
   useEffect(() => {
     requestUserPermission();
     checkToken();
@@ -93,18 +93,40 @@ const App = ({navigation}) => {
     });
   }, []);
 
+  useEffect(() => {
+    const handleAppStateChange = nextAppState => {
+      if (nextAppState === 'active') {
+        console.log('App is in the foreground');
+      } else {
+        console.log('App is in the background');
+        updateLastSeen();
+      }
+    };
+
+    AppState.addEventListener('change', handleAppStateChange);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      AppState.removeEventListener('change', handleAppStateChange);
+    };
+  }, []);
   const updateLastSeen = async () => {
+    let token = await AsyncStorage.getItem('userToken');
     await axiosconfig
-      .post(`last-seen`, {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
+      .post(
+        `last-seen`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      })
+      )
       .then(res => {
         console.log('last seen', res.data);
       })
       .catch(err => {
-        console.log(err);
+        console.log(err, 'last seen err1');
       });
   };
 
@@ -113,8 +135,6 @@ const App = ({navigation}) => {
     let exist = await AsyncStorage.getItem('already');
     let userData = await AsyncStorage.getItem('userData');
     userData = JSON.parse(userData);
-    console.log('app', token);
-    console.log('app', userData);
     dispatch(setExist(exist));
     setThemeMode(token);
     if (token) {
@@ -134,8 +154,6 @@ const App = ({navigation}) => {
         },
       })
       .then(res => {
-        console.log('data1', res.data);
-
         if (
           res?.data?.user_details?.theme_mode == null ||
           res?.data?.user_details?.theme_mode == '' ||
