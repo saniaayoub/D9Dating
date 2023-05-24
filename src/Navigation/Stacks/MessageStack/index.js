@@ -5,6 +5,7 @@ import ViewUser from '../../../screens/App/Home/ViewUser';
 import messaging from '@react-native-firebase/messaging';
 import * as RootNavigation from '../../../../RootNavigation';
 import {navigationRef} from '../../../../RootNavigation';
+import {useEffect} from 'react';
 const Stack = createStackNavigator();
 
 const MessageStack = () => {
@@ -13,7 +14,7 @@ const MessageStack = () => {
 
   //   messaging().onNotificationOpenedApp(remoteMessage => {
   //     console.log(
-  //       'Notification caused app to open from background msg stack:',
+  //       'Notification caused app to open from background msg stack heree:',
   //       remoteMessage.notification,
   //     );
   //     RootNavigation.navigate(remoteMessage.data.screen);
