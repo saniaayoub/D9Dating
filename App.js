@@ -1,6 +1,12 @@
 import 'react-native-gesture-handler';
-import {KeyboardAvoidingView, Platform, Alert} from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+  PermissionsAndroid,
+} from 'react-native';
 import React, {useEffect} from 'react';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {NativeBaseProvider, Box} from 'native-base';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -43,6 +49,70 @@ const App = ({navigation}) => {
     }
   };
 
+  const requestNotificationPermission = async () => {
+    try {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Notification permission granted');
+          await AsyncStorage.setItem('permission', 'granted');
+        } else {
+          console.log('Notification permission denied');
+          await AsyncStorage.setItem('permission', 'denied');
+        }
+      } else {
+        const status = await request(PERMISSIONS.IOS.NOTIFICATIONS);
+        if (status === RESULTS.GRANTED) {
+          await AsyncStorage.setItem('permission', 'granted');
+
+          console.log('Notification permission granted');
+        } else {
+          await AsyncStorage.setItem('permission', 'denied');
+          console.log('Notification permission denied');
+        }
+      }
+    } catch (error) {
+      console.log('Error requesting notification permission: ', error);
+    }
+  };
+
+  useEffect(() => {
+    // alert('hi');
+    checkNotPer();
+  }, []);
+
+  const checkNotPer = async () => {
+    const checkPermission = await AsyncStorage.getItem('permission');
+    askForPermission(checkPermission);
+  };
+
+  const askForPermission = checkPermission => {
+    if (checkPermission == 'granted') {
+    } else {
+      const checkAndRequestNotificationPermission = async () => {
+        try {
+          const status = await check(
+            Platform.OS === 'android'
+              ? PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+              : PERMISSIONS.IOS.NOTIFICATIONS,
+          );
+          if (status === RESULTS.GRANTED) {
+            console.log('status', status);
+            await AsyncStorage.setItem('permission', 'granted');
+            console.log('Notification permission already granted');
+          } else {
+            await requestNotificationPermission();
+          }
+        } catch (error) {
+          console.log('Error checking notification permission: ', error);
+        }
+      };
+
+      checkAndRequestNotificationPermission();
+    }
+  };
   useEffect(() => {
     // Replace with your server URL
 
@@ -87,9 +157,9 @@ const App = ({navigation}) => {
     init().finally(async () => {
       if (Platform.OS == 'ios') {
         await RNBootSplash.hide({fade: true, duration: 500});
+      } else {
+        SplashScreen.hide();
       }
-
-      console.log('Bootsplash has been hidden successfully');
     });
   }, []);
 
@@ -112,22 +182,24 @@ const App = ({navigation}) => {
   }, []);
   const updateLastSeen = async () => {
     let token = await AsyncStorage.getItem('userToken');
-    await axiosconfig
-      .post(
-        `last-seen`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+    if (token) {
+      await axiosconfig
+        .post(
+          `last-seen`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      )
-      .then(res => {
-        console.log('last seen', res.data);
-      })
-      .catch(err => {
-        console.log(err, 'last seen err1');
-      });
+        )
+        .then(res => {
+          console.log('last seen', res.data);
+        })
+        .catch(err => {
+          console.log(err, 'last seen err1');
+        });
+    }
   };
 
   const getToken = async () => {
@@ -135,7 +207,7 @@ const App = ({navigation}) => {
     let exist = await AsyncStorage.getItem('already');
     let userData = await AsyncStorage.getItem('userData');
     userData = JSON.parse(userData);
-    console.log(token);
+    // console.log(token);
     dispatch(setExist(exist));
     setThemeMode(token);
     if (token) {
@@ -165,7 +237,8 @@ const App = ({navigation}) => {
           dispatch(setTheme('light'));
         }
         if (Platform.OS == 'android') {
-          SplashScreen.hide();
+          console.log('close splash');
+          // SplashScreen.hide();
         }
       })
       .catch(err => {

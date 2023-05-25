@@ -12,40 +12,48 @@ import * as RootNavigation from '../../../../RootNavigation';
 import {navigationRef} from '../../../../RootNavigation';
 import messaging from '@react-native-firebase/messaging';
 import {useEffect} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 
 const HomeStack = () => {
   useEffect(() => {
     // Assume a message-notification contains a "type" property in the data payload of the screen to open
-
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      console.log(
-        'Notification caused app to open from background state00:',
-        remoteMessage.notification,
-      );
-      RootNavigation.navigate(remoteMessage.data.screen, {
-        data: remoteMessage.data,
-      });
-    });
-
-    // Check whether an initial notification is available
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage) {
-          console.log(
-            'Notification caused app to open from quit state0o:',
-            remoteMessage.notification,
-          );
-          RootNavigation.navigate(remoteMessage.data.screen, {
-            data: remoteMessage.data,
-          });
-          // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
-        }
-      });
+    checkPermission();
   }, []);
+  const checkPermission = async () => {
+    const granted = await AsyncStorage.getItem('permission');
+    console.log(granted, 'check before');
+    if (granted == 'granted') {
+      messaging().onNotificationOpenedApp(remoteMessage => {
+        console.log(
+          'Notification caused app to open from background state00:',
+          remoteMessage.notification,
+        );
+        RootNavigation.navigate(remoteMessage.data.screen, {
+          data: remoteMessage.data,
+        });
+      });
 
+      // Check whether an initial notification is available
+      messaging()
+        .getInitialNotification()
+        .then(remoteMessage => {
+          if (remoteMessage) {
+            console.log(
+              'Notification caused app to open from quit state0o:',
+              remoteMessage.notification,
+            );
+            RootNavigation.navigate(remoteMessage.data.screen, {
+              data: remoteMessage.data,
+            });
+            // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+          }
+        });
+    } else {
+      console.log("don't send notification");
+    }
+  };
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Home" component={Home} />

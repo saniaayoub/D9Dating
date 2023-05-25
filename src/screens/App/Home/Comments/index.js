@@ -118,9 +118,9 @@ const Comments = ({navigation, route}) => {
       } else {
         getPublicPosts(data?.id);
       }
-      console.log('from', data?.id);
+      // console.log('from', data?.id);
     } else {
-      console.log('comments notification ', Pid);
+      // console.log('comments notification ', Pid);
       getPosts(Pid);
       getPublicPosts(Pid);
     }
@@ -128,7 +128,7 @@ const Comments = ({navigation, route}) => {
     // extractDate();
   }, []);
 
-  console.log(route?.params?.data?.id, 'commentId');
+  // console.log(route?.params?.data?.id, 'commentId');
   const getUserData = async id => {
     setLoader(true);
     axiosconfig
@@ -182,23 +182,23 @@ const Comments = ({navigation, route}) => {
     index,
   });
   const matchId = comments => {
-    console.log('to check matched id');
+    // console.log('to check matched id');
     comments.map((p, index) => {
-      console.log(p?.id, 'all comments ids');
+      // console.log(p?.id, 'all comments ids');
       if (p?.id == Cid) {
         const matchedId = p?.id;
-        console.log(matchedId, index, 'mat');
+        // console.log(matchedId, index, 'mat');
         if (index !== -1 && flatListRef.current) {
           flatListRef.current.scrollToIndex({index, animated: true});
         }
       } else {
-        console.log('false');
+        // console.log('false');
       }
     });
   };
 
   const addComment = async postid => {
-    setLoader(false);
+    setLoader(true);
     if (!comment) {
       setLoader(false);
       return;
@@ -225,7 +225,7 @@ const Comments = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('data', JSON.stringify(res.data));
+        // // console.log('data', JSON.stringify(res.data));
         setComment('');
         setEdit(false);
         setCommentID('');
@@ -243,7 +243,7 @@ const Comments = ({navigation, route}) => {
         setComment('');
         setEdit(false);
         setCommentID('');
-        console.log(err);
+        // console.log(err);
         // Alert.alert(err);
       });
   };
@@ -256,7 +256,7 @@ const Comments = ({navigation, route}) => {
 
   const deleteComment = async commentid => {
     setLoader(true);
-    // console.log(userToken, 'get');
+    // // console.log(userToken, 'get');
     await axiosconfig
       .get(`comment-delete/${commentid}`, {
         headers: {
@@ -281,7 +281,7 @@ const Comments = ({navigation, route}) => {
   };
 
   const getPosts = async postid => {
-    // console.log('swer');
+    // // console.log('swer');
     await axiosconfig
       .get('user_details', {
         headers: {
@@ -290,7 +290,7 @@ const Comments = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('friendx', res.data.post_friends, postid);
+        // // console.log('friendx', res.data.post_friends, postid);
         getUpdatedComments(res.data.post_friends, postid);
       })
       .catch(err => {
@@ -301,7 +301,7 @@ const Comments = ({navigation, route}) => {
   };
 
   const getPublicPosts = async postid => {
-    // console.log('swer');
+    // // console.log('swer');
     await axiosconfig
       .get('fun-interaction', {
         headers: {
@@ -310,7 +310,7 @@ const Comments = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('public', res?.data?.post_public, postid);
+        // // console.log('public', res?.data?.post_public, postid);
         getUpdatedComments(res?.data?.post_public, postid);
       })
       .catch(err => {
@@ -323,16 +323,16 @@ const Comments = ({navigation, route}) => {
   const getUpdatedComments = (array, postid) => {
     let temp = array.filter(elem => elem.id == postid);
     setPost(temp[0]);
-    console.log(temp[0], 'post datatas');
+    // console.log(temp[0], 'post datatas');
     setComments(temp[0]?.post_comments);
     matchId(temp[0]?.post_comments);
     setLoader(false);
     setRefresh(!refresh);
-    // console.log(temp[0]?.post_comments, comments, 'whhwyw');
+    // // console.log(temp[0]?.post_comments, comments, 'whhwyw');
   };
 
   const renderItem = (elem, i) => {
-    // console.log(elem?.item);
+    // // console.log(elem?.item);
     return (
       <View style={s.card}>
         <View

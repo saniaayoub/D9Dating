@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Modal, ActivityIndicator} from 'react-native';
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import {Input, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
@@ -21,6 +21,13 @@ const OTPModal = ({
   handleSubmit,
   OtpSubmit,
 }) => {
+  const otpRef = useRef();
+
+  useEffect(() => {
+    setTimeout(() => {
+      otpRef.current.focusField(0);
+    }, 500);
+  }, []);
   return (
     <Modal
       animationType="slide"
@@ -28,8 +35,7 @@ const OTPModal = ({
       visible={modalVisible}
       onRequestClose={() => {
         setModalVisible(!modalVisible);
-      }}
-    >
+      }}>
       <View style={s.centeredView}>
         <View style={s.modalView}>
           <Button
@@ -43,8 +49,7 @@ const OTPModal = ({
             zIndex={1000}
             position="absolute"
             right={moderateScale(15, 0.1)}
-            top={moderateScale(10, 0.1)}
-          >
+            top={moderateScale(10, 0.1)}>
             <Feather name="x" size={moderateScale(22, 0.1)} color={'grey'} />
           </Button>
           <Text style={s.verifyHeading}>Verification Code</Text>
@@ -55,9 +60,10 @@ const OTPModal = ({
           <OTPInputView
             style={{width: '80%', height: 200}}
             pinCount={4}
+            ref={otpRef}
             // code={this.state.code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
             // onCodeChanged = {code => { this.setState({code})}}
-            autoFocusOnLoad
+            autoFocusOnLoad={false}
             codeInputFieldStyle={s.underlineStyleBase}
             codeInputHighlightStyle={s.underlineStyleHighLighted}
             onCodeFilled={code => {
@@ -87,8 +93,7 @@ const OTPModal = ({
                   OtpSubmit();
                   // navigation.navigate('ChangePass')
                 }
-              }}
-            >
+              }}>
               <Text style={[s.btnText, {color: '#222222'}]}>Submit</Text>
             </Button>
             <Button
@@ -103,8 +108,7 @@ const OTPModal = ({
               w={moderateScale(140, 0.1)}
               h={moderateScale(35, 0.1)}
               alignItems={'center'}
-              onPressIn={() => submit()}
-            >
+              onPressIn={() => submit()}>
               <Text style={[s.btnText, {color: '#222222'}]}>Resend</Text>
             </Button>
           </View>

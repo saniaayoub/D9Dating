@@ -56,37 +56,31 @@ const ViewUser = ({navigation, route}) => {
   const [scroll, setScroll] = useState(false);
   const [loader, setLoader] = useState(false);
   const [userData, setUserData] = useState([]);
-
-  // const ID = route?.params?.data?.id;
+  const socketUsers = useSelector(state => state.reducer.socketUsers);
   const notification = route?.params?.data?.screen;
   const [id, setId] = useState(route?.params?.data?.id);
-  // const id = ;
-  console.log(notification, id, 'notification screen');
 
   useEffect(() => {
     getData();
     getId();
   }, []);
 
-  // const notificationAcceptReq = async () => {
-  //   console.log('id', ID);
-  //   setLoader(true);
-  //   axiosconfig
-  //     .get(`user_view/${ID}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${userToken}`,
-  //       },
-  //     })
-  //     .then(res => {
-  //       // console.log('data11', res.data.user_details);
-  //       setUserData(res?.data?.user_details);
-  //       setLoader(false);
-  //     })
-  //     .catch(err => {
-  //       setLoader(false);
-  //       // console.log(err);
-  //     });
-  // };
+  const searchUserOnSocket = userData => {
+    let temp = {backendUser: userData, socketUser: {}};
+    console.log('found1', temp);
+    socketUsers.findLast((elem, index) => {
+      if (elem?.username == userData?.email) {
+        console.log('found', index);
+        temp = {backendUser: userData, socketUser: elem};
+      }
+    });
+    handleCreateRoom(temp);
+  };
+
+  const handleCreateRoom = user => {
+    // console.log(user, 'handle');
+    navigation.navigate('Chat', user);
+  };
 
   const getId = async () => {
     console.log('id console');
@@ -244,16 +238,21 @@ const ViewUser = ({navigation, route}) => {
               <Text style={[s.headerTxt, {color: textColor}]}>
                 {userData?.name} {userData?.last_name}
               </Text>
-
-              <View style={s.icon}>
-                <AntDesign
-                  style={{position: 'absolute'}}
-                  name="message1"
-                  color="#FFD700"
-                  solid
-                  size={moderateScale(22, 0.1)}
-                />
-              </View>
+              {userData?.connected ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    searchUserOnSocket(userData);
+                  }}
+                  style={s.icon}>
+                  <AntDesign
+                    style={{position: 'absolute'}}
+                    name="message1"
+                    color="#FFD700"
+                    solid
+                    size={moderateScale(22, 0.1)}
+                  />
+                </TouchableOpacity>
+              ) : null}
             </View>
             <View style={s.row1}>
               <View>

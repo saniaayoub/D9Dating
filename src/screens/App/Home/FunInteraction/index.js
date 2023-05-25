@@ -6,6 +6,7 @@ import {
   Image,
   Alert,
   FlatList,
+  RefreshControl,
   TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useState, useEffect, useRef} from 'react';
@@ -32,6 +33,7 @@ import socket from '../../../../utils/socket';
 import styles from './style';
 import {useNavigation, useRoute} from '@react-navigation/native';
 const SERVER_URL = 'http://your-server-address';
+
 const FunInteraction = ({}) => {
   const dispatch = useDispatch();
   const refRBSheet1 = useRef();
@@ -41,6 +43,7 @@ const FunInteraction = ({}) => {
   const theme = useSelector(state => state.reducer.theme);
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
+  const [refreshing, setRefreshing] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [postId, setPostId] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -323,6 +326,12 @@ const FunInteraction = ({}) => {
     );
   };
 
+  const handleRefresh = () => {
+    // Perform your data fetching or refreshing logic here
+    getID();
+    getPosts();
+  };
+
   const renderItem = elem => {
     if (elem?.item?.privacy_option == '3') {
       return; //hide friends' only me posts
@@ -370,7 +379,7 @@ const FunInteraction = ({}) => {
               w="150"
               borderWidth={moderateScale(1, 0.1)}
               borderColor={'grey'}
-              backgroundColor={'red'}
+              backgroundColor={color}
               marginRight={moderateScale(15, 0.1)}
               marginTop={moderateScale(25, 0.1)}
               closeOnSelect={true}
@@ -749,6 +758,9 @@ const FunInteraction = ({}) => {
           keyExtractor={(elem, index) => {
             index.toString();
           }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
           getItemLayout={getItemLayout}
           extraData={refresh}
         />

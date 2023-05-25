@@ -9,6 +9,7 @@ import {
   PermissionsAndroid,
   Platform,
   Alert,
+  RefreshControl,
   Dimensions,
 } from 'react-native';
 import PhotoEditor from 'react-native-photo-editor';
@@ -42,6 +43,7 @@ import {
 import messaging from '@react-native-firebase/messaging';
 import * as RootNavigation from '../../../../RootNavigation';
 import {navigationRef} from '../../../../RootNavigation';
+
 const Organization = [
   {id: 'Alpha Phi Alpha Fraternity, Inc.', color: 'blue'},
   {id: 'Alpha Kappa Alpha Sorority Inc.', color: 'green'},
@@ -56,6 +58,7 @@ const Organization = [
 
 const Home = ({navigation, route}) => {
   const dispatch = useDispatch();
+
   const refRBSheet = useRef();
   const refRBSheet1 = useRef();
   const flatListRef = useRef(null);
@@ -65,9 +68,11 @@ const Home = ({navigation, route}) => {
   const organizations = useSelector(state => state.reducer.organization);
   const storyID = useSelector(state => state.reducer.storyID);
   const storiesData = useSelector(state => state.reducer.stories);
+
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [refresh, setRefresh] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [myStories, setMyStories] = useState([]);
   const [storyCircle, setStoryCircle] = useState('green');
   const [loader, setLoader] = useState(false);
@@ -79,6 +84,7 @@ const Home = ({navigation, route}) => {
   const [postId, setPostId] = useState(null);
   const [userData, setUserData] = useState('');
   const [funPostsData, setFunPostsData] = useState('');
+  const socketUsers = useSelector(state => state.reducer.socketUsers);
   const [dummyImage, setDummyImage] = useState(
     'https://designprosusa.com/the_night/storage/app/1678168286base64_image.png',
   );
@@ -204,9 +210,7 @@ const Home = ({navigation, route}) => {
       .then(res => {
         // // console.log('public post', JSON.stringify(res?.data?.post_public));
         const data = res?.data?.post_public;
-
         setFunPostsData(res?.data?.post_public);
-
         setLoader(false);
       })
       .catch(err => {
@@ -249,13 +253,13 @@ const Home = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // // console.log('Posts', res.data);
+        console.log('Post hide', res.data);
         getPosts();
         setLoader(false);
       })
       .catch(err => {
         setLoader(false);
-        // console.log(err);
+        console.log(err, 'hide error');
         // showToast(err.response);
       });
   };
@@ -399,7 +403,7 @@ const Home = ({navigation, route}) => {
     let isStoragePermitted = await requestExternalWritePermission();
     let isReadStoragePermitted = await requestExternalReadPermission();
 
-    if (isCameraPermitted && isStoragePermitted && isReadStoragePermitted) {
+    if (isCameraPermitted || isStoragePermitted || isReadStoragePermitted) {
       launchCamera(options, response => {
         // console.log('Response = ', response);
 
@@ -625,6 +629,12 @@ const Home = ({navigation, route}) => {
         getStories();
         // Alert.alert(err);
       });
+  };
+
+  const handleRefresh = () => {
+    // Perform your data fetching or refreshing logic here
+    getID();
+    funPosts();
   };
 
   const addComment = async (id, index) => {
@@ -920,21 +930,23 @@ const Home = ({navigation, route}) => {
                   </Menu.Item>
                 </>
               ) : null}
-              <Menu.Item
-                onPress={() => {
-                  refRBSheet1.current.open();
-                  setPostId(elem?.item?.id);
-                }}>
-                <View style={s.optionView}>
-                  <MaterialIcons
-                    name={'report'}
-                    color="red"
-                    size={moderateScale(13, 0.1)}
-                    style={{flex: 0.3}}
-                  />
-                  <Text style={[s.optionBtns]}>Report</Text>
-                </View>
-              </Menu.Item>
+              {userID != elem?.item?.user?.id ? (
+                <Menu.Item
+                  onPress={() => {
+                    refRBSheet1.current.open();
+                    setPostId(elem?.item?.id);
+                  }}>
+                  <View style={s.optionView}>
+                    <MaterialIcons
+                      name={'report'}
+                      color="red"
+                      size={moderateScale(13, 0.1)}
+                      style={{flex: 0.3}}
+                    />
+                    <Text style={[s.optionBtns]}>Report</Text>
+                  </View>
+                </Menu.Item>
+              ) : null}
             </Menu>
           </View>
         </View>
@@ -1293,6 +1305,12 @@ const Home = ({navigation, route}) => {
             keyExtractor={(elem, index) => {
               index.toString();
             }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+              />
+            }
             extraData={refresh}
             getItemLayout={getItemLayout}
           />

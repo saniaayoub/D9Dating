@@ -53,6 +53,7 @@ const Chat = ({navigation, route}) => {
   const [socketUser, setSocketUser] = useState(route?.params?.socketUser);
 
   useEffect(() => {
+    console.log(backendUser, 'sasnas', socketUser);
     getMessages();
     getData();
     sendReadStatus();
@@ -140,7 +141,6 @@ const Chat = ({navigation, route}) => {
   const getData = async () => {
     const data = await AsyncStorage.getItem('userData');
     setUserData(JSON.parse(data));
-    // console.log(userData);
   };
 
   const handleNewMessage = () => {
@@ -178,7 +178,6 @@ const Chat = ({navigation, route}) => {
         fromSelf: true,
         time: `${hour}:${mins}`,
       });
-
       setMessage('');
     }
   };
@@ -206,7 +205,6 @@ const Chat = ({navigation, route}) => {
   };
 
   const storeMsg = async msg => {
-    setLoader(true);
     await axiosconfig
       .post(`message_store`, msg, {
         headers: {
@@ -214,8 +212,7 @@ const Chat = ({navigation, route}) => {
         },
       })
       .then(res => {
-        // console.log('message send', res.data);
-        setLoader(false);
+        console.log('message send', res.data);
       })
       .catch(err => {
         setLoader(false);
@@ -361,7 +358,7 @@ const Chat = ({navigation, route}) => {
                   </Pressable>
                 );
               }}>
-              <Menu.Item
+              {/* <Menu.Item
                 onPress={() => {
                   // console.log('unsend');
                 }}>
@@ -375,7 +372,7 @@ const Chat = ({navigation, route}) => {
                   />
                   <Text style={[s.optionBtns, {color: textColor}]}>Unsend</Text>
                 </View>
-              </Menu.Item>
+              </Menu.Item> */}
               {/* <Menu.Item
                 onPress={() => {
                   // console.log('reply');
@@ -612,13 +609,13 @@ const Chat = ({navigation, route}) => {
               />
             </View>
 
-            <TouchableOpacity style={s.attach}>
+            {/* <TouchableOpacity style={s.attach}>
               <Entypo
                 name={'attachment'}
                 color={'#8F8A8A'}
                 size={moderateScale(20, 0.1)}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           <View style={s.sendBtn}>
             <TouchableOpacity
