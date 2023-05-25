@@ -11,8 +11,8 @@ const styles = StyleSheet.create({
   },
   heading: {
     marginBottom: moderateScale(30, 0.1),
-    flexDirection: 'column',
-    alignItems: 'center',
+    // flexDirection: 'column',
+    // alignItems: 'center',
   },
   headingText: {
     //fontFamily: Poppins,
@@ -32,17 +32,19 @@ const styles = StyleSheet.create({
   input: {
     marginVertical: moderateScale(10, 0.1),
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginRight: moderateScale(-5, 0.1),
+    alignItems: 'center',
+
+    // justifyContent: 'space-around',
+    // marginRight: moderateScale(-5, 0.1),
     height: moderateScale(40, 0.1),
   },
   inputTxt: {
     // fontSize: moderateScale(12, 0.1),
     // justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
     color: '#fff',
-    //fontFamily: Poppins,
-    marginTop: moderateScale(17, 0.1),
+    fontFamily: Poppins,
+    // marginTop: moderateScale(17, 0.1),
   },
   radioInput: {
     width: '100%',
@@ -63,13 +65,13 @@ const styles = StyleSheet.create({
     top: moderateScale(20, 0.1),
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: moderateScale(30, 0.1),
+    marginVertical: moderateScale(50, 0.1),
     bottom: moderateScale(25, 0.1),
   },
   btnText: {
     //fontFamily: Poppins,
-    lineHeight: moderateScale(20, 0.1),
-    fontSize: moderateScale(13, 0.1),
+    lineHeight: moderateScale(15, 0.1),
+    fontSize: moderateScale(14, 0.1),
     color: '#222222',
   },
   signInNow: {
@@ -79,12 +81,13 @@ const styles = StyleSheet.create({
     //fontFamily: Poppins,
   },
   bottomLink: {
-    flex: 1,
-    justifyContent: 'flex-end',
+    // justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: moderateScale(5, 0.1),
     // marginBottom: 36,
   },
   inputStyle: {
-    fontSize: moderateScale(14, 0.1),
+    fontSize: moderateScale(12, 0.1),
     //fontFamily: 'Gilroy-Medium',
   },
   inputContainerStyle: {
@@ -104,6 +107,7 @@ const styles = StyleSheet.create({
   },
   date: {
     paddingBottom: moderateScale(10),
+    fontSize: moderateScale(12, 0.1),
     textAlign: 'center',
   },
   dateView: {

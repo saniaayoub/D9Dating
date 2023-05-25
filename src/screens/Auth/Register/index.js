@@ -367,47 +367,56 @@ const Register = ({navigation}) => {
               paddingBottom: moderateScale(20, 0.1),
               paddingHorizontal: moderateScale(9, 0.1),
             }}>
-            <View style={s.input}>
+            <View style={[s.input]}>
               <View style={{flex: 0.4}}>
                 <Text style={[s.inputTxt, {color: Textcolor}]}>Name</Text>
               </View>
-              <View style={{flex: 0.3}}>
-                <Input
-                  w={{
-                    base: '90%',
-                    md: '25%',
-                  }}
-                  style={{
-                    borderBottomColor:
-                      onsubmit && fname == null ? 'red' : Textcolor,
-                    borderBottomWidth: 1,
-                  }}
-                  placeholder="First Name"
-                  variant="unstyled"
-                  placeholderTextColor={Textcolor}
-                  onChangeText={e => setFname(e)}
-                  color={Textcolor}
-                  fontSize={moderateScale(10, 0.1)}
-                />
-              </View>
-              <View style={{flex: 0.3}}>
-                <Input
-                  w={{
-                    base: '90%',
-                    md: '15%',
-                  }}
-                  placeholder="Last Name"
-                  style={{
-                    borderBottomColor:
-                      onsubmit && lastname == null ? 'red' : Textcolor,
-                    borderBottomWidth: 1,
-                  }}
-                  variant="unstyled"
-                  placeholderTextColor={Textcolor}
-                  color={Textcolor}
-                  onChangeText={e => setLastname(e)}
-                  fontSize={moderateScale(10, 0.1)}
-                />
+              <View
+                style={{
+                  flex: 0.6,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+
+                  // justifyContent: 'space-between',
+                }}>
+                <View style={{flex: 0.5}}>
+                  <Input
+                    w={{
+                      base: '90%',
+                      md: '25%',
+                    }}
+                    style={{
+                      borderBottomColor:
+                        onsubmit && fname == null ? 'red' : Textcolor,
+                      borderBottomWidth: 1,
+                    }}
+                    placeholder="First Name"
+                    variant="unstyled"
+                    placeholderTextColor={Textcolor}
+                    onChangeText={e => setFname(e)}
+                    color={Textcolor}
+                    fontSize={moderateScale(12, 0.1)}
+                  />
+                </View>
+                <View style={{flex: 0.5}}>
+                  <Input
+                    w={{
+                      base: '90%',
+                      md: '15%',
+                    }}
+                    placeholder="Last Name"
+                    style={{
+                      borderBottomColor:
+                        onsubmit && lastname == null ? 'red' : Textcolor,
+                      borderBottomWidth: 1,
+                    }}
+                    variant="unstyled"
+                    placeholderTextColor={Textcolor}
+                    color={Textcolor}
+                    onChangeText={e => setLastname(e)}
+                    fontSize={moderateScale(12, 0.1)}
+                  />
+                </View>
               </View>
             </View>
             <View style={s.input}>
@@ -507,11 +516,22 @@ const Register = ({navigation}) => {
                   Phone Number
                 </Text>
               </View>
-              <View style={{flex: 0.6}}>
+              <View
+                style={{
+                  flex: 0.6,
+                  // marginVertical: moderateScale(15, 0.1),
+                  paddingVertical: moderateScale(9, 0.1),
+
+                  borderBottomColor:
+                    onsubmit && isPhone == false ? 'red' : Textcolor,
+                  borderBottomWidth: 1,
+                }}>
                 <PhoneInput
-                  style={{
-                    bottom: Platform.OS == 'ios' ? 0 : moderateScale(-10, 0.1),
-                  }}
+                  style={
+                    {
+                      // bottom: Platform.OS == 'ios' ? 0 : moderateScale(-10, 0.1),
+                    }
+                  }
                   initialCountry={'us'}
                   textProps={{
                     placeholder: 'Enter Phone Number',
@@ -532,7 +552,7 @@ const Register = ({navigation}) => {
                     }
                   }}
                 />
-                <Input
+                {/* <Input
                   w={{
                     base: '100%',
                     md: '25%',
@@ -547,7 +567,7 @@ const Register = ({navigation}) => {
                   // placeholderTextColor={Textcolor}
                   isReadOnly={true}
                   color={Textcolor}
-                />
+                /> */}
               </View>
             </View>
 
@@ -571,7 +591,7 @@ const Register = ({navigation}) => {
                   variant="unstyled"
                   placeholderTextColor={Textcolor}
                   color={Textcolor}
-                  fontSize={moderateScale(10, 0.1)}
+                  fontSize={moderateScale(12, 0.1)}
                   onChangeText={e => {
                     validateEmail(e);
                     setEmail(e);
@@ -624,7 +644,7 @@ const Register = ({navigation}) => {
                             onsubmit && organization == null
                               ? 'red'
                               : Textcolor,
-                          marginBottom: moderateScale(-10, 0.1),
+                          // marginBottom: moderateScale(-10, 0.1),
                           paddingLeft: moderateScale(10, 0.1),
                           // width: moderateScale(170, 0.1),
                           alignItems: 'center',
@@ -645,7 +665,7 @@ const Register = ({navigation}) => {
                         <Entypo
                           style={{
                             flex: 0.2,
-                            paddingBottom: moderateScale(12, 0.1),
+                            bottom: moderateScale(10, 0.1),
                           }}
                           name={'chevron-down'}
                           size={moderateScale(25, 0.1)}
@@ -669,39 +689,6 @@ const Register = ({navigation}) => {
                       </Menu.Item>
                     );
                   })}
-                  {/* <Menu.Item
-                    onPress={() => {
-                      setGroup('Group 1');
-                    }}
-                  >
-                    <View style={s.optionView}>
-                      <Text style={[s.optionBtns, {color: Textcolor}]}>
-                        Group 1
-                      </Text>
-                    </View>
-                  </Menu.Item> 
-                  <Menu.Item
-                    onPress={() => {
-                      setGroup('Group 2');
-                    }}
-                  >
-                    <View style={s.optionView}>
-                      <Text style={[s.optionBtns, {color: Textcolor}]}>
-                        Group 2
-                      </Text>
-                    </View>
-                  </Menu.Item>
-                  <Menu.Item
-                    onPress={() => {
-                      setGroup('Group 3');
-                    }}
-                  >
-                    <View style={s.optionView}>
-                      <Text style={[s.optionBtns, {color: Textcolor}]}>
-                        Group 3
-                      </Text>
-                    </View>
-                  </Menu.Item> */}
                 </Menu>
               </View>
             </View>
@@ -724,17 +711,13 @@ const Register = ({navigation}) => {
                       borderBottomColor:
                         onsubmit && location == null ? 'red' : Textcolor,
                     }}
-                    // onTouchStart={() => navigation.navigate('Maps')}
-                    // onPressIn={() => navigation.navigate('Map',{
-                    //   from : 'register'
-                    // })}
                     variant="unstyled"
                     editable={false}
                     placeholder={userLocation ? userLocation : 'Enter Location'}
                     onChangeText={() => setLocation(location)}
                     placeholderTextColor={Textcolor}
                     color={Textcolor}
-                    fontSize={moderateScale(10, 0.1)}
+                    fontSize={moderateScale(12, 0.1)}
                   />
                 </TouchableOpacity>
               </View>
@@ -778,7 +761,7 @@ const Register = ({navigation}) => {
                     )
                   }
                   color={Textcolor}
-                  fontSize={moderateScale(14, 0.1)}
+                  fontSize={moderateScale(12, 0.1)}
                   secureTextEntry={showPass}
                 />
               </View>
@@ -823,7 +806,7 @@ const Register = ({navigation}) => {
                     )
                   }
                   color={Textcolor}
-                  fontSize={moderateScale(14, 0.1)}
+                  fontSize={moderateScale(12, 0.1)}
                   secureTextEntry={showConPass}
                 />
               </View>

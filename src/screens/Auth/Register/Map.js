@@ -25,15 +25,13 @@ import {Marker} from 'react-native-maps';
 import MapView, {PROVIDER_GOOGLE, animateToRegion} from 'react-native-maps';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import Geolocation from 'react-native-geolocation-service';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import Geocoder from 'react-native-geocoding';
 import {moderateScale} from 'react-native-size-matters';
 import Modal from 'react-native-modal';
 import Inicon from 'react-native-vector-icons/Ionicons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -45,22 +43,21 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const Map = ({navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [loc, setLoc] = useState(null);
-  const searchBarRef = useRef();
-
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-  const screen1 = route.params;
-
-  console.log(screen1, 'screen');
-  const dispatch = useDispatch();
-  const mapRef = useRef();
-  const [markerPosition, setMarkerPosition] = useState({
+  const isFocused = useIsFocused();
+  const [position, setPosition] = useState({
     latitude: 51.50853,
     longitude: -0.12574,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+  const [markerPosition, setMarkerPosition] = useState(position);
+  const searchBarRef = useRef();
+
+  const screen1 = route.params;
+
+  console.log(screen1, 'screen');
+  const dispatch = useDispatch();
+  const mapRef = useRef();
 
   const onMapRegionChange = newRegion => {
     console.log(newRegion, 'new region');
@@ -75,12 +72,6 @@ const Map = ({navigation, route}) => {
     });
   };
 
-  const [position, setPosition] = useState({
-    latitude: 51.50853,
-    longitude: -0.12574,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
   useEffect(() => {
     Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
   }, []);
@@ -176,29 +167,29 @@ const Map = ({navigation, route}) => {
       }
     }
   };
-  const getOneTimeLocation = () => {
-    console.log('get one time');
-    Geolocation.getCurrentPosition(
-      position => {
-        // const { latitude, longitude } = position.coords;
-        console.log(position.coords.latitude, 'latitude');
-      },
-      error => {
-        console.log(error.code, error.message);
-      },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
-  };
-  const getCity = async (lat, long) => {
-    console.log('getcity');
-    Geocoder.from(lat, long).then(json => {
-      var addressComponent = json.results[0].address_components;
-      console.log(json.results, 'acc');
-      setLoc(
-        addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
-      );
-    });
-  };
+  // const getOneTimeLocation = () => {
+  //   console.log('get one time');
+  //   Geolocation.getCurrentPosition(
+  //     position => {
+  //       // const { latitude, longitude } = position.coords;
+  //       console.log(position.coords.latitude, 'latitude');
+  //     },
+  //     error => {
+  //       console.log(error.code, error.message);
+  //     },
+  //     {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+  //   );
+  // };
+  // const getCity = async (lat, long) => {
+  //   console.log('getcity');
+  //   Geocoder.from(lat, long).then(json => {
+  //     var addressComponent = json.results[0].address_components;
+  //     console.log(json.results, 'acc');
+  //     setLoc(
+  //       addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
+  //     );
+  //   });
+  // };
   const checkGeolocationPermission = async () => {
     try {
       const granted = await PermissionsAndroid.check(
@@ -269,12 +260,11 @@ const Map = ({navigation, route}) => {
   useEffect(() => {
     console.log('he');
     Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
-
     checkGeolocationPermission();
-  }, []);
+  }, [isFocused]);
 
   const onPress = (data, details) => {
-    // console.log(data, 'aaa');
+    console.log(data, 'aaa');
     setLoc(data.description);
     Geocoder.from(data.description)
       .then(json => {
@@ -285,6 +275,10 @@ const Map = ({navigation, route}) => {
           latitude: location.lat,
           longitude: location.lng,
         });
+        // setLoc({
+        //   latitude: location.lat,
+        //   longitude: location.lng,
+        // });
         mapRef.current.animateToRegion({
           latitude: location.lat,
           longitude: location.lng,
@@ -354,7 +348,7 @@ const Map = ({navigation, route}) => {
         onRegionChangeComplete={onMapRegionChange}
         rotateEnabled={true}>
         <Marker
-          // draggable
+          draggable
           coordinate={markerPosition}
           title="Yor are here"
           description="current Location"
@@ -383,7 +377,7 @@ const Map = ({navigation, route}) => {
           <Inicon
             name="arrow-back-circle-outline"
             size={moderateScale(30)}
-            color={'#000'}
+            color={'black'}
           />
         </TouchableOpacity>
 
@@ -392,8 +386,11 @@ const Map = ({navigation, route}) => {
           styles={{
             textInput: {
               height: moderateScale(38, 0.1),
-
-              color: 'black',
+              borderRadius: moderateScale(0, 0.1),
+              backgroundColor: '#fff',
+              borderTopLeftRadius: moderateScale(12, 0.1),
+              borderBottomLeftRadius: moderateScale(12, 0.1),
+              color: '#000',
               fontSize: moderateScale(16, 0.1),
             },
           }}
@@ -421,24 +418,26 @@ const Map = ({navigation, route}) => {
                   searchBarRef?.current?.clear();
                 }}
                 style={{
-                  backgroundColor: '#fff',
+                  backgroundColor: 'white',
                   alignItems: 'center',
                   height: moderateScale(38, 0.1),
 
                   padding: moderateScale(5, 0.1),
-                  borderTopRightRadius: moderateScale(10, 0.1),
-                  borderBottomRightRadius: moderateScale(10, 0.1),
+                  borderTopRightRadius: moderateScale(12, 0.1),
+                  borderBottomRightRadius: moderateScale(12, 0.1),
                 }}>
                 <Entypo
                   name="cross"
                   size={moderateScale(25, 0.1)}
-                  color={'grey'}
+                  color={'#000'}
                 />
               </TouchableOpacity>
             );
           }}
           placeholder="Search"
-          textInputProps={{placeholderTextColor: 'black'}}
+          textInputProps={{
+            placeholderTextColor: '#000',
+          }}
           query={{
             key: 'AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU',
             language: 'en', // language of the results
@@ -449,56 +448,32 @@ const Map = ({navigation, route}) => {
           fetchDetails={true}
           onPress={e => onPress(e)}
           onFail={error => console.error(error)}
-          // requestUrl={{
-          //   url:
-          //     'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api',
-          //   useOnPlatform: 'web',
-          // }}
-          // this in only required for use on the web. See https://git.io/JflFv more for details.
         />
-        <View>
-          <TouchableOpacity
-            onPress={() => requestGeolocationPermission()}
-            style={{
-              flexDirection: 'row',
-              // borderBottomWidth: moderateScale(1, 0.1),
-              // borderBottomColor: 'grey',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'white',
-              height: moderateScale(35, 0.1),
-              borderRadius: moderateScale(5, 0.1),
-              // // padding: moderateScale(10, 0.1),
-              // // width: moderateScale(150, 0.1),
-              // marginTop: moderateScale(50, 0.1),
-              // paddingBottom: moderateScale(5, 0.1),
-            }}>
-            <FontAwesome
-              name={'location-arrow'}
-              color="red"
-              size={moderateScale(20, 0.1)}
-            />
-            <Text
-              style={{
-                color: 'red',
-                paddingLeft: moderateScale(15, 0.1),
-                fontSize: moderateScale(14, 0.1),
-              }}>
-              Use my current location
-            </Text>
-          </TouchableOpacity>
-        </View>
+      </View>
+      <View
+        style={{
+          alignSelf: 'flex-end',
+          paddingHorizontal: moderateScale(20, 0.1),
+          paddingRight: moderateScale(25, 0.1),
+          marginVertical: moderateScale(15, 0.1),
+          bottom: moderateScale(55, 0.1),
+          backgroundColor: 'rgba(255, 255, 0, 0.4)',
+          borderRadius: moderateScale(40, 0.1) / 2,
+          // opacity: moderateScale(0.5, 0.1),
+        }}>
+        <TouchableOpacity onPress={() => requestGeolocationPermission()}>
+          <MaterialIcon
+            name={'my-location'}
+            color="red"
+            size={moderateScale(40, 0.1)}
+          />
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity
         onPress={() => {
-          // setModalVisible(!isModalVisible);
           console.log(loc, 'log');
-          if (loc != null) {
-            setModalVisible(!isModalVisible);
-          } else {
-            Alert.alert('Please select location');
-          }
+          setModalVisible(!isModalVisible);
         }}
         style={{
           width: moderateScale(250, 0.1),
@@ -528,7 +503,7 @@ const Map = ({navigation, route}) => {
         <Modal isVisible={isModalVisible}>
           <View
             style={{
-              height: moderateScale(300, 0.1),
+              height: moderateScale(200, 0.1),
               backgroundColor: 'white',
               borderRadius: moderateScale(10, 0, 1),
             }}>
@@ -539,9 +514,9 @@ const Map = ({navigation, route}) => {
             </TouchableOpacity>
             <View
               style={{
-                marginVertical: moderateScale(25, 0.1),
+                // marginVertical: moderateScale(20, 0.1),
                 flexDirection: 'row',
-                alignItems: 'center',
+                // alignItems: 'center',
                 justifyContent: 'center',
                 paddingLeft: moderateScale(20, 0.1),
                 width: '80%',
@@ -550,11 +525,17 @@ const Map = ({navigation, route}) => {
                 style={{
                   fontSize: moderateScale(18, 0.1),
                   marginRight: moderateScale(10, 0.1),
+                  alignSelf: 'center',
                   color: 'black',
                 }}>
-                {loc}
+                {loc == null ? position : loc}
               </Text>
-              <View style={{marginRight: moderateScale(-50, 0.1)}}>
+              <View
+                style={{
+                  marginRight: moderateScale(-50, 0.1),
+                  // alignSelf: 'center',
+                  // paddingBottom:
+                }}>
                 <Inicon
                   name="location"
                   size={moderateScale(30)}
@@ -574,14 +555,12 @@ const Map = ({navigation, route}) => {
                 } else if (screen1?.from == 'register') {
                   console.log('register');
                   dispatch(setLocation(loc));
-                  // setModalVisible(!isModlVisible);
                   setTimeout(() => {
                     navigation.goBack();
                   }, 2000);
                 } else if (screen1?.from == 'user') {
                   console.log('user');
                   dispatch(setLocation(loc));
-                  // setModalVisible(!isModlVisible);
                   setTimeout(() => {
                     navigation.navigate('Profile', {
                       data: 'map',
@@ -590,14 +569,13 @@ const Map = ({navigation, route}) => {
                 }
               }}
               style={{
-                width: moderateScale(250, 0.1),
+                width: moderateScale(150, 0.1),
                 height: moderateScale(38, 0.1),
                 backgroundColor: '#FFD700',
                 justifyContent: 'center',
-                marginVertical: moderateScale(15, 0.1),
                 borderRadius: moderateScale(12, 0.1),
                 alignSelf: 'center',
-                top: moderateScale(15, 0.1),
+                marginVertical: moderateScale(20, 0.1),
               }}>
               <Text
                 style={{
