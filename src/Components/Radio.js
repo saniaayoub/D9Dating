@@ -12,8 +12,7 @@ const radio = ({onPress, selected, children}) => {
     <View style={styles.radioButtonContainer}>
       <TouchableOpacity
         onPress={onPress}
-        style={[styles.radioButton, {borderColor: Textcolor}]}
-      >
+        style={[styles.radioButton, {borderColor: Textcolor}]}>
         {selected ? <View style={styles.radioButtonIcon} /> : null}
       </TouchableOpacity>
       <TouchableOpacity onPress={onPress}>
@@ -53,11 +52,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFD700',
   },
   radioButtonText: {
-    marginTop: moderateScale(3, 0.1),
-    color: '#FFFFFF',
-    //fontFamily: poppins,
     fontWeight: '300',
-    fontSize: moderateScale(10, 0.1),
+    fontSize: moderateScale(12, 0.1),
     //fontFamily: poppins,
     marginLeft: moderateScale(9, 0.1),
     lineHeight: moderateScale(12, 0.1),
