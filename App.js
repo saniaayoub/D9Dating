@@ -3,12 +3,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  TouchableOpacity,
   PermissionsAndroid,
+  Text,
 } from 'react-native';
 import React, {useEffect} from 'react';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import {NativeBaseProvider, Box} from 'native-base';
+import {NativeBaseProvider, Box, useToast} from 'native-base';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MyStatusBar from './src/Components/StatusBar';
 import {useSelector, useDispatch} from 'react-redux';
@@ -26,8 +28,12 @@ import SplashScreen from 'react-native-splash-screen';
 import * as RootNavigation from './RootNavigation';
 import {navigationRef} from './RootNavigation';
 import {AppState} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {moderateScale} from 'react-native-size-matters';
+
 const App = ({navigation}) => {
   const dispatch = useDispatch();
+  const toast = useToast();
   const userToken = useSelector(state => state.reducer.userToken);
   const theme = useSelector(state => state.reducer.theme);
 
@@ -56,10 +62,10 @@ const App = ({navigation}) => {
           PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('Notification permission granted');
+          // console.log('Notification permission granted');
           await AsyncStorage.setItem('permission', 'granted');
         } else {
-          console.log('Notification permission denied');
+          // console.log('Notification permission denied');
           await AsyncStorage.setItem('permission', 'denied');
         }
       } else {
@@ -67,10 +73,10 @@ const App = ({navigation}) => {
         if (status === RESULTS.GRANTED) {
           await AsyncStorage.setItem('permission', 'granted');
 
-          console.log('Notification permission granted');
+          // console.log('Notification permission granted');
         } else {
           await AsyncStorage.setItem('permission', 'denied');
-          console.log('Notification permission denied');
+          // console.log('Notification permission denied');
         }
       }
     } catch (error) {
@@ -99,7 +105,7 @@ const App = ({navigation}) => {
               : PERMISSIONS.IOS.NOTIFICATIONS,
           );
           if (status === RESULTS.GRANTED) {
-            console.log('status', status);
+            // console.log('status', status);
             await AsyncStorage.setItem('permission', 'granted');
             console.log('Notification permission already granted');
           } else {
@@ -115,37 +121,57 @@ const App = ({navigation}) => {
   };
   useEffect(() => {
     // Replace with your server URL
-
     socket.on('connect', () => {
       console.log('Socket connected');
     });
 
-    // socket.on('disconnect', reason => {
-    //   console.log('Socket disconnected');
-    //   console.log('Reason:', reason);
-    //   updateLastSeen();
+    // socket.on('private_message', ({content, from, time}) => {
+    //   toast.show({
+    //     title: 'Hello world1',
+    //     placement: 'top',
+    //     render: () => {
+    //       return (
+    //         <TouchableOpacity
+    //           style={{
+    //             borderRadius: moderateScale(10, 0.1),
+    //             paddingVertical: moderateScale(10, 0.1),
+    //             paddingHorizontal: moderateScale(15, 0.1),
+    //             backgroundColor: '#FFD700',
+    //             flexDirection: 'row',
+    //           }}
+    //           onPress={() => {
+    //             console.log('not logging');
+    //           }}>
+    //           <Icon name={'envelope'} color={'#000'} size={18} />
+    //           <Text style={{color: '#000', marginLeft: moderateScale(10, 0.1)}}>
+    //             You have a new message
+    //           </Text>
+    //         </TouchableOpacity>
+    //       );
+    //     },
+    //   });
     // });
 
+    socket.on('disconnect', reason => {
+      console.log('Socket disconnected');
+      console.log('Reason:', reason);
+      updateLastSeen();
+    });
     socket.on('error', error => {
       console.error('Socket error:', error);
     });
-
+    socket.on('connect_error', error => {
+      console.log('Connection error:', error);
+    });
     // Clean up the socket on component unmount
     return () => {
       socket.disconnect();
     };
   }, [socket]);
+
   useEffect(() => {
     requestUserPermission();
     checkToken();
-    // // Initialize push notifications
-    // PushNotification.configure({
-    //   onNotification: function(notification) {
-    //     console.log('NOTIFICATION:', notification);
-    //   },
-    // });
-    // // Request permission to send push notifications
-    // PushNotification.requestPermissions();
   }, []);
 
   useEffect(() => {

@@ -27,6 +27,7 @@ import axiosconfig from '../../../Providers/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
+import Inicon from 'react-native-vector-icons/Ionicons';
 
 const Message = ({navigation}) => {
   const dispatch = useDispatch();
@@ -151,7 +152,7 @@ const Message = ({navigation}) => {
   };
 
   const handleCreateRoom = user => {
-    // console.log(user, 'handle');
+    console.log(user, 'handle');
     navigation.navigate('Chat', user);
     setModalVisible(false);
   };
@@ -254,9 +255,27 @@ const Message = ({navigation}) => {
         <>
           <ScrollView
             contentContainerStyle={[s.container, {backgroundColor: color}]}>
-            <View>
+            <View
+              style={{
+                marginLeft: moderateScale(-5, 0.1),
+                marginVertical: moderateScale(10, 0.1),
+                alignItems: 'center',
+                // justifyContent: 'space-evenly',
+                flexDirection: 'row',
+              }}>
+              <TouchableOpacity
+                // style={{flex: 0.1}}
+                onPress={() => navigation.goBack('')}>
+                <Inicon
+                  name="arrow-back-circle-outline"
+                  size={moderateScale(30)}
+                  color={textColor}
+                />
+              </TouchableOpacity>
               <Text style={[s.HeadingText, {color: textColor}]}>Messages</Text>
             </View>
+
+            <View></View>
             <View style={[s.border, {borderBottomColor: textColor}]}>
               <TouchableOpacity style={s.btn}>
                 <Text style={[s.chats, {color: textColor}]}>Chats</Text>

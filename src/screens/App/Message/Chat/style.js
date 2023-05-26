@@ -156,8 +156,9 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(15, 0.1),
   },
   chat: {
-    height: '80%',
-    paddingBottom: moderateScale(15, 0.1),
+    maxHeight: '85%',
+    minHeight: '85%',
+    // paddingBottom: moderateScale(15, 0.1),
   },
   textSmall1: {
     //fontFamily: Poppins,
@@ -180,9 +181,8 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(5, 0.1),
   },
   messageInput: {
-    // position: 'absolute',
     paddingLeft: moderateScale(10, 0.1),
-    bottom: moderateScale(80, 0.1),
+    bottom: moderateScale(30, 0.1),
     flexDirection: 'row',
     alignItems: 'center',
     // justifyContent: 'center',
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     borderWidth: moderateScale(1, 0.1),
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: moderateScale(10, 0.1),
+    // marginLeft: moderateScale(10, 0.1),
   },
   inputText: {
     flex: 0.9,

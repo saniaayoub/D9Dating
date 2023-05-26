@@ -11,16 +11,51 @@ import Likes from '../../../screens/App/Home/Likes';
 import * as RootNavigation from '../../../../RootNavigation';
 import {navigationRef} from '../../../../RootNavigation';
 import messaging from '@react-native-firebase/messaging';
-import {useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useEffect} from 'react';
+import socket from '../../../utils/socket';
+import {TouchableOpacity, Text} from 'react-native';
+import {useToast} from 'native-base';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {moderateScale} from 'react-native-size-matters';
 
 const Stack = createStackNavigator();
 
 const HomeStack = () => {
+  const toast = useToast();
+  useEffect(() => {
+    socket.on('private_message', ({content, from, time}) => {
+      toast.show({
+        placement: 'top',
+        render: () => {
+          return (
+            <TouchableOpacity
+              style={{
+                borderRadius: moderateScale(10, 0.1),
+                paddingVertical: moderateScale(10, 0.1),
+                paddingHorizontal: moderateScale(15, 0.1),
+                backgroundColor: '#FFD700',
+                flexDirection: 'row',
+              }}
+              onPress={() => {
+                RootNavigation.navigate('MessageStack');
+              }}>
+              <Icon name={'envelope'} color={'#000'} size={18} />
+              <Text style={{color: '#000', marginLeft: moderateScale(10, 0.1)}}>
+                You have a new message
+              </Text>
+            </TouchableOpacity>
+          );
+        },
+      });
+    });
+  }, [socket]);
+
   useEffect(() => {
     // Assume a message-notification contains a "type" property in the data payload of the screen to open
     checkPermission();
   }, []);
+
   const checkPermission = async () => {
     const granted = await AsyncStorage.getItem('permission');
     console.log(granted, 'check before');
@@ -54,6 +89,7 @@ const HomeStack = () => {
       console.log("don't send notification");
     }
   };
+
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Home" component={Home} />

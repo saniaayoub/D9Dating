@@ -39,6 +39,14 @@ socketIO.on('connection', socket => {
       time: `${timestamp.hour}:${timestamp.mins}`,
     });
   });
+  socket.on('like', ({username, to, timestamp}) => {
+    console.log('like', username, to);
+    socket.to(to).emit('like', {
+      username,
+      from: socket.id,
+      time: `${timestamp.hour}:${timestamp.mins}`,
+    });
+  });
 
   socket.on('disconnect', () => {
     socket.disconnect();

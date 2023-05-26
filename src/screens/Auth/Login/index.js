@@ -15,7 +15,7 @@ import s from './style';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/Fontisto';
-import {Input, FormControl, Button} from 'native-base';
+import {Input, FormControl, Box, Button} from 'native-base';
 import {moderateScale} from 'react-native-size-matters';
 import Lock from '../../../assets/images/svg/lock.svg';
 import {setTheme, setUserToken, setStories} from '../../../Redux/actions';
@@ -23,6 +23,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
 import Loader from '../../../Components/Loader';
+import socket from '../../../utils/socket';
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const passRegex = new RegExp(
   '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
@@ -42,14 +43,15 @@ const Login = ({navigation}) => {
   const theme = useSelector(state => state.reducer.theme);
   const Textcolor = theme === 'dark' ? '#fff' : '#222222';
 
+  useEffect(() => {}, []);
+
   const fcmToken = token => {
     console.log('fcmtoken api');
     // setLoader(true);
-    console.log(token, 'userToken');
+    console.log(userToken, 'userToken');
     var data = {
       device_token: FCMtoken,
     };
-    console.log(data, 'device token');
     axiosconfig
       .post('device-token', data, {
         headers: {
@@ -65,6 +67,7 @@ const Login = ({navigation}) => {
         console.log(err, 'errors');
       });
   };
+
   const onSignInUser = () => {
     console.log('submit');
     setSubmitted(false);
@@ -99,6 +102,8 @@ const Login = ({navigation}) => {
           AsyncStorage.setItem('userToken', res?.data?.access_token);
           console.log(res?.data, 'res');
           fcmToken(res?.data?.access_token);
+          socket.auth = {username: email};
+          socket.connect();
           dispatch(setUserToken(res?.data?.access_token));
           setLoader(false);
         })

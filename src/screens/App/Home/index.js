@@ -35,14 +35,12 @@ import Loader from '../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosconfig from '../../../provider/axios';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
+import CustomAlert from '../../../Components/AlertModal';
 import {
   setOrganization,
   setStories,
   addSocketUsers,
 } from '../../../Redux/actions';
-import messaging from '@react-native-firebase/messaging';
-import * as RootNavigation from '../../../../RootNavigation';
-import {navigationRef} from '../../../../RootNavigation';
 
 const Organization = [
   {id: 'Alpha Phi Alpha Fraternity, Inc.', color: 'blue'},
@@ -68,10 +66,10 @@ const Home = ({navigation, route}) => {
   const organizations = useSelector(state => state.reducer.organization);
   const storyID = useSelector(state => state.reducer.storyID);
   const storiesData = useSelector(state => state.reducer.stories);
-
   const color = theme === 'dark' ? '#222222' : '#fff';
   const textColor = theme === 'light' ? '#000' : '#fff';
   const [refresh, setRefresh] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [myStories, setMyStories] = useState([]);
   const [storyCircle, setStoryCircle] = useState('green');
@@ -108,6 +106,11 @@ const Home = ({navigation, route}) => {
     // console.log(storyID, 'setUD');
   }, [isFocused]);
 
+  useEffect(() => {
+    socket.on('like', ({username, from}) => {
+      console.log('socekeeyy like', username, from);
+    });
+  }, [socket]);
   useEffect(() => {
     socket.on('users', users => {
       users.forEach(user => {
@@ -166,6 +169,14 @@ const Home = ({navigation, route}) => {
         console.log('false a');
       }
     });
+  };
+
+  const handleShowAlert = () => {
+    setShowAlert(true);
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
   const getItemLayout = (data, index) => ({
     length: 500,
@@ -292,7 +303,7 @@ const Home = ({navigation, route}) => {
     setLoader(false);
   };
 
-  const hitLike = async (id, index) => {
+  const hitLike = async (id, index, data) => {
     setLoader(true);
     await axiosconfig
       .get(`like/${id}`, {
@@ -304,6 +315,7 @@ const Home = ({navigation, route}) => {
       .then(res => {
         // // console.log('data', JSON.stringify(res.data));
         toggleLike(index);
+        searchUserOnSocket(data);
         setLoader(false);
       })
       .catch(err => {
@@ -313,12 +325,31 @@ const Home = ({navigation, route}) => {
       });
   };
 
+  const socketLike = (user, name) => {
+    console.log('user name', user, name);
+    socket.emit('like', {
+      username: name,
+      to: user.userID,
+    });
+  };
+
+  const searchUserOnSocket = user => {
+    console.log(user, 'aoxjw');
+    // let temp = {backendUser: userData, socketUser: {}};
+    socketUsers.findLast((elem, index) => {
+      if (elem?.username == user?.email) {
+        console.log('found', index);
+        socketLike(elem, user?.name);
+      }
+    });
+  };
+
   var lastTap = null;
-  const handleDoubleTap = (id, index) => {
+  const handleDoubleTap = (id, index, data) => {
     const now = Date.now();
     const DOUBLE_PRESS_DELAY = 300;
     if (lastTap && now - lastTap < DOUBLE_PRESS_DELAY) {
-      hitLike(id, index);
+      hitLike(id, index, data);
     } else {
       lastTap = now;
     }
@@ -952,7 +983,9 @@ const Home = ({navigation, route}) => {
         </View>
         <View style={s.img}>
           <TouchableWithoutFeedback
-            onPress={() => handleDoubleTap(elem?.item?.id, elem?.index)}>
+            onPress={() =>
+              handleDoubleTap(elem?.item?.id, elem?.index, elem?.item?.user)
+            }>
             <View style={s.img}>
               <Image
                 source={{uri: elem?.item?.image}}
@@ -963,7 +996,7 @@ const Home = ({navigation, route}) => {
           <TouchableOpacity
             onPress={() => {
               // send();
-              hitLike(elem?.item?.id, elem?.index);
+              hitLike(elem?.item?.id, elem?.index, elem?.item?.user);
               // // console.log(data[elem.index].post.liked);
             }}
             style={s.likes}>
@@ -1080,6 +1113,16 @@ const Home = ({navigation, route}) => {
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
+
+      {/* <TouchableOpacity style={s.button} onPress={handleShowAlert}>
+        <Text style={s.buttonText}>Show Alert</Text>
+      </TouchableOpacity>
+      <CustomAlert
+        visible={showAlert}
+        onClose={handleCloseAlert}
+        message="This is a custom alert!"
+      /> */}
+
       <View style={[s.container, s.col, {backgroundColor: color}]}>
         <ScrollView
           scrollEnabled

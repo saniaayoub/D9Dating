@@ -18,6 +18,17 @@ const styles = StyleSheet.create({
     //fontFamily: Poppins,
     lineHeight: moderateScale(18, 0.1),
   },
+  button: {
+    backgroundColor: 'blue',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignSelf: 'flex-end',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
   hText: {
     fontSize: moderateScale(13, 0.1),
   },

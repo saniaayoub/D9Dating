@@ -61,6 +61,11 @@ const BottomTabs = () => {
         name={'MessageStack'}
         component={MessageStack}
         options={{
+          tabBarStyle: {
+            display: 'none',
+          },
+          tabBarVisible: false,
+
           tabBarIcon: ({focused}) => (
             <View>
               <ChatIcon

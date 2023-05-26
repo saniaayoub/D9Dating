@@ -10,6 +10,7 @@ import {
   Keyboard,
 } from 'react-native';
 // const {v4: uuidv4} = require('uuid');
+import {CommonActions} from '@react-navigation/native';
 import React, {useEffect, useState, useLayoutEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {moderateScale} from 'react-native-size-matters';
@@ -17,6 +18,7 @@ import s from './style';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Inicon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Input, FormControl, Button, Menu, Pressable} from 'native-base';
 import socket from '../../../../utils/socket';
 import io from 'socket.io-client';
@@ -31,6 +33,8 @@ import moment from 'moment';
 
 const Chat = ({navigation, route}) => {
   const dispatch = useDispatch();
+  console.log('getting data bachk', route?.params?.backendUser);
+
   const userToken = useSelector(state => state.reducer.userToken);
   const organizations = useSelector(state => state.reducer.organization);
   const data = route?.params?.data;
@@ -89,6 +93,7 @@ const Chat = ({navigation, route}) => {
 
   useEffect(() => {
     socket.on('user-disconnected', users => {
+      console.log('a user disconnected');
       users.forEach(user => {
         user.self = user.userID === socket.id;
       });
@@ -99,14 +104,18 @@ const Chat = ({navigation, route}) => {
 
   const setOnlineStatus = async susers => {
     setOnline(false);
+    let temp = false;
     console.log(susers, 'susers');
     susers.findLast((elem, index) => {
-      console.log('coming');
       if (elem?.username === backendUser?.email) {
         setOnline(true);
+        temp = true;
         setSocketUser(elem);
       }
     });
+    if (!temp) {
+      getUserData();
+    }
   };
 
   const getMessages = async () => {
@@ -183,7 +192,7 @@ const Chat = ({navigation, route}) => {
   };
 
   const sendReadStatus = async () => {
-    setLoader(true);
+    // setLoader(true);
     await axiosconfig
       .post(
         `read_status`,
@@ -196,10 +205,10 @@ const Chat = ({navigation, route}) => {
       )
       .then(res => {
         console.log('read status', res.data);
-        setLoader(false);
+        // setLoader(false);
       })
       .catch(err => {
-        setLoader(false);
+        // setLoader(false);
         console.log(err);
       });
   };
@@ -215,7 +224,7 @@ const Chat = ({navigation, route}) => {
         console.log('message send', res.data);
       })
       .catch(err => {
-        setLoader(false);
+        // setLoader(false);
         // console.log(err);
       });
   };
@@ -257,7 +266,6 @@ const Chat = ({navigation, route}) => {
   };
 
   const getUserData = async () => {
-    setLoader(true);
     axiosconfig
       .get(`user_view/${backendUser?.id}`, {
         headers: {
@@ -267,11 +275,10 @@ const Chat = ({navigation, route}) => {
       .then(res => {
         // console.log('data11', res.data.user_details);
         setBackendUser(res.data.user_details);
-        setLoader(false);
       })
       .catch(err => {
-        setLoader(false);
-        // console.log(err);
+        // setLoader(false);
+        console.log(err);
       });
   };
 
@@ -340,9 +347,9 @@ const Chat = ({navigation, route}) => {
               trigger={triggerProps => {
                 return (
                   <Pressable
-                    onLongPress={() => {
-                      setMenuOpen(true);
-                    }}
+                    // onLongPress={() => {
+                    //   setMenuOpen(true);
+                    // }}
                     {...triggerProps}
                     style={{
                       flexDirection: 'row',
@@ -433,6 +440,7 @@ const Chat = ({navigation, route}) => {
       </View>
     );
   };
+
   return (
     <SafeAreaView style={{display: 'flex', flex: 1, backgroundColor: color}}>
       {loader ? <Loader /> : null}
@@ -440,7 +448,14 @@ const Chat = ({navigation, route}) => {
         <View style={s.header}>
           <TouchableOpacity
             style={{flex: 0.1}}
-            onPress={() => navigation.goBack()}>
+            onPress={() => {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 1,
+                  routes: [{name: 'Message'}],
+                }),
+              );
+            }}>
             <Inicon
               name="arrow-back-circle-outline"
               size={moderateScale(30)}
@@ -583,53 +598,49 @@ const Chat = ({navigation, route}) => {
           />
         </View>
       </View>
-      {backendUser?.block_status == null || backendUser?.block_status == 0 ? (
-        <View style={[s.messageInput, {backgroundColor: color}]}>
-          <View style={s.input}>
-            <TouchableOpacity style={s.circle}>
-              <Icon
-                name={'smile'}
-                color={'#8F8A8A'}
-                solid
-                size={moderateScale(20, 0.1)}
-              />
-            </TouchableOpacity>
-            <View style={s.inputText}>
-              <Input
-                w={'100%'}
-                variant="unstyled"
-                placeholderTextColor={'#fff'}
-                color={'#fff'}
-                placeholder="Type Message"
-                value={message}
-                multiline
-                flexWrap={'wrap'}
-                maxHeight={60}
-                onChangeText={text => setMessage(text)}
-              />
-            </View>
+      <View style={[s.messageInput, {backgroundColor: color}]}>
+        <View style={s.input}>
+          <View style={s.circle}>
+            <Icon2
+              name={'email'}
+              color={'#8F8A8A'}
+              solid
+              size={moderateScale(20, 0.1)}
+            />
+          </View>
+          <View style={s.inputText}>
+            <Input
+              w={'100%'}
+              variant="unstyled"
+              placeholderTextColor={'#fff'}
+              color={'#fff'}
+              placeholder="Type Message"
+              value={message}
+              multiline
+              flexWrap={'wrap'}
+              maxHeight={60}
+              onChangeText={text => setMessage(text)}
+            />
+          </View>
 
-            {/* <TouchableOpacity style={s.attach}>
+          {/* <TouchableOpacity style={s.attach}>
               <Entypo
                 name={'attachment'}
                 color={'#8F8A8A'}
                 size={moderateScale(20, 0.1)}
               />
             </TouchableOpacity> */}
-          </View>
-          <View style={s.sendBtn}>
-            <TouchableOpacity
-              onPress={() => handleNewMessage()}
-              style={s.circle}>
-              <Inicon
-                name={'md-send'}
-                color={'#8F8A8A'}
-                size={moderateScale(20, 0.1)}
-              />
-            </TouchableOpacity>
-          </View>
         </View>
-      ) : null}
+        <View style={s.sendBtn}>
+          <TouchableOpacity onPress={() => handleNewMessage()} style={s.circle}>
+            <Inicon
+              name={'md-send'}
+              color={'#8F8A8A'}
+              size={moderateScale(20, 0.1)}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };

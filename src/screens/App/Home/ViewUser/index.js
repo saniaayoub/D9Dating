@@ -13,7 +13,7 @@ import Loader from '../../../../Components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
 import ImageView from 'react-native-image-viewing';
-
+import * as RootNavigation from '../../../../../RootNavigation';
 const data = [
   {
     user_id: 1,
@@ -67,7 +67,7 @@ const ViewUser = ({navigation, route}) => {
 
   const searchUserOnSocket = userData => {
     let temp = {backendUser: userData, socketUser: {}};
-    console.log('found1', temp);
+
     socketUsers.findLast((elem, index) => {
       if (elem?.username == userData?.email) {
         console.log('found', index);
@@ -78,8 +78,9 @@ const ViewUser = ({navigation, route}) => {
   };
 
   const handleCreateRoom = user => {
-    // console.log(user, 'handle');
-    navigation.navigate('Chat', user);
+    console.log(user, 'handle');
+    RootNavigation.navigate('Chat', user);
+    // navigation.navigate('MessageStack', {screen: 'Chat', params: user});
   };
 
   const getId = async () => {
@@ -238,7 +239,7 @@ const ViewUser = ({navigation, route}) => {
               <Text style={[s.headerTxt, {color: textColor}]}>
                 {userData?.name} {userData?.last_name}
               </Text>
-              {userData?.connected ? (
+              {userData?.connected == 1 ? (
                 <TouchableOpacity
                   onPress={() => {
                     searchUserOnSocket(userData);

@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   HeadingText: {
+    marginLeft: moderateScale(20, 0.1),
     fontSize: moderateScale(20, 0.1),
     //fontFamily: PoppinsBold,
     lineHeight: moderateScale(30, 0.1),
