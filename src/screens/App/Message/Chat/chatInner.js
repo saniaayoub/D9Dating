@@ -77,6 +77,7 @@ const Chat = ({navigation, route}) => {
             time: time,
           },
         ]);
+        sendReadStatus();
       }
     });
   }, [socket]);
