@@ -199,7 +199,12 @@ const Register = ({navigation}) => {
       return false;
     }
     if (password != confirmPassword) {
-      alert('password does not match');
+      Alert.alert('password does not match');
+      sub = false;
+      return false;
+    }
+    if (!phonenum.current.isValidNumber()) {
+      Alert.alert('Please enter valid Phone Number');
       sub = false;
       return false;
     }
@@ -623,7 +628,7 @@ const Register = ({navigation}) => {
               </View>
               <View style={{flex: 0.6}}>
                 <Menu
-                  style={{width: '80%'}}
+                  style={{width: '85%'}}
                   borderWidth={moderateScale(1, 0.1)}
                   borderBottomColor={'grey'}
                   backgroundColor={color}
@@ -648,7 +653,7 @@ const Register = ({navigation}) => {
                           paddingLeft: moderateScale(10, 0.1),
                           // width: moderateScale(170, 0.1),
                           alignItems: 'center',
-                          marginTop: moderateScale(18, 0.1),
+                          // marginTop: moderateScale(18, 0.1),
                         }}>
                         <Text
                           style={[
@@ -656,7 +661,7 @@ const Register = ({navigation}) => {
                             {
                               color: Textcolor,
                               flex: 0.8,
-                              paddingBottom: moderateScale(12, 0.1),
+                              paddingBottom: moderateScale(5, 0.1),
                             },
                           ]}>
                           {organization}
@@ -665,6 +670,7 @@ const Register = ({navigation}) => {
                         <Entypo
                           style={{
                             flex: 0.2,
+                            left: moderateScale(10, 0.1),
                             bottom: moderateScale(10, 0.1),
                           }}
                           name={'chevron-down'}

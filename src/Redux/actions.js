@@ -13,6 +13,7 @@ import {
   SET_STORYID,
   SET_STORY_COLOR,
   SET_FTOKEN,
+  USERLOC,
 } from './Constants';
 
 export const setUserToken = value => {
@@ -51,6 +52,12 @@ export const addSocketUsers = value => {
 export const setLocation = value => {
   return {
     type: LOCATION,
+    payload: value,
+  };
+};
+export const setUserLoc = value => {
+  return {
+    type: USERLOC,
     payload: value,
   };
 };

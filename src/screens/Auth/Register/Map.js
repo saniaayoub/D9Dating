@@ -18,7 +18,7 @@ import {
   View,
   Alert,
 } from 'react-native';
-import {setLocation} from '../../../Redux/actions';
+import {setLocation, setUserLoc} from '../../../Redux/actions';
 import {setPostLocation} from '../../../Redux/actions';
 import {useSelector, useDispatch} from 'react-redux';
 import {Marker} from 'react-native-maps';
@@ -42,22 +42,57 @@ let LATITUDE;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const Map = ({navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [loc, setLoc] = useState(null);
   const isFocused = useIsFocused();
-  const [position, setPosition] = useState({
-    latitude: 51.50853,
-    longitude: -0.12574,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-  const [markerPosition, setMarkerPosition] = useState(position);
-  const searchBarRef = useRef();
-
   const screen1 = route.params;
+  console.log(userLocation, 'user locationnn');
+  const userLocation = useSelector(state => state.reducer.userLoc);
+  const locat = useSelector(state => state.reducer.location);
+  const [position, setPosition] = useState(
+    screen1.from == 'user'
+      ? userLocation
+      : {
+          latitude: 51.50853,
+          longitude: -0.12574,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        },
+  );
+  const [loc, setLoc] = useState(
+    screen1.from == 'user' ? locat : 'London Greater London',
+  );
+
+  const p = useSelector(state => state.reducer.postLocation);
+  const [markerPosition, setMarkerPosition] = useState(position);
+  console.log(markerPosition, 'marker position');
+  console.log(position, 'drag position');
+  const searchBarRef = useRef();
 
   console.log(screen1, 'screen');
   const dispatch = useDispatch();
   const mapRef = useRef();
+
+  // const locat = data => {
+  //   console.log(position, 'posss', markerPosition, 'markkkkk');
+  //   console.log(data, 'uuu dtaa');
+  //   Geocoder.from(data)
+  //     .then(json => {
+  //       const location = json.results[0].geometry.location;
+  //       console.log(location.lat, location.lng, 'position xyz');
+
+  //       setPosition({
+  //         latitude: location.lat,
+  //         longitude: location.lng,
+  //       });
+  //       console.log(position, 'position after');
+  //       setMarkerPosition({
+  //         latitude: location.lat,
+  //         longitude: location.lng,
+  //       });
+  //       console.log(markerPosition, 'position after');
+  //     })
+  //     .catch(error => console.warn(error));
+  //   // setPosition(data.description);
+  // };
 
   const onMapRegionChange = newRegion => {
     console.log(newRegion, 'new region');
@@ -127,7 +162,7 @@ const Map = ({navigation, route}) => {
             });
           }
         } else {
-          Alert.alert('D9Dating is accessing your location');
+          // Alert.alert('D9Dating is accessing your location');
           Geolocation.getCurrentPosition(pos => {
             // console.log(pos.coords.longitude, 'longitude' );
             setPosition({
@@ -167,29 +202,32 @@ const Map = ({navigation, route}) => {
       }
     }
   };
-  // const getOneTimeLocation = () => {
-  //   console.log('get one time');
-  //   Geolocation.getCurrentPosition(
-  //     position => {
-  //       // const { latitude, longitude } = position.coords;
-  //       console.log(position.coords.latitude, 'latitude');
-  //     },
-  //     error => {
-  //       console.log(error.code, error.message);
-  //     },
-  //     {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-  //   );
-  // };
-  // const getCity = async (lat, long) => {
-  //   console.log('getcity');
-  //   Geocoder.from(lat, long).then(json => {
-  //     var addressComponent = json.results[0].address_components;
-  //     console.log(json.results, 'acc');
-  //     setLoc(
-  //       addressComponent[1].short_name + ' ' + addressComponent[2].short_name,
-  //     );
-  //   });
-  // };
+  const getOneTimeLocation = () => {
+    console.log('get one time');
+    Geolocation.getCurrentPosition(
+      position => {
+        // const { latitude, longitude } = position.coords;
+        console.log(position.coords.latitude, 'latitude');
+      },
+      error => {
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+  const getCity = async coordinate => {
+    console.log('get city name');
+    await Geocoder.from(coordinate)
+      .then(json => {
+        const cityName = json.results[0].address_components.find(
+          ac => ac.types.includes('locality').long_name,
+        );
+        console.log(cityName, 'sania');
+        setLoc(cityName);
+        return cityName;
+      })
+      .catch(error => console.warn(error));
+  };
   const checkGeolocationPermission = async () => {
     try {
       const granted = await PermissionsAndroid.check(
@@ -232,6 +270,7 @@ const Map = ({navigation, route}) => {
           console.log(pos, 'possgg');
         });
       } else {
+        // getCity(loc);
         console.log('Geolocation permission denied');
         setPosition({
           latitude: 51.50853,
@@ -245,6 +284,7 @@ const Map = ({navigation, route}) => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         });
+
         mapRef.current.animateToRegion({
           latitude: 51.50853,
           longitude: -0.12574,
@@ -260,7 +300,9 @@ const Map = ({navigation, route}) => {
   useEffect(() => {
     console.log('he');
     Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
-    checkGeolocationPermission();
+    if (!screen1.from == 'user') {
+      checkGeolocationPermission();
+    }
   }, [isFocused]);
 
   const onPress = (data, details) => {
@@ -275,10 +317,6 @@ const Map = ({navigation, route}) => {
           latitude: location.lat,
           longitude: location.lng,
         });
-        // setLoc({
-        //   latitude: location.lat,
-        //   longitude: location.lng,
-        // });
         mapRef.current.animateToRegion({
           latitude: location.lat,
           longitude: location.lng,
@@ -300,7 +338,7 @@ const Map = ({navigation, route}) => {
         const cityName = json.results[0].address_components.find(ac =>
           ac.types.includes('locality'),
         ).long_name;
-        console.log(cityName);
+        console.log(cityName, 'aaaaa');
       })
       .catch(error => console.warn(error));
   };
@@ -331,6 +369,7 @@ const Map = ({navigation, route}) => {
       },
     );
   }
+
   return (
     <View style={styles.container}>
       <MapView
@@ -350,8 +389,8 @@ const Map = ({navigation, route}) => {
         <Marker
           draggable
           coordinate={markerPosition}
-          title="Yor are here"
-          description="current Location"
+          // title="Yor are here"
+          // description="current Location"
           onPress={() => {
             console.log(markerPosition, 'before');
             setMarkerPosition(position);
@@ -452,12 +491,14 @@ const Map = ({navigation, route}) => {
       </View>
       <View
         style={{
-          alignSelf: 'flex-end',
+          position: 'absolute',
+          // alignSelf: 'flex-end',
           paddingHorizontal: moderateScale(20, 0.1),
           paddingRight: moderateScale(25, 0.1),
           marginVertical: moderateScale(15, 0.1),
-          bottom: moderateScale(55, 0.1),
+          bottom: moderateScale(120, 0.1),
           backgroundColor: 'rgba(255, 255, 0, 0.4)',
+          right: moderateScale(20, 0.1),
           borderRadius: moderateScale(40, 0.1) / 2,
           // opacity: moderateScale(0.5, 0.1),
         }}>
@@ -473,6 +514,7 @@ const Map = ({navigation, route}) => {
       <TouchableOpacity
         onPress={() => {
           console.log(loc, 'log');
+          // getCity(loc);
           setModalVisible(!isModalVisible);
         }}
         style={{
@@ -485,7 +527,7 @@ const Map = ({navigation, route}) => {
           bottom:
             Platform.OS == 'ios'
               ? moderateScale(100, 0.1)
-              : moderateScale(70, 0.1),
+              : moderateScale(50, 0.1),
         }}>
         <View>
           <Text
@@ -528,7 +570,7 @@ const Map = ({navigation, route}) => {
                   alignSelf: 'center',
                   color: 'black',
                 }}>
-                {loc == null ? position : loc}
+                {loc}
               </Text>
               <View
                 style={{
@@ -561,6 +603,8 @@ const Map = ({navigation, route}) => {
                 } else if (screen1?.from == 'user') {
                   console.log('user');
                   dispatch(setLocation(loc));
+                  dispatch(setUserLoc(markerPosition));
+
                   setTimeout(() => {
                     navigation.navigate('Profile', {
                       data: 'map',

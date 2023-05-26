@@ -116,7 +116,7 @@ const CreatePost = ({navigation, route}) => {
   const [location, setLocation] = useState(
     route?.params?.from == 'Home' || route?.params?.from == 'funInteraction'
       ? route?.params?.elem?.location
-      : postLocation,
+      : 'Select Location....',
   );
 
   const requestCameraPermission = async () => {
@@ -162,7 +162,6 @@ const CreatePost = ({navigation, route}) => {
     let options = {
       mediaType: type,
       maxWidth: moderateScale(300, 0.1),
-
       maxHeight: moderateScale(270, 0.1),
       quality: 1,
       videoQuality: 'low',
