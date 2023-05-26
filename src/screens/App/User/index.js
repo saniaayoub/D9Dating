@@ -310,7 +310,7 @@ const Profile = ({navigation, route}) => {
     };
     let isCameraPermitted = await requestCameraPermission();
     let isStoragePermitted = await requestExternalWritePermission();
-    if (isCameraPermitted && isStoragePermitted) {
+    if (isCameraPermitted || isStoragePermitted) {
       launchCamera(options, response => {
         console.log('Response = ', response);
 

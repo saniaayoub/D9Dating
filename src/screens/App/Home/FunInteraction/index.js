@@ -371,7 +371,7 @@ const FunInteraction = ({}) => {
               </Text>
             </TouchableOpacity>
             <Text style={[s.textRegular, {color: textColor}]}>
-              {elem?.item?.user?.location}
+              {elem?.item?.location}
             </Text>
           </View>
           <View style={[s.options]}>

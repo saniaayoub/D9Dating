@@ -4,6 +4,7 @@ export const SET_THEME = 'SET_THEME';
 export const ADD_USERS = 'ADD_USERS';
 export const ADD_SOCKET_USERS = 'ADD_SOCKET_USERS';
 export const LOCATION = 'LOCATION';
+export const USERLOC = 'USERLOC';
 export const DATE = 'DATE';
 export const SET_USER_DATA = 'SET_USER_DATA';
 export const SET_ORGANIZATION = 'SET_ORGANIZATION';

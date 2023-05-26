@@ -340,9 +340,9 @@ const Chat = ({navigation, route}) => {
               trigger={triggerProps => {
                 return (
                   <Pressable
-                    onLongPress={() => {
-                      setMenuOpen(true);
-                    }}
+                    // onLongPress={() => {
+                    //   setMenuOpen(true);
+                    // }}
                     {...triggerProps}
                     style={{
                       flexDirection: 'row',
