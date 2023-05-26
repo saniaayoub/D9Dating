@@ -81,6 +81,7 @@ const Home = ({navigation, route}) => {
   const [otherStories, setOtherStories] = useState([]);
   const [postId, setPostId] = useState(null);
   const [userData, setUserData] = useState('');
+  const [text, setText] = useState(null);
   const [funPostsData, setFunPostsData] = useState('');
   const socketUsers = useSelector(state => state.reducer.socketUsers);
   const [dummyImage, setDummyImage] = useState(
@@ -235,6 +236,7 @@ const Home = ({navigation, route}) => {
       post_id: postId,
       text: repText,
     };
+    console.log(data, 'data');
     await axiosconfig
       .post('post-report', data, {
         headers: {
