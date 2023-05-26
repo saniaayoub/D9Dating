@@ -64,11 +64,7 @@ const CreatePost = ({navigation, route}) => {
       ? route?.params?.elem?.caption
       : null,
   );
-  const [story, setStory] = useState(
-    route?.params?.from == 'Home' || route?.params?.from == 'funInteraction'
-      ? route?.params?.elem?.privacy_option
-      : 'Public',
-  );
+
   const [loader, setLoader] = useState(false);
   const isFocused = useIsFocused();
   const [userData, setUserData] = useState([]);
@@ -117,6 +113,11 @@ const CreatePost = ({navigation, route}) => {
     route?.params?.from == 'Home' || route?.params?.from == 'funInteraction'
       ? route?.params?.elem?.location
       : 'Select Location....',
+  );
+  const [story, setStory] = useState(
+    route?.params?.from == 'Home' || route?.params?.from == 'funInteraction'
+      ? route?.params?.elem?.privacy_option
+      : 'Public',
   );
 
   const requestCameraPermission = async () => {

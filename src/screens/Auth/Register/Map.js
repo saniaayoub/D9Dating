@@ -44,22 +44,16 @@ const Map = ({navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const isFocused = useIsFocused();
   const screen1 = route.params;
-  console.log(userLocation, 'user locationnn');
   const userLocation = useSelector(state => state.reducer.userLoc);
+  console.log(locat, 'user locationnn');
   const locat = useSelector(state => state.reducer.location);
-  const [position, setPosition] = useState(
-    screen1.from == 'user'
-      ? userLocation
-      : {
-          latitude: 51.50853,
-          longitude: -0.12574,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        },
-  );
-  const [loc, setLoc] = useState(
-    screen1.from == 'user' ? locat : 'London Greater London',
-  );
+  const [position, setPosition] = useState({
+    latitude: 51.50853,
+    longitude: -0.12574,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+  const [loc, setLoc] = useState('London Greater London');
 
   const p = useSelector(state => state.reducer.postLocation);
   const [markerPosition, setMarkerPosition] = useState(position);
@@ -300,6 +294,15 @@ const Map = ({navigation, route}) => {
   useEffect(() => {
     console.log('he');
     Geocoder.init('AIzaSyCYvOXB3SFyyeR0usVOgnLyoDiAd2XDunU');
+    if (screen1.from == 'user') {
+      setPosition(userLocation);
+      setMarkerPosition(userLocation);
+      setLoc(locat);
+    } else {
+      setPosition(position);
+      setMarkerPosition(position);
+      setLoc(loc);
+    }
     if (!screen1.from == 'user') {
       checkGeolocationPermission();
     }
@@ -312,7 +315,6 @@ const Map = ({navigation, route}) => {
       .then(json => {
         const location = json.results[0].geometry.location;
         // console.log(location.lat, location.lng, 'position');
-
         setMarkerPosition({
           latitude: location.lat,
           longitude: location.lng,
@@ -389,7 +391,7 @@ const Map = ({navigation, route}) => {
         <Marker
           draggable
           coordinate={markerPosition}
-          // title="Yor are here"
+          title={loc}
           // description="current Location"
           onPress={() => {
             console.log(markerPosition, 'before');
